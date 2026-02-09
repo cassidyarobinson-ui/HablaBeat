@@ -196,6 +196,30 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
         }
       })
 
+      // Check if all notes are done — fade out and end early
+      const allNotesDone = notesRef.current.every((n) => n.hit)
+      const lastNote = notesRef.current[notesRef.current.length - 1]
+      if (allNotesDone && lastNote && currentTime > lastNote.timestamp + 2) {
+        // Fade out audio over 2 seconds then end
+        const fadeAudio = audioRef.current
+        if (fadeAudio && !fadeAudio.paused) {
+          const fadeInterval = setInterval(() => {
+            if (fadeAudio.volume > 0.05) {
+              fadeAudio.volume = Math.max(0, fadeAudio.volume - 0.05)
+            } else {
+              clearInterval(fadeInterval)
+              fadeAudio.pause()
+              setGameState("ended")
+              if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+              }
+            }
+          }, 100)
+        }
+        return
+      }
+
       animationRef.current = requestAnimationFrame(render)
     }
 
