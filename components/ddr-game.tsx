@@ -566,7 +566,7 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
   }
 
   const showHitEffect = (lane: number, judgment: string, color: string) => {
-    const container = fallingRef.current
+    const container = containerRef.current
     if (!container) return
 
     // Rainbow color cycle on each hit
