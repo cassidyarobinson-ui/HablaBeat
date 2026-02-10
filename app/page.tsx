@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import dynamic from "next/dynamic"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
@@ -1344,6 +1343,15 @@ const languages = {
   },
 }
 
+// Helper: load from localStorage
+const loadPersisted = (key: string, fallback: any) => {
+  if (typeof window === "undefined") return fallback
+  try {
+    const val = localStorage.getItem(key)
+    return val !== null ? JSON.parse(val) : fallback
+  } catch { return fallback }
+}
+
 export default function HablaBeat() {
   const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr">("songs")
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
@@ -1374,6 +1382,73 @@ export default function HablaBeat() {
   const [bestFlow, setBestFlow] = useState(0)
   const [totalVocabBank, setTotalVocabBank] = useState(0)
   const [openSectionId, setOpenSectionId] = useState<string>("alphabet-vowels")
+  const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
+  const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
+
+  // Load persisted stats on mount
+  useEffect(() => {
+    setBestFlow(loadPersisted("hablabeat-best-flow", 0))
+    setTotalVocabBank(loadPersisted("hablabeat-total-vocab-bank", 0))
+    setBestGrades(loadPersisted("hablabeat-best-grades", {}))
+    setSongPlayCounts(loadPersisted("hablabeat-song-play-counts", {}))
+  }, [])
+
+  // Persist stats when they change
+  useEffect(() => { if (bestFlow > 0) localStorage.setItem("hablabeat-best-flow", JSON.stringify(bestFlow)) }, [bestFlow])
+  useEffect(() => { if (totalVocabBank > 0) localStorage.setItem("hablabeat-total-vocab-bank", JSON.stringify(totalVocabBank)) }, [totalVocabBank])
+  useEffect(() => { if (Object.keys(bestGrades).length > 0) localStorage.setItem("hablabeat-best-grades", JSON.stringify(bestGrades)) }, [bestGrades])
+  useEffect(() => { if (Object.keys(songPlayCounts).length > 0) localStorage.setItem("hablabeat-song-play-counts", JSON.stringify(songPlayCounts)) }, [songPlayCounts])
+
+  // Check if section badge is unlocked
+  const isSectionBadgeUnlocked = (section: any) => {
+    return section.songs.some((song: any) => song.playCount >= 5)
+  }
+
+  // Auto-collect any claimable coins when curriculum data changes
+  useEffect(() => {
+    const allSecs = curriculumData.flatMap((cat) => cat.sections)
+    allSecs.forEach((section) => {
+      if (isSectionBadgeUnlocked(section)) {
+        const coinId = `${section.id}-coin`
+        setLunasPurse((prev) => {
+          if (prev.some((item) => item.id === coinId)) return prev
+          return [
+            ...prev,
+            {
+              id: coinId,
+              name: section.title,
+              description: `Earned by completing ${section.title}`,
+              icon: section.icon,
+              type: "coin",
+              earnedDate: new Date().toLocaleDateString(),
+            },
+          ]
+        })
+      }
+    })
+  }, [curriculumData])
+
+  // Callback when DDR game ends: update best flow, total vocab bank, best grade, play count
+  const handleDDRGameEnd = (songNum: number, flow: number, bank: number, grade: string) => {
+    // Best flow ever
+    setBestFlow(prev => {
+      const newVal = Math.max(prev, flow)
+      return newVal
+    })
+    // Accumulate total vocab bank
+    setTotalVocabBank(prev => prev + bank)
+    // Best grade per song (compare letter grades)
+    const gradeOrder = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"]
+    setBestGrades(prev => {
+      const currentBest = prev[songNum]
+      const currentIdx = currentBest ? gradeOrder.indexOf(currentBest) : -1
+      const newIdx = gradeOrder.indexOf(grade)
+      if (newIdx > currentIdx) return { ...prev, [songNum]: grade }
+      return prev
+    })
+    // Track play count per song
+    setSongPlayCounts(prev => ({ ...prev, [songNum]: (prev[songNum] || 0) + 1 }))
+  }
 
   // Update allSongs calculation to use current language
   const allSongs = curriculumData.flatMap((category) =>
@@ -1388,11 +1463,6 @@ export default function HablaBeat() {
       })),
     ),
   )
-
-  // 1. Update the isSectionBadgeUnlocked function
-  const isSectionBadgeUnlocked = (section) => {
-    return section.songs.some((song) => song.playCount >= 5)
-  }
 
   const handleLanguageChange = (language) => {
     setSelectedLanguage(language)
@@ -1652,6 +1722,7 @@ export default function HablaBeat() {
           handleNextSong()
           setCurrentView("ddr")
         } : undefined}
+        onGameEnd={handleDDRGameEnd}
       />
     )
   }
@@ -1760,13 +1831,21 @@ export default function HablaBeat() {
   }
 
   if (currentView === "coins") {
+    // Determine which sections have coins earned vs not
+    const earnedCoins = lunasPurse.filter((item) => item.type === "coin")
+    const allSectionsList = curriculumData.flatMap((cat) => cat.sections)
+    const notYetCollected = allSectionsList.filter((section) => {
+      const coinId = `${section.id}-coin`
+      return !lunasPurse.some((item) => item.id === coinId)
+    })
+
     return (
       <div className="min-h-screen bg-gray-900">
         <div className="max-w-md mx-auto bg-gray-900 min-h-screen">
           {/* Header */}
           <div className="text-white p-4">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-32 h-32 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white overflow-hidden">
+              <div className="w-44 h-44 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/super-bunny.gif"
@@ -1776,118 +1855,55 @@ export default function HablaBeat() {
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3">HablaBeat</h1>
-                <p className="text-purple-100 text-lg">Coin Collection</p>
+                <p className="text-purple-100 text-lg">Your Vocab Bank 💰</p>
                 <div className="flex items-center gap-2 mt-2">
                   <Coins className="h-4 w-4 text-purple-300" />
                   <span className="text-purple-200 font-medium">
-                    {lunasPurse.filter((item) => item.type === "coin").length} coins collected
+                    {earnedCoins.length} coins collected
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Language Selector removed */}
-
           {/* Coin Collection Display */}
           <div className="px-4 space-y-4">
-            <h2 className="text-xl font-bold text-white mb-4">Luna's Coin Collection</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Coins Collected</h2>
 
-            {/* Replace rectangular coin display with circular coins */}
-            {lunasPurse.filter((item) => item.type === "coin").length === 0 ? (
+            {earnedCoins.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-6xl mb-4">🪙</div>
                 <p className="text-gray-400">No coins earned yet!</p>
-                {/* Update the "Available to Earn" section description */}
-                <p className="text-gray-500 text-sm mt-2">Listen to songs 5 times each to earn coins</p>
+                <p className="text-gray-500 text-sm mt-2">Play and Sing songs to earn coins</p>
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-4">
-                {lunasPurse
-                  .filter((item) => item.type === "coin")
-                  .map((coin) => (
+                {earnedCoins.map((coin) => (
                     <div key={coin.id} className="flex flex-col items-center">
                       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 border-4 border-yellow-300 shadow-lg flex items-center justify-center relative overflow-hidden">
-                        {/* Coin shine effect */}
                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"></div>
                         <span className="text-2xl relative z-10">{coin.icon}</span>
                       </div>
                       <h3 className="font-bold text-white text-xs mt-2 text-center">{coin.name}</h3>
-                      <p className="text-xs text-gray-500 text-center">Earned: {coin.earnedDate}</p>
                     </div>
                   ))}
               </div>
             )}
 
-            {/* Available Coins to Earn */}
-            <div className="mt-8">
-              <h3 className="text-lg font-bold text-white mb-4">Available to Earn</h3>
-              <div className="space-y-3">
-                {curriculumData.map((category) =>
-                  category.sections.map((section) => {
-                    const isUnlocked = isSectionBadgeUnlocked(section)
-                    const coinId = `${section.id}-coin`
-                    const alreadyEarned = lunasPurse.some((item) => item.id === coinId)
-
-                    if (alreadyEarned) return null
-
-                    return (
-                      <div
-                        key={section.id}
-                        className={`p-3 rounded-lg border ${isUnlocked ? "bg-yellow-900/20 border-yellow-400" : "bg-gray-800 border-gray-700"}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer transition-all ${
-                              isUnlocked
-                                ? "hover:scale-110 border-2 border-yellow-400 shadow-lg shadow-yellow-400/30"
-                                : "opacity-50"
-                            }`}
-                            // Update the coin earning logic in the section header click handler
-                            onClick={() => {
-                              if (isSectionBadgeUnlocked(section)) {
-                                // Auto-earn coin when clicking on unlocked section
-                                const coinId = `${section.id}-coin`
-                                const alreadyEarned = lunasPurse.some((item) => item.id === coinId)
-
-                                if (!alreadyEarned) {
-                                  setLunasPurse((prev) => [
-                                    ...prev,
-                                    {
-                                      id: coinId,
-                                      name: `${section.title}`,
-                                      description: `Earned by listening to ${section.title} songs 5+ times`,
-                                      icon: section.icon,
-                                      type: "coin",
-                                      earnedDate: new Date().toLocaleDateString(),
-                                    },
-                                  ])
-                                }
-                                setCurrentView("coins")
-                              }
-                            }}
-                          >
-                            <span className="text-xl">{section.icon}</span>
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-medium text-white text-sm">{section.title}</h4>
-                            {/* Update the "Available to Earn" section description */}
-                            <p className="text-xs text-gray-400">
-                              {isUnlocked ? "Ready to claim!" : `Listen to songs 5 times each to unlock`}
-                            </p>
-                          </div>
-                          {isUnlocked && (
-                            <div className="text-yellow-400">
-                              <Coins className="h-5 w-5" />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  }),
-                )}
+            {/* Not Yet Collected - greyed out, emoji only, 5 per row */}
+            {notYetCollected.length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-lg font-bold text-white mb-2">Not Yet Collected</h3>
+                <p className="text-xs text-gray-400 mb-4 italic">Play and Sing a song 3 times to unlock</p>
+                <div className="flex flex-wrap gap-3">
+                  {notYetCollected.map((section) => (
+                    <div key={section.id} className="w-14 h-14 rounded-full bg-gray-700/50 border-2 border-gray-600/30 flex items-center justify-center opacity-40">
+                      <span className="text-2xl grayscale">{section.icon}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Bottom Navigation */}
@@ -1933,10 +1949,11 @@ export default function HablaBeat() {
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3">HablaBeat</h1>
-                <p className="text-purple-100 text-lg leading-tight">Collect coins with{"\n"}Super Bunny!</p>
+                <p className="text-purple-100 text-lg leading-tight">Collect coins with</p>
+                <p className="text-purple-100 text-lg leading-tight pl-4">Super Bunny!</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <Flame className="h-4 w-4 text-orange-400" />
-                  <span className="text-orange-300 font-medium">Best Flow: {bestFlow}</span>
+                  <span className="text-xl">🔥</span>
+                  <span className="text-orange-300 font-bold">Best Flow Ever: {bestFlow}</span>
                 </div>
               </div>
             </div>
@@ -2006,9 +2023,10 @@ export default function HablaBeat() {
                               {section.songs.length} songs • {section.songs.reduce((sum, song) => sum + song.playCount, 0)} plays
                             </div>
                           </div>
-                          <Badge variant="secondary" className="bg-gray-700 text-gray-300 border-gray-600 text-xs">
-                            {section.songs.filter((song) => song.completed).length}/{section.songs.length}
-                          </Badge>
+                          {/* Verb type icon for verb sections */}
+                          {section.id === "ar-verbs" && <span className="text-lg font-black text-cyan-400">AR</span>}
+                          {section.id === "er-verbs" && <span className="text-lg font-black text-emerald-400">ER</span>}
+                          {section.id === "ir-verbs" && <span className="text-lg font-black text-purple-400">IR</span>}
                           <div className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}>
                             <ChevronRight className="h-4 w-4 text-gray-400" />
                           </div>
@@ -2019,6 +2037,7 @@ export default function HablaBeat() {
                           <div className="space-y-0.5 pl-4 pr-2 pb-2 bg-gray-800/20">
                             {section.songs.map((song) => {
                               const isClickable = song.youtubeId && song.youtubeId !== ""
+                              const songBestGrade = bestGrades[song.number]
                               return (
                                 <div
                                   key={song.id}
@@ -2029,29 +2048,31 @@ export default function HablaBeat() {
                                       <span className="text-sm font-medium">{song.number}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <h4 className="font-medium text-white truncate text-sm">{song.title}</h4>
+                                      <h4 className="font-bold text-white truncate text-base">{song.title}</h4>
                                     </div>
-                                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                                      <Play className="h-3 w-3" />
-                                      <span className="font-medium">{song.playCount}</span>
-                                    </div>
-                                  </div>
-                                  {/* Action buttons - light grey */}
-                                  <div className="flex gap-2 mt-1.5 ml-10">
-                                    {isClickable && (
-                                      <button
-                                        onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1 px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded-md text-xs font-medium text-white transition-colors"
-                                      >
-                                        🎤 Sing
-                                      </button>
+                                    {/* Best grade badge */}
+                                    {songBestGrade && (
+                                      <span className="text-xs font-black px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/40">
+                                        {songBestGrade}
+                                      </span>
                                     )}
+                                  </div>
+                                  {/* Action buttons - Play first, Sing second, bigger with spacing */}
+                                  <div className="flex gap-3 mt-2 ml-10">
                                     {selectedLanguage === "spanish" && (
                                       <button
                                         onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1 px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded-md text-xs font-medium text-white transition-colors"
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-lg text-sm font-bold text-white transition-colors"
                                       >
                                         🥕 Play
+                                      </button>
+                                    )}
+                                    {isClickable && (
+                                      <button
+                                        onClick={() => handlePlaySong(song.id, category.id, section.id)}
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm font-bold text-white transition-colors"
+                                      >
+                                        🎤 Sing
                                       </button>
                                     )}
                                   </div>
