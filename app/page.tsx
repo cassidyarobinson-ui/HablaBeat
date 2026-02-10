@@ -1575,6 +1575,13 @@ export default function HablaBeat() {
               controls: 1,
               rel: 0,
               modestbranding: 1,
+              showinfo: 0,
+              iv_load_policy: 3,
+              cc_load_policy: 0,
+              fs: 0,
+              disablekb: 0,
+              playsinline: 1,
+              origin: window.location.origin,
             },
             events: {
               onStateChange: (event) => {
@@ -1616,8 +1623,20 @@ export default function HablaBeat() {
     }
 
     return (
-      <div className="aspect-square rounded-lg overflow-hidden bg-black">
+      <div className="aspect-square rounded-lg overflow-hidden bg-black relative youtube-hide-branding">
         <div ref={playerRef} className="w-full h-full"></div>
+        {/* Overlay to hide YouTube logo in bottom right */}
+        <div className="absolute bottom-0 right-0 w-20 h-8 bg-black z-10 pointer-events-none" />
+        <style jsx global>{`
+          .youtube-hide-branding iframe {
+            pointer-events: auto;
+          }
+          .ytp-watermark,
+          .ytp-youtube-button,
+          .ytp-show-cards-title {
+            display: none !important;
+          }
+        `}</style>
       </div>
     )
   }

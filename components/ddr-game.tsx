@@ -99,6 +99,8 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
   const [difficulty, setDifficulty] = useState(5)
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
+  const [elapsedTime, setElapsedTime] = useState("0:00")
+  const [totalTime, setTotalTime] = useState("0:00")
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const notesRef = useRef<Note[]>([])
@@ -219,6 +221,16 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
       const container = fallingRef.current
       if (!container) return
 
+      // Update time display
+      const mins = Math.floor(currentTime / 60)
+      const secs = Math.floor(currentTime % 60)
+      setElapsedTime(`${mins}:${secs.toString().padStart(2, "0")}`)
+      if (audio.duration && isFinite(audio.duration)) {
+        const tMins = Math.floor(audio.duration / 60)
+        const tSecs = Math.floor(audio.duration % 60)
+        setTotalTime(`${tMins}:${tSecs.toString().padStart(2, "0")}`)
+      }
+
       container.innerHTML = ""
 
       notesRef.current.forEach((note) => {
@@ -235,13 +247,13 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
               // Round blue bubble with coin inside
               noteEl.style.cssText = `
                 position: absolute;
-                left: ${note.lane * 25 + 2}%;
-                width: 21%;
+                left: ${note.lane * 25 + 1}%;
+                width: 23%;
                 top: ${yPosition}%;
                 transform: translateY(-50%);
                 z-index: 10;
                 aspect-ratio: 1;
-                max-height: 80px;
+                max-height: 110px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -256,8 +268,8 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
               // Coin inside the bubble - rounder, bubble-like with $ and larger text
               const englishText = (showTranslations && note.english && note.english.toLowerCase() !== note.text.toLowerCase()) ? note.english : ""
               const coinContent = englishText
-                ? `<div style="font-size:7px;font-weight:700;color:#78350F;line-height:1;letter-spacing:0.3px">${englishText}</div><div style="font-size:12px;font-weight:900;color:#451A03;line-height:1.1">${note.text}</div><div style="font-size:9px;font-weight:900;color:#92400E;line-height:1;margin-top:1px">$</div>`
-                : `<div style="font-size:15px;font-weight:900;color:#451A03;line-height:1.1">${note.text}</div><div style="font-size:10px;font-weight:900;color:#92400E;line-height:1;margin-top:2px">$</div>`
+                ? `<div style="font-size:10px;font-weight:700;color:#78350F;line-height:1.1;letter-spacing:0.3px;max-width:90%;text-align:center">${englishText}</div><div style="font-size:14px;font-weight:900;color:#451A03;line-height:1.1;max-width:90%;text-align:center">${note.text}</div>`
+                : `<div style="font-size:18px;font-weight:900;color:#451A03;line-height:1.1;max-width:90%;text-align:center">${note.text}</div>`
 
               noteEl.innerHTML = `<div style="width:88%;height:88%;border-radius:50%;background:radial-gradient(circle at 35% 28%,#FDE68A,#FBBF24 40%,#D97706);border:2.5px solid #B45309;box-shadow:0 2px 8px rgba(0,0,0,0.3),inset 0 -4px 8px rgba(146,64,14,0.25),inset 3px 3px 10px rgba(254,243,199,0.6),0 0 12px rgba(251,191,36,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:2px;position:relative"><div style="position:absolute;top:8%;left:18%;width:30%;height:20%;background:radial-gradient(ellipse,rgba(255,255,255,0.6),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-15deg)"></div>${coinContent}</div>`
 
@@ -596,10 +608,10 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
       animation: coinDrop 0.8s ease-in forwards;
     `
     const coinText = showTranslations && noteEnglish && noteEnglish.toLowerCase() !== noteText.toLowerCase()
-      ? `<div class="text-[8px] leading-tight text-yellow-900 font-semibold">${noteEnglish}</div><div class="text-[10px] leading-tight text-yellow-900 font-bold">${noteText}</div>`
-      : `<div class="text-[10px] leading-tight text-yellow-900 font-bold">${noteText}</div>`
+      ? `<div class="text-[10px] leading-tight text-yellow-900 font-semibold">${noteEnglish}</div><div class="text-[13px] leading-tight text-yellow-900 font-bold">${noteText}</div>`
+      : `<div class="text-[14px] leading-tight text-yellow-900 font-bold">${noteText}</div>`
     coin.innerHTML = `
-      <div style="width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FDE68A, #F59E0B 50%, #D97706); border: 2.5px solid #B45309; box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(146,64,14,0.3), inset 2px 2px 6px rgba(254,243,199,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;">
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FDE68A, #F59E0B 50%, #D97706); border: 2.5px solid #B45309; box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(146,64,14,0.3), inset 2px 2px 6px rgba(254,243,199,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 2px;">
         ${coinText}
       </div>
     `
@@ -1034,10 +1046,13 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
           <div ref={fallingRef} className="absolute inset-0 pointer-events-none" />
         </div>
 
-        {/* Bank and Best - below the arrows */}
+        {/* Bank, Time, and Best - below the arrows */}
         <div className="flex justify-between items-center mt-2 bg-black/60 rounded-lg px-4 py-2">
           <div className="text-sm">
             💰 Bank: <span className="font-bold text-yellow-300 text-base">{score}</span>
+          </div>
+          <div className="text-sm text-white/70 font-mono">
+            <span className="text-white font-bold">{elapsedTime}</span> / {totalTime}
           </div>
           <div className="text-sm">
             🔥 Best: <span className="font-bold text-orange-300 text-base">{maxCombo} flow</span>
