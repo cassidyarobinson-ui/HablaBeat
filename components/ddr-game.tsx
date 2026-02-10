@@ -40,6 +40,7 @@ interface DDRGameProps {
   songNumber: number
   songTitle: string
   onBack: () => void
+  onNextSong?: () => void
 }
 
 // Constants
@@ -49,47 +50,47 @@ const HIT_WINDOWS = { PERFECT: 0.08, GOOD: 0.15, MISS: 0.25 }
 const LANE_COLORS = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"]
 const LANE_TEXT_COLORS = ["text-red-500", "text-blue-500", "text-green-500", "text-yellow-500"]
 
-// Carrot SVG for each direction (the pointed tip faces the arrow direction)
+// Carrot SVG for each direction (the pointed tip faces the arrow direction) - black outline
 const CARROT_SVGS: Record<string, string> = {
   left: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="0,20 40,4 36,20 40,36" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <polygon points="0,20 40,4 36,20 40,36" fill="#F97316" stroke="#000" stroke-width="2"/>
     <line x1="14" y1="14" x2="20" y2="17" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="18" y1="12" x2="24" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="22" y1="24" x2="28" y2="21" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="46" cy="14" rx="7" ry="5" fill="#22C55E" transform="rotate(-20,46,14)"/>
-    <ellipse cx="50" cy="20" rx="7" ry="5" fill="#16A34A" transform="rotate(10,50,20)"/>
-    <ellipse cx="44" cy="24" rx="6" ry="4" fill="#22C55E" transform="rotate(25,44,24)"/>
+    <ellipse cx="46" cy="14" rx="7" ry="5" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-20,46,14)"/>
+    <ellipse cx="50" cy="20" rx="7" ry="5" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(10,50,20)"/>
+    <ellipse cx="44" cy="24" rx="6" ry="4" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(25,44,24)"/>
   </svg>`,
   down: `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="20,60 4,20 20,24 36,20" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <polygon points="20,60 4,20 20,24 36,20" fill="#F97316" stroke="#000" stroke-width="2"/>
     <line x1="14" y1="34" x2="17" y2="40" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="12" y1="38" x2="16" y2="44" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="24" y1="34" x2="21" y2="40" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="14" cy="12" rx="5" ry="7" fill="#22C55E" transform="rotate(-15,14,12)"/>
-    <ellipse cx="20" cy="8" rx="5" ry="7" fill="#16A34A" transform="rotate(5,20,8)"/>
-    <ellipse cx="26" cy="13" rx="4" ry="6" fill="#22C55E" transform="rotate(20,26,13)"/>
+    <ellipse cx="14" cy="12" rx="5" ry="7" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-15,14,12)"/>
+    <ellipse cx="20" cy="8" rx="5" ry="7" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(5,20,8)"/>
+    <ellipse cx="26" cy="13" rx="4" ry="6" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(20,26,13)"/>
   </svg>`,
   up: `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="20,0 36,40 20,36 4,40" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <polygon points="20,0 36,40 20,36 4,40" fill="#F97316" stroke="#000" stroke-width="2"/>
     <line x1="14" y1="26" x2="17" y2="20" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="12" y1="22" x2="16" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="24" y1="26" x2="21" y2="20" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="14" cy="48" rx="5" ry="7" fill="#22C55E" transform="rotate(15,14,48)"/>
-    <ellipse cx="20" cy="52" rx="5" ry="7" fill="#16A34A" transform="rotate(-5,20,52)"/>
-    <ellipse cx="26" cy="47" rx="4" ry="6" fill="#22C55E" transform="rotate(-20,26,47)"/>
+    <ellipse cx="14" cy="48" rx="5" ry="7" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(15,14,48)"/>
+    <ellipse cx="20" cy="52" rx="5" ry="7" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(-5,20,52)"/>
+    <ellipse cx="26" cy="47" rx="4" ry="6" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-20,26,47)"/>
   </svg>`,
   right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="60,20 20,4 24,20 20,36" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <polygon points="60,20 20,4 24,20 20,36" fill="#F97316" stroke="#000" stroke-width="2"/>
     <line x1="40" y1="14" x2="34" y2="17" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="36" y1="12" x2="30" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="36" y1="24" x2="30" y2="21" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="14" cy="14" rx="7" ry="5" fill="#22C55E" transform="rotate(20,14,14)"/>
-    <ellipse cx="10" cy="20" rx="7" ry="5" fill="#16A34A" transform="rotate(-10,10,20)"/>
-    <ellipse cx="16" cy="24" rx="6" ry="4" fill="#22C55E" transform="rotate(-25,16,24)"/>
+    <ellipse cx="14" cy="14" rx="7" ry="5" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(20,14,14)"/>
+    <ellipse cx="10" cy="20" rx="7" ry="5" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(-10,10,20)"/>
+    <ellipse cx="16" cy="24" rx="6" ry="4" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-25,16,24)"/>
   </svg>`,
 }
 
-export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, onBack, onNextSong }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
@@ -243,6 +244,11 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
             const yPosition = progress * (HIT_LINE_POSITION * 100)
 
             if (yPosition >= 0 && yPosition <= 100) {
+              // 3D perspective: bubbles start small/angled at top, grow as they approach
+              const scale = 0.45 + progress * 0.55 // 0.45 at top → 1.0 at hit line
+              const rotateX = (1 - progress) * 35 // 35deg tilt at top → 0 at hit line
+              const opacity = Math.min(1, 0.4 + progress * 0.6) // fade in slightly
+
               const noteEl = document.createElement("div")
               // Round blue bubble with coin inside
               noteEl.style.cssText = `
@@ -250,8 +256,9 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
                 left: ${note.lane * 25 + 1}%;
                 width: 23%;
                 top: ${yPosition}%;
-                transform: translateY(-50%);
-                z-index: 10;
+                transform: translateY(-50%) scale(${scale}) rotateX(${rotateX}deg);
+                transform-origin: center center;
+                z-index: ${Math.floor(progress * 20) + 10};
                 aspect-ratio: 1;
                 max-height: 110px;
                 border-radius: 50%;
@@ -263,6 +270,7 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
                 border: 1.5px solid rgba(200,225,255,0.5);
                 box-shadow: 0 0 18px rgba(59,130,246,0.3), inset 0 -6px 12px rgba(59,130,246,0.15), inset 4px 4px 12px rgba(255,255,255,0.35);
                 overflow: visible;
+                opacity: ${opacity};
               `
 
               // Coin inside the bubble - rounder, bubble-like with $ and larger text
@@ -498,28 +506,18 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
   }, [])
 
   const showLanePress = (lane: number) => {
-    const hitZone = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-hit-zone`) as HTMLElement
     const arrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
     const flash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
 
-    if (hitZone) {
-      hitZone.style.transform = "scale(0.9)"
-      hitZone.style.boxShadow = "0 0 30px rgba(249,115,22,0.9), inset 0 0 20px rgba(249,115,22,0.4)"
-      hitZone.style.borderColor = "#FDE68A"
-      setTimeout(() => {
-        hitZone.style.transform = "scale(1)"
-        hitZone.style.boxShadow = "0 0 20px rgba(249,115,22,0.5), inset 0 0 10px rgba(249,115,22,0.2)"
-        hitZone.style.borderColor = "rgb(251,146,60)"
-      }, 150)
-    }
+    // Carrot pushes up a smidge then snaps back
     if (arrow) {
-      arrow.style.transform = "scale(1.3)"
+      arrow.style.transform = "translateY(-12px) scale(1.15)"
       setTimeout(() => {
-        arrow.style.transform = "scale(1)"
-      }, 150)
+        arrow.style.transform = "translateY(0) scale(1)"
+      }, 120)
     }
     if (flash) {
-      flash.style.opacity = "0.3"
+      flash.style.opacity = "0.25"
       setTimeout(() => {
         flash.style.opacity = "0"
       }, 150)
@@ -534,16 +532,14 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
     const rainbowColor = RAINBOW_COLORS[hitColorIndexRef.current % RAINBOW_COLORS.length]
     hitColorIndexRef.current += 1
 
-    // Flash the hit zone with the rainbow color
-    const hitZone = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-hit-zone`) as HTMLElement
-    if (hitZone) {
-      hitZone.style.borderColor = rainbowColor
-      hitZone.style.boxShadow = `0 0 30px ${rainbowColor}, inset 0 0 15px ${rainbowColor}80`
-      hitZone.style.background = `${rainbowColor}30`
+    // Flash carrot arrow with rainbow color on hit
+    const hitArrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
+    if (hitArrow) {
+      hitArrow.style.filter = `drop-shadow(0 0 12px ${rainbowColor}) drop-shadow(0 0 24px ${rainbowColor})`
+      hitArrow.style.transform = "translateY(-14px) scale(1.2)"
       setTimeout(() => {
-        hitZone.style.borderColor = "rgb(251,146,60)"
-        hitZone.style.boxShadow = "0 0 20px rgba(249,115,22,0.5), inset 0 0 10px rgba(249,115,22,0.2)"
-        hitZone.style.background = "transparent"
+        hitArrow.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"
+        hitArrow.style.transform = "translateY(0) scale(1)"
       }, 200)
     }
 
@@ -730,18 +726,28 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
     return (
       <div className="min-h-screen text-white" style={{ background: `url(${setupBgUrl}) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
         <div className="max-w-md mx-auto p-4">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4 pt-8">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={onBack}>
-              <ChevronDown className="h-6 w-6" />
-            </Button>
-            <h1 className="text-xl font-bold text-center flex-1">🎮 DDR Mode</h1>
-            <div className="w-10" />
+          {/* Header with gradient */}
+          <div className="relative rounded-2xl overflow-hidden mb-4 mt-4" style={{ background: "linear-gradient(135deg, rgba(88,28,135,0.85), rgba(15,23,42,0.85) 50%, rgba(30,58,138,0.85))" }}>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            <div className="relative px-4 py-5">
+              <div className="flex items-center justify-between mb-3">
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={onBack}>
+                  <ChevronDown className="h-6 w-6" />
+                </Button>
+                <h1 className="text-2xl font-black text-center flex-1 tracking-wider uppercase" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>🎮 PLAY</h1>
+                <div className="w-10" />
+              </div>
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-1" style={{ textShadow: "0 2px 6px rgba(0,0,0,0.5)" }}>{songTitle}</h2>
+                <p className="text-purple-200 text-sm">Song #{songNumber}</p>
+              </div>
+            </div>
           </div>
 
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-1">{songTitle}</h2>
-            <p className="text-purple-200">Song #{songNumber}</p>
+          {/* Your Mission - moved under header */}
+          <div className="bg-blue-900/40 rounded-xl p-3 text-sm mb-4 border border-blue-400/30">
+            <p className="font-bold mb-1 text-blue-200">🎯 Your Mission:</p>
+            <p className="text-purple-200">Pop the bubbles with your carrot arrows to get your vocab bank back!</p>
           </div>
 
           {/* Settings */}
@@ -788,12 +794,6 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
           >
             {showTranslations ? "▶ Start!" : "▶ ¡Empezar!"}
           </button>
-
-          {/* Instructions */}
-          <div className="mt-6 bg-blue-900 bg-opacity-30 rounded-xl p-4 text-sm">
-            <p className="font-bold mb-2">🎮 How to Play:</p>
-            <p className="text-purple-200">An evil orange villain stole all of your coins! Quick — pop his bubbles with your carrot arrows to get your vocab bank back!</p>
-          </div>
         </div>
       </div>
     )
@@ -803,7 +803,7 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
   if (gameState === "ended") {
     const { grade, color: gradeColor } = getGrade()
     return (
-      <div className="min-h-screen text-white flex items-center justify-center relative overflow-hidden" style={{ background: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/images/backgrounds/song-${songNumber}.jpg) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
+      <div className="h-[100dvh] text-white flex items-center justify-center relative overflow-hidden" style={{ background: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/images/backgrounds/song-${songNumber}.jpg) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
         {/* Falling coin bubbles background animation */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {Array.from({ length: 25 }).map((_, i) => {
@@ -862,82 +862,82 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
           })}
         </div>
 
-        <div className="max-w-md mx-auto p-6 text-center relative z-10">
-          {/* Trophy with Grade */}
-          <div className="relative inline-block mb-6">
-            <div className="w-56 h-56 mx-auto relative">
-              <Image
-                src="/images/trophy.jpg"
-                alt="Trophy"
-                width={224}
-                height={224}
-                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(234,179,8,0.4)]"
-              />
-              {/* Grade overlaid inside the trophy cup */}
-              <div className="absolute top-[18%] left-1/2 -translate-x-1/2 flex items-center justify-center">
-                <span className={`text-5xl font-black ${gradeColor} drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]`} style={{ textShadow: "0 0 20px currentColor" }}>
-                  {grade}
-                </span>
+        <div className="max-w-md mx-auto px-4 py-2 text-center relative z-10 flex flex-col items-center justify-center h-full">
+          {/* Trophy centered, larger, bouncing */}
+          <div className="relative w-44 h-44 md:w-56 md:h-56 flex-shrink-0 mx-auto mb-2" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
+            <Image
+              src="/images/trophy.png"
+              alt="Trophy"
+              width={224}
+              height={224}
+              className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(234,179,8,0.4)]"
+            />
+            {/* Grade overlaid inside the trophy cup */}
+            <div className="absolute top-[18%] left-1/2 -translate-x-1/2 flex items-center justify-center">
+              <span className={`text-4xl md:text-5xl font-black ${gradeColor} drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]`} style={{ textShadow: "0 0 20px currentColor" }}>
+                {grade}
+              </span>
+            </div>
+            {/* WINNER text on the plaque */}
+            <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2">
+              <span className="text-sm md:text-base font-black text-yellow-900 tracking-wider uppercase" style={{ textShadow: "0 1px 1px rgba(255,255,255,0.3)" }}>
+                WINNER
+              </span>
+            </div>
+          </div>
+
+          {/* Stats row - horizontal with large emojis */}
+          <div className="flex gap-3 w-full mb-3">
+            {/* Longest Flow */}
+            <div className="flex-1 bg-orange-900/40 rounded-xl px-3 py-2 border-2 border-orange-500">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-2xl md:text-3xl">🔥</span>
+                <span className="text-orange-200 text-base md:text-lg font-semibold">Flow</span>
+                <span className="font-bold text-orange-300 text-2xl md:text-3xl">{maxCombo}</span>
+              </div>
+            </div>
+            {/* Vocab Bank */}
+            <div className="flex-1 bg-yellow-900/40 rounded-xl px-3 py-2 border-2 border-yellow-500">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-2xl md:text-3xl">💰</span>
+                <span className="text-yellow-200 text-base md:text-lg font-semibold">Bank</span>
+                <span className="font-bold text-yellow-300 text-2xl md:text-3xl">{score}</span>
               </div>
             </div>
           </div>
 
-          {/* Longest Flow */}
-          <div className="bg-orange-900/40 rounded-xl p-4 border-2 border-orange-500 mb-3">
-            <p className="text-orange-200 mb-1 text-lg font-semibold">🔥 Longest Flow</p>
-            <span className="font-bold text-orange-300 text-4xl">{maxCombo}</span>
-          </div>
-
-          {/* Vocab Bank */}
-          <div className="bg-yellow-900/40 rounded-xl p-4 border-2 border-yellow-500 mb-6">
-            <p className="text-yellow-200 mb-1 text-lg font-semibold">💰 Vocab Bank</p>
-            <span className="font-bold text-yellow-300 text-4xl">{score}</span>
-          </div>
-
-          {/* Super Hero Bunny with waving carrot and flowing cape */}
-          <div className="mb-6 relative flex flex-col items-center">
-            <div className="relative w-48 h-48" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
-              <Image
-                src="/images/super-bunny.png"
-                alt="Super Bunny"
-                width={192}
-                height={192}
-                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                style={{ animation: "bunnySmile 3s ease-in-out infinite" }}
-              />
-              {/* Carrot wave glow effect */}
-              <div
-                className="absolute top-0 right-2 w-8 h-8 rounded-full bg-orange-400/30 blur-md"
-                style={{ animation: "carrotGlow 1.5s ease-in-out infinite" }}
-              />
-              {/* Cape wind particles */}
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-1.5 h-1.5 bg-white/30 rounded-full"
-                  style={{
-                    right: `-${8 + i * 6}px`,
-                    top: `${50 + i * 12}%`,
-                    animation: `capeParticle ${0.8 + i * 0.3}s ease-out ${i * 0.2}s infinite`,
-                  }}
-                />
-              ))}
-            </div>
-            <p className="text-purple-200 text-sm mt-2 italic">
-              {showTranslations ? "Super Bunny celebrates your victory!" : "¡Súper Conejito celebra tu victoria!"}
-            </p>
-          </div>
-
-          <div className="space-y-3">
+          <div className="space-y-2 w-full mb-2">
             <button
               onClick={resetGame}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-4 rounded-xl font-bold text-xl hover:from-purple-500 hover:to-pink-500 transition-all"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 rounded-xl font-bold text-lg hover:from-purple-500 hover:to-pink-500 transition-all"
             >
               {showTranslations ? "↻ Play Again!" : "↻ ¡Jugar Otra Vez!"}
             </button>
-            <button onClick={onBack} className="w-full bg-gray-700 hover:bg-gray-600 px-8 py-3 rounded-xl font-bold transition-colors">
-              Back to Songs
-            </button>
+            <div className="flex gap-2 w-full">
+              <button onClick={onBack} className="flex-1 bg-gray-700 hover:bg-gray-600 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm">
+                ← Back to Songs
+              </button>
+              {onNextSong && (
+                <button onClick={onNextSong} className="flex-1 bg-green-700 hover:bg-green-600 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm">
+                  Next Song →
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Super Bunny below buttons */}
+          <div className="relative flex flex-col items-center">
+            <div className="relative w-24 h-24 md:w-32 md:h-32">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/super-bunny-animated.webp"
+                alt="Super Bunny"
+                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+              />
+            </div>
+            <p className="text-purple-200 text-xs italic">
+              {showTranslations ? "Super Bunny celebrates your victory!" : "¡Súper Conejito celebra tu victoria!"}
+            </p>
           </div>
         </div>
 
@@ -961,19 +961,6 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
             50% { transform: translateY(0) scale(1); }
             75% { transform: translateY(-8px) scale(1.02); }
           }
-          @keyframes bunnySmile {
-            0%, 100% { transform: rotate(-3deg); }
-            30% { transform: rotate(3deg); }
-            60% { transform: rotate(-2deg); }
-          }
-          @keyframes carrotGlow {
-            0%, 100% { opacity: 0.3; transform: scale(1) translateY(0); }
-            50% { opacity: 0.7; transform: scale(1.3) translateY(-4px); }
-          }
-          @keyframes capeParticle {
-            0% { opacity: 0.5; transform: translateX(0) translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateX(20px) translateY(-10px) scale(0); }
-          }
         `}</style>
       </div>
     )
@@ -982,7 +969,7 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
   // PLAYING STATE
   const bgImageUrl = `/images/backgrounds/song-${songNumber}.jpg`
   return (
-    <div className="min-h-screen text-white relative" style={{ background: `url(${bgImageUrl}) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
+    <div className="h-[100dvh] text-white relative overflow-hidden" style={{ background: `url(${bgImageUrl}) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
       {/* Encouragement overlay - at top of screen to avoid overlap with flow counter */}
       {encouragement && (
         <div className="fixed top-16 left-0 right-0 flex justify-center pointer-events-none z-50">
@@ -998,11 +985,11 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
         </div>
       )}
 
-      <div className="max-w-lg mx-auto p-2">
+      <div className="max-w-lg mx-auto px-1 pt-1">
         {/* Top bar: Just back arrow */}
-        <div className="flex items-center mb-2 p-2">
-          <button onClick={onBack} className="text-white hover:text-purple-300 transition-colors bg-black/40 rounded-full p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="flex items-center p-1">
+          <button onClick={onBack} className="text-white hover:text-purple-300 transition-colors bg-black/40 rounded-full p-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -1011,19 +998,16 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
         {/* Game Area */}
         <div
           ref={containerRef}
-          className="relative bg-black/50 rounded-lg overflow-hidden border-4 border-purple-500/60"
-          style={{ height: "75vh" }}
+          className="relative rounded-lg overflow-hidden border-2 border-white/20"
+          style={{ height: "calc(100dvh - 120px)", perspective: "800px" }}
         >
           {/* Lanes */}
           <div className="absolute inset-0 flex">
             {[0, 1, 2, 3].map((lane) => (
-              <div key={lane} className={`flex-1 ${lane < 3 ? "border-r-2 border-gray-600" : ""} relative`} data-ddr-lane={lane}>
+              <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
-                <div
-                  className="ddr-hit-zone absolute left-1 right-1 border-3 border-orange-400 rounded-full transition-all duration-150"
-                  style={{ bottom: "10%", aspectRatio: "1", boxShadow: "0 0 20px rgba(249,115,22,0.5), inset 0 0 10px rgba(249,115,22,0.2)" }}
-                />
-                <div className={`ddr-arrow absolute left-0 right-0 flex justify-center transition-all duration-150`} style={{ bottom: "3%" }} dangerouslySetInnerHTML={{ __html: [CARROT_SVGS.left, CARROT_SVGS.down, CARROT_SVGS.up, CARROT_SVGS.right][lane] }} />
+                <div className="ddr-hit-zone absolute left-1 right-1 transition-all duration-150" style={{ bottom: "10%", aspectRatio: "1" }} />
+                <div className={`ddr-arrow absolute left-0 right-0 flex justify-center transition-all duration-100`} style={{ bottom: "4%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [CARROT_SVGS.left, CARROT_SVGS.down, CARROT_SVGS.up, CARROT_SVGS.right][lane] }} />
               </div>
             ))}
           </div>
@@ -1043,19 +1027,19 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
           )}
 
           {/* Falling notes rendered here */}
-          <div ref={fallingRef} className="absolute inset-0 pointer-events-none" />
+          <div ref={fallingRef} className="absolute inset-0 pointer-events-none" style={{ transformStyle: "preserve-3d" }} />
         </div>
 
         {/* Bank, Time, and Best - below the arrows */}
-        <div className="flex justify-between items-center mt-2 bg-black/60 rounded-lg px-4 py-2">
-          <div className="text-sm">
-            💰 Bank: <span className="font-bold text-yellow-300 text-base">{score}</span>
+        <div className="flex justify-between items-center mt-1 bg-black/60 rounded-lg px-3 py-1.5">
+          <div className="text-base md:text-lg font-semibold">
+            💰 <span className="font-bold text-yellow-300 text-lg md:text-xl">{score}</span>
           </div>
-          <div className="text-sm text-white/70 font-mono">
-            <span className="text-white font-bold">{elapsedTime}</span> / {totalTime}
+          <div className="text-base md:text-lg text-white/70 font-mono">
+            <span className="text-white font-bold text-lg md:text-xl">{elapsedTime}</span> / {totalTime}
           </div>
-          <div className="text-sm">
-            🔥 Best: <span className="font-bold text-orange-300 text-base">{maxCombo} flow</span>
+          <div className="text-base md:text-lg font-semibold">
+            🔥 <span className="font-bold text-orange-300 text-lg md:text-xl">{maxCombo}</span>
           </div>
         </div>
       </div>

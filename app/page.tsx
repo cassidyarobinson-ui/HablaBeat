@@ -1648,6 +1648,10 @@ export default function HablaBeat() {
         songNumber={currentSong.number}
         songTitle={currentSong.title}
         onBack={() => setCurrentView("songs")}
+        onNextSong={currentSongIndex < allSongs.length - 1 ? () => {
+          handleNextSong()
+          setCurrentView("ddr")
+        } : undefined}
       />
     )
   }
@@ -1763,11 +1767,10 @@ export default function HablaBeat() {
           <div className="text-white p-4">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-32 h-32 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white overflow-hidden">
-                <Image
-                  src="/images/super-bunny.png"
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/super-bunny.gif"
                   alt="Super Bunny"
-                  width={104}
-                  height={104}
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -1921,11 +1924,10 @@ export default function HablaBeat() {
           <div className="text-white p-4">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-44 h-44 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white overflow-hidden">
-                <Image
-                  src="/images/super-bunny.png"
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/super-bunny.gif"
                   alt="Super Bunny"
-                  width={160}
-                  height={160}
                   className="w-full h-full object-contain"
                 />
               </div>
