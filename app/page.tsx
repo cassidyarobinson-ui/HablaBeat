@@ -6,10 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import dynamic from "next/dynamic"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
-import { Input } from "@/components/ui/input"
 import {
   Play,
-  Star,
   BookOpen,
   Pause,
   SkipBack,
@@ -17,9 +15,10 @@ import {
   Shuffle,
   Repeat,
   ChevronDown,
+  ChevronRight,
   MoreHorizontal,
-  Search,
   Coins,
+  Flame,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -1372,8 +1371,9 @@ export default function HablaBeat() {
   const [currentSongIndex, setCurrentSongIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  // Removed: const [dailyStreak, setDailyStreak] = useState(27)
-  // Removed: const [songsPerDayAverage, setSongsPerDayAverage] = useState(4.2)
+  const [bestFlow, setBestFlow] = useState(0)
+  const [totalVocabBank, setTotalVocabBank] = useState(0)
+  const [openSectionId, setOpenSectionId] = useState<string>("alphabet-vowels")
 
   // Update allSongs calculation to use current language
   const allSongs = curriculumData.flatMap((category) =>
@@ -1701,7 +1701,7 @@ export default function HablaBeat() {
                   onClick={() => setCurrentView("ddr")}
                   className="flex items-center gap-2 px-5 py-2.5 bg-pink-600 hover:bg-pink-500 rounded-full font-bold text-sm transition-colors"
                 >
-                  🎮 Play DDR
+                  🥕 Play
                 </button>
               )}
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
@@ -1743,10 +1743,10 @@ export default function HablaBeat() {
           {/* Header */}
           <div className="text-white p-4">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-32 h-32 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white">
+              <div className="w-32 h-32 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white overflow-hidden">
                 <Image
-                  src="/images/hablabeat-logo.png"
-                  alt="HablaBeat logo"
+                  src="/images/super-bunny.png"
+                  alt="Super Bunny"
                   width={104}
                   height={104}
                   className="w-full h-full object-contain"
@@ -1765,27 +1765,7 @@ export default function HablaBeat() {
             </div>
           </div>
 
-          {/* Language Selector */}
-          <div className="px-4 mb-4">
-            <div className="flex gap-2">
-              {Object.entries(languages).map(([key, lang]) => (
-                <Button
-                  key={key}
-                  variant={selectedLanguage === key ? "default" : "secondary"}
-                  size="sm"
-                  onClick={() => handleLanguageChange(key)}
-                  className={`flex items-center gap-2 ${
-                    selectedLanguage === key
-                      ? "bg-purple-600 hover:bg-purple-700 text-white border-purple-500"
-                      : "bg-gray-700 hover:bg-gray-600 text-gray-200 border-gray-600"
-                  }`}
-                >
-                  <span>{lang.flag}</span>
-                  <span>{lang.name}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
+          {/* Language Selector removed */}
 
           {/* Coin Collection Display */}
           <div className="px-4 space-y-4">
@@ -1918,272 +1898,152 @@ export default function HablaBeat() {
     return (
       <div className="min-h-screen bg-gray-900">
         <div className="max-w-md mx-auto bg-gray-900 min-h-screen">
-          {/* Header with Large Luna Dog */}
+          {/* Header with Super Bunny */}
           <div className="text-white p-4">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-32 h-32 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white">
+              <div className="w-44 h-44 bg-white rounded-full p-3 flex-shrink-0 border-2 border-white overflow-hidden">
                 <Image
-                  src="/images/hablabeat-logo.png"
-                  alt="HablaBeat logo"
-                  width={104}
-                  height={104}
+                  src="/images/super-bunny.png"
+                  alt="Super Bunny"
+                  width={160}
+                  height={160}
                   className="w-full h-full object-contain"
                 />
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3">HablaBeat</h1>
-                <p className="text-purple-100 text-lg">Learn languages through song with Luna</p>
+                <p className="text-purple-100 text-lg leading-tight">Collect coins with{"\n"}Super Bunny!</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <Play className="h-4 w-4 text-purple-300" />
-                  <span className="text-purple-200 font-medium">{totalPlayCount} total plays</span>
+                  <Flame className="h-4 w-4 text-orange-400" />
+                  <span className="text-orange-300 font-medium">Best Flow: {bestFlow}</span>
                 </div>
               </div>
             </div>
 
-            {/* Language Selector */}
-            <div className="mb-4">
-              <div className="flex gap-2">
-                {Object.entries(languages).map(([key, lang]) => (
-                  <Button
-                    key={key}
-                    variant={selectedLanguage === key ? "default" : "secondary"}
-                    size="sm"
-                    onClick={() => handleLanguageChange(key)}
-                    className={`flex items-center gap-2 ${
-                      selectedLanguage === key
-                        ? "bg-purple-600 hover:bg-purple-700 text-white border-purple-500"
-                        : "bg-gray-700 hover:bg-gray-600 text-gray-200 border-gray-600"
-                    }`}
-                  >
-                    <span>{lang.flag}</span>
-                    <span>{lang.name}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Removed Stats Cards Section */}
-
-            {/* Search Bar */}
-            <div className="px-4 mb-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="What do you want to learn?"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-800 border-0 text-white placeholder:text-gray-400"
-                />
-              </div>
-            </div>
-
-            {/* Search Results or Curriculum */}
-            <div className="p-2 space-y-6 pb-32">
-              {searchQuery ? (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-bold text-white">Search Results</h2>
-                  {filteredSongs.length === 0 ? (
-                    <p className="text-gray-400 text-center py-8">No songs found for "{searchQuery}"</p>
-                  ) : (
-                    <div className="space-y-1">
-                      {filteredSongs.map((song) => {
-                        const isClickable = song.youtubeId && song.youtubeId !== ""
-                        return (
-                          <div
-                            key={`${song.categoryId}-${song.sectionId}-${song.id}`}
-                            className="p-3 rounded-lg transition-all hover:bg-gray-800"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 flex items-center justify-center text-gray-400">
-                                <span className="text-sm font-medium">{song.number}</span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <h4 className="font-medium text-white truncate">{song.title}</h4>
-                                <p className="text-sm text-gray-400 truncate">
-                                  {song.section} • {song.category}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-1 text-sm text-gray-400">
-                                <Play className="h-3 w-3" />
-                                <span className="font-medium">{song.playCount}</span>
-                              </div>
-                            </div>
-                            <div className="flex gap-2 mt-2 ml-11">
-                              {isClickable && (
-                                <button
-                                  onClick={() => handlePlaySong(song.id, song.categoryId, song.sectionId)}
-                                  className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 rounded-md text-xs font-medium transition-colors"
-                                >
-                                  <Play className="h-3 w-3" /> Watch
-                                </button>
-                              )}
-                              {selectedLanguage === "spanish" && (
-                                <button
-                                  onClick={() => handlePlayDDR(song.id, song.categoryId, song.sectionId)}
-                                  className="flex items-center gap-1 px-3 py-1.5 bg-pink-600 hover:bg-pink-500 rounded-md text-xs font-medium transition-colors"
-                                >
-                                  🎮 Play DDR
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )}
+            {/* Vocab Bank */}
+            <div className="px-4 mb-3">
+              <div className="bg-yellow-900/30 rounded-xl p-3 border border-yellow-600/40 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">💰</span>
+                  <span className="text-yellow-200 font-bold text-lg">Vocab Bank</span>
                 </div>
-              ) : (
-                curriculumData.map((category) => (
-                  <div key={category.id} className="space-y-6">
-                    {/* Main Category Header */}
-                    <div className="p-6">
-                      <div className="flex items-center gap-4">
-                        <div className="flex-1">
-                          <h1 className="text-2xl font-bold mb-1 text-white">{category.title}</h1>
-                          <div className="text-lg font-semibold mb-2 text-white">
-                            {category.sections.reduce((sum, section) => sum + section.songs.length, 0)} songs total
-                          </div>
-                        </div>
-                      </div>
-                      <div className="h-0.5 bg-gray-600 rounded-full mt-4 overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
-                          style={{
-                            width: `${Math.round(
-                              (category.sections.reduce(
-                                (sum, section) => sum + section.songs.filter((song) => song.completed).length,
-                                0,
-                              ) /
-                                category.sections.reduce((sum, section) => sum + section.songs.length, 0)) *
-                                100,
-                            )}%`,
-                          }}
-                        ></div>
-                      </div>
-                    </div>
+                <span className="text-yellow-300 font-black text-2xl">{totalVocabBank}</span>
+              </div>
+            </div>
 
-                    {/* Sections within Main Category */}
-                    {category.sections.map((section) => (
-                      <div key={section.id} className="space-y-4">
-                        {/* Section Header */}
-                        <div
-                          className={`p-4 ${isSectionBadgeUnlocked(section) ? "border-2 border-yellow-400 rounded-lg" : ""}`}
+            {/* Curriculum - Accordion Sections */}
+            <div className="p-2 space-y-4 pb-32">
+              {curriculumData.map((category) => (
+                <div key={category.id} className="space-y-2">
+                  {/* Main Category Header */}
+                  <div className="px-4 pt-4 pb-2">
+                    <h1 className="text-2xl font-bold text-white">{category.title}</h1>
+                    <div className="text-sm text-gray-400 mt-1">
+                      {category.sections.reduce((sum, section) => sum + section.songs.length, 0)} songs total
+                    </div>
+                    <div className="h-0.5 bg-gray-600 rounded-full mt-3 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.round(
+                            (category.sections.reduce(
+                              (sum, section) => sum + section.songs.filter((song) => song.completed).length,
+                              0,
+                            ) /
+                              category.sections.reduce((sum, section) => sum + section.songs.length, 0)) *
+                              100,
+                          )}%`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Accordion Sections */}
+                  {category.sections.map((section) => {
+                    const isOpen = openSectionId === section.id
+                    return (
+                      <div key={section.id}>
+                        {/* Section Header - clickable accordion toggle */}
+                        <button
+                          onClick={() => setOpenSectionId(isOpen ? "" : section.id)}
+                          className={`w-full p-3 px-4 flex items-center gap-3 transition-all ${
+                            isOpen ? "bg-gray-800/60" : "hover:bg-gray-800/30"
+                          } ${isSectionBadgeUnlocked(section) ? "border-l-4 border-yellow-400" : ""}`}
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`w-12 h-12 rounded-full bg-white flex items-center justify-center cursor-pointer transition-all ${
-                                  isSectionBadgeUnlocked(section)
-                                    ? "hover:scale-110 border-2 border-yellow-400 shadow-lg shadow-yellow-400/30"
-                                    : "opacity-30"
-                                }`}
-                                // Update the coin earning logic in the section header click handler
-                                onClick={() => {
-                                  if (isSectionBadgeUnlocked(section)) {
-                                    // Auto-earn coin when clicking on unlocked section
-                                    const coinId = `${section.id}-coin`
-                                    const alreadyEarned = lunasPurse.some((item) => item.id === coinId)
-
-                                    if (!alreadyEarned) {
-                                      setLunasPurse((prev) => [
-                                        ...prev,
-                                        {
-                                          id: coinId,
-                                          name: `${section.title}`,
-                                          description: `Earned by listening to ${section.title} songs 5+ times`,
-                                          icon: section.icon,
-                                          type: "coin",
-                                          earnedDate: new Date().toLocaleDateString(),
-                                        },
-                                      ])
-                                    }
-                                    setCurrentView("coins")
-                                  }
-                                }}
-                              >
-                                <span className="text-2xl">{section.icon}</span>
-                              </div>
-                            </div>
-                            <div className="flex-1">
-                              <h2 className="text-lg font-bold text-white">{section.title}</h2>
-                              <div className="text-sm font-medium text-white">
-                                {section.songs.length} songs •{" "}
-                                {section.songs.reduce((sum, song) => sum + song.playCount, 0)} plays
-                              </div>
-                            </div>
-                            <Badge variant="secondary" className="bg-gray-700 text-gray-300 border-gray-600">
-                              {section.songs.filter((song) => song.completed).length}/{section.songs.length} completed
-                            </Badge>
+                          <div
+                            className={`w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 transition-all ${
+                              isSectionBadgeUnlocked(section)
+                                ? "border-2 border-yellow-400 shadow-lg shadow-yellow-400/30"
+                                : "opacity-40"
+                            }`}
+                          >
+                            <span className="text-lg">{section.icon}</span>
                           </div>
-                          <div className="h-0.5 bg-gray-600 rounded-full mt-4 overflow-hidden">
-                            <div
-                              className="h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
-                              style={{
-                                width: `${Math.round(
-                                  (section.songs.filter((song) => song.completed).length / section.songs.length) * 100,
-                                )}%`,
-                              }}
-                            ></div>
+                          <div className="flex-1 text-left">
+                            <h2 className="text-base font-bold text-white">{section.title}</h2>
+                            <div className="text-xs text-gray-400">
+                              {section.songs.length} songs • {section.songs.reduce((sum, song) => sum + song.playCount, 0)} plays
+                            </div>
                           </div>
-                        </div>
+                          <Badge variant="secondary" className="bg-gray-700 text-gray-300 border-gray-600 text-xs">
+                            {section.songs.filter((song) => song.completed).length}/{section.songs.length}
+                          </Badge>
+                          <div className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}>
+                            <ChevronRight className="h-4 w-4 text-gray-400" />
+                          </div>
+                        </button>
 
-                        {/* Song List */}
-                        <div className="space-y-1 ml-4">
-                          {section.songs.map((song) => {
-                            const isClickable = song.youtubeId && song.youtubeId !== ""
-                            return (
-                              <div
-                                key={song.id}
-                                className="p-3 rounded-lg transition-all hover:bg-gray-800"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 flex items-center justify-center text-gray-400">
-                                    <span className="text-sm font-medium">{song.number}</span>
+                        {/* Song List - only shown when section is open */}
+                        {isOpen && (
+                          <div className="space-y-0.5 pl-4 pr-2 pb-2 bg-gray-800/20">
+                            {section.songs.map((song) => {
+                              const isClickable = song.youtubeId && song.youtubeId !== ""
+                              return (
+                                <div
+                                  key={song.id}
+                                  className="p-2.5 rounded-lg transition-all hover:bg-gray-800"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-7 h-7 flex items-center justify-center text-gray-400">
+                                      <span className="text-sm font-medium">{song.number}</span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="font-medium text-white truncate text-sm">{song.title}</h4>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                                      <Play className="h-3 w-3" />
+                                      <span className="font-medium">{song.playCount}</span>
+                                    </div>
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-white truncate">{song.title}</h4>
-                                    <p className="text-sm text-gray-400 truncate">{section.title}</p>
-                                  </div>
-                                  <div className="flex items-center gap-1 text-sm text-gray-400">
-                                    <Play className="h-3 w-3" />
-                                    <span className="font-medium">{song.playCount}</span>
-                                  </div>
-                                  <div className="w-6 h-6 flex items-center justify-center">
-                                    {song.completed ? (
-                                      <Star className="h-4 w-4 text-green-400 fill-current" />
-                                    ) : (
-                                      <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                                  {/* Action buttons - light grey */}
+                                  <div className="flex gap-2 mt-1.5 ml-10">
+                                    {isClickable && (
+                                      <button
+                                        onClick={() => handlePlaySong(song.id, category.id, section.id)}
+                                        className="flex items-center gap-1 px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded-md text-xs font-medium text-white transition-colors"
+                                      >
+                                        🎤 Sing
+                                      </button>
+                                    )}
+                                    {selectedLanguage === "spanish" && (
+                                      <button
+                                        onClick={() => handlePlayDDR(song.id, category.id, section.id)}
+                                        className="flex items-center gap-1 px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded-md text-xs font-medium text-white transition-colors"
+                                      >
+                                        🥕 Play
+                                      </button>
                                     )}
                                   </div>
                                 </div>
-                                {/* Action buttons */}
-                                <div className="flex gap-2 mt-2 ml-11">
-                                  {isClickable && (
-                                    <button
-                                      onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                      className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 rounded-md text-xs font-medium transition-colors"
-                                    >
-                                      <Play className="h-3 w-3" /> Watch
-                                    </button>
-                                  )}
-                                  {selectedLanguage === "spanish" && (
-                                    <button
-                                      onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                      className="flex items-center gap-1 px-3 py-1.5 bg-pink-600 hover:bg-pink-500 rounded-md text-xs font-medium transition-colors"
-                                    >
-                                      🎮 Play DDR
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
+                              )
+                            })}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                ))
-              )}
+                    )
+                  })}
+                </div>
+              ))}
             </div>
 
             {/* Mini Player */}

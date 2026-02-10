@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, Play, Pause } from "lucide-react"
 import { translateWord } from "@/lib/spanish-dictionary"
+import Image from "next/image"
 
 // Types
 interface KaraokeWord {
@@ -48,12 +49,53 @@ const HIT_WINDOWS = { PERFECT: 0.08, GOOD: 0.15, MISS: 0.25 }
 const LANE_COLORS = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"]
 const LANE_TEXT_COLORS = ["text-red-500", "text-blue-500", "text-green-500", "text-yellow-500"]
 
+// Carrot SVG for each direction (the pointed tip faces the arrow direction)
+const CARROT_SVGS: Record<string, string> = {
+  left: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="0,20 40,4 36,20 40,36" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <line x1="14" y1="14" x2="20" y2="17" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="18" y1="12" x2="24" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="22" y1="24" x2="28" y2="21" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="46" cy="14" rx="7" ry="5" fill="#22C55E" transform="rotate(-20,46,14)"/>
+    <ellipse cx="50" cy="20" rx="7" ry="5" fill="#16A34A" transform="rotate(10,50,20)"/>
+    <ellipse cx="44" cy="24" rx="6" ry="4" fill="#22C55E" transform="rotate(25,44,24)"/>
+  </svg>`,
+  down: `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="20,60 4,20 20,24 36,20" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <line x1="14" y1="34" x2="17" y2="40" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="12" y1="38" x2="16" y2="44" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="24" y1="34" x2="21" y2="40" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="14" cy="12" rx="5" ry="7" fill="#22C55E" transform="rotate(-15,14,12)"/>
+    <ellipse cx="20" cy="8" rx="5" ry="7" fill="#16A34A" transform="rotate(5,20,8)"/>
+    <ellipse cx="26" cy="13" rx="4" ry="6" fill="#22C55E" transform="rotate(20,26,13)"/>
+  </svg>`,
+  up: `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="20,0 36,40 20,36 4,40" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <line x1="14" y1="26" x2="17" y2="20" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="12" y1="22" x2="16" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="24" y1="26" x2="21" y2="20" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="14" cy="48" rx="5" ry="7" fill="#22C55E" transform="rotate(15,14,48)"/>
+    <ellipse cx="20" cy="52" rx="5" ry="7" fill="#16A34A" transform="rotate(-5,20,52)"/>
+    <ellipse cx="26" cy="47" rx="4" ry="6" fill="#22C55E" transform="rotate(-20,26,47)"/>
+  </svg>`,
+  right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="60,20 20,4 24,20 20,36" fill="#F97316" stroke="#EA580C" stroke-width="1.5"/>
+    <line x1="40" y1="14" x2="34" y2="17" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="36" y1="12" x2="30" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="36" y1="24" x2="30" y2="21" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="14" cy="14" rx="7" ry="5" fill="#22C55E" transform="rotate(20,14,14)"/>
+    <ellipse cx="10" cy="20" rx="7" ry="5" fill="#16A34A" transform="rotate(-10,10,20)"/>
+    <ellipse cx="16" cy="24" rx="6" ry="4" fill="#22C55E" transform="rotate(-25,16,24)"/>
+  </svg>`,
+}
+
 export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
   const [maxCombo, setMaxCombo] = useState(0)
+  const [totalHits, setTotalHits] = useState(0)
   const [difficulty, setDifficulty] = useState(5)
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
@@ -63,9 +105,21 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
   const scoreRef = useRef(0)
   const comboRef = useRef(0)
   const maxComboRef = useRef(0)
+  const totalHitsRef = useRef(0)
+  const hitColorIndexRef = useRef(0)
   const animationRef = useRef<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const fallingRef = useRef<HTMLDivElement>(null)
+
+  // Rainbow colors that cycle on each hit
+  const RAINBOW_COLORS = [
+    "#EF4444", // red
+    "#F97316", // orange
+    "#EAB308", // yellow
+    "#22C55E", // green
+    "#3B82F6", // blue
+    "#A855F7", // purple
+  ]
 
   // Load timing data
   useEffect(() => {
@@ -109,24 +163,29 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
     })
   }, [timingData, difficulty])
 
-  // Start game
+  // Start game — create audio directly in click handler (required for autoplay)
   const startGame = useCallback(() => {
     if (!timingData) return
+
+    // Prevent double-invoke from creating duplicate audio
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.src = ""
+      audioRef.current = null
+    }
 
     const notes = createNotes()
     notesRef.current = notes
     scoreRef.current = 0
     comboRef.current = 0
     maxComboRef.current = 0
+    totalHitsRef.current = 0
     setScore(0)
     setCombo(0)
     setMaxCombo(0)
-    setGameState("playing")
+    setTotalHits(0)
 
-    // Create and play audio from the MyKaraoke URL
-    if (audioRef.current) {
-      audioRef.current.pause()
-    }
+    // Create audio immediately in the click handler (user gesture required)
     const audio = new Audio(timingData.audioUrl)
     audio.crossOrigin = "anonymous"
     audioRef.current = audio
@@ -139,9 +198,13 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
       }
     })
 
+    // Play audio immediately (user gesture context is required)
     audio.play().catch((err) => {
       console.error("Audio play failed:", err)
     })
+
+    // Set game state after play() call to start render loop
+    setGameState("playing")
   }, [timingData, createNotes])
 
   // Render loop
@@ -169,19 +232,34 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
 
             if (yPosition >= 0 && yPosition <= 100) {
               const noteEl = document.createElement("div")
-              noteEl.className = `absolute ${LANE_COLORS[note.lane]} rounded-lg p-2 text-center shadow-xl border-2 border-white`
-              noteEl.style.left = note.lane * 25 + 1 + "%"
-              noteEl.style.width = "23%"
-              noteEl.style.top = yPosition + "%"
-              noteEl.style.transform = "translateY(-50%)"
-              noteEl.style.zIndex = "10"
+              // Round blue bubble with coin inside
+              noteEl.style.cssText = `
+                position: absolute;
+                left: ${note.lane * 25 + 2}%;
+                width: 21%;
+                top: ${yPosition}%;
+                transform: translateY(-50%);
+                z-index: 10;
+                aspect-ratio: 1;
+                max-height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                background: radial-gradient(circle at 30% 25%, rgba(173,216,255,0.6), rgba(100,180,255,0.35) 50%, rgba(59,130,246,0.25));
+                border: 1.5px solid rgba(200,225,255,0.5);
+                box-shadow: 0 0 18px rgba(59,130,246,0.3), inset 0 -6px 12px rgba(59,130,246,0.15), inset 4px 4px 12px rgba(255,255,255,0.35);
+                overflow: visible;
+              `
 
-              if (showTranslations && note.english && note.english.toLowerCase() !== note.text.toLowerCase()) {
-                // English small on top, Spanish big on bottom
-                noteEl.innerHTML = `<div class="text-xs font-semibold opacity-80">${note.english}</div><div class="font-bold text-lg">${note.text}</div>`
-              } else {
-                noteEl.innerHTML = `<div class="font-bold text-lg">${note.text}</div>`
-              }
+              // Coin inside the bubble - rounder, bubble-like with $ and larger text
+              const englishText = (showTranslations && note.english && note.english.toLowerCase() !== note.text.toLowerCase()) ? note.english : ""
+              const coinContent = englishText
+                ? `<div style="font-size:7px;font-weight:700;color:#78350F;line-height:1;letter-spacing:0.3px">${englishText}</div><div style="font-size:12px;font-weight:900;color:#451A03;line-height:1.1">${note.text}</div><div style="font-size:9px;font-weight:900;color:#92400E;line-height:1;margin-top:1px">$</div>`
+                : `<div style="font-size:15px;font-weight:900;color:#451A03;line-height:1.1">${note.text}</div><div style="font-size:10px;font-weight:900;color:#92400E;line-height:1;margin-top:2px">$</div>`
+
+              noteEl.innerHTML = `<div style="width:88%;height:88%;border-radius:50%;background:radial-gradient(circle at 35% 28%,#FDE68A,#FBBF24 40%,#D97706);border:2.5px solid #B45309;box-shadow:0 2px 8px rgba(0,0,0,0.3),inset 0 -4px 8px rgba(146,64,14,0.25),inset 3px 3px 10px rgba(254,243,199,0.6),0 0 12px rgba(251,191,36,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:2px;position:relative"><div style="position:absolute;top:8%;left:18%;width:30%;height:20%;background:radial-gradient(ellipse,rgba(255,255,255,0.6),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-15deg)"></div>${coinContent}</div>`
 
               container.appendChild(noteEl)
             }
@@ -290,25 +368,27 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
 
       if (timeDelta <= HIT_WINDOWS.PERFECT) {
         judgment = showTranslations ? "PERFECT" : "PERFECTO"
-        points = 100 + comboRef.current * 10
+        points = 25
         judgmentColor = "text-yellow-300"
       } else if (timeDelta <= HIT_WINDOWS.GOOD) {
         judgment = showTranslations ? "GOOD" : "BIEN"
-        points = 50 + comboRef.current * 5
+        points = 25
         judgmentColor = "text-green-300"
       } else {
         judgment = "OK"
-        points = 20
+        points = 25
         judgmentColor = "text-blue-300"
       }
 
       closest.hit = true
       scoreRef.current += points
       comboRef.current += 1
+      totalHitsRef.current += 1
       maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
       setScore(scoreRef.current)
       setCombo(comboRef.current)
       setMaxCombo(maxComboRef.current)
+      setTotalHits(totalHitsRef.current)
 
       showHitEffect(lane, judgment, judgmentColor)
       checkEncouragement(comboRef.current)
@@ -358,25 +438,27 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
 
         if (timeDelta <= HIT_WINDOWS.PERFECT) {
           judgment = showTranslations ? "PERFECT" : "PERFECTO"
-          points = 100 + comboRef.current * 10
+          points = 25
           judgmentColor = "text-yellow-300"
         } else if (timeDelta <= HIT_WINDOWS.GOOD) {
           judgment = showTranslations ? "GOOD" : "BIEN"
-          points = 50 + comboRef.current * 5
+          points = 25
           judgmentColor = "text-green-300"
         } else {
           judgment = "OK"
-          points = 20
+          points = 25
           judgmentColor = "text-blue-300"
         }
 
         closest.hit = true
         scoreRef.current += points
         comboRef.current += 1
+        totalHitsRef.current += 1
         maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
         setScore(scoreRef.current)
         setCombo(comboRef.current)
         setMaxCombo(maxComboRef.current)
+        setTotalHits(totalHitsRef.current)
 
         showHitEffect(lane, judgment, judgmentColor)
         checkEncouragement(comboRef.current)
@@ -410,10 +492,12 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
 
     if (hitZone) {
       hitZone.style.transform = "scale(0.9)"
-      hitZone.style.boxShadow = "0 0 30px rgba(255,255,255,0.8), inset 0 0 20px rgba(255,255,255,0.4)"
+      hitZone.style.boxShadow = "0 0 30px rgba(249,115,22,0.9), inset 0 0 20px rgba(249,115,22,0.4)"
+      hitZone.style.borderColor = "#FDE68A"
       setTimeout(() => {
         hitZone.style.transform = "scale(1)"
-        hitZone.style.boxShadow = "0 0 20px rgba(255,255,255,0.5)"
+        hitZone.style.boxShadow = "0 0 20px rgba(249,115,22,0.5), inset 0 0 10px rgba(249,115,22,0.2)"
+        hitZone.style.borderColor = "rgb(251,146,60)"
       }, 150)
     }
     if (arrow) {
@@ -434,64 +518,128 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
     const container = fallingRef.current
     if (!container) return
 
+    // Rainbow color cycle on each hit
+    const rainbowColor = RAINBOW_COLORS[hitColorIndexRef.current % RAINBOW_COLORS.length]
+    hitColorIndexRef.current += 1
+
+    // Flash the hit zone with the rainbow color
+    const hitZone = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-hit-zone`) as HTMLElement
+    if (hitZone) {
+      hitZone.style.borderColor = rainbowColor
+      hitZone.style.boxShadow = `0 0 30px ${rainbowColor}, inset 0 0 15px ${rainbowColor}80`
+      hitZone.style.background = `${rainbowColor}30`
+      setTimeout(() => {
+        hitZone.style.borderColor = "rgb(251,146,60)"
+        hitZone.style.boxShadow = "0 0 20px rgba(249,115,22,0.5), inset 0 0 10px rgba(249,115,22,0.2)"
+        hitZone.style.background = "transparent"
+      }, 200)
+    }
+
+    // Flash the lane background with the rainbow color
+    const laneFlash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
+    if (laneFlash) {
+      laneFlash.style.backgroundColor = rainbowColor
+      laneFlash.style.opacity = "0.25"
+      setTimeout(() => {
+        laneFlash.style.opacity = "0"
+      }, 200)
+    }
+
+    // Find the note text for the coin
+    const audio = audioRef.current
+    const currentTime = audio ? audio.currentTime : 0
+    const hitNote = notesRef.current.find(
+      (n) => n.lane === lane && n.hit && Math.abs(n.timestamp - currentTime) <= HIT_WINDOWS.MISS + 0.1
+    )
+    const noteText = hitNote ? hitNote.text : ""
+    const noteEnglish = hitNote ? hitNote.english : ""
+
+    // Bubble pop effect — ring expanding outward
+    const popRing = document.createElement("div")
+    popRing.className = "absolute rounded-full pointer-events-none"
+    popRing.style.cssText = `
+      left: ${lane * 25 + 1}%; width: 23%; bottom: 12%; aspect-ratio: 1;
+      border: 3px solid rgba(147,197,253,0.9);
+      animation: bubblePop 0.4s ease-out forwards; z-index: 90;
+    `
+    container.appendChild(popRing)
+    setTimeout(() => popRing.remove(), 400)
+
+    // Bubble shards (small blue pieces flying out)
+    for (let i = 0; i < 10; i++) {
+      const shard = document.createElement("div")
+      shard.className = "absolute rounded-full pointer-events-none"
+      shard.style.cssText = `
+        left: ${lane * 25 + 12}%; bottom: 15%;
+        width: ${6 + Math.random() * 8}px; height: ${6 + Math.random() * 8}px;
+        background: radial-gradient(circle, rgba(147,197,253,0.9), rgba(59,130,246,0.6));
+        transition: all 0.5s ease-out; opacity: 1;
+      `
+      container.appendChild(shard)
+      const angle = (i / 10) * Math.PI * 2
+      const dist = 50 + Math.random() * 50
+      setTimeout(() => {
+        shard.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`
+        shard.style.opacity = "0"
+        shard.style.width = "2px"
+        shard.style.height = "2px"
+      }, 10)
+      setTimeout(() => shard.remove(), 500)
+    }
+
+    // Coin dropping out of the popped bubble
+    const coin = document.createElement("div")
+    coin.className = "absolute pointer-events-none"
+    coin.style.cssText = `
+      left: ${lane * 25 + 1}%; width: 23%; bottom: 14%;
+      display: flex; justify-content: center; z-index: 95;
+      animation: coinDrop 0.8s ease-in forwards;
+    `
+    const coinText = showTranslations && noteEnglish && noteEnglish.toLowerCase() !== noteText.toLowerCase()
+      ? `<div class="text-[8px] leading-tight text-yellow-900 font-semibold">${noteEnglish}</div><div class="text-[10px] leading-tight text-yellow-900 font-bold">${noteText}</div>`
+      : `<div class="text-[10px] leading-tight text-yellow-900 font-bold">${noteText}</div>`
+    coin.innerHTML = `
+      <div style="width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FDE68A, #F59E0B 50%, #D97706); border: 2.5px solid #B45309; box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(146,64,14,0.3), inset 2px 2px 6px rgba(254,243,199,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;">
+        ${coinText}
+      </div>
+    `
+    container.appendChild(coin)
+    setTimeout(() => coin.remove(), 800)
+
     // Judgment text
     const el = document.createElement("div")
     el.className = `absolute ${color} font-bold text-3xl pointer-events-none`
     el.style.cssText = `
-      left: ${lane * 25 + 1}%; width: 23%; bottom: 18%; text-align: center;
+      left: ${lane * 25 + 1}%; width: 23%; bottom: 22%; text-align: center;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px currentColor;
       animation: ddrJudgmentPop 0.8s ease-out forwards; z-index: 100;
     `
     el.textContent = judgment
     container.appendChild(el)
     setTimeout(() => el.remove(), 800)
-
-    // Particles
-    for (let i = 0; i < 8; i++) {
-      const p = document.createElement("div")
-      p.className = `absolute ${LANE_COLORS[lane]} rounded-full pointer-events-none`
-      p.style.cssText = `
-        left: ${lane * 25 + 12}%; bottom: 15%; width: 12px; height: 12px;
-        transition: all 0.5s ease-out; opacity: 1;
-      `
-      container.appendChild(p)
-      const angle = (i / 8) * Math.PI * 2
-      const dist = 60 + Math.random() * 40
-      setTimeout(() => {
-        p.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`
-        p.style.opacity = "0"
-        p.style.width = "3px"
-        p.style.height = "3px"
-      }, 10)
-      setTimeout(() => p.remove(), 500)
-    }
   }
 
   const checkEncouragement = (currentCombo: number) => {
     const spanishMessages: Record<number, { text: string; color: string }> = {
+      3: { text: "¡Vamos!", color: "text-green-300" },
       5: { text: "¡Bien Hecho!", color: "text-green-400" },
+      8: { text: "¡Súper!", color: "text-cyan-400" },
       10: { text: "¡Excelente!", color: "text-blue-400" },
+      13: { text: "¡Genial!", color: "text-indigo-400" },
       15: { text: "¡Increíble!", color: "text-purple-400" },
+      18: { text: "¡Asombroso!", color: "text-violet-400" },
       20: { text: "¡Fantástico!", color: "text-pink-400" },
+      25: { text: "¡Tremendo!", color: "text-rose-400" },
       30: { text: "¡IMPRESIONANTE!", color: "text-yellow-300" },
+      35: { text: "¡MAGNÍFICO!", color: "text-amber-400" },
       40: { text: "¡FENOMENAL!", color: "text-red-400" },
+      45: { text: "¡ESPECTACULAR!", color: "text-orange-300" },
       50: { text: "¡ERES INCREÍBLE!", color: "text-yellow-400" },
     }
 
-    const englishMessages: Record<number, { text: string; color: string }> = {
-      5: { text: "Nice Job!", color: "text-green-400" },
-      10: { text: "Excellent!", color: "text-blue-400" },
-      15: { text: "Incredible!", color: "text-purple-400" },
-      20: { text: "Fantastic!", color: "text-pink-400" },
-      30: { text: "AMAZING!", color: "text-yellow-300" },
-      40: { text: "PHENOMENAL!", color: "text-red-400" },
-      50: { text: "YOU'RE INCREDIBLE!", color: "text-yellow-400" },
-    }
-
-    const messages = showTranslations ? englishMessages : spanishMessages
-    const overflowMsg = showTranslations
-      ? { text: "UNSTOPPABLE!", color: "text-orange-400" }
-      : { text: "¡IMPARABLE!", color: "text-orange-400" }
+    // Always show Spanish encouragement messages
+    const messages = spanishMessages
+    const overflowMsg = { text: "¡IMPARABLE!", color: "text-orange-400" }
 
     const msg = messages[currentCombo] || (currentCombo > 50 && currentCombo % 25 === 0 ? overflowMsg : null)
 
@@ -514,6 +662,27 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
     setScore(0)
     setCombo(0)
     setMaxCombo(0)
+    setTotalHits(0)
+  }
+
+  // Calculate grade based on percentage of bubbles popped
+  const getGrade = () => {
+    const total = notesRef.current.length
+    if (total === 0) return { grade: "F", color: "text-red-400" }
+    const pct = (totalHitsRef.current / total) * 100
+    if (pct >= 97) return { grade: "A+", color: "text-yellow-300" }
+    if (pct >= 93) return { grade: "A", color: "text-yellow-400" }
+    if (pct >= 90) return { grade: "A-", color: "text-yellow-500" }
+    if (pct >= 87) return { grade: "B+", color: "text-green-300" }
+    if (pct >= 83) return { grade: "B", color: "text-green-400" }
+    if (pct >= 80) return { grade: "B-", color: "text-green-500" }
+    if (pct >= 77) return { grade: "C+", color: "text-blue-300" }
+    if (pct >= 73) return { grade: "C", color: "text-blue-400" }
+    if (pct >= 70) return { grade: "C-", color: "text-blue-500" }
+    if (pct >= 67) return { grade: "D+", color: "text-orange-300" }
+    if (pct >= 63) return { grade: "D", color: "text-orange-400" }
+    if (pct >= 60) return { grade: "D-", color: "text-orange-500" }
+    return { grade: "F", color: "text-red-400" }
   }
 
   const totalNotes = timingData
@@ -545,8 +714,9 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
 
   // SETUP SCREEN
   if (gameState === "setup") {
+    const setupBgUrl = `/images/backgrounds/song-${songNumber}.jpg`
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900 text-white">
+      <div className="min-h-screen text-white" style={{ background: `url(${setupBgUrl}) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
         <div className="max-w-md mx-auto p-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-4 pt-8">
@@ -610,16 +780,7 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
           {/* Instructions */}
           <div className="mt-6 bg-blue-900 bg-opacity-30 rounded-xl p-4 text-sm">
             <p className="font-bold mb-2">🎮 How to Play:</p>
-            <ul className="space-y-1 text-purple-200">
-              <li>• Words fall as the song plays!</li>
-              <li>
-                • <span className="font-bold text-white">Desktop:</span> Press ← ↓ ↑ → arrow keys
-              </li>
-              <li>
-                • <span className="font-bold text-white">Mobile:</span> Tap the lane as words reach the bottom
-              </li>
-              <li>• Perfect timing = more points!</li>
-            </ul>
+            <p className="text-purple-200">An evil orange villain stole all of your coins! Quick — pop his bubbles with your carrot arrows to get your vocab bank back!</p>
           </div>
         </div>
       </div>
@@ -628,25 +789,131 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
 
   // END SCREEN
   if (gameState === "ended") {
+    const { grade, color: gradeColor } = getGrade()
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900 text-white flex items-center justify-center">
-        <div className="max-w-md mx-auto p-6 text-center">
-          <h2 className="text-5xl font-bold mb-4 text-yellow-300 animate-pulse">
-            {showTranslations ? "Congrats!" : "¡Felicidades!"}
-          </h2>
-          <p className="text-2xl font-bold mb-6 text-pink-300">
-            {showTranslations ? "You Did Amazing!" : "¡Lo Hiciste Increíble!"}
-          </p>
+      <div className="min-h-screen text-white flex items-center justify-center relative overflow-hidden" style={{ background: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/images/backgrounds/song-${songNumber}.jpg) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
+        {/* Falling coin bubbles background animation */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {Array.from({ length: 25 }).map((_, i) => {
+            const size = 60
+            const delay = Math.random() * 4
+            const duration = 3.5 + Math.random() * 3
+            const leftPos = Math.random() * 95
+            const wobble = Math.random() > 0.4
+            return (
+              <div
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  left: `${leftPos}%`,
+                  top: `-8%`,
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  animation: `endCoinFall ${duration}s linear ${delay}s infinite${wobble ? `, coinWobble ${0.8 + Math.random() * 0.6}s ease-in-out ${delay}s infinite` : ""}`,
+                  background: "radial-gradient(circle at 35% 30%, #FDE68A, #FBBF24 45%, #D97706)",
+                  border: "2.5px solid #B45309",
+                  boxShadow: "0 0 18px rgba(251,191,36,0.4), inset 0 -6px 12px rgba(146,64,14,0.25), inset 4px 4px 12px rgba(254,243,199,0.5)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Bubble shine highlight */}
+                <div
+                  className="absolute rounded-full"
+                  style={{
+                    top: "8%",
+                    left: "18%",
+                    width: "35%",
+                    height: "25%",
+                    background: "radial-gradient(ellipse, rgba(255,255,255,0.7), rgba(255,255,255,0) 70%)",
+                    transform: "rotate(-15deg)",
+                  }}
+                />
+                {/* Dollar sign */}
+                <span
+                  style={{
+                    fontSize: "28px",
+                    fontWeight: 900,
+                    color: "#78350F",
+                    textShadow: "0 1px 2px rgba(0,0,0,0.15)",
+                    lineHeight: 1,
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  $
+                </span>
+              </div>
+            )
+          })}
+        </div>
 
-          <div className="space-y-3 mb-8">
-            <div className="bg-yellow-900/40 rounded-xl p-4 border-2 border-yellow-500">
-              <p className="text-yellow-200 mb-1">{showTranslations ? "Final Score" : "Puntuación Final"}</p>
-              <span className="font-bold text-yellow-300 text-4xl">{score}</span>
+        <div className="max-w-md mx-auto p-6 text-center relative z-10">
+          {/* Trophy with Grade */}
+          <div className="relative inline-block mb-6">
+            <div className="w-56 h-56 mx-auto relative">
+              <Image
+                src="/images/trophy.jpg"
+                alt="Trophy"
+                width={224}
+                height={224}
+                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(234,179,8,0.4)]"
+              />
+              {/* Grade overlaid inside the trophy cup */}
+              <div className="absolute top-[18%] left-1/2 -translate-x-1/2 flex items-center justify-center">
+                <span className={`text-5xl font-black ${gradeColor} drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]`} style={{ textShadow: "0 0 20px currentColor" }}>
+                  {grade}
+                </span>
+              </div>
             </div>
-            <div className="bg-green-900/40 rounded-xl p-4 border-2 border-green-500">
-              <p className="text-green-200 mb-1">{showTranslations ? "Max Combo" : "Combo Máximo"}</p>
-              <span className="font-bold text-green-300 text-4xl">×{maxCombo}</span>
+          </div>
+
+          {/* Longest Flow */}
+          <div className="bg-orange-900/40 rounded-xl p-4 border-2 border-orange-500 mb-3">
+            <p className="text-orange-200 mb-1 text-lg font-semibold">🔥 Longest Flow</p>
+            <span className="font-bold text-orange-300 text-4xl">{maxCombo}</span>
+          </div>
+
+          {/* Vocab Bank */}
+          <div className="bg-yellow-900/40 rounded-xl p-4 border-2 border-yellow-500 mb-6">
+            <p className="text-yellow-200 mb-1 text-lg font-semibold">💰 Vocab Bank</p>
+            <span className="font-bold text-yellow-300 text-4xl">{score}</span>
+          </div>
+
+          {/* Super Hero Bunny with waving carrot and flowing cape */}
+          <div className="mb-6 relative flex flex-col items-center">
+            <div className="relative w-48 h-48" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
+              <Image
+                src="/images/super-bunny.png"
+                alt="Super Bunny"
+                width={192}
+                height={192}
+                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                style={{ animation: "bunnySmile 3s ease-in-out infinite" }}
+              />
+              {/* Carrot wave glow effect */}
+              <div
+                className="absolute top-0 right-2 w-8 h-8 rounded-full bg-orange-400/30 blur-md"
+                style={{ animation: "carrotGlow 1.5s ease-in-out infinite" }}
+              />
+              {/* Cape wind particles */}
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-1.5 h-1.5 bg-white/30 rounded-full"
+                  style={{
+                    right: `-${8 + i * 6}px`,
+                    top: `${50 + i * 12}%`,
+                    animation: `capeParticle ${0.8 + i * 0.3}s ease-out ${i * 0.2}s infinite`,
+                  }}
+                />
+              ))}
             </div>
+            <p className="text-purple-200 text-sm mt-2 italic">
+              {showTranslations ? "Super Bunny celebrates your victory!" : "¡Súper Conejito celebra tu victoria!"}
+            </p>
           </div>
 
           <div className="space-y-3">
@@ -661,20 +928,56 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
             </button>
           </div>
         </div>
+
+        {/* End screen animations */}
+        <style jsx>{`
+          @keyframes endCoinFall {
+            0% { transform: translateY(-20px) scale(0.8); opacity: 0; }
+            5% { opacity: 0.95; transform: translateY(0) scale(1); }
+            50% { opacity: 0.9; transform: translateY(50vh) scale(1.02); }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(110vh) scale(0.95); opacity: 0; }
+          }
+          @keyframes coinWobble {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+          }
+          @keyframes bunnyBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-12px) scale(1.03); }
+            50% { transform: translateY(0) scale(1); }
+            75% { transform: translateY(-8px) scale(1.02); }
+          }
+          @keyframes bunnySmile {
+            0%, 100% { transform: rotate(-3deg); }
+            30% { transform: rotate(3deg); }
+            60% { transform: rotate(-2deg); }
+          }
+          @keyframes carrotGlow {
+            0%, 100% { opacity: 0.3; transform: scale(1) translateY(0); }
+            50% { opacity: 0.7; transform: scale(1.3) translateY(-4px); }
+          }
+          @keyframes capeParticle {
+            0% { opacity: 0.5; transform: translateX(0) translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateX(20px) translateY(-10px) scale(0); }
+          }
+        `}</style>
       </div>
     )
   }
 
   // PLAYING STATE
+  const bgImageUrl = `/images/backgrounds/song-${songNumber}.jpg`
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900 text-white">
-      {/* Encouragement overlay */}
+    <div className="min-h-screen text-white relative" style={{ background: `url(${bgImageUrl}) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
+      {/* Encouragement overlay - at top of screen to avoid overlap with flow counter */}
       {encouragement && (
-        <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+        <div className="fixed top-16 left-0 right-0 flex justify-center pointer-events-none z-50">
           <div
-            className={`${encouragement.color} text-5xl md:text-7xl font-black`}
+            className={`${encouragement.color} text-4xl md:text-6xl font-black px-6 py-2`}
             style={{
-              textShadow: "4px 4px 8px rgba(0,0,0,0.9)",
+              textShadow: "3px 3px 6px rgba(0,0,0,0.9), 0 0 30px currentColor",
               animation: "ddrEncouragementBounce 0.6s ease-out",
             }}
           >
@@ -684,31 +987,20 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
       )}
 
       <div className="max-w-lg mx-auto p-2">
-        {/* Score bar */}
-        <div className="flex justify-between mb-2 text-sm bg-black/50 rounded-lg p-3">
-          <div>
-            Score: <span className="font-bold text-yellow-300">{score}</span>
-          </div>
-          <div>
-            Combo: <span className="font-bold text-green-300">×{combo}</span>
-          </div>
-          <div>
-            Best: <span className="font-bold text-blue-300">×{maxCombo}</span>
-          </div>
-        </div>
-
-        {/* Controls */}
-        <div className="flex gap-2 justify-center mb-2">
-          <button onClick={resetGame} className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold text-sm">
-            ↻ Reset
+        {/* Top bar: Just back arrow */}
+        <div className="flex items-center mb-2 p-2">
+          <button onClick={onBack} className="text-white hover:text-purple-300 transition-colors bg-black/40 rounded-full p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
         </div>
 
         {/* Game Area */}
         <div
           ref={containerRef}
-          className="relative bg-black/70 rounded-lg overflow-hidden border-4 border-purple-500"
-          style={{ height: "70vh" }}
+          className="relative bg-black/50 rounded-lg overflow-hidden border-4 border-purple-500/60"
+          style={{ height: "75vh" }}
         >
           {/* Lanes */}
           <div className="absolute inset-0 flex">
@@ -716,21 +1008,41 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r-2 border-gray-600" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
                 <div
-                  className="ddr-hit-zone absolute left-1 right-1 h-20 border-4 border-white rounded-lg transition-all duration-150"
-                  style={{ bottom: "12%", boxShadow: "0 0 20px rgba(255,255,255,0.5)" }}
+                  className="ddr-hit-zone absolute left-1 right-1 border-3 border-orange-400 rounded-full transition-all duration-150"
+                  style={{ bottom: "10%", aspectRatio: "1", boxShadow: "0 0 20px rgba(249,115,22,0.5), inset 0 0 10px rgba(249,115,22,0.2)" }}
                 />
-                <div className={`ddr-arrow absolute left-0 right-0 text-center text-4xl font-bold ${LANE_TEXT_COLORS[lane]} transition-all duration-150`} style={{ bottom: "3%" }}>
-                  {["←", "↓", "↑", "→"][lane]}
-                </div>
+                <div className={`ddr-arrow absolute left-0 right-0 flex justify-center transition-all duration-150`} style={{ bottom: "3%" }} dangerouslySetInnerHTML={{ __html: [CARROT_SVGS.left, CARROT_SVGS.down, CARROT_SVGS.up, CARROT_SVGS.right][lane] }} />
               </div>
             ))}
           </div>
+
+          {/* Flow counter centered behind bubbles */}
+          {combo >= 2 && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5]">
+              <div className="text-center">
+                <div className="text-8xl md:text-9xl font-black text-white/40" style={{ textShadow: "0 0 60px rgba(255,255,255,0.25), 0 4px 8px rgba(0,0,0,0.5)", fontFamily: "'Impact', 'Arial Black', sans-serif", letterSpacing: "-2px" }}>
+                  {combo}
+                </div>
+                <div className="text-2xl md:text-3xl font-black text-white/45 -mt-3 tracking-[0.3em] uppercase" style={{ textShadow: "0 0 30px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.5)", fontFamily: "'Impact', 'Arial Black', sans-serif" }}>
+                  flow
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Falling notes rendered here */}
           <div ref={fallingRef} className="absolute inset-0 pointer-events-none" />
         </div>
 
-        <div className="text-center mt-2 text-sm text-purple-200">🎹 Press ← ↓ ↑ → or tap lanes! 🎹</div>
+        {/* Bank and Best - below the arrows */}
+        <div className="flex justify-between items-center mt-2 bg-black/60 rounded-lg px-4 py-2">
+          <div className="text-sm">
+            💰 Bank: <span className="font-bold text-yellow-300 text-base">{score}</span>
+          </div>
+          <div className="text-sm">
+            🔥 Best: <span className="font-bold text-orange-300 text-base">{maxCombo} flow</span>
+          </div>
+        </div>
       </div>
 
       {/* DDR-specific animations */}
@@ -745,6 +1057,19 @@ export default function DDRGame({ songNumber, songTitle, onBack }: DDRGameProps)
           50% { transform: scale(1.3); }
           70% { transform: scale(0.9); }
           100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bubbleFloat {
+          0%, 100% { transform: translateY(-50%) scale(1); }
+          50% { transform: translateY(-50%) scale(1.04); }
+        }
+        @keyframes bubblePop {
+          0% { transform: scale(1); opacity: 1; border-width: 3px; }
+          100% { transform: scale(2.5); opacity: 0; border-width: 0.5px; }
+        }
+        @keyframes coinDrop {
+          0% { transform: translateY(0) scale(1.2); opacity: 1; }
+          30% { transform: translateY(20px) scale(1); opacity: 1; }
+          100% { transform: translateY(80px) scale(0.6) rotate(15deg); opacity: 0; }
         }
       `}</style>
     </div>
