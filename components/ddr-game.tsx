@@ -140,10 +140,11 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
   }, [songNumber])
 
   // Speed multiplier: affects playback rate (pitch preserved via Web Audio or playbackRate)
+  // Fast = normal speed (1.0), Medium = slow (0.75), Slow = even slower (0.5)
   const getSpeedRate = useCallback(() => {
-    if (speed === "slow") return 0.75
-    if (speed === "fast") return 1.25
-    return 1.0
+    if (speed === "slow") return 0.5
+    if (speed === "medium") return 0.75
+    return 1.0 // fast = normal speed
   }, [speed])
 
   // Create notes from timing data — all bubbles always shown (no difficulty filter)
@@ -850,12 +851,12 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
                         : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                     }`}
                   >
-                    {s === "slow" ? "🐢 Slow" : s === "medium" ? "🎵 Medium" : "⚡ Fast"}
+                    {s === "slow" ? "🐢 Slow" : s === "medium" ? "🎵 Medium" : "⚡ Fast (Normal)"}
                   </button>
                 ))}
               </div>
               <p className="text-xs text-purple-300 mt-2 text-center">
-                {speed === "slow" ? "0.75× speed — more time to react" : speed === "medium" ? "Normal speed" : "1.25× speed — for experts!"}
+                {speed === "slow" ? "0.5× speed — lots of time to react" : speed === "medium" ? "0.75× speed — a bit slower" : "Normal speed"}
               </p>
             </div>
 
