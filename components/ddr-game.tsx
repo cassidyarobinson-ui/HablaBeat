@@ -448,15 +448,15 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
       let judgmentColor: string
 
       if (timeDelta <= HIT_WINDOWS.PERFECT) {
-        judgment = showTranslations ? "PERFECT" : "PERFECTO"
+        judgment = "¡PERFECTO!"
         points = 25
         judgmentColor = "text-yellow-300"
       } else if (timeDelta <= HIT_WINDOWS.GOOD) {
-        judgment = showTranslations ? "GOOD" : "BIEN"
+        judgment = "¡BIEN!"
         points = 25
         judgmentColor = "text-green-300"
       } else {
-        judgment = "OK"
+        judgment = "¡OK!"
         points = 25
         judgmentColor = "text-blue-300"
       }
@@ -518,15 +518,15 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
         let judgmentColor: string
 
         if (timeDelta <= HIT_WINDOWS.PERFECT) {
-          judgment = showTranslations ? "PERFECT" : "PERFECTO"
+          judgment = "¡PERFECTO!"
           points = 25
           judgmentColor = "text-yellow-300"
         } else if (timeDelta <= HIT_WINDOWS.GOOD) {
-          judgment = showTranslations ? "GOOD" : "BIEN"
+          judgment = "¡BIEN!"
           points = 25
           judgmentColor = "text-green-300"
         } else {
-          judgment = "OK"
+          judgment = "¡OK!"
           points = 25
           judgmentColor = "text-blue-300"
         }
@@ -713,7 +713,7 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
 
     // Judgment text
     const el = document.createElement("div")
-    el.className = `absolute ${color} font-bold text-3xl pointer-events-none`
+    el.className = `absolute ${color} font-bold text-base pointer-events-none`
     el.style.cssText = `
       left: ${lane * 25 + 1}%; width: 23%; bottom: 22%; text-align: center;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px currentColor;
