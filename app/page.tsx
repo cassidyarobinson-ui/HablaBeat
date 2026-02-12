@@ -11,13 +11,9 @@ import {
   Pause,
   SkipBack,
   SkipForward,
-  Shuffle,
-  Repeat,
   ChevronLeft,
   ChevronRight,
-  MoreHorizontal,
   Coins,
-  Flame,
   Mic,
   MicOff,
 } from "lucide-react"
@@ -1685,110 +1681,32 @@ export default function HablaBeat() {
     )
   }
 
-  // YouTube Player Component with auto-next functionality
-  const YouTubePlayer = ({ videoId }) => {
-    const playerRef = useRef(null)
-    const [player, setPlayer] = useState(null)
-
-    useEffect(() => {
-      if (!videoId) return
-
-      // Load YouTube iframe API
-      if (!window.YT) {
-        const tag = document.createElement("script")
-        tag.src = "https://www.youtube.com/iframe_api"
-        const firstScriptTag = document.getElementsByTagName("script")[0]
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
-
-        window.onYouTubeIframeAPIReady = () => {
-          initializePlayer()
-        }
-      } else {
-        initializePlayer()
-      }
-
-      function initializePlayer() {
-        if (playerRef.current && window.YT && window.YT.Player) {
-          const newPlayer = new window.YT.Player(playerRef.current, {
-            height: "100%",
-            width: "100%",
-            videoId: videoId,
-            playerVars: {
-              autoplay: 1,
-              controls: 1,
-              rel: 0,
-              modestbranding: 1,
-              showinfo: 0,
-              iv_load_policy: 3,
-              cc_load_policy: 0,
-              fs: 0,
-              disablekb: 0,
-              playsinline: 1,
-              origin: window.location.origin,
-            },
-            events: {
-              onStateChange: (event) => {
-                // When video ends (state 0), increment play count and play next song
-                if (event.data === window.YT.PlayerState.ENDED) {
-                  // Increment play count for the completed song
-                  const category = curriculumData.find((c) => c.id === currentSong.categoryId)
-                  const section = category?.sections.find((s) => s.id === currentSong.sectionId)
-                  if (currentSong && category && section) {
-                    handleSongComplete(currentSong.id, category.id, section.id)
-                  }
-                  // Then play next song
-                  handleNextSong()
-                }
-              },
-            },
-          })
-          setPlayer(newPlayer)
-        }
-      }
-
-      return () => {
-        if (player && player.destroy) {
-          player.destroy()
-        }
-      }
-    }, [videoId])
-
+  // Embedded Video Player — uses iframe embed to hide YouTube branding
+  const VideoPlayer = ({ videoId }: { videoId: string }) => {
     if (!videoId) {
       return (
-        <div className="aspect-square bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+        <div className="aspect-video bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
           <div className="text-center">
             <div className="text-8xl mb-4">{currentSong?.sectionIcon}</div>
-            <p className="text-white/80 text-sm">Video will play here</p>
-            <p className="text-white/60 text-xs mt-2">YouTube video + lyrics</p>
+            <p className="text-white/80 text-sm">Video coming soon</p>
           </div>
         </div>
       )
     }
 
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&cc_load_policy=0&fs=0&playsinline=1&controls=1&disablekb=0&origin=${typeof window !== "undefined" ? window.location.origin : ""}`
+
     return (
-      <div className="aspect-square rounded-lg overflow-hidden bg-black relative youtube-hide-branding">
-        <div ref={playerRef} className="w-full h-full"></div>
-        {/* Overlays to hide YouTube branding */}
-        <div className="absolute bottom-0 right-0 w-24 h-10 bg-black z-10 pointer-events-none" />
-        <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-black/80 to-transparent z-10 pointer-events-none" />
-        <style jsx global>{`
-          .youtube-hide-branding iframe {
-            pointer-events: auto;
-          }
-          .ytp-watermark,
-          .ytp-youtube-button,
-          .ytp-show-cards-title,
-          .ytp-title,
-          .ytp-title-text,
-          .ytp-share-button,
-          .ytp-watch-later-button,
-          .ytp-chrome-top,
-          .ytp-impression-link,
-          a.ytp-title-link {
-            display: none !important;
-            opacity: 0 !important;
-          }
-        `}</style>
+      <div className="aspect-video rounded-xl overflow-hidden bg-black relative">
+        <iframe
+          src={embedUrl}
+          className="w-full h-full border-0"
+          allow="autoplay; encrypted-media"
+          allowFullScreen={false}
+        />
+        {/* Overlays to cover branding */}
+        <div className="absolute bottom-0 right-0 w-28 h-9 bg-gradient-to-l from-black via-black/95 to-transparent z-10 pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-black via-black/60 to-transparent z-10 pointer-events-none" />
       </div>
     )
   }
@@ -1814,63 +1732,86 @@ export default function HablaBeat() {
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
         <div className="max-w-md mx-auto bg-gradient-to-b from-gray-900 to-black min-h-screen">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 pt-12">
+          <div className="flex items-center justify-between p-4 pt-8">
             <Button
               variant="ghost"
               size="icon"
               className="text-white hover:bg-white/10"
-              onClick={() => setCurrentView("songs")}
+              onClick={() => { stopMic(); setCurrentView("songs") }}
             >
               <ChevronLeft className="h-6 w-6" />
             </Button>
-            <div className="text-center">
-              <p className="text-sm text-gray-300">Playing from HablaBeat</p>
+            <div className="text-center flex-1">
+              <h1 className="text-lg font-bold">{currentSong.title}</h1>
+              <p className="text-xs text-gray-400">{currentSong.sectionTitle}</p>
             </div>
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-              <MoreHorizontal className="h-6 w-6" />
-            </Button>
+            <div className="w-10" />
           </div>
 
-          {/* Video/Lyrics Area */}
-          <div className="px-6 mb-4">
-            <YouTubePlayer videoId={currentSong.youtubeId} />
+          {/* Video */}
+          <div className="px-4 mb-4">
+            <VideoPlayer videoId={currentSong.youtubeId} />
           </div>
 
-          {/* Sing Along - Mic toggle and scoring */}
-          <div className="px-6 mb-4">
-            <div className="flex items-center gap-3 bg-gray-800/60 rounded-xl p-3">
-              <button
-                onClick={isMicActive ? stopMic : startMic}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all ${
-                  isMicActive
-                    ? "bg-red-600 hover:bg-red-500 text-white animate-pulse"
-                    : "bg-purple-600 hover:bg-purple-500 text-white"
-                }`}
-              >
-                {isMicActive ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                {isMicActive ? "Stop" : "🎤 Sing Along!"}
-              </button>
-              {isMicActive && (
-                <div className="flex-1 flex items-center gap-2">
-                  {/* Volume meter */}
-                  <div className="flex-1 h-3 bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-100"
-                      style={{
-                        width: `${singLevel}%`,
-                        background: singLevel > 50 ? "linear-gradient(90deg, #22c55e, #eab308)" : singLevel > 15 ? "#22c55e" : "#6b7280",
-                      }}
-                    />
+          {/* Sing Along Section */}
+          <div className="px-4 mb-4">
+            <div className="bg-gray-800/60 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-purple-300">🎤 Sing Along</h3>
+                {isMicActive && (
+                  <span className="text-yellow-300 font-bold text-lg">⭐ {singScore}</span>
+                )}
+              </div>
+
+              {!isMicActive ? (
+                <button
+                  onClick={startMic}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold text-base transition-all"
+                >
+                  <Mic className="h-5 w-5" />
+                  Start Singing!
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  {/* Live volume meter */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-4 bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-75"
+                        style={{
+                          width: `${singLevel}%`,
+                          background: singLevel > 60
+                            ? "linear-gradient(90deg, #22c55e, #eab308, #ef4444)"
+                            : singLevel > 25
+                            ? "linear-gradient(90deg, #22c55e, #eab308)"
+                            : singLevel > 10
+                            ? "#22c55e"
+                            : "#6b7280",
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-gray-400 w-8 text-right">{singLevel}%</span>
                   </div>
-                  <span className="text-yellow-300 font-bold text-sm min-w-[3rem] text-right">⭐ {singScore}</span>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-400">
+                      {singLevel > 40 ? "🔥 Great singing!" : singLevel > 15 ? "🎵 Keep going!" : "🎤 Sing louder!"}
+                    </p>
+                    <button
+                      onClick={stopMic}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600/80 hover:bg-red-500 rounded-lg text-xs font-bold transition-all"
+                    >
+                      <MicOff className="h-3.5 w-3.5" />
+                      Stop
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Song Info with Skip Buttons */}
-          <div className="px-6 mb-8">
-            <div className="flex items-center justify-between">
+          {/* Skip controls */}
+          <div className="px-4 mb-4">
+            <div className="flex items-center justify-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
@@ -1878,14 +1819,16 @@ export default function HablaBeat() {
                 onClick={handlePreviousSong}
                 disabled={currentSongIndex === 0}
               >
-                <SkipBack className="h-8 w-8" />
+                <SkipBack className="h-6 w-6" />
               </Button>
-
-              <div className="text-center flex-1">
-                <h1 className="text-2xl font-bold mb-2">{currentSong.title}</h1>
-                <p className="text-gray-300 text-lg">{currentSong.sectionTitle}</p>
-              </div>
-
+              {selectedLanguage === "spanish" && (
+                <button
+                  onClick={() => { stopMic(); setCurrentView("ddr") }}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-pink-600 hover:bg-pink-500 rounded-full font-bold text-sm transition-colors"
+                >
+                  🥕 Play Mode
+                </button>
+              )}
               <Button
                 variant="ghost"
                 size="icon"
@@ -1893,27 +1836,7 @@ export default function HablaBeat() {
                 onClick={handleNextSong}
                 disabled={currentSongIndex === allSongs.length - 1}
               >
-                <SkipForward className="h-8 w-8" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Controls */}
-          <div className="px-6 mb-8">
-            <div className="flex items-center justify-center gap-6">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                <Shuffle className="h-6 w-6" />
-              </Button>
-              {selectedLanguage === "spanish" && (
-                <button
-                  onClick={() => setCurrentView("ddr")}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-pink-600 hover:bg-pink-500 rounded-full font-bold text-sm transition-colors"
-                >
-                  🥕 Play
-                </button>
-              )}
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                <Repeat className="h-6 w-6" />
+                <SkipForward className="h-6 w-6" />
               </Button>
             </div>
           </div>
@@ -1924,7 +1847,7 @@ export default function HablaBeat() {
               <Button
                 variant="ghost"
                 className="flex flex-col items-center gap-1 text-white pt-3"
-                onClick={() => setCurrentView("songs")}
+                onClick={() => { stopMic(); setCurrentView("songs") }}
               >
                 <BookOpen className="h-5 w-5" />
                 <span className="text-xs">Songs</span>
@@ -1932,7 +1855,7 @@ export default function HablaBeat() {
               <Button
                 variant="ghost"
                 className="flex flex-col items-center gap-1 text-gray-400 pt-3"
-                onClick={() => setCurrentView("coins")}
+                onClick={() => { stopMic(); setCurrentView("coins") }}
               >
                 <Coins className="h-5 w-5" />
                 <span className="text-xs">Coins</span>
