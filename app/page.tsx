@@ -1825,7 +1825,7 @@ export default function HablaBeat() {
               {selectedLanguage === "spanish" && (
                 <button
                   onClick={() => { stopMic(); setCurrentView("ddr") }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-full font-bold text-sm text-white transition-colors"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-400 hover:bg-blue-300 rounded-full font-bold text-sm text-white transition-colors"
                 >
                   🥕 Play Mode
                 </button>
@@ -1889,13 +1889,12 @@ export default function HablaBeat() {
                   src="/images/super-bunny.gif"
                   alt="Blue Bunny"
                   className="w-full h-full object-contain"
+                  style={{ filter: "sepia(0.35) saturate(2) hue-rotate(190deg) brightness(1.05)", opacity: 0.85 }}
                 />
-                {/* Heart overlay replacing S on chest - opaque white bg to cover S */}
-                <div className="absolute flex items-center justify-center" style={{ top: "49%", left: "35%", width: "22%", height: "22%", background: "white", borderRadius: "50%" }}>
-                  <svg style={{ width: "75%", height: "75%" }} viewBox="0 0 24 24" fill="#2563eb" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </div>
+                {/* Heart outline overlay on chest replacing S */}
+                <svg className="absolute pointer-events-none" style={{ top: "55%", left: "37%", width: "16%", height: "16%" }} viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
@@ -1989,18 +1988,17 @@ export default function HablaBeat() {
                   src="/images/super-bunny.gif"
                   alt="Blue Bunny"
                   className="w-full h-full object-contain"
+                  style={{ filter: "sepia(0.35) saturate(2) hue-rotate(190deg) brightness(1.05)", opacity: 0.85 }}
                 />
-                {/* Heart overlay replacing S on chest - opaque white bg to cover S */}
-                <div className="absolute flex items-center justify-center" style={{ top: "49%", left: "35%", width: "22%", height: "22%", background: "white", borderRadius: "50%" }}>
-                  <svg style={{ width: "75%", height: "75%" }} viewBox="0 0 24 24" fill="#2563eb" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </div>
+                {/* Heart outline overlay on chest replacing S */}
+                <svg className="absolute pointer-events-none" style={{ top: "55%", left: "37%", width: "16%", height: "16%" }} viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
-                <p className="text-blue-600 text-lg leading-tight">Collect coins with</p>
-                <p className="text-blue-600 text-lg leading-tight font-bold">Blue Bunny!</p>
+                <p className="text-blue-400 text-lg leading-tight">Collect coins with</p>
+                <p className="text-blue-400 text-lg leading-tight font-bold">Blue Bunny!</p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-xl">🔥</span>
                   <span className="text-teal-600 font-bold">Best Flow: {bestFlow}</span>
@@ -2111,7 +2109,7 @@ export default function HablaBeat() {
                                     {selectedLanguage === "spanish" && (
                                       <button
                                         onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-bold text-white transition-colors"
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-400 hover:bg-blue-300 rounded-lg text-sm font-bold text-white transition-colors"
                                       >
                                         🥕 Play
                                       </button>
@@ -2119,7 +2117,7 @@ export default function HablaBeat() {
                                     {isClickable && (
                                       <button
                                         onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-bold text-white transition-colors"
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-400 hover:bg-blue-300 rounded-lg text-sm font-bold text-white transition-colors"
                                       >
                                         🎤 Sing
                                       </button>
