@@ -1883,17 +1883,13 @@ export default function HablaBeat() {
           {/* Header */}
           <div className="text-gray-900 p-4">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-44 h-44 flex-shrink-0 relative">
+              <div className="w-44 h-44 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/super-bunny-blue.png"
+                  src="/images/super-bunny-blue.gif"
                   alt="Blue Bunny"
                   className="w-full h-full object-contain"
                 />
-                {/* Heart outline overlay on chest replacing S */}
-                <svg className="absolute pointer-events-none" style={{ top: "53%", left: "36%", width: "18%", height: "18%" }} viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
@@ -1981,17 +1977,13 @@ export default function HablaBeat() {
           {/* Header with Super Bunny */}
           <div className="text-gray-900 p-4">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-44 h-44 flex-shrink-0 relative">
+              <div className="w-44 h-44 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/super-bunny-blue.png"
+                  src="/images/super-bunny-blue.gif"
                   alt="Blue Bunny"
                   className="w-full h-full object-contain"
                 />
-                {/* Heart outline overlay on chest replacing S */}
-                <svg className="absolute pointer-events-none" style={{ top: "53%", left: "36%", width: "18%", height: "18%" }} viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>

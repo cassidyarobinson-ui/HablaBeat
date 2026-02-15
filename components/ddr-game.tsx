@@ -1033,15 +1033,12 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
           <div className="relative flex flex-col items-center">
             <div className="relative w-24 h-24 md:w-32 md:h-32">
               {/* eslint-disable-next-line @next/next/no-img-element */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/super-bunny-blue.png"
+                src="/images/super-bunny-blue.gif"
                 alt="Blue Bunny"
                 className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.1)]"
               />
-              {/* Heart outline overlay on chest */}
-              <svg className="absolute pointer-events-none" style={{ top: "53%", left: "36%", width: "18%", height: "18%" }} viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
             </div>
             <p className="text-blue-600 text-xs italic">
               {showTranslations ? "Blue Bunny celebrates your victory!" : "¡Conejito Azul celebra tu victoria!"}
