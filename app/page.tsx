@@ -51,7 +51,7 @@ const languages = {
         sections: [
           {
             id: "alphabet-vowels",
-            title: "Alphabet, Vowels",
+            title: "Alphabet World",
             icon: "📚",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -84,7 +84,7 @@ const languages = {
           },
           {
             id: "the-self",
-            title: "The Self",
+            title: "You World",
             icon: "👤",
             color: latinoColors.teal,
             badgeUnlocked: false,
@@ -118,7 +118,7 @@ const languages = {
           },
           {
             id: "pets-syllables",
-            title: "Pets And Syllables",
+            title: "Pet World",
             icon: "🐕",
             color: latinoColors.aqua,
             badgeUnlocked: false,
@@ -151,7 +151,7 @@ const languages = {
           },
           {
             id: "places",
-            title: "Places",
+            title: "Travel World",
             icon: "🏠",
             color: latinoColors.mint,
             badgeUnlocked: false,
@@ -177,7 +177,7 @@ const languages = {
           },
           {
             id: "numbers-time",
-            title: "Numbers And Time",
+            title: "Time World",
             icon: "🕐",
             color: latinoColors.purple,
             badgeUnlocked: false,
@@ -218,7 +218,7 @@ const languages = {
           },
           {
             id: "colors-feelings",
-            title: "Colors And Feelings",
+            title: "Feelings Color World",
             icon: "🌈",
             color: latinoColors.orange,
             badgeUnlocked: false,
@@ -237,7 +237,7 @@ const languages = {
           },
           {
             id: "foods",
-            title: "Foods",
+            title: "Food World",
             icon: "🍎",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -272,7 +272,7 @@ const languages = {
         sections: [
           {
             id: "ar-verbs",
-            title: "AR Verbs",
+            title: "AR World",
             icon: "🅰️",
             color: latinoColors.aqua,
             badgeUnlocked: false,
@@ -299,7 +299,7 @@ const languages = {
           },
           {
             id: "er-verbs",
-            title: "ER Verbs",
+            title: "ER World",
             icon: "🅴",
             color: latinoColors.mint,
             badgeUnlocked: false,
@@ -318,7 +318,7 @@ const languages = {
           },
           {
             id: "ir-verbs",
-            title: "IR Verbs",
+            title: "IR World",
             icon: "🅸",
             color: latinoColors.purple,
             badgeUnlocked: false,
@@ -337,7 +337,7 @@ const languages = {
           },
           {
             id: "preterite",
-            title: "Preterite",
+            title: "Quick Past World",
             icon: "⏪",
             color: latinoColors.orange,
             badgeUnlocked: false,
@@ -371,7 +371,7 @@ const languages = {
           },
           {
             id: "imperfecto",
-            title: "Imperfecto",
+            title: "Long Past World",
             icon: "🔄",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -404,7 +404,7 @@ const languages = {
           },
           {
             id: "futuro",
-            title: "Futuro",
+            title: "Future World",
             icon: "⏩",
             color: latinoColors.teal,
             badgeUnlocked: false,
@@ -422,7 +422,7 @@ const languages = {
           },
           {
             id: "conditional",
-            title: "Conditional",
+            title: "Conditional World",
             icon: "🤔",
             color: latinoColors.aqua,
             badgeUnlocked: false,
@@ -447,7 +447,7 @@ const languages = {
           },
           {
             id: "pronouns",
-            title: "Pronouns",
+            title: "Pronoun World",
             icon: "👥",
             color: latinoColors.mint,
             badgeUnlocked: false,
@@ -472,7 +472,7 @@ const languages = {
           },
           {
             id: "advanced",
-            title: "Advanced",
+            title: "Advanced World",
             icon: "🎓",
             color: latinoColors.purple,
             badgeUnlocked: false,
@@ -1358,16 +1358,16 @@ export default function HablaBeat() {
   const [lunasPurse, setLunasPurse] = useState([
     {
       id: "alphabet-vowels-coin",
-      name: "Alphabet Vowels",
-      description: "Earned by completing Alphabet, Vowels section",
+      name: "Alphabet World",
+      description: "Earned by completing Alphabet World section",
       icon: "📚",
       type: "coin",
       earnedDate: new Date().toLocaleDateString(),
     },
     {
       id: "the-self-coin",
-      name: "The Self",
-      description: "Earned by completing The Self section",
+      name: "You World",
+      description: "Earned by completing You World section",
       icon: "👤",
       type: "coin",
       earnedDate: new Date().toLocaleDateString(),
