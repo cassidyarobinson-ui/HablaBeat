@@ -390,6 +390,51 @@ function pickQuery(c: CountryData): string { return c.pexelsQueries[Math.floor(M
 const PEXELS_KEY = "QRejvnDTjk8yS9g9TWg3PNP3xQVpHJMuWimILfdpOUVYqnFygj58czF1"
 
 // ─────────────────────────────────────────────
+// Song 8 (AEIOU Pet World) — per-lyric-line animal video queries
+// Maps first lyric line ID of each animal couplet → Pexels search query
+// ─────────────────────────────────────────────
+const SONG8_ANIMAL_QUERIES: Record<number, string> = {
+  // AEIOU intro (lines 0–5) and repeat (lines 52–57)
+  0: "araña spider web close up",
+  1: "elephant africa wildlife",
+  2: "iguana lizard reptile",
+  3: "bear oso wildlife nature",
+  4: "unicorn fantasy magical horse",
+  5: "araña spider web close up", // AEIOU chorus — reuse spider
+  // Alphabet section
+  6: "búho owl bird wildlife",
+  8: "conejo rabbit cute bunny",
+  10: "chivo goat farm animal",
+  12: "delfín dolphin ocean jump",
+  14: "flamingo bird pink flock",
+  16: "gato cat cute kitten",
+  18: "hipopotamo hippo water wildlife",
+  20: "jirafa giraffe africa tall",
+  22: "koala bear australia eucalyptus",
+  24: "león lion africa mane roar",
+  26: "mono monkey jungle primate",
+  28: "nutria otter river water",
+  30: "ñandú rhea bird argentina",
+  32: "pingüino penguin antarctic",
+  34: "quetzal bird colorful Guatemala",
+  36: "rinoceronte rhino africa wildlife",
+  38: "serpiente snake reptile",
+  40: "tigre tiger wildlife stripes",
+  42: "vaca cow farm dairy",
+  44: "wombat australia marsupial",
+  46: "xoloitzcuintle hairless dog mexico",
+  48: "yak tibet highland animal",
+  50: "zorro fox wildlife red",
+  // AEIOU repeat
+  52: "araña spider web close up",
+  53: "elephant africa wildlife",
+  54: "iguana lizard reptile",
+  55: "bear oso wildlife nature",
+  56: "unicorn fantasy magical horse",
+  57: "araña spider web close up",
+}
+
+// ─────────────────────────────────────────────
 // Props
 // ─────────────────────────────────────────────
 interface SingModeViewProps {
@@ -427,6 +472,9 @@ export default function SingModeView({
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)  // direct audio playback — same as DDR game
   const progressBarRef = useRef<HTMLDivElement>(null)
+  // Cache for song-8 animal videos: lineId → {vid, img} so each animal only fetches once
+  const animalCacheRef = useRef<Record<number, { vid: HTMLVideoElement | null; img: HTMLImageElement | null }>>({})
+  const lastAnimalLineRef = useRef<number>(-1)
 
   // Total song duration derived from the last lyric word's end time
   const totalDuration = useMemo(() => {
@@ -500,8 +548,12 @@ export default function SingModeView({
     setBgImageLoaded(false)
     bgImageRef.current = null
     lastSwapRef.current = Date.now()
+    // Clear animal cache on song change
+    animalCacheRef.current = {}
+    lastAnimalLineRef.current = -1
     loadMedia.current(country)
-    scheduleSwap.current(country)
+    // For song 8, skip the random-rotation swap since animals drive the video
+    if (song.number !== 8) scheduleSwap.current(country)
     return () => {
       if (swapTimerRef.current) clearTimeout(swapTimerRef.current)
       const vid = bgVideoRef.current
@@ -509,6 +561,83 @@ export default function SingModeView({
       bgImageRef.current = null
     }
   }, [song.number])
+
+  // ── Song 8: swap background to animal video when lyric line changes ──
+  useEffect(() => {
+    if (song.number !== 8) return
+    // Find which animal line we're on — each animal has an entry in SONG8_ANIMAL_QUERIES,
+    // and the "syllable" lines (odd lines like 7,9,11…) inherit the previous animal's video.
+    // Walk backwards from activeLyricId to find the nearest animal-query line.
+    let animalLineId = -1
+    for (let id = activeLyricId; id >= 0; id--) {
+      if (SONG8_ANIMAL_QUERIES[id] !== undefined) { animalLineId = id; break }
+    }
+    if (animalLineId < 0 || animalLineId === lastAnimalLineRef.current) return
+    lastAnimalLineRef.current = animalLineId
+
+    const query = SONG8_ANIMAL_QUERIES[animalLineId]
+
+    // If cached, swap immediately
+    const cached = animalCacheRef.current[animalLineId]
+    if (cached) {
+      if (cached.vid) {
+        const prev = bgVideoRef.current
+        if (prev) { prev.pause(); prev.src = "" }
+        bgVideoRef.current = cached.vid
+        cached.vid.currentTime = 0
+        cached.vid.play().then(() => setBgLoaded(true)).catch(() => {})
+        setBgLoaded(true)
+      }
+      if (cached.img) { bgImageRef.current = cached.img; setBgImageLoaded(true) }
+      return
+    }
+
+    // Not cached — fetch, cache, then swap
+    animalCacheRef.current[animalLineId] = { vid: null, img: null }
+
+    // Still photo fallback
+    fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=10&orientation=landscape`, {
+      headers: { Authorization: PEXELS_KEY }
+    }).then(r => r.json()).then(data => {
+      const photos: any[] = data?.photos ?? []
+      if (!photos.length) return
+      const pick = photos[Math.floor(Math.random() * Math.min(photos.length, 5))]
+      const src = pick?.src?.large2x ?? pick?.src?.large ?? pick?.src?.original
+      if (!src) return
+      const img = new Image()
+      img.crossOrigin = "anonymous"
+      img.onload = () => {
+        animalCacheRef.current[animalLineId] = { ...animalCacheRef.current[animalLineId], img }
+        // Only apply if still on this animal
+        if (lastAnimalLineRef.current === animalLineId) { bgImageRef.current = img; setBgImageLoaded(true) }
+      }
+      img.src = src
+    }).catch(() => {})
+
+    // Video
+    const vid = document.createElement("video")
+    vid.muted = true; vid.loop = true; vid.playsInline = true; vid.crossOrigin = "anonymous"
+    fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(query)}&per_page=10`, {
+      headers: { Authorization: PEXELS_KEY }
+    }).then(r => r.json()).then(data => {
+      const videos: any[] = data?.videos ?? []
+      if (!videos.length) return
+      const pick = videos[Math.floor(Math.random() * Math.min(videos.length, 5))]
+      const files: any[] = pick.video_files ?? []
+      const mp4 = files.filter((f: any) => f.file_type === "video/mp4").sort((a: any, b: any) => a.height - b.height).find((f: any) => f.height <= 720)
+      if (!mp4?.link) return
+      vid.src = mp4.link
+      animalCacheRef.current[animalLineId] = { ...animalCacheRef.current[animalLineId], vid }
+      vid.play().then(() => {
+        if (lastAnimalLineRef.current === animalLineId) {
+          const prev = bgVideoRef.current
+          if (prev && prev !== vid) { prev.pause(); prev.src = "" }
+          bgVideoRef.current = vid
+          setBgLoaded(true)
+        }
+      }).catch(() => {})
+    }).catch(() => {})
+  }, [activeLyricId, song.number])
 
   // ── Load and play audio directly from audioUrl — identical to DDR game ──
   // Timestamps in the JSON were generated from this exact WAV file, so currentTime
