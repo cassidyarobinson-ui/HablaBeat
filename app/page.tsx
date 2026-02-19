@@ -2147,7 +2147,7 @@ export default function HablaBeat() {
               <div className="w-44 h-44 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/super-bunny-heart.jpg"
+                  src="/images/super-bunny-heart.gif"
                   alt="HablaBeat Bunny"
                   className="w-full h-full object-contain"
                 />
@@ -2249,7 +2249,7 @@ export default function HablaBeat() {
               <div className="w-44 h-44 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/super-bunny-heart.jpg"
+                  src="/images/super-bunny-heart.gif"
                   alt="HablaBeat Bunny"
                   className="w-full h-full object-contain"
                 />
