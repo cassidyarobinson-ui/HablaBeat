@@ -396,6 +396,7 @@ interface SingModeViewProps {
   song: { id: string; title: string; number: number; youtubeId?: string; sectionTitle?: string }
   lyricLines: { id: number; words: { id: number; text: string; timestamp: number; duration: number }[] }[]
   activeLyricId: number
+  audioUrl?: string
   isMicActive: boolean
   singLevel: number
   singScore: number
@@ -410,7 +411,7 @@ interface SingModeViewProps {
 // Component
 // ─────────────────────────────────────────────
 export default function SingModeView({
-  song, lyricLines, activeLyricId,
+  song, lyricLines, activeLyricId, audioUrl,
   isMicActive, singLevel, singScore,
   onStartMic, onStopMic, onBack, onNext, onPrev,
 }: SingModeViewProps) {
@@ -423,8 +424,7 @@ export default function SingModeView({
   const [bgImageLoaded, setBgImageLoaded] = useState(false)
   const [activeWordId, setActiveWordId] = useState<number>(-1)
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const startTimeRef = useRef<number>(Date.now() / 1000)
-  const ytCurrentTimeRef = useRef<number>(0) // actual YouTube playback position
+  const syncAudioRef = useRef<HTMLAudioElement | null>(null) // hidden audio for timing (same as DDR game)
 
   const country = getCountry(song.number)
   const { palette, flag, flagColors, country: countryName } = country
@@ -521,21 +521,33 @@ export default function SingModeView({
     }
   }, [isMicActive])
 
-  // ── YouTube postMessage listener: captures currentTime + ended state ──
-  // enablejsapi=1 on the iframe lets us receive time updates and state changes.
+  // ── Hidden sync audio element — same approach as DDR game ──
+  // Loads the same audio file used for timing JSON generation, plays it muted.
+  // We read audio.currentTime directly (reliable, no postMessage needed).
+  useEffect(() => {
+    if (!audioUrl) { syncAudioRef.current = null; return }
+    const audio = new Audio(audioUrl)
+    audio.muted = true       // silent — YouTube iframe handles audible playback
+    audio.preload = "auto"
+    syncAudioRef.current = audio
+    // Play as soon as enough is buffered
+    const tryPlay = () => { audio.play().catch(() => {}) }
+    audio.addEventListener("canplay", tryPlay, { once: true })
+    tryPlay() // attempt immediately in case already cached
+    return () => {
+      audio.pause()
+      audio.src = ""
+      syncAudioRef.current = null
+    }
+  }, [audioUrl, song.number])
+
+  // ── YouTube postMessage listener: song ENDED → auto-advance ──
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       try {
         const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data
-        // currentTime updates arrive as infoDelivery with currentTime field
-        if (data?.event === "infoDelivery") {
-          if (typeof data?.info?.currentTime === "number") {
-            ytCurrentTimeRef.current = data.info.currentTime
-          }
-          // playerState 0 = ENDED — auto-advance to next song
-          if (data?.info?.playerState === 0 && onNext) {
-            setTimeout(() => { onNext() }, 1500)
-          }
+        if (data?.event === "infoDelivery" && data?.info?.playerState === 0 && onNext) {
+          setTimeout(() => { onNext() }, 1500)
         }
       } catch {}
     }
@@ -543,12 +555,12 @@ export default function SingModeView({
     return () => window.removeEventListener("message", handleMessage)
   }, [onNext, song.youtubeId])
 
-  // ── Word-level karaoke sync — uses actual YouTube currentTime ──
+  // ── Word-level karaoke sync — reads audio.currentTime directly (same as DDR game) ──
   useEffect(() => {
     if (lyricLines.length === 0) { setActiveWordId(-1); return }
     if (wordTimerRef.current) clearInterval(wordTimerRef.current)
     wordTimerRef.current = setInterval(() => {
-      const elapsed = ytCurrentTimeRef.current
+      const elapsed = syncAudioRef.current?.currentTime ?? 0
       let found = -1
       for (const line of lyricLines) {
         for (const word of line.words) {
