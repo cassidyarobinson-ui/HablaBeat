@@ -551,9 +551,11 @@ export default function SingModeView({
     // Clear animal cache on song change
     animalCacheRef.current = {}
     lastAnimalLineRef.current = -1
-    loadMedia.current(country)
-    // For song 8, skip the random-rotation swap since animals drive the video
-    if (song.number !== 8) scheduleSwap.current(country)
+    // Song 8: animals exclusively drive the background — skip generic media entirely
+    if (song.number !== 8) {
+      loadMedia.current(country)
+      scheduleSwap.current(country)
+    }
     return () => {
       if (swapTimerRef.current) clearTimeout(swapTimerRef.current)
       const vid = bgVideoRef.current
