@@ -1398,6 +1398,7 @@ export default function HablaBeat() {
   // Lyrics sync state
   const [lyricLines, setLyricLines] = useState<{id: number; words: {id: number; text: string; timestamp: number; duration: number}[]}[]>([])
   const [activeLyricId, setActiveLyricId] = useState<number>(-1)
+  const [currentAudioUrl, setCurrentAudioUrl] = useState<string>("")
   const lyricTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const lyricStartTimeRef = useRef<number>(0)
   const lyricCanvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -1555,16 +1556,18 @@ export default function HablaBeat() {
     return getSongCountry(songNum).palette
   }
 
-  // Load lyrics when song changes
+  // Load lyrics + audioUrl when song changes
   useEffect(() => {
-    if (!currentSong?.number) { setLyricLines([]); return }
+    if (!currentSong?.number) { setLyricLines([]); setCurrentAudioUrl(""); return }
     fetch(`/timing/song-${currentSong.number}.json`)
       .then(r => r.ok ? r.json() : null)
       .then(data => {
         if (data?.lyrics) setLyricLines(data.lyrics)
         else setLyricLines([])
+        if (data?.audioUrl) setCurrentAudioUrl(data.audioUrl)
+        else setCurrentAudioUrl("")
       })
-      .catch(() => setLyricLines([]))
+      .catch(() => { setLyricLines([]); setCurrentAudioUrl("") })
     setActiveLyricId(-1)
     lyricStartTimeRef.current = Date.now() / 1000
   }, [currentSong])
@@ -1919,6 +1922,7 @@ export default function HablaBeat() {
         song={currentSong}
         lyricLines={lyricLines}
         activeLyricId={activeLyricId}
+        audioUrl={currentAudioUrl}
         onBack={() => setCurrentView("songs")}
         onNext={currentSongIndex < allSongs.length - 1 ? handleNextSong : undefined}
         onPrev={currentSongIndex > 0 ? handlePreviousSong : undefined}

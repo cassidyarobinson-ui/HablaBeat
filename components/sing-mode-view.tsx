@@ -396,6 +396,7 @@ interface SingModeViewProps {
   song: { id: string; title: string; number: number; youtubeId?: string; sectionTitle?: string }
   lyricLines: { id: number; words: { id: number; text: string; timestamp: number; duration: number }[] }[]
   activeLyricId: number
+  audioUrl?: string
   onBack: () => void
   onNext?: () => void
   onPrev?: () => void
@@ -412,12 +413,11 @@ function formatTime(s: number) {
 }
 
 export default function SingModeView({
-  song, lyricLines, activeLyricId,
+  song, lyricLines, activeLyricId, audioUrl,
   onBack, onNext, onPrev,
 }: SingModeViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animRef = useRef<number | null>(null)
-  const analyserRef = useRef<AnalyserNode | null>(null)
   const bgVideoRef = useRef<HTMLVideoElement | null>(null)
   const bgImageRef = useRef<HTMLImageElement | null>(null)
   const [bgLoaded, setBgLoaded] = useState(false)
@@ -425,8 +425,7 @@ export default function SingModeView({
   const [activeWordId, setActiveWordId] = useState<number>(-1)
   const [elapsedSecs, setElapsedSecs] = useState(0)
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const playStartWallRef = useRef<number>(0)   // wall-clock ms when YouTube started playing
-  const isPlayingRef = useRef<boolean>(false)  // whether YouTube has fired playerState=1
+  const audioRef = useRef<HTMLAudioElement | null>(null)  // direct audio playback — same as DDR game
 
   // Total song duration derived from the last lyric word's end time
   const totalDuration = useMemo(() => {
@@ -510,44 +509,34 @@ export default function SingModeView({
     }
   }, [song.number])
 
-  // ── YouTube postMessage: detect play start (playerState=1) + song ended (0) ──
-  // When YouTube fires playerState=1, we capture the wall clock as our timing reference.
-  // This is the most reliable approach — single audio source, no drift.
+  // ── Load and play audio directly from audioUrl — identical to DDR game ──
+  // Timestamps in the JSON were generated from this exact WAV file, so currentTime
+  // matches the lyrics perfectly with zero offset calculation needed.
   useEffect(() => {
-    isPlayingRef.current = false
-    playStartWallRef.current = 0
     setElapsedSecs(0)
-    const handleMessage = (e: MessageEvent) => {
-      try {
-        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data
-        if (data?.event === "infoDelivery") {
-          const state = data?.info?.playerState
-          // playerState 1 = PLAYING — capture the moment YouTube starts
-          if (state === 1 && !isPlayingRef.current) {
-            isPlayingRef.current = true
-            playStartWallRef.current = Date.now()
-          }
-          // playerState 0 = ENDED — auto-advance to next song
-          if (state === 0 && onNext) {
-            setTimeout(() => { onNext() }, 1500)
-          }
-        }
-      } catch {}
-    }
-    window.addEventListener("message", handleMessage)
+    setActiveWordId(-1)
+    if (!audioUrl) { audioRef.current = null; return }
+    const audio = new Audio(audioUrl)
+    audio.preload = "auto"
+    audioRef.current = audio
+    // Auto-advance to next song when audio ends
+    audio.addEventListener("ended", () => { if (onNext) setTimeout(onNext, 1500) })
+    const tryPlay = () => { audio.play().catch(() => {}) }
+    audio.addEventListener("canplay", tryPlay, { once: true })
+    tryPlay()
     return () => {
-      window.removeEventListener("message", handleMessage)
-      isPlayingRef.current = false
+      audio.pause()
+      audio.src = ""
+      audioRef.current = null
     }
-  }, [onNext, song.youtubeId])
+  }, [audioUrl, song.number, onNext])
 
-  // ── Word-level karaoke sync — wall-clock elapsed since YouTube started playing ──
+  // ── Word-level karaoke sync — reads audio.currentTime directly (same as DDR game) ──
   useEffect(() => {
     if (lyricLines.length === 0) { setActiveWordId(-1); return }
     if (wordTimerRef.current) clearInterval(wordTimerRef.current)
     wordTimerRef.current = setInterval(() => {
-      if (!isPlayingRef.current) return
-      const elapsed = (Date.now() - playStartWallRef.current) / 1000
+      const elapsed = audioRef.current?.currentTime ?? 0
       setElapsedSecs(elapsed)
       let found = -1
       for (const line of lyricLines) {
@@ -558,7 +547,7 @@ export default function SingModeView({
         }
       }
       setActiveWordId(found)
-    }, 40) // 40ms for smooth word-level tracking
+    }, 40) // 40ms — same as DDR game
     return () => { if (wordTimerRef.current) clearInterval(wordTimerRef.current) }
   }, [lyricLines, song.number])
 
@@ -573,36 +562,26 @@ export default function SingModeView({
     resize()
     window.addEventListener("resize", resize)
 
-    const freqData = new Uint8Array(128)
     let lastBeat = 0
     let beatFlash = 0
 
     const draw = () => {
       animRef.current = requestAnimationFrame(draw)
       const W = canvas.width, H = canvas.height
-      const t = Date.now() / 1000
-      const an = analyserRef.current
-      if (an) an.getByteFrequencyData(freqData)
-      else freqData.fill(0)
-      const energy = freqData.reduce((a, b) => a + b, 0) / freqData.length
-
-      // Bass energy (low frequencies 0-10)
-      const bassE = freqData.slice(0, 10).reduce((a, b) => a + b, 0) / 10
-      // Mid energy
-      const midE = freqData.slice(10, 50).reduce((a, b) => a + b, 0) / 40
-      // Beat detection — sharp bass spike
+      // Simple time-based beat flash for visual interest (no mic needed)
       const now = Date.now()
-      if (bassE > 140 && now - lastBeat > 250) {
-        lastBeat = now; beatFlash = 1.0
-        // On a strong beat, swap video early if 5s+ since last swap
-        if (bassE > 180 && now - lastSwapRef.current > 5000) {
+      const beat = Math.sin(now / 500) // ~120bpm pulse
+      if (beat > 0.95 && now - lastBeat > 400) {
+        lastBeat = now; beatFlash = 0.5
+        // Occasionally swap video on beat
+        if (now - lastSwapRef.current > 5000) {
           lastSwapRef.current = now
           if (swapTimerRef.current) clearTimeout(swapTimerRef.current)
           loadMedia.current(country)
           scheduleSwap.current(country)
         }
       }
-      beatFlash = Math.max(0, beatFlash - 0.07)
+      beatFlash = Math.max(0, beatFlash - 0.04)
 
       // ── 1. Draw background image (instant fallback) or video ──
       const vid = bgVideoRef.current
@@ -617,9 +596,6 @@ export default function SingModeView({
         const offY = (H * (zoom - 1)) / 2
 
         if (hasVideo) {
-          // Playback speed reacts to energy
-          const targetRate = 1 + (energy / 255) * 0.8
-          if (Math.abs(vid!.playbackRate - targetRate) > 0.1) vid!.playbackRate = targetRate
           ctx.drawImage(vid!, -offX, -offY, W * zoom, H * zoom)
         } else if (hasImage) {
           // Draw image cover-fit
@@ -629,10 +605,8 @@ export default function SingModeView({
           ctx.drawImage(img!, -offX + (W - dw) / 2, -offY + (H - dh) / 2, dw * zoom, dh * zoom)
         }
 
-        // Very light overlay — just enough for text legibility, keep colors vivid
-        const baseAlpha = 0.18
-        const energyLift = (energy / 255) * 0.08 // gets even lighter on high energy
-        ctx.fillStyle = `rgba(0,0,0,${Math.max(0.08, baseAlpha - energyLift)})`
+        // Light overlay for text legibility
+        ctx.fillStyle = "rgba(0,0,0,0.18)"
         ctx.fillRect(0, 0, W, H)
 
         // Beat flash in flag primary color
@@ -709,17 +683,7 @@ export default function SingModeView({
         style={{ display: "block" }}
       />
 
-      {/* Hidden YouTube iframe — audio only (keeps playing in background) */}
-      {song.youtubeId && (
-        <iframe
-          key={song.youtubeId}
-          id="yt-audio-iframe"
-          src={`https://www.youtube-nocookie.com/embed/${song.youtubeId}?autoplay=1&rel=0&modestbranding=1&controls=0&playsinline=1&enablejsapi=1`}
-          className="absolute opacity-0 pointer-events-none"
-          style={{ width: 1, height: 1, bottom: 0, left: 0 }}
-          allow="autoplay; encrypted-media"
-        />
-      )}
+      {/* Audio is played directly from the WAV audioUrl — same as DDR game, perfect timestamp sync */}
 
       {/* ── Top bar ── */}
       <div className="relative z-10 flex items-center gap-3 px-4 pt-safe pt-4 pb-2"
