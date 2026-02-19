@@ -641,20 +641,6 @@ export default function SingModeView({
           ctx.fillRect(0, 0, W, H)
         }
 
-        // ── Edge frequency beams — flag colors cycling ──
-        const barCount = 12
-        for (let i = 0; i < barCount; i++) {
-          const fv = freqData[Math.floor((i / barCount) * 60) + 4] || 0
-          const bh = (fv / 255) * H * 0.22 + beatFlash * H * 0.04
-          const col = flagColors[i % flagColors.length]
-          ctx.globalAlpha = 0.55 + (fv / 255) * 0.45
-          ctx.shadowColor = col; ctx.shadowBlur = 8 + (fv / 255) * 12
-          ctx.fillStyle = col
-          // Left beams
-          ctx.fillRect(0, H * (i / barCount), bh, H / barCount - 1)
-          // Right beams
-          ctx.fillRect(W - bh, H * (i / barCount), bh, H / barCount - 1)
-        }
         ctx.shadowBlur = 0; ctx.globalAlpha = 1
 
       } else {
