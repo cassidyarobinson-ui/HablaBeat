@@ -395,7 +395,6 @@ const PEXELS_KEY = "QRejvnDTjk8yS9g9TWg3PNP3xQVpHJMuWimILfdpOUVYqnFygj58czF1"
 interface SingModeViewProps {
   song: { id: string; title: string; number: number; youtubeId?: string; sectionTitle?: string }
   lyricLines: { id: number; words: { id: number; text: string; timestamp: number; duration: number }[] }[]
-  activeLyricId: number
   audioUrl?: string
   onBack: () => void
   onNext?: () => void
@@ -413,7 +412,7 @@ function formatTime(s: number) {
 }
 
 export default function SingModeView({
-  song, lyricLines, activeLyricId, audioUrl,
+  song, lyricLines, audioUrl,
   onBack, onNext, onPrev,
 }: SingModeViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -422,6 +421,7 @@ export default function SingModeView({
   const bgImageRef = useRef<HTMLImageElement | null>(null)
   const [bgLoaded, setBgLoaded] = useState(false)
   const [bgImageLoaded, setBgImageLoaded] = useState(false)
+  const [activeLyricId, setActiveLyricId] = useState<number>(-1)
   const [activeWordId, setActiveWordId] = useState<number>(-1)
   const [elapsedSecs, setElapsedSecs] = useState(0)
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -515,6 +515,7 @@ export default function SingModeView({
   useEffect(() => {
     setElapsedSecs(0)
     setActiveWordId(-1)
+    setActiveLyricId(-1)
     if (!audioUrl) { audioRef.current = null; return }
     const audio = new Audio(audioUrl)
     audio.preload = "auto"
@@ -533,22 +534,32 @@ export default function SingModeView({
     }
   }, [audioUrl, song.number, onNext])
 
-  // ── Word-level karaoke sync — reads audio.currentTime directly (same as DDR game) ──
+  // ── Word-level + Line-level karaoke sync — reads audio.currentTime directly (same as DDR game) ──
   useEffect(() => {
-    if (lyricLines.length === 0) { setActiveWordId(-1); return }
+    if (lyricLines.length === 0) { setActiveWordId(-1); setActiveLyricId(-1); return }
     if (wordTimerRef.current) clearInterval(wordTimerRef.current)
     wordTimerRef.current = setInterval(() => {
       const elapsed = audioRef.current?.currentTime ?? 0
       setElapsedSecs(elapsed)
-      let found = -1
+      let foundWord = -1
+      let foundLine = -1
       for (const line of lyricLines) {
+        const firstWord = line.words[0]
+        const lastWord = line.words[line.words.length - 1]
+        // Line is active if we're between its first word start and last word end (+ small buffer)
+        if (firstWord && lastWord &&
+            elapsed >= firstWord.timestamp &&
+            elapsed < lastWord.timestamp + lastWord.duration + 0.3) {
+          foundLine = line.id
+        }
         for (const word of line.words) {
           if (elapsed >= word.timestamp && elapsed < word.timestamp + word.duration) {
-            found = word.id
+            foundWord = word.id
           }
         }
       }
-      setActiveWordId(found)
+      setActiveWordId(foundWord)
+      setActiveLyricId(foundLine)
     }, 40) // 40ms — same as DDR game
     return () => { if (wordTimerRef.current) clearInterval(wordTimerRef.current) }
   }, [lyricLines, song.number])

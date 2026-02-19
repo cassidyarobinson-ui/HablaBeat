@@ -1919,7 +1919,6 @@ export default function HablaBeat() {
       <SingModeView
         song={currentSong}
         lyricLines={lyricLines}
-        activeLyricId={activeLyricId}
         audioUrl={currentAudioUrl}
         onBack={() => setCurrentView("songs")}
         onNext={currentSongIndex < allSongs.length - 1 ? handleNextSong : undefined}
