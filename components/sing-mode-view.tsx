@@ -521,9 +521,11 @@ export default function SingModeView({
     audioRef.current = audio
     // Auto-advance to next song when audio ends
     audio.addEventListener("ended", () => { if (onNext) setTimeout(onNext, 1500) })
-    const tryPlay = () => { audio.play().catch(() => {}) }
-    audio.addEventListener("canplay", tryPlay, { once: true })
-    tryPlay()
+    // Try to play immediately, then retry on canplay in case buffering is needed
+    audio.play().catch(() => {
+      // Browser may have blocked autoplay — retry when buffered
+      audio.addEventListener("canplay", () => { audio.play().catch(() => {}) }, { once: true })
+    })
     return () => {
       audio.pause()
       audio.src = ""

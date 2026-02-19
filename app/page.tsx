@@ -1672,17 +1672,9 @@ export default function HablaBeat() {
     }
   }, [currentView, currentSong])
 
-  // Auto-start mic when entering player view, clean up when leaving
+  // Clean up mic if it was active when leaving player view
   useEffect(() => {
-    if (currentView === "player") {
-      // Small delay to ensure the view is rendered before requesting mic
-      const timer = setTimeout(() => {
-        if (!isMicActive) {
-          startMic()
-        }
-      }, 500)
-      return () => clearTimeout(timer)
-    } else {
+    if (currentView !== "player") {
       stopMic()
     }
   }, [currentView])
@@ -1763,6 +1755,12 @@ export default function HablaBeat() {
   }
 
   const handlePlaySong = (songId, categoryId, sectionId) => {
+    // Unlock audio for this browser session — must happen inside a user gesture
+    try {
+      const ctx = new AudioContext()
+      ctx.resume().then(() => ctx.close())
+    } catch {}
+
     // Find the song details
     const category = curriculumData.find((c) => c.id === categoryId)
     const section = category?.sections.find((s) => s.id === sectionId)
