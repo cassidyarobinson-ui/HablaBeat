@@ -424,6 +424,7 @@ export default function SingModeView({
   const [activeWordId, setActiveWordId] = useState<number>(-1)
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number>(Date.now() / 1000)
+  const ytCurrentTimeRef = useRef<number>(0) // actual YouTube playback position
 
   const country = getCountry(song.number)
   const { palette, flag, flagColors, country: countryName } = country
@@ -520,18 +521,21 @@ export default function SingModeView({
     }
   }, [isMicActive])
 
-  // ── Auto-advance when YouTube song ends ──
-  // YouTube IFrame API posts state changes via postMessage.
-  // State 0 = ENDED — we call onNext() with a short celebratory delay.
+  // ── YouTube postMessage listener: captures currentTime + ended state ──
+  // enablejsapi=1 on the iframe lets us receive time updates and state changes.
   useEffect(() => {
-    if (!onNext) return
     const handleMessage = (e: MessageEvent) => {
       try {
         const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data
-        // YouTube sends { event: "infoDelivery", info: { playerState: 0 } } when ended
-        if (data?.event === "infoDelivery" && data?.info?.playerState === 0) {
-          // Small delay so the last lyric is visible before transitioning
-          setTimeout(() => { onNext() }, 1500)
+        // currentTime updates arrive as infoDelivery with currentTime field
+        if (data?.event === "infoDelivery") {
+          if (typeof data?.info?.currentTime === "number") {
+            ytCurrentTimeRef.current = data.info.currentTime
+          }
+          // playerState 0 = ENDED — auto-advance to next song
+          if (data?.info?.playerState === 0 && onNext) {
+            setTimeout(() => { onNext() }, 1500)
+          }
         }
       } catch {}
     }
@@ -539,15 +543,12 @@ export default function SingModeView({
     return () => window.removeEventListener("message", handleMessage)
   }, [onNext, song.youtubeId])
 
-  // ── Word-level karaoke sync ──
-  // YOUTUBE_START_OFFSET accounts for YouTube iframe autoplay startup latency (~1.5s)
-  const YOUTUBE_START_OFFSET = 1.5
+  // ── Word-level karaoke sync — uses actual YouTube currentTime ──
   useEffect(() => {
     if (lyricLines.length === 0) { setActiveWordId(-1); return }
-    startTimeRef.current = Date.now() / 1000
     if (wordTimerRef.current) clearInterval(wordTimerRef.current)
     wordTimerRef.current = setInterval(() => {
-      const elapsed = (Date.now() / 1000 - startTimeRef.current) - YOUTUBE_START_OFFSET
+      const elapsed = ytCurrentTimeRef.current
       let found = -1
       for (const line of lyricLines) {
         for (const word of line.words) {

@@ -1400,6 +1400,7 @@ export default function HablaBeat() {
   const [activeLyricId, setActiveLyricId] = useState<number>(-1)
   const lyricTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const lyricStartTimeRef = useRef<number>(0)
+  const ytCurrentTimeRef = useRef<number>(0) // actual YouTube playback position from postMessage
   const lyricCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const lyricAnimRef = useRef<number | null>(null)
 
@@ -1569,15 +1570,12 @@ export default function HablaBeat() {
     lyricStartTimeRef.current = Date.now() / 1000
   }, [currentSong])
 
-  // Lyric sync ticker — uses wall-clock time from when song view opened
-  // YOUTUBE_START_OFFSET accounts for YouTube iframe autoplay startup latency (~1.5s)
-  const YOUTUBE_START_OFFSET = 1.5
+  // Lyric sync ticker — uses actual YouTube currentTime from postMessage (same as DDR game uses audio.currentTime)
   useEffect(() => {
     if (currentView !== "player" || lyricLines.length === 0) return
-    lyricStartTimeRef.current = Date.now() / 1000
     if (lyricTimerRef.current) clearInterval(lyricTimerRef.current)
     lyricTimerRef.current = setInterval(() => {
-      const elapsed = (Date.now() / 1000 - lyricStartTimeRef.current) - YOUTUBE_START_OFFSET
+      const elapsed = ytCurrentTimeRef.current
       let active = -1
       for (const line of lyricLines) {
         const firstWord = line.words[0]
@@ -1590,6 +1588,22 @@ export default function HablaBeat() {
     }, 80)
     return () => { if (lyricTimerRef.current) clearInterval(lyricTimerRef.current) }
   }, [currentView, lyricLines])
+
+  // Listen for YouTube postMessage currentTime updates (enablejsapi=1 on the iframe)
+  useEffect(() => {
+    if (currentView !== "player") return
+    ytCurrentTimeRef.current = 0
+    const handleMessage = (e: MessageEvent) => {
+      try {
+        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data
+        if (data?.event === "infoDelivery" && typeof data?.info?.currentTime === "number") {
+          ytCurrentTimeRef.current = data.info.currentTime
+        }
+      } catch {}
+    }
+    window.addEventListener("message", handleMessage)
+    return () => window.removeEventListener("message", handleMessage)
+  }, [currentView, currentSong?.id])
 
   // Mini visualizer canvas loop for player view
   useEffect(() => {
