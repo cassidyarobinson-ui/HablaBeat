@@ -1019,8 +1019,8 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/super-bunny-blue.gif"
-                alt="Blue Bunny"
+                src="/images/super-bunny-heart.jpg"
+                alt="HablaBeat Bunny"
                 className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.1)]"
               />
             </div>

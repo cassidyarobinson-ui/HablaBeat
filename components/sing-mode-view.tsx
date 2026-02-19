@@ -426,6 +426,7 @@ export default function SingModeView({
   const [elapsedSecs, setElapsedSecs] = useState(0)
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)  // direct audio playback — same as DDR game
+  const progressBarRef = useRef<HTMLDivElement>(null)
 
   // Total song duration derived from the last lyric word's end time
   const totalDuration = useMemo(() => {
@@ -521,7 +522,7 @@ export default function SingModeView({
     audio.preload = "auto"
     audioRef.current = audio
     // Auto-advance to next song when audio ends
-    audio.addEventListener("ended", () => { if (onNext) setTimeout(onNext, 1500) })
+    audio.addEventListener("ended", () => { if (onNext) setTimeout(onNext, 800) })
     // Try to play immediately, then retry on canplay in case buffering is needed
     audio.play().catch(() => {
       // Browser may have blocked autoplay — retry when buffered
@@ -609,7 +610,13 @@ export default function SingModeView({
         const offY = (H * (zoom - 1)) / 2
 
         if (hasVideo) {
-          ctx.drawImage(vid!, -offX, -offY, W * zoom, H * zoom)
+          // Cover-fit: preserve aspect ratio, no distortion when window is resized
+          const vw = vid!.videoWidth || W
+          const vh = vid!.videoHeight || H
+          const vscale = Math.max(W / vw, H / vh)
+          const vdw = vw * vscale * zoom
+          const vdh = vh * vscale * zoom
+          ctx.drawImage(vid!, -offX + (W - vdw) / 2, -offY + (H - vdh) / 2, vdw, vdh)
         } else if (hasImage) {
           // Draw image cover-fit
           const iw = img!.naturalWidth, ih = img!.naturalHeight
@@ -649,6 +656,15 @@ export default function SingModeView({
       window.removeEventListener("resize", resize)
     }
   }, [palette, bgLoaded, bgImageLoaded, song.number])
+
+  // ── Seek: click anywhere on progress bar to jump to that position ──
+  function handleSeek(e: React.MouseEvent<HTMLDivElement>) {
+    if (!audioRef.current || totalDuration <= 0 || !progressBarRef.current) return
+    const rect = progressBarRef.current.getBoundingClientRect()
+    const fraction = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    audioRef.current.currentTime = fraction * totalDuration
+    setElapsedSecs(fraction * totalDuration)
+  }
 
   // Active lyric lines
   const activeLine = lyricLines.find(l => l.id === activeLyricId)
@@ -745,18 +761,26 @@ export default function SingModeView({
       <div className="relative z-10 px-4 pb-safe pb-6 pt-2"
         style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)" }}>
 
-        {/* Progress bar */}
+        {/* Progress bar — click to seek */}
         <div className="flex items-center gap-2 mb-3">
           <span className="text-white/60 text-xs tabular-nums w-8 text-right">{formatTime(elapsedSecs)}</span>
-          <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full"
-              style={{
-                width: totalDuration > 0 ? `${Math.min(100, (elapsedSecs / totalDuration) * 100)}%` : "0%",
-                background: `linear-gradient(90deg, ${palette[0]}, ${palette[1]})`,
-                transition: "width 0.1s linear",
-              }}
-            />
+          {/* Outer wrapper: larger invisible hit area for easier tapping */}
+          <div
+            ref={progressBarRef}
+            onClick={handleSeek}
+            className="flex-1 cursor-pointer flex items-center"
+            style={{ padding: "8px 0", margin: "-8px 0" }}
+          >
+            <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: totalDuration > 0 ? `${Math.min(100, (elapsedSecs / totalDuration) * 100)}%` : "0%",
+                  background: `linear-gradient(90deg, ${palette[0]}, ${palette[1]})`,
+                  transition: "width 0.1s linear",
+                }}
+              />
+            </div>
           </div>
           <span className="text-white/60 text-xs tabular-nums w-8">{formatTime(totalDuration)}</span>
         </div>

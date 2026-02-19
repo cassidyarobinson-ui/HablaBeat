@@ -1929,7 +1929,7 @@ export default function HablaBeat() {
 
   if (currentView === "player_legacy" && currentSong) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-900">
+      <div className="min-h-screen bg-white text-gray-900">
         <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
           {/* Header */}
           <div className="flex items-center justify-between p-4 pt-8">
@@ -2139,7 +2139,7 @@ export default function HablaBeat() {
     })
 
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
           {/* Header */}
           <div className="text-gray-900 p-4">
@@ -2147,8 +2147,8 @@ export default function HablaBeat() {
               <div className="w-44 h-44 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/super-bunny-blue.gif"
-                  alt="Blue Bunny"
+                  src="/images/super-bunny-heart.jpg"
+                  alt="HablaBeat Bunny"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -2241,7 +2241,7 @@ export default function HablaBeat() {
 
   if (currentView === "songs") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
           {/* Header with Super Bunny */}
           <div className="text-gray-900 p-4">
@@ -2249,8 +2249,8 @@ export default function HablaBeat() {
               <div className="w-44 h-44 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/super-bunny-blue.gif"
-                  alt="Blue Bunny"
+                  src="/images/super-bunny-heart.jpg"
+                  alt="HablaBeat Bunny"
                   className="w-full h-full object-contain"
                 />
               </div>
