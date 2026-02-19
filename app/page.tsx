@@ -2154,7 +2154,7 @@ export default function HablaBeat() {
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
-                <p className="text-lg" style={{ color: "#7EC8E3" }}>Your Vocab Bank 💰</p>
+                <p className="text-lg" style={{ color: "#6A9FC0" }}>Your Vocab Bank 💰</p>
                 <div className="flex items-center gap-2 mt-2">
                   <Coins className="h-4 w-4 text-teal-600" />
                   <span className="text-teal-600 font-medium">
@@ -2256,8 +2256,8 @@ export default function HablaBeat() {
               </div>
               <div className="flex-1 text-left">
                 <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
-                <p className="text-lg leading-tight" style={{ color: "#7EC8E3" }}>Collect coins with</p>
-                <p className="text-lg leading-tight font-bold" style={{ color: "#7EC8E3" }}>Blue Bunny!</p>
+                <p className="text-lg leading-tight" style={{ color: "#6A9FC0" }}>Collect coins with</p>
+                <p className="text-lg leading-tight font-bold" style={{ color: "#6A9FC0" }}>Blue Bunny!</p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-xl">🔥</span>
                   <span className="text-teal-600 font-bold">Best Flow: {bestFlow}</span>
@@ -2397,7 +2397,7 @@ export default function HablaBeat() {
                                     {selectedLanguage === "spanish" && (
                                       <button
                                         onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors" style={{ backgroundColor: "#7EC8E3" }}
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors" style={{ backgroundColor: "#6A9FC0" }}
                                       >
                                         🥕 Play
                                       </button>
@@ -2405,7 +2405,7 @@ export default function HablaBeat() {
                                     {isClickable && (
                                       <button
                                         onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors" style={{ backgroundColor: "#7EC8E3" }}
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors" style={{ backgroundColor: "#6A9FC0" }}
                                       >
                                         🎤 Sing
                                       </button>
