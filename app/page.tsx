@@ -1398,10 +1398,8 @@ export default function HablaBeat() {
   // Lyrics sync state
   const [lyricLines, setLyricLines] = useState<{id: number; words: {id: number; text: string; timestamp: number; duration: number}[]}[]>([])
   const [activeLyricId, setActiveLyricId] = useState<number>(-1)
-  const [currentAudioUrl, setCurrentAudioUrl] = useState<string>("")
   const lyricTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const lyricStartTimeRef = useRef<number>(0)
-  const syncAudioRef = useRef<HTMLAudioElement | null>(null) // hidden audio for timing (same as DDR game)
   const lyricCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const lyricAnimRef = useRef<number | null>(null)
 
@@ -1557,61 +1555,19 @@ export default function HablaBeat() {
     return getSongCountry(songNum).palette
   }
 
-  // Load lyrics + audioUrl when song changes
+  // Load lyrics when song changes
   useEffect(() => {
-    if (!currentSong?.number) { setLyricLines([]); setCurrentAudioUrl(""); return }
+    if (!currentSong?.number) { setLyricLines([]); return }
     fetch(`/timing/song-${currentSong.number}.json`)
       .then(r => r.ok ? r.json() : null)
       .then(data => {
         if (data?.lyrics) setLyricLines(data.lyrics)
         else setLyricLines([])
-        if (data?.audioUrl) setCurrentAudioUrl(data.audioUrl)
-        else setCurrentAudioUrl("")
       })
-      .catch(() => { setLyricLines([]); setCurrentAudioUrl("") })
+      .catch(() => setLyricLines([]))
     setActiveLyricId(-1)
     lyricStartTimeRef.current = Date.now() / 1000
   }, [currentSong])
-
-  // Hidden sync audio for player view — same approach as DDR game
-  // Plays the song's audio muted so we can read audio.currentTime for lyric sync
-  useEffect(() => {
-    if (currentView !== "player" || !currentAudioUrl) {
-      if (syncAudioRef.current) { syncAudioRef.current.pause(); syncAudioRef.current.src = ""; syncAudioRef.current = null }
-      return
-    }
-    const audio = new Audio(currentAudioUrl)
-    audio.muted = true
-    audio.preload = "auto"
-    syncAudioRef.current = audio
-    const tryPlay = () => { audio.play().catch(() => {}) }
-    audio.addEventListener("canplay", tryPlay, { once: true })
-    tryPlay()
-    return () => {
-      audio.pause()
-      audio.src = ""
-      syncAudioRef.current = null
-    }
-  }, [currentView, currentAudioUrl])
-
-  // Lyric sync ticker — reads audio.currentTime directly (same as DDR game)
-  useEffect(() => {
-    if (currentView !== "player" || lyricLines.length === 0) return
-    if (lyricTimerRef.current) clearInterval(lyricTimerRef.current)
-    lyricTimerRef.current = setInterval(() => {
-      const elapsed = syncAudioRef.current?.currentTime ?? 0
-      let active = -1
-      for (const line of lyricLines) {
-        const firstWord = line.words[0]
-        const lastWord = line.words[line.words.length - 1]
-        if (elapsed >= firstWord.timestamp && elapsed < lastWord.timestamp + lastWord.duration + 0.3) {
-          active = line.id
-        }
-      }
-      setActiveLyricId(active)
-    }, 80)
-    return () => { if (lyricTimerRef.current) clearInterval(lyricTimerRef.current) }
-  }, [currentView, lyricLines])
 
   // Mini visualizer canvas loop for player view
   useEffect(() => {
@@ -1963,13 +1919,7 @@ export default function HablaBeat() {
         song={currentSong}
         lyricLines={lyricLines}
         activeLyricId={activeLyricId}
-        audioUrl={currentAudioUrl}
-        isMicActive={isMicActive}
-        singLevel={singLevel}
-        singScore={singScore}
-        onStartMic={startMic}
-        onStopMic={stopMic}
-        onBack={() => { stopMic(); setCurrentView("songs") }}
+        onBack={() => setCurrentView("songs")}
         onNext={currentSongIndex < allSongs.length - 1 ? handleNextSong : undefined}
         onPrev={currentSongIndex > 0 ? handlePreviousSong : undefined}
       />

@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { ChevronLeft, Mic, MicOff, SkipBack, SkipForward } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { ChevronLeft, SkipBack, SkipForward } from "lucide-react"
 
 // ─────────────────────────────────────────────
 // Country data — palette + flag colors + Pexels query pool per song
@@ -396,12 +396,6 @@ interface SingModeViewProps {
   song: { id: string; title: string; number: number; youtubeId?: string; sectionTitle?: string }
   lyricLines: { id: number; words: { id: number; text: string; timestamp: number; duration: number }[] }[]
   activeLyricId: number
-  audioUrl?: string
-  isMicActive: boolean
-  singLevel: number
-  singScore: number
-  onStartMic: () => void
-  onStopMic: () => void
   onBack: () => void
   onNext?: () => void
   onPrev?: () => void
@@ -410,10 +404,16 @@ interface SingModeViewProps {
 // ─────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────
+// ── Format seconds as m:ss ──
+function formatTime(s: number) {
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60)
+  return `${m}:${sec.toString().padStart(2, "0")}`
+}
+
 export default function SingModeView({
-  song, lyricLines, activeLyricId, audioUrl,
-  isMicActive, singLevel, singScore,
-  onStartMic, onStopMic, onBack, onNext, onPrev,
+  song, lyricLines, activeLyricId,
+  onBack, onNext, onPrev,
 }: SingModeViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animRef = useRef<number | null>(null)
@@ -423,8 +423,21 @@ export default function SingModeView({
   const [bgLoaded, setBgLoaded] = useState(false)
   const [bgImageLoaded, setBgImageLoaded] = useState(false)
   const [activeWordId, setActiveWordId] = useState<number>(-1)
+  const [elapsedSecs, setElapsedSecs] = useState(0)
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const syncAudioRef = useRef<HTMLAudioElement | null>(null) // hidden audio for timing (same as DDR game)
+  const playStartWallRef = useRef<number>(0)   // wall-clock ms when YouTube started playing
+  const isPlayingRef = useRef<boolean>(false)  // whether YouTube has fired playerState=1
+
+  // Total song duration derived from the last lyric word's end time
+  const totalDuration = useMemo(() => {
+    let max = 0
+    for (const line of lyricLines) {
+      for (const w of line.words) {
+        max = Math.max(max, w.timestamp + w.duration)
+      }
+    }
+    return max
+  }, [lyricLines])
 
   const country = getCountry(song.number)
   const { palette, flag, flagColors, country: countryName } = country
@@ -497,70 +510,45 @@ export default function SingModeView({
     }
   }, [song.number])
 
-  // ── Grab analyser from Web Audio if mic is active ──
+  // ── YouTube postMessage: detect play start (playerState=1) + song ended (0) ──
+  // When YouTube fires playerState=1, we capture the wall clock as our timing reference.
+  // This is the most reliable approach — single audio source, no drift.
   useEffect(() => {
-    // The analyser is created in the parent (page.tsx); we can't easily access it here.
-    // So we create our own mic stream just for the visualizer canvas.
-    if (!isMicActive) { analyserRef.current = null; return }
-    let ctx: AudioContext | null = null
-    let stream: MediaStream | null = null
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(s => {
-      stream = s
-      ctx = new AudioContext()
-      const src = ctx.createMediaStreamSource(s)
-      const an = ctx.createAnalyser()
-      an.fftSize = 256
-      an.smoothingTimeConstant = 0.75
-      src.connect(an)
-      analyserRef.current = an
-    }).catch(() => {})
-    return () => {
-      analyserRef.current = null
-      stream?.getTracks().forEach(t => t.stop())
-      ctx?.close()
-    }
-  }, [isMicActive])
-
-  // ── Hidden sync audio element — same approach as DDR game ──
-  // Loads the same audio file used for timing JSON generation, plays it muted.
-  // We read audio.currentTime directly (reliable, no postMessage needed).
-  useEffect(() => {
-    if (!audioUrl) { syncAudioRef.current = null; return }
-    const audio = new Audio(audioUrl)
-    audio.muted = true       // silent — YouTube iframe handles audible playback
-    audio.preload = "auto"
-    syncAudioRef.current = audio
-    // Play as soon as enough is buffered
-    const tryPlay = () => { audio.play().catch(() => {}) }
-    audio.addEventListener("canplay", tryPlay, { once: true })
-    tryPlay() // attempt immediately in case already cached
-    return () => {
-      audio.pause()
-      audio.src = ""
-      syncAudioRef.current = null
-    }
-  }, [audioUrl, song.number])
-
-  // ── YouTube postMessage listener: song ENDED → auto-advance ──
-  useEffect(() => {
+    isPlayingRef.current = false
+    playStartWallRef.current = 0
+    setElapsedSecs(0)
     const handleMessage = (e: MessageEvent) => {
       try {
         const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data
-        if (data?.event === "infoDelivery" && data?.info?.playerState === 0 && onNext) {
-          setTimeout(() => { onNext() }, 1500)
+        if (data?.event === "infoDelivery") {
+          const state = data?.info?.playerState
+          // playerState 1 = PLAYING — capture the moment YouTube starts
+          if (state === 1 && !isPlayingRef.current) {
+            isPlayingRef.current = true
+            playStartWallRef.current = Date.now()
+          }
+          // playerState 0 = ENDED — auto-advance to next song
+          if (state === 0 && onNext) {
+            setTimeout(() => { onNext() }, 1500)
+          }
         }
       } catch {}
     }
     window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
+    return () => {
+      window.removeEventListener("message", handleMessage)
+      isPlayingRef.current = false
+    }
   }, [onNext, song.youtubeId])
 
-  // ── Word-level karaoke sync — reads audio.currentTime directly (same as DDR game) ──
+  // ── Word-level karaoke sync — wall-clock elapsed since YouTube started playing ──
   useEffect(() => {
     if (lyricLines.length === 0) { setActiveWordId(-1); return }
     if (wordTimerRef.current) clearInterval(wordTimerRef.current)
     wordTimerRef.current = setInterval(() => {
-      const elapsed = syncAudioRef.current?.currentTime ?? 0
+      if (!isPlayingRef.current) return
+      const elapsed = (Date.now() - playStartWallRef.current) / 1000
+      setElapsedSecs(elapsed)
       let found = -1
       for (const line of lyricLines) {
         for (const word of line.words) {
@@ -794,25 +782,23 @@ export default function SingModeView({
       <div className="relative z-10 px-4 pb-safe pb-6 pt-2"
         style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)" }}>
 
-        {/* Volume meter */}
+        {/* Progress bar */}
         <div className="flex items-center gap-2 mb-3">
+          <span className="text-white/60 text-xs tabular-nums w-8 text-right">{formatTime(elapsedSecs)}</span>
           <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-75"
+              className="h-full rounded-full"
               style={{
-                width: `${singLevel}%`,
-                background: singLevel > 60
-                  ? "linear-gradient(90deg,#22c55e,#eab308,#ef4444)"
-                  : singLevel > 25
-                  ? "linear-gradient(90deg,#22c55e,#eab308)"
-                  : "#22c55e",
+                width: totalDuration > 0 ? `${Math.min(100, (elapsedSecs / totalDuration) * 100)}%` : "0%",
+                background: `linear-gradient(90deg, ${palette[0]}, ${palette[1]})`,
+                transition: "width 0.1s linear",
               }}
             />
           </div>
-          <span className="text-yellow-400 font-bold text-sm whitespace-nowrap">⭐ {singScore}</span>
+          <span className="text-white/60 text-xs tabular-nums w-8">{formatTime(totalDuration)}</span>
         </div>
 
-        {/* Skip + Mic row */}
+        {/* Skip prev/next row */}
         <div className="flex items-center justify-between">
           <button
             onClick={onPrev}
@@ -822,22 +808,8 @@ export default function SingModeView({
             <SkipBack className="h-5 w-5" />
           </button>
 
-          {isMicActive ? (
-            <button
-              onClick={onStopMic}
-              className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white text-sm"
-              style={{ background: palette[0], boxShadow: `0 0 20px ${palette[0]}` }}
-            >
-              <MicOff className="h-4 w-4" /> Mute
-            </button>
-          ) : (
-            <button
-              onClick={onStartMic}
-              className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white text-sm bg-white/20 border border-white/30"
-            >
-              <Mic className="h-4 w-4" /> Sing!
-            </button>
-          )}
+          {/* Spacer keeps skip buttons at the edges */}
+          <div className="flex-1" />
 
           <button
             onClick={onNext}
