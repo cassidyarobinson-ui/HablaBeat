@@ -555,6 +555,52 @@ export default function SingModeView({
     if (song.number !== 8) {
       loadMedia.current(country)
       scheduleSwap.current(country)
+    } else {
+      // Preload spider immediately so background shows from song start (before lyrics at 12.60s)
+      const firstQuery = SONG8_ANIMAL_QUERIES[0] // "araña spider web close up"
+      lastAnimalLineRef.current = 0
+
+      // Still photo fallback
+      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(firstQuery)}&per_page=10&orientation=landscape`, {
+        headers: { Authorization: PEXELS_KEY }
+      }).then(r => r.json()).then(data => {
+        const photos: any[] = data?.photos ?? []
+        if (!photos.length) return
+        const pick = photos[Math.floor(Math.random() * Math.min(photos.length, 5))]
+        const src = pick?.src?.large2x ?? pick?.src?.large ?? pick?.src?.original
+        if (!src) return
+        const img = new Image()
+        img.crossOrigin = "anonymous"
+        img.onload = () => {
+          animalCacheRef.current[0] = { ...animalCacheRef.current[0], img }
+          bgImageRef.current = img
+          setBgImageLoaded(true)
+        }
+        img.src = src
+      }).catch(() => {})
+
+      // Video
+      const vid = document.createElement("video")
+      vid.muted = true; vid.loop = true; vid.playsInline = true; vid.crossOrigin = "anonymous"
+      animalCacheRef.current[0] = { vid: null, img: null }
+      fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(firstQuery)}&per_page=10`, {
+        headers: { Authorization: PEXELS_KEY }
+      }).then(r => r.json()).then(data => {
+        const videos: any[] = data?.videos ?? []
+        if (!videos.length) return
+        const pick = videos[Math.floor(Math.random() * Math.min(videos.length, 5))]
+        const files: any[] = pick.video_files ?? []
+        const mp4 = files.filter((f: any) => f.file_type === "video/mp4").sort((a: any, b: any) => a.height - b.height).find((f: any) => f.height <= 720)
+        if (!mp4?.link) return
+        vid.src = mp4.link
+        animalCacheRef.current[0] = { ...animalCacheRef.current[0], vid }
+        vid.play().then(() => {
+          const prev = bgVideoRef.current
+          if (prev && prev !== vid) { prev.pause(); prev.src = "" }
+          bgVideoRef.current = vid
+          setBgLoaded(true)
+        }).catch(() => {})
+      }).catch(() => {})
     }
     return () => {
       if (swapTimerRef.current) clearTimeout(swapTimerRef.current)
