@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
+const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
+const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 import {
   Play,
   BookOpen,
@@ -16,6 +18,7 @@ import {
   Coins,
   Mic,
   MicOff,
+  Sparkles,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -1351,7 +1354,7 @@ const loadPersisted = (key: string, fallback: any) => {
 }
 
 export default function HablaBeat() {
-  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr">("songs")
+  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer">("songs")
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
@@ -1391,6 +1394,14 @@ export default function HablaBeat() {
   const micAnalyserRef = useRef<AnalyserNode | null>(null)
   const micAnimFrameRef = useRef<number | null>(null)
   const singScoreRef = useRef(0)
+
+  // Lyrics sync state
+  const [lyricLines, setLyricLines] = useState<{id: number; words: {id: number; text: string; timestamp: number; duration: number}[]}[]>([])
+  const [activeLyricId, setActiveLyricId] = useState<number>(-1)
+  const lyricTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const lyricStartTimeRef = useRef<number>(0)
+  const lyricCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const lyricAnimRef = useRef<number | null>(null)
 
   // Load persisted stats on mount
   useEffect(() => {
@@ -1466,6 +1477,219 @@ export default function HablaBeat() {
     setIsMicActive(false)
     setSingLevel(0)
   }
+
+  // Per-song country data — exact mapping from world JSON (50 Spanish songs)
+  type SongCountryData = { country: string; flag: string; palette: string[]; pexelsQuery: string }
+  const SONG_COUNTRY_MAP: Record<number, SongCountryData> = {
+    // World 1 — Alphabet World → Mexico (1-3)
+    1:  { country: 'Mexico',             flag: '🇲🇽', palette: ['#00CED1','#FF1493','#FF8C00'], pexelsQuery: 'mexico papel picado colorful fiesta' },
+    2:  { country: 'Mexico',             flag: '🇲🇽', palette: ['#00CED1','#FF1493','#FF8C00'], pexelsQuery: 'mexico talavera tiles colorful mosaic' },
+    3:  { country: 'Mexico',             flag: '🇲🇽', palette: ['#00CED1','#FF1493','#FF8C00'], pexelsQuery: 'mexico huichol art colorful patterns' },
+    // World 2 — Self World → Guatemala (4-7)
+    4:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala mayan woven textiles colorful huipil' },
+    5:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala colorful market fabric weaving' },
+    6:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala jungle temple ancient mayan' },
+    7:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala traditional dance colorful costume' },
+    // World 3 — Pet World → El Salvador & Honduras (8-10)
+    8:  { country: 'El Salvador',        flag: '🇸🇻', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'el salvador colorful wildlife tropical nature' },
+    9:  { country: 'Honduras',           flag: '🇭🇳', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'honduras tropical wildlife colorful reef' },
+    10: { country: 'El Salvador',        flag: '🇸🇻', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'central america ceramic folk art colorful' },
+    // World 4 — Travel World → Nicaragua (11-13)
+    11: { country: 'Nicaragua',          flag: '🇳🇮', palette: ['#FF4500','#00CED1','#FF8C00'], pexelsQuery: 'nicaragua lake volcano dramatic landscape' },
+    12: { country: 'Nicaragua',          flag: '🇳🇮', palette: ['#FF4500','#00CED1','#FF8C00'], pexelsQuery: 'nicaragua colorful mosaic patterns streets' },
+    13: { country: 'Nicaragua',          flag: '🇳🇮', palette: ['#FF4500','#00CED1','#FF8C00'], pexelsQuery: 'nicaragua colorful market street art' },
+    // World 5 — Time World → Costa Rica (14-17)
+    14: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica rainforest wildlife colorful tropical' },
+    15: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica jungle animals bright colorful' },
+    16: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica colorful birds toucans nature' },
+    17: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica tropical flowers waterfall colorful' },
+    // World 6 — Feelings & Color World → Panama (18-20)
+    18: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama pollera dress traditional colorful' },
+    19: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama tropical flowers bright colorful' },
+    20: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama colorful city canal tropical' },
+    // World 7 — Food World → Caribbean: Cuba, Dominican Republic, Puerto Rico (21-23)
+    21: { country: 'Cuba',               flag: '🇨🇺', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'cuba salsa dance colorful havana street' },
+    22: { country: 'Dominican Republic', flag: '🇩🇴', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'dominican republic merengue dance colorful festival' },
+    23: { country: 'Puerto Rico',        flag: '🇵🇷', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'puerto rico colorful streets old san juan' },
+    // World 8 — AR World → Colombia (24-27)
+    24: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia carnaval barranquilla colorful masks feathers' },
+    25: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia cumbia dance colorful skirts' },
+    26: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia medellin colorful street art flowers' },
+    27: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia colorful coffee region flowers landscape' },
+    // World 9 — ER World → Venezuela (28-30)
+    28: { country: 'Venezuela',          flag: '🇻🇪', palette: ['#DAA520','#228B22','#CC0000'], pexelsQuery: 'venezuela angel falls waterfall dramatic nature' },
+    29: { country: 'Venezuela',          flag: '🇻🇪', palette: ['#DAA520','#228B22','#CC0000'], pexelsQuery: 'venezuela joropo harp music traditional dance' },
+    30: { country: 'Venezuela',          flag: '🇻🇪', palette: ['#DAA520','#228B22','#CC0000'], pexelsQuery: 'venezuela tepui table mountain colorful landscape' },
+    // World 10 — IR World → Ecuador (31-33)
+    31: { country: 'Ecuador',            flag: '🇪🇨', palette: ['#000080','#DC143C','#FFD700'], pexelsQuery: 'ecuador andean textiles colorful patterns market' },
+    32: { country: 'Ecuador',            flag: '🇪🇨', palette: ['#000080','#DC143C','#FFD700'], pexelsQuery: 'ecuador galapagos islands colorful wildlife' },
+    33: { country: 'Ecuador',            flag: '🇪🇨', palette: ['#000080','#DC143C','#FFD700'], pexelsQuery: 'ecuador otavalo market colorful textiles weaving' },
+    // World 11 — Quick Past World → Peru (34-37)
+    34: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru chicha art fluorescent colorful poster' },
+    35: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru marinera dance silhouette colorful festival' },
+    36: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru machu picchu inca colorful sunrise' },
+    37: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru cusco colorful traditional carnival' },
+    // World 12 — Long Past World → Bolivia (38-40)
+    38: { country: 'Bolivia',            flag: '🇧🇴', palette: ['#FF4500','#00CC00','#8B4513'], pexelsQuery: 'bolivia diablada devil mask festival colorful' },
+    39: { country: 'Bolivia',            flag: '🇧🇴', palette: ['#FF4500','#00CC00','#8B4513'], pexelsQuery: 'bolivia altiplano textile woven colorful patterns' },
+    40: { country: 'Bolivia',            flag: '🇧🇴', palette: ['#FF4500','#00CC00','#8B4513'], pexelsQuery: 'bolivia salar de uyuni salt flat colorful sky' },
+    // World 13 — Future World → Paraguay (41-42)
+    41: { country: 'Paraguay',           flag: '🇵🇾', palette: ['#FFFFFF','#00CC00','#1E90FF'], pexelsQuery: 'paraguay nanduti lace colorful patterns weaving' },
+    42: { country: 'Paraguay',           flag: '🇵🇾', palette: ['#FFFFFF','#00CC00','#1E90FF'], pexelsQuery: 'paraguay colorful traditional festival dance music' },
+    // World 14 — Conditional World → Uruguay (43-44)
+    43: { country: 'Uruguay',            flag: '🇺🇾', palette: ['#20B2AA','#FF8C00','#A9A9A9'], pexelsQuery: 'uruguay coastal ocean surf colorful sunset' },
+    44: { country: 'Uruguay',            flag: '🇺🇾', palette: ['#20B2AA','#FF8C00','#A9A9A9'], pexelsQuery: 'uruguay candombe drum dance colorful afro' },
+    // World 15 — Pronoun World → Chile (45-46)
+    45: { country: 'Chile',              flag: '🇨🇱', palette: ['#ADD8E6','#DC143C','#696969'], pexelsQuery: 'chile andes mountains dramatic colorful landscape' },
+    46: { country: 'Chile',              flag: '🇨🇱', palette: ['#ADD8E6','#DC143C','#696969'], pexelsQuery: 'chile patagonia colorful nature torres del paine' },
+    // World 16 — Advanced World → Argentina (47-50)
+    47: { country: 'Argentina',          flag: '🇦🇷', palette: ['#8B0000','#191970','#FFD700'], pexelsQuery: 'argentina tango dance dramatic couple silhouette' },
+    48: { country: 'Argentina',          flag: '🇦🇷', palette: ['#8B0000','#191970','#FFD700'], pexelsQuery: 'argentina buenos aires colorful la boca street art' },
+    49: { country: 'Argentina',          flag: '🇦🇷', palette: ['#8B0000','#191970','#FFD700'], pexelsQuery: 'argentina patagonia grand vista dramatic colorful' },
+    50: { country: 'Argentina',          flag: '🇦🇷', palette: ['#8B0000','#191970','#FFD700'], pexelsQuery: 'argentina carnival colorful costume festival' },
+  }
+  function getSongCountry(songNum: number): SongCountryData {
+    return SONG_COUNTRY_MAP[songNum] ?? { country: 'Latin America', flag: '🌎', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'latin america colorful festival dance' }
+  }
+  function getSongPalette(songNum: number): string[] {
+    return getSongCountry(songNum).palette
+  }
+
+  // Load lyrics when song changes
+  useEffect(() => {
+    if (!currentSong?.number) { setLyricLines([]); return }
+    fetch(`/timing/song-${currentSong.number}.json`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.lyrics) setLyricLines(data.lyrics)
+        else setLyricLines([])
+      })
+      .catch(() => setLyricLines([]))
+    setActiveLyricId(-1)
+    lyricStartTimeRef.current = Date.now() / 1000
+  }, [currentSong])
+
+  // Lyric sync ticker — uses wall-clock time from when song view opened
+  // YOUTUBE_START_OFFSET accounts for YouTube iframe autoplay startup latency (~1.5s)
+  const YOUTUBE_START_OFFSET = 1.5
+  useEffect(() => {
+    if (currentView !== "player" || lyricLines.length === 0) return
+    lyricStartTimeRef.current = Date.now() / 1000
+    if (lyricTimerRef.current) clearInterval(lyricTimerRef.current)
+    lyricTimerRef.current = setInterval(() => {
+      const elapsed = (Date.now() / 1000 - lyricStartTimeRef.current) - YOUTUBE_START_OFFSET
+      let active = -1
+      for (const line of lyricLines) {
+        const firstWord = line.words[0]
+        const lastWord = line.words[line.words.length - 1]
+        if (elapsed >= firstWord.timestamp && elapsed < lastWord.timestamp + lastWord.duration + 0.3) {
+          active = line.id
+        }
+      }
+      setActiveLyricId(active)
+    }, 80)
+    return () => { if (lyricTimerRef.current) clearInterval(lyricTimerRef.current) }
+  }, [currentView, lyricLines])
+
+  // Mini visualizer canvas loop for player view
+  useEffect(() => {
+    const canvas = lyricCanvasRef.current
+    if (!canvas || currentView !== "player") return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    let frame = 0
+    const songNum = currentSong?.number ?? 1
+    const countryData = getSongCountry(songNum)
+    const palette = countryData.palette
+
+    // Fetch one Pexels clip for this country and play it behind the bars
+    const bgVideo = document.createElement('video')
+    bgVideo.muted = true
+    bgVideo.loop = true
+    bgVideo.playsInline = true
+    bgVideo.crossOrigin = 'anonymous'
+    let bgReady = false
+    const PEXELS_KEY = 'QRejvnDTjk8yS9g9TWg3PNP3xQVpHJMuWimILfdpOUVYqnFygj58czF1'
+    fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(countryData.pexelsQuery)}&per_page=5`, {
+      headers: { Authorization: PEXELS_KEY }
+    }).then(r => r.json()).then(data => {
+      const videos = data?.videos ?? []
+      if (videos.length > 0) {
+        const pick = videos[Math.floor(Math.random() * videos.length)]
+        const files = pick.video_files ?? []
+        const mp4 = files.filter((f: any) => f.file_type === 'video/mp4').sort((a: any, b: any) => a.height - b.height).find((f: any) => f.height <= 720)
+        if (mp4?.link) { bgVideo.src = mp4.link; bgVideo.play().then(() => { bgReady = true }).catch(() => {}) }
+      }
+    }).catch(() => {})
+
+    const draw = () => {
+      lyricAnimRef.current = requestAnimationFrame(draw)
+      frame++
+      const W = canvas.width, H = canvas.height
+      const t = Date.now() / 1000
+      const analyser = micAnalyserRef.current
+      const freqData = new Uint8Array(analyser ? analyser.frequencyBinCount : 32)
+      if (analyser) analyser.getByteFrequencyData(freqData)
+      const energy = freqData.reduce((a, b) => a + b, 0) / freqData.length
+
+      // Background: country video or dark fade
+      if (bgReady && bgVideo.readyState >= 2) {
+        ctx.drawImage(bgVideo, 0, 0, W, H)
+        ctx.fillStyle = 'rgba(0,0,0,0.55)'
+        ctx.fillRect(0, 0, W, H)
+      } else {
+        ctx.fillStyle = 'rgba(0,0,0,0.18)'
+        ctx.fillRect(0, 0, W, H)
+      }
+
+      // Frequency bars using world palette
+      const barCount = 24
+      const barW = W / barCount
+      for (let i = 0; i < barCount; i++) {
+        const freq = freqData[Math.floor((i / barCount) * freqData.length)] || 0
+        const barH = (freq / 255) * H * 0.85 + 3
+        const col = palette[i % palette.length]
+        ctx.shadowColor = col
+        ctx.shadowBlur = 8
+        ctx.fillStyle = col
+        ctx.fillRect(i * barW + 1, H - barH, barW - 2, barH)
+      }
+      ctx.shadowBlur = 0
+
+      // Floating particles on beat
+      if (frame % 6 === 0 && energy > 20) {
+        const col = palette[Math.floor(Math.random() * palette.length)]
+        const x = Math.random() * W
+        const y = Math.random() * H
+        const r = 2 + Math.random() * (energy / 255) * 10
+        ctx.beginPath()
+        ctx.arc(x, y, r, 0, Math.PI * 2)
+        ctx.fillStyle = col
+        ctx.shadowColor = col
+        ctx.shadowBlur = 12
+        ctx.fill()
+        ctx.shadowBlur = 0
+      }
+
+      // Center pulse ring
+      const pulseR = 18 + (energy / 255) * 24
+      const col0 = palette[Math.floor(t * 2) % palette.length]
+      ctx.strokeStyle = col0
+      ctx.shadowColor = col0
+      ctx.shadowBlur = 10
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.arc(W / 2, H / 2, pulseR, 0, Math.PI * 2)
+      ctx.stroke()
+      ctx.shadowBlur = 0
+    }
+    draw()
+    return () => {
+      if (lyricAnimRef.current) cancelAnimationFrame(lyricAnimRef.current)
+      bgVideo.pause()
+      bgVideo.src = ''
+    }
+  }, [currentView, currentSong])
 
   // Auto-start mic when entering player view, clean up when leaving
   useEffect(() => {
@@ -1713,6 +1937,24 @@ export default function HablaBeat() {
 
   if (currentView === "player" && currentSong) {
     return (
+      <SingModeView
+        song={currentSong}
+        lyricLines={lyricLines}
+        activeLyricId={activeLyricId}
+        isMicActive={isMicActive}
+        singLevel={singLevel}
+        singScore={singScore}
+        onStartMic={startMic}
+        onStopMic={stopMic}
+        onBack={() => { stopMic(); setCurrentView("songs") }}
+        onNext={currentSongIndex < allSongs.length - 1 ? handleNextSong : undefined}
+        onPrev={currentSongIndex > 0 ? handlePreviousSong : undefined}
+      />
+    )
+  }
+
+  if (currentView === "player_legacy" && currentSong) {
+    return (
       <div className="min-h-screen bg-gray-50 text-gray-900">
         <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
           {/* Header */}
@@ -1756,56 +1998,93 @@ export default function HablaBeat() {
             )}
           </div>
 
-          {/* Sing Along Section - always active */}
+          {/* Lyrics + Visualizer Section */}
           <div className="px-4 mb-4">
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-blue-700">🎤 Sing Along</h3>
-                <span className="text-yellow-600 font-bold text-lg">⭐ {singScore}</span>
+            <div className="rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-black">
+              {/* Country badge */}
+              {currentSong?.number && selectedLanguage === "spanish" && (() => {
+                const sc = getSongCountry(currentSong.number)
+                return (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-900 border-b border-gray-800">
+                    <span className="text-lg">{sc.flag}</span>
+                    <span className="text-xs font-bold text-white">{sc.country}</span>
+                    <span className="ml-auto text-xs text-gray-500">Song {currentSong.number} of 50</span>
+                  </div>
+                )
+              })()}
+              {/* Mini visualizer canvas */}
+              <canvas
+                ref={lyricCanvasRef}
+                width={400}
+                height={70}
+                className="w-full block"
+                style={{ height: 70 }}
+              />
+
+              {/* Lyrics scroll area */}
+              <div className="bg-gray-950 px-4 py-3" style={{ minHeight: 110 }}>
+                {lyricLines.length === 0 ? (
+                  <p className="text-center text-gray-500 text-sm pt-6">🎵 Loading lyrics…</p>
+                ) : (
+                  <div className="space-y-1 overflow-hidden" style={{ maxHeight: 100 }}>
+                    {lyricLines.map((line) => {
+                      const isActive = line.id === activeLyricId
+                      const isPast = line.id < activeLyricId
+                      return (
+                        <p
+                          key={line.id}
+                          className="text-center transition-all duration-200 leading-snug"
+                          style={{
+                            fontSize: isActive ? '1.15rem' : '0.8rem',
+                            fontWeight: isActive ? 700 : 400,
+                            color: isActive ? '#fff' : isPast ? '#4a4a6a' : '#6b6b8a',
+                            textShadow: isActive ? `0 0 12px ${getSongPalette(currentSong?.number ?? 1)[0]}, 0 0 24px ${getSongPalette(currentSong?.number ?? 1)[1]}` : 'none',
+                            transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                            display: isActive || Math.abs(line.id - activeLyricId) <= 2 ? 'block' : 'none',
+                          }}
+                        >
+                          {line.words.map(w => w.text).join(' ')}
+                        </p>
+                      )
+                    })}
+                    {activeLyricId === -1 && (
+                      <p className="text-center text-gray-500 text-sm pt-4">🎤 Sing along!</p>
+                    )}
+                  </div>
+                )}
               </div>
 
-              <div className="space-y-3">
-                {/* Live volume meter */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-75"
-                      style={{
-                        width: `${singLevel}%`,
-                        background: singLevel > 60
-                          ? "linear-gradient(90deg, #22c55e, #eab308, #ef4444)"
-                          : singLevel > 25
-                          ? "linear-gradient(90deg, #22c55e, #eab308)"
-                          : singLevel > 10
-                          ? "#22c55e"
-                          : "#d1d5db",
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs text-gray-500 w-8 text-right">{singLevel}%</span>
+              {/* Mic bar */}
+              <div className="bg-gray-900 px-4 py-2 flex items-center gap-3">
+                <div className="flex-1 h-3 bg-gray-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-75"
+                    style={{
+                      width: `${singLevel}%`,
+                      background: singLevel > 60
+                        ? "linear-gradient(90deg, #22c55e, #eab308, #ef4444)"
+                        : singLevel > 25
+                        ? "linear-gradient(90deg, #22c55e, #eab308)"
+                        : "#22c55e",
+                    }}
+                  />
                 </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500">
-                    {singLevel > 40 ? "🔥 Great singing!" : singLevel > 15 ? "🎵 Keep going!" : "🎤 Sing along!"}
-                  </p>
-                  {isMicActive ? (
-                    <button
-                      onClick={stopMic}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500 hover:bg-red-400 rounded-lg text-xs font-bold text-white transition-all"
-                    >
-                      <MicOff className="h-3.5 w-3.5" />
-                      Mute
-                    </button>
-                  ) : (
-                    <button
-                      onClick={startMic}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-400 rounded-lg text-xs font-bold text-white transition-all"
-                    >
-                      <Mic className="h-3.5 w-3.5" />
-                      Unmute
-                    </button>
-                  )}
-                </div>
+                <span className="text-yellow-400 font-bold text-sm whitespace-nowrap">⭐ {singScore}</span>
+                {isMicActive ? (
+                  <button
+                    onClick={stopMic}
+                    className="flex items-center gap-1 px-2.5 py-1 bg-red-600 hover:bg-red-500 rounded-lg text-xs font-bold text-white"
+                  >
+                    <MicOff className="h-3 w-3" /> Mute
+                  </button>
+                ) : (
+                  <button
+                    onClick={startMic}
+                    className="flex items-center gap-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs font-bold text-white"
+                  >
+                    <Mic className="h-3 w-3" /> Unmute
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -1860,6 +2139,14 @@ export default function HablaBeat() {
               >
                 <Coins className="h-5 w-5" />
                 <span className="text-xs">Coins</span>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                onClick={() => { stopMic(); setCurrentView("visualizer") }}
+              >
+                <Sparkles className="h-5 w-5" />
+                <span className="text-xs">Visualizer</span>
               </Button>
             </div>
           </div>
@@ -1963,6 +2250,14 @@ export default function HablaBeat() {
                 <Coins className="h-5 w-5" />
                 <span className="text-xs">Coins</span>
               </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                onClick={() => setCurrentView("visualizer")}
+              >
+                <Sparkles className="h-5 w-5" />
+                <span className="text-xs">Visualizer</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -2059,9 +2354,31 @@ export default function HablaBeat() {
                               : <span className="text-lg">{section.icon}</span>}
                           </div>
                           <div className="flex-1 text-left">
-                            <h2 className="text-base font-bold text-gray-900">{section.title}</h2>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <h2 className="text-base font-bold text-gray-900">{section.title}</h2>
+                              {selectedLanguage === "spanish" && section.songs.length > 0 && (() => {
+                                const seen = new Set<string>()
+                                return section.songs
+                                  .map(s => getSongCountry(s.number))
+                                  .filter(c => { if (seen.has(c.flag)) return false; seen.add(c.flag); return true })
+                                  .map(c => (
+                                    <span key={c.flag} className="text-base leading-none" title={c.country}>
+                                      {c.flag}
+                                    </span>
+                                  ))
+                              })()}
+                            </div>
                             <div className="text-xs text-gray-500">
-                              {section.songs.length} songs • {section.songs.reduce((sum, song) => sum + song.playCount, 0)} plays
+                              {section.songs.length} songs • {section.songs.reduce((sum: number, song: any) => sum + song.playCount, 0)} plays
+                              {selectedLanguage === "spanish" && section.songs.length > 0 && (() => {
+                                const seen = new Set<string>()
+                                const countries = section.songs
+                                  .map((s: any) => getSongCountry(s.number))
+                                  .filter((c: SongCountryData) => { if (seen.has(c.country)) return false; seen.add(c.country); return true })
+                                  .map((c: SongCountryData) => c.country)
+                                  .join(', ')
+                                return <span className="ml-1 text-gray-400">· {countries}</span>
+                              })()}
                             </div>
                           </div>
                           <div className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}>
@@ -2085,7 +2402,14 @@ export default function HablaBeat() {
                                       <span className="text-sm font-medium">{song.number}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <h4 className="font-bold text-gray-900 truncate text-base">{song.title}</h4>
+                                      <div className="flex items-center gap-1.5">
+                                        <h4 className="font-bold text-gray-900 truncate text-base">{song.title}</h4>
+                                        {selectedLanguage === "spanish" && (
+                                          <span className="text-sm leading-none flex-shrink-0" title={getSongCountry(song.number).country}>
+                                            {getSongCountry(song.number).flag}
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
                                     {/* Best grade badge */}
                                     {songBestGrade && (
@@ -2147,7 +2471,54 @@ export default function HablaBeat() {
                   <Coins className="h-5 w-5" />
                   <span className="text-xs">Coins</span>
                 </Button>
+                <Button
+                  variant="ghost"
+                  className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                  onClick={() => setCurrentView("visualizer")}
+                >
+                  <Sparkles className="h-5 w-5" />
+                  <span className="text-xs">Visualizer</span>
+                </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (currentView === "visualizer") {
+    return (
+      <div className="min-h-screen bg-black">
+        <div className="max-w-md mx-auto min-h-screen flex flex-col">
+          <VisualizerView onBack={() => setCurrentView("songs")} />
+          {/* Bottom Navigation */}
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-lg z-50">
+            <div className="flex justify-around">
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                onClick={() => setCurrentView("songs")}
+              >
+                <BookOpen className="h-5 w-5" />
+                <span className="text-xs">Songs</span>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                onClick={() => setCurrentView("coins")}
+              >
+                <Coins className="h-5 w-5" />
+                <span className="text-xs">Coins</span>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 text-gray-900 pt-3"
+                onClick={() => setCurrentView("visualizer")}
+              >
+                <Sparkles className="h-5 w-5" />
+                <span className="text-xs">Visualizer</span>
+              </Button>
             </div>
           </div>
         </div>
