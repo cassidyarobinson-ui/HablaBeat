@@ -523,7 +523,7 @@ const LYRIC_VIDEO_QUERIES: Record<number, Record<number, string>> = {
     2: "iguana lizard reptile",
     3: "bear oso wildlife nature",
     4: "unicorn fantasy magical horse",
-    5: "araña spider web close up",
+    5: "unicorn fantasy magical rainbow horse",  // ¡A–E–I–O–U Unicornio chorus
     // Alphabet section
     6: "búho owl bird wildlife",
     8: "conejo rabbit cute bunny",
@@ -538,8 +538,8 @@ const LYRIC_VIDEO_QUERIES: Record<number, Record<number, string>> = {
     26: "mono monkey jungle primate",
     28: "nutria otter river water",
     30: "ñandú rhea bird argentina",
-    32: "pingüino penguin antarctic",
-    34: "quetzal bird colorful Guatemala",
+    32: "penguin colony swimming waddle",
+    34: "resplendent quetzal green red bird rainforest",
     36: "rinoceronte rhino africa wildlife",
     38: "serpiente snake reptile",
     40: "tigre tiger wildlife stripes",
@@ -554,7 +554,7 @@ const LYRIC_VIDEO_QUERIES: Record<number, Record<number, string>> = {
     54: "iguana lizard reptile",
     55: "bear oso wildlife nature",
     56: "unicorn fantasy magical horse",
-    57: "araña spider web close up",
+    57: "unicorn fantasy magical rainbow horse",  // ¡A–E–I–O–U Unicornio chorus repeat
   },
 }
 
