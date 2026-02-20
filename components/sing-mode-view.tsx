@@ -390,49 +390,179 @@ function pickQuery(c: CountryData): string { return c.pexelsQueries[Math.floor(M
 const PEXELS_KEY = "QRejvnDTjk8yS9g9TWg3PNP3xQVpHJMuWimILfdpOUVYqnFygj58czF1"
 
 // ─────────────────────────────────────────────
-// Song 8 (AEIOU Pet World) — per-lyric-line animal video queries
-// Maps first lyric line ID of each animal couplet → Pexels search query
+// Per-lyric-line video queries for songs with visual vocab
+// LYRIC_VIDEO_QUERIES[songNumber][lineId] → Pexels search query
+// Lines NOT listed inherit the previous listed line's video (no random swaps)
 // ─────────────────────────────────────────────
-const SONG8_ANIMAL_QUERIES: Record<number, string> = {
-  // AEIOU intro (lines 0–5) and repeat (lines 52–57)
-  0: "araña spider web close up",
-  1: "elephant africa wildlife",
-  2: "iguana lizard reptile",
-  3: "bear oso wildlife nature",
-  4: "unicorn fantasy magical horse",
-  5: "araña spider web close up", // AEIOU chorus — reuse spider
-  // Alphabet section
-  6: "búho owl bird wildlife",
-  8: "conejo rabbit cute bunny",
-  10: "chivo goat farm animal",
-  12: "delfín dolphin ocean jump",
-  14: "flamingo bird pink flock",
-  16: "gato cat cute kitten",
-  18: "hipopotamo hippo water wildlife",
-  20: "jirafa giraffe africa tall",
-  22: "koala bear australia eucalyptus",
-  24: "león lion africa mane roar",
-  26: "mono monkey jungle primate",
-  28: "nutria otter river water",
-  30: "ñandú rhea bird argentina",
-  32: "pingüino penguin antarctic",
-  34: "quetzal bird colorful Guatemala",
-  36: "rinoceronte rhino africa wildlife",
-  38: "serpiente snake reptile",
-  40: "tigre tiger wildlife stripes",
-  42: "vaca cow farm dairy",
-  44: "wombat australia marsupial",
-  46: "xoloitzcuintle hairless dog mexico",
-  48: "yak tibet highland animal",
-  50: "zorro fox wildlife red",
-  // AEIOU repeat
-  52: "araña spider web close up",
-  53: "elephant africa wildlife",
-  54: "iguana lizard reptile",
-  55: "bear oso wildlife nature",
-  56: "unicorn fantasy magical horse",
-  57: "araña spider web close up",
+const LYRIC_VIDEO_QUERIES: Record<number, Record<number, string>> = {
+
+  // ── Song 4: Las partes del cuerpo y cara ──────────────────────────────
+  4: {
+    0:  "children dancing happy",                        // intro "Vamos a tocar..."
+    1:  "person touching head hair neck",                // cabeza, pelo, cuello, garganta
+    2:  "person shoulders arms stretching",              // hombros, brazos
+    3:  "hands fingers wrists close up",                 // codos, dedos, muñecas, manos
+    4:  "person back belly torso",                       // espalda, barriga
+    5:  "person legs knees feet walking",                // pierna, rodilla, pies
+    6:  "person touching face smiling",                  // intro cara
+    7:  "person eyes nose lips teeth smile",             // ojos, nariz, labios, dientes
+    8:  "person ear mouth face",                         // oreja, boca
+    9:  "person tongue forehead face",                   // lengua, frente
+    10: "children dancing celebration",                  // baila baila baila
+    11: "children dancing celebration",
+    // repeat
+    12: "children dancing happy",
+    13: "person touching head hair neck",
+    14: "person shoulders arms stretching",
+    15: "hands fingers wrists close up",
+    16: "person back belly torso",
+    17: "person legs knees feet walking",
+    18: "person touching face smiling",
+    19: "person eyes nose lips teeth smile",
+    20: "person ear mouth face",
+    21: "person tongue forehead face",
+    22: "children dancing celebration",
+  },
+
+  // ── Song 5: Ropa Linda ────────────────────────────────────────────────
+  5: {
+    0:  "shirt pants clothing fashion",                  // camisa, pantalón
+    1:  "shoes belt accessories",                        // zapatos, cinturón
+    2:  "hat gloves socks winter clothing",              // gorra, guantes, calcetín
+    3:  "colorful clothes children fashion",             // ropa linda para mí
+    4:  "skirt sweater jacket fashion",                  // falda, suéter, chaqueta
+    5:  "fashion model stylish outfit",                  // me visto como una estrella
+    6:  "scarf winter cold fashion",                     // bufanda para el frío
+    7:  "suit formal wear men",                          // traje para el tío
+    8:  "dress pajama boots fashion",                    // vestido, pijama, botas
+    9:  "sandals summer shoes feet",                     // sandalias
+    10: "clothes folded colorful wardrobe",              // ropa en español
+    11: "child learning happy school",                   // cada día aprenderé
+    // repeat
+    12: "shirt pants clothing fashion",
+    13: "shoes belt accessories",
+    14: "hat gloves socks winter clothing",
+    15: "colorful clothes children fashion",
+    16: "skirt sweater jacket fashion",
+    17: "fashion model stylish outfit",
+    18: "scarf winter cold fashion",
+    19: "suit formal wear men",
+    20: "dress pajama boots fashion",
+    21: "sandals summer shoes feet",
+    22: "clothes folded colorful wardrobe",
+    23: "child learning happy school",
+  },
+
+  // ── Song 6: Mi Familia ────────────────────────────────────────────────
+  6: {
+    0:  "happy family waving hello",                     // hola hola
+    1:  "family singing together",                       // vamos a cantar
+    2:  "family portrait group",                         // los de mi familia
+    3:  "father mother parents smiling",                 // papá y mamá
+    4:  "brother sister siblings children",              // hermano, hermana
+    5:  "uncle aunt family adults",                      // tío, tía
+    6:  "grandmother family portrait",                   // abuela sana
+    7:  "grandfather senior man happy",                  // abuelo contento
+    8:  "cousins children playing",                      // primo y prima
+    9:  "nephew niece children family",                  // sobrino, sobrina
+    10: "family pet dog cat walking",                    // mascota que camina
+    11: "happy family together outdoors",                // mi familia es lo mejor
+    // repeat
+    12: "happy family waving hello",
+    13: "family singing together",
+    14: "family portrait group",
+    15: "father mother parents smiling",
+    16: "brother sister siblings children",
+    17: "uncle aunt family adults",
+    18: "grandmother family portrait",
+    19: "grandfather senior man happy",
+    20: "cousins children playing",
+    21: "nephew niece children family",
+    22: "family pet dog cat walking",
+    23: "happy family together outdoors",
+  },
+
+  // ── Song 7: Los Trabajos ──────────────────────────────────────────────
+  7: {
+    0:  "career jobs future dreams",                     // qué quieres ser
+    1:  "career jobs future dreams",
+    2:  "doctor firefighter baker profession",           // doctor, bombero, panadero
+    3:  "teacher pilot carpenter profession",            // maestra, piloto, carpintero
+    4:  "singer chef gardener profession",               // cantante, chef, jardinero
+    5:  "dentist artist engineer profession",            // dentista, artista, ingeniero
+    6:  "police officer farmer painter",                 // policía, granjero, pintor
+    7:  "actor nurse writer profession",                 // actor, enfermera, escritor
+    8:  "veterinarian driver vehicle",                   // veterinario, conductor
+    9:  "architect translator office",                   // arquitecto, traductor
+    10: "many careers options future",                   // tantas cosas
+    11: "student learning studying",                     // solo tienes que aprender
+    12: "joy happiness success work",                    // con alegría y amor
+    13: "choose profession graduation",                  // elige tu profesión
+    // repeat
+    14: "career jobs future dreams",
+    15: "career jobs future dreams",
+    16: "doctor firefighter baker profession",
+    17: "teacher pilot carpenter profession",
+    18: "singer chef gardener profession",
+    19: "dentist artist engineer profession",
+    20: "police officer farmer painter",
+    21: "actor nurse writer profession",
+    22: "veterinarian driver vehicle",
+    23: "architect translator office",
+    24: "many careers options future",
+    25: "student learning studying",
+    26: "joy happiness success work",
+    27: "choose profession graduation",
+  },
+
+  // ── Song 8: AEIOU Pet World ───────────────────────────────────────────
+  8: {
+    // AEIOU intro
+    0: "araña spider web close up",
+    1: "elephant africa wildlife",
+    2: "iguana lizard reptile",
+    3: "bear oso wildlife nature",
+    4: "unicorn fantasy magical horse",
+    5: "araña spider web close up",
+    // Alphabet section
+    6: "búho owl bird wildlife",
+    8: "conejo rabbit cute bunny",
+    10: "chivo goat farm animal",
+    12: "delfín dolphin ocean jump",
+    14: "flamingo bird pink flock",
+    16: "gato cat cute kitten",
+    18: "hipopotamo hippo water wildlife",
+    20: "jirafa giraffe africa tall",
+    22: "koala bear australia eucalyptus",
+    24: "león lion africa mane roar",
+    26: "mono monkey jungle primate",
+    28: "nutria otter river water",
+    30: "ñandú rhea bird argentina",
+    32: "pingüino penguin antarctic",
+    34: "quetzal bird colorful Guatemala",
+    36: "rinoceronte rhino africa wildlife",
+    38: "serpiente snake reptile",
+    40: "tigre tiger wildlife stripes",
+    42: "vaca cow farm dairy",
+    44: "wombat australia marsupial",
+    46: "xoloitzcuintle hairless dog mexico",
+    48: "yak tibet highland animal",
+    50: "zorro fox wildlife red",
+    // AEIOU repeat
+    52: "araña spider web close up",
+    53: "elephant africa wildlife",
+    54: "iguana lizard reptile",
+    55: "bear oso wildlife nature",
+    56: "unicorn fantasy magical horse",
+    57: "araña spider web close up",
+  },
 }
+
+// Songs that use lyric-driven video (no generic country rotation)
+const LYRIC_VIDEO_SONGS = new Set(Object.keys(LYRIC_VIDEO_QUERIES).map(Number))
+
+// Convenience alias for legacy song-8 references
+const SONG8_ANIMAL_QUERIES = LYRIC_VIDEO_QUERIES[8]
 
 // ─────────────────────────────────────────────
 // Props
@@ -552,14 +682,16 @@ export default function SingModeView({
     // Clear animal cache on song change
     animalCacheRef.current = {}
     lastAnimalLineRef.current = -1
-    // Song 8: animals exclusively drive the background — skip generic media entirely
-    if (song.number !== 8) {
+    // Lyric-video songs: vocab visuals drive the background exclusively — no generic country rotation
+    if (!LYRIC_VIDEO_SONGS.has(song.number)) {
       loadMedia.current(country)
       scheduleSwap.current(country)
     } else {
-      // Preload spider immediately so background shows from song start (before lyrics at 12.60s)
-      const firstQuery = SONG8_ANIMAL_QUERIES[0] // "araña spider web close up"
-      lastAnimalLineRef.current = 0
+      // Preload first-line video immediately so background shows from song start
+      const songQueries = LYRIC_VIDEO_QUERIES[song.number]
+      const firstLineId = Math.min(...Object.keys(songQueries).map(Number))
+      const firstQuery = songQueries[firstLineId]
+      lastAnimalLineRef.current = firstLineId
 
       // Still photo fallback
       fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(firstQuery)}&per_page=10&orientation=landscape`, {
@@ -573,7 +705,7 @@ export default function SingModeView({
         const img = new Image()
         img.crossOrigin = "anonymous"
         img.onload = () => {
-          animalCacheRef.current[0] = { ...animalCacheRef.current[0], img }
+          animalCacheRef.current[firstLineId] = { ...animalCacheRef.current[firstLineId], img }
           bgImageRef.current = img
           setBgImageLoaded(true)
         }
@@ -583,7 +715,7 @@ export default function SingModeView({
       // Video
       const vid = document.createElement("video")
       vid.muted = true; vid.loop = true; vid.playsInline = true; vid.crossOrigin = "anonymous"
-      animalCacheRef.current[0] = { vid: null, img: null }
+      animalCacheRef.current[firstLineId] = { vid: null, img: null }
       fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(firstQuery)}&per_page=10`, {
         headers: { Authorization: PEXELS_KEY }
       }).then(r => r.json()).then(data => {
@@ -594,7 +726,7 @@ export default function SingModeView({
         const mp4 = files.filter((f: any) => f.file_type === "video/mp4").sort((a: any, b: any) => a.height - b.height).find((f: any) => f.height <= 720)
         if (!mp4?.link) return
         vid.src = mp4.link
-        animalCacheRef.current[0] = { ...animalCacheRef.current[0], vid }
+        animalCacheRef.current[firstLineId] = { ...animalCacheRef.current[firstLineId], vid }
         vid.play().then(() => {
           const prev = bgVideoRef.current
           if (prev && prev !== vid) { prev.pause(); prev.src = "" }
@@ -611,20 +743,19 @@ export default function SingModeView({
     }
   }, [song.number])
 
-  // ── Song 8: swap background to animal video when lyric line changes ──
+  // ── Lyric-video songs: swap background when lyric line changes ──
   useEffect(() => {
-    if (song.number !== 8) return
-    // Find which animal line we're on — each animal has an entry in SONG8_ANIMAL_QUERIES,
-    // and the "syllable" lines (odd lines like 7,9,11…) inherit the previous animal's video.
-    // Walk backwards from activeLyricId to find the nearest animal-query line.
+    if (!LYRIC_VIDEO_SONGS.has(song.number)) return
+    const songQueries = LYRIC_VIDEO_QUERIES[song.number]
+    // Walk backwards from activeLyricId to find nearest line with a query entry
     let animalLineId = -1
     for (let id = activeLyricId; id >= 0; id--) {
-      if (SONG8_ANIMAL_QUERIES[id] !== undefined) { animalLineId = id; break }
+      if (songQueries[id] !== undefined) { animalLineId = id; break }
     }
     if (animalLineId < 0 || animalLineId === lastAnimalLineRef.current) return
     lastAnimalLineRef.current = animalLineId
 
-    const query = SONG8_ANIMAL_QUERIES[animalLineId]
+    const query = songQueries[animalLineId]
 
     // If cached, swap immediately
     const cached = animalCacheRef.current[animalLineId]
@@ -765,8 +896,8 @@ export default function SingModeView({
       const beat = Math.sin(now / 500) // ~120bpm pulse
       if (beat > 0.95 && now - lastBeat > 400) {
         lastBeat = now; beatFlash = 0.5
-        // Occasionally swap video on beat — skip for song 8 (animals only)
-        if (song.number !== 8 && now - lastSwapRef.current > 5000) {
+        // Occasionally swap video on beat — skip for lyric-video songs (vocab visuals only)
+        if (!LYRIC_VIDEO_SONGS.has(song.number) && now - lastSwapRef.current > 5000) {
           lastSwapRef.current = now
           if (swapTimerRef.current) clearTimeout(swapTimerRef.current)
           loadMedia.current(country)
