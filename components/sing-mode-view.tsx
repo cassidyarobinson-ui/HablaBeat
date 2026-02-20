@@ -1114,7 +1114,10 @@ export default function SingModeView({
                 className="h-full rounded-full"
                 style={{
                   width: totalDuration > 0 ? `${Math.min(100, (elapsedSecs / totalDuration) * 100)}%` : "0%",
-                  background: `linear-gradient(90deg, ${palette[0]}, ${palette[1]})`,
+                  background: flagColors[1] === "#FFFFFF"
+                    // Flag has white middle — use hard stops so white stripe is visible
+                    ? `linear-gradient(90deg, ${flagColors[0]} 0%, ${flagColors[0]} 33%, ${flagColors[1]} 33%, ${flagColors[1]} 66%, ${flagColors[2]} 66%, ${flagColors[2]} 100%)`
+                    : `linear-gradient(90deg, ${flagColors[0]} 0%, ${flagColors[1]} 50%, ${flagColors[2]} 100%)`,
                   transition: "width 0.1s linear",
                 }}
               />
