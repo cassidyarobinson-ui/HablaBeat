@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { ChevronLeft, SkipBack, SkipForward } from "lucide-react"
+import { ChevronLeft, Pause, Play, SkipBack, SkipForward } from "lucide-react"
 
 // ─────────────────────────────────────────────
 // Country data — palette + flag colors + Pexels query pool per song
@@ -469,6 +469,7 @@ export default function SingModeView({
   const [activeLyricId, setActiveLyricId] = useState<number>(-1)
   const [activeWordId, setActiveWordId] = useState<number>(-1)
   const [elapsedSecs, setElapsedSecs] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(true)
   const wordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)  // direct audio playback — same as DDR game
   const progressBarRef = useRef<HTMLDivElement>(null)
@@ -764,8 +765,8 @@ export default function SingModeView({
       const beat = Math.sin(now / 500) // ~120bpm pulse
       if (beat > 0.95 && now - lastBeat > 400) {
         lastBeat = now; beatFlash = 0.5
-        // Occasionally swap video on beat
-        if (now - lastSwapRef.current > 5000) {
+        // Occasionally swap video on beat — skip for song 8 (animals only)
+        if (song.number !== 8 && now - lastSwapRef.current > 5000) {
           lastSwapRef.current = now
           if (swapTimerRef.current) clearTimeout(swapTimerRef.current)
           loadMedia.current(country)
@@ -843,6 +844,33 @@ export default function SingModeView({
     setElapsedSecs(fraction * totalDuration)
   }
 
+  // ── Toggle play/pause ──
+  function togglePause() {
+    const audio = audioRef.current
+    if (!audio) return
+    if (audio.paused) {
+      audio.play().catch(() => {})
+      bgVideoRef.current?.play().catch(() => {})
+      setIsPlaying(true)
+    } else {
+      audio.pause()
+      bgVideoRef.current?.pause()
+      setIsPlaying(false)
+    }
+  }
+
+  // ── Spacebar to pause/play ──
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.code === "Space" && e.target === document.body) {
+        e.preventDefault()
+        togglePause()
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  })
+
   // Active lyric lines
   const activeLine = lyricLines.find(l => l.id === activeLyricId)
   const prevLine = lyricLines.find(l => l.id === activeLyricId - 1)
@@ -881,7 +909,7 @@ export default function SingModeView({
   }
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col" style={{ touchAction: "none" }}>
+    <div className="fixed inset-0 bg-black z-50 flex flex-col" style={{ touchAction: "none" }} onClick={togglePause}>
       {/* Full-screen canvas */}
       <canvas
         ref={canvasRef}
@@ -893,7 +921,8 @@ export default function SingModeView({
 
       {/* ── Top bar ── */}
       <div className="relative z-10 flex items-center gap-3 px-4 pt-safe pt-4 pb-2"
-        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%)" }}>
+        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%)" }}
+        onClick={e => e.stopPropagation()}>
         <button
           onClick={onBack}
           className="flex items-center justify-center w-9 h-9 rounded-full bg-black/40 text-white"
@@ -936,7 +965,8 @@ export default function SingModeView({
 
       {/* ── Bottom controls ── */}
       <div className="relative z-10 px-4 pb-safe pb-6 pt-2"
-        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)" }}>
+        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)" }}
+        onClick={e => e.stopPropagation()}>
 
         {/* Progress bar — click to seek */}
         <div className="flex items-center gap-2 mb-3">
@@ -962,7 +992,7 @@ export default function SingModeView({
           <span className="text-white/60 text-xs tabular-nums w-8">{formatTime(totalDuration)}</span>
         </div>
 
-        {/* Skip prev/next row */}
+        {/* Skip prev / play-pause / skip next row */}
         <div className="flex items-center justify-between">
           <button
             onClick={onPrev}
@@ -972,8 +1002,16 @@ export default function SingModeView({
             <SkipBack className="h-5 w-5" />
           </button>
 
-          {/* Spacer keeps skip buttons at the edges */}
-          <div className="flex-1" />
+          {/* Play / Pause button */}
+          <button
+            onClick={togglePause}
+            className="flex items-center justify-center w-14 h-14 rounded-full bg-white/20 text-white"
+          >
+            {isPlaying
+              ? <Pause className="h-6 w-6" />
+              : <Play className="h-6 w-6 translate-x-0.5" />
+            }
+          </button>
 
           <button
             onClick={onNext}
