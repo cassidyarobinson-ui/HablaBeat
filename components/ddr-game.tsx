@@ -844,9 +844,34 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     ]
 
     return (
-      <div className="min-h-screen relative overflow-hidden flex flex-col" style={{
-        background: "linear-gradient(175deg, #a5f3fc 0%, #67e8f9 30%, #7dd3fc 55%, #86efac 80%, #bbf7d0 100%)"
-      }}>
+      <div className="min-h-screen relative overflow-hidden flex flex-col setup-swirl-bg">
+        <style>{`
+          @keyframes setupSwirlBg {
+            0%   { background-position: 0% 50%; }
+            25%  { background-position: 50% 100%; }
+            50%  { background-position: 100% 50%; }
+            75%  { background-position: 50% 0%; }
+            100% { background-position: 0% 50%; }
+          }
+          .setup-swirl-bg {
+            background: linear-gradient(135deg, #e0fdf4 0%, #dbeeff 25%, #e0fdf4 50%, #cff3ff 75%, #e0fdf4 100%);
+            background-size: 400% 400%;
+            animation: setupSwirlBg 12s ease-in-out infinite;
+          }
+          @keyframes turtleWaddle {
+            0%,100% { transform: rotate(-8deg) translateX(0px); }
+            25%      { transform: rotate(4deg) translateX(2px); }
+            50%      { transform: rotate(-6deg) translateX(-1px); }
+            75%      { transform: rotate(3deg) translateX(1px); }
+          }
+          @keyframes setupLightning {
+            0%,100% { transform: scaleX(1); filter: brightness(1); }
+            40%      { transform: scaleX(1.2) skewX(-6deg); filter: brightness(1.7) drop-shadow(0 0 4px #fff); }
+            70%      { transform: scaleX(0.9) skewX(3deg); filter: brightness(1.2); }
+          }
+          .emoji-turtle    { display:inline-block; animation: turtleWaddle 1.6s ease-in-out infinite; }
+          .emoji-setup-zap { display:inline-block; animation: setupLightning 1.8s ease-in-out infinite; }
+        `}</style>
 
         {/* Iridescent bubble decorations */}
         {bubbles.map((b, i) => (
@@ -868,12 +893,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
         <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-3 pt-6 pb-12 relative z-10">
 
-          {/* Header card — purple→pink→orange gradient */}
+          {/* Header card — purple→pink→orange gradient (matches home ribbon) */}
           <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
             background: "linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #ea580c 100%)",
             border: "2px solid rgba(255,255,255,0.35)"
           }}>
-            {/* inner highlight shimmer */}
             <div className="absolute inset-0 pointer-events-none" style={{
               background: "linear-gradient(120deg, rgba(255,255,255,0.18) 0%, transparent 50%)"
             }} />
@@ -901,19 +925,19 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
           {/* Mission card — frosted glass */}
           <div className="rounded-3xl px-5 py-4 shadow-lg" style={{
-            background: "rgba(255,255,255,0.52)",
+            background: "rgba(255,255,255,0.6)",
             backdropFilter: "blur(20px)",
-            border: "1.5px solid rgba(255,255,255,0.75)"
+            border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
             <p className="font-black text-blue-700 mb-1">🎯 Your Mission:</p>
             <p className="text-blue-900 text-sm leading-relaxed">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
           </div>
 
-          {/* Speed card — frosted glass */}
+          {/* Speed card — frosted glass with pill buttons matching home style */}
           <div className="rounded-3xl px-5 py-5 shadow-lg" style={{
-            background: "rgba(255,255,255,0.52)",
+            background: "rgba(255,255,255,0.6)",
             backdropFilter: "blur(20px)",
-            border: "1.5px solid rgba(255,255,255,0.75)"
+            border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
             <p className="font-black text-gray-800 mb-3">Song Speed</p>
             <div className="flex gap-3">
@@ -923,17 +947,18 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                   onClick={() => setSpeed(s)}
                   className="flex-1 py-3.5 rounded-full font-bold text-base transition-all"
                   style={speed === s ? {
-                    background: "linear-gradient(135deg, #38bdf8, #3b82f6)",
-                    color: "white",
-                    border: "2px solid rgba(255,255,255,0.6)",
-                    boxShadow: "0 4px 18px rgba(56,189,248,0.55)"
+                    background: "#000",
+                    color: "#fff",
+                    border: "2px solid #000",
                   } : {
-                    background: "rgba(255,255,255,0.75)",
-                    color: "#1e293b",
-                    border: "2px solid rgba(255,255,255,0.85)"
+                    background: "#fff",
+                    color: "#000",
+                    border: "2px solid #000",
                   }}
                 >
-                  {s === "slower" ? "🐢 Slower" : "⚡ Normal"}
+                  {s === "slower"
+                    ? <><span className="emoji-turtle">🐢</span> Slower</>
+                    : <><span className="emoji-setup-zap">⚡</span> Normal</>}
                 </button>
               ))}
             </div>
