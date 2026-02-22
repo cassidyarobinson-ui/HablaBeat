@@ -2717,30 +2717,30 @@ export default function HablaBeat() {
             <div className="px-3 mt-4 grid grid-cols-3 gap-2">
               {/* Day Streak */}
               <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
-                background: "#f5f0e8",
-                border: "1.5px solid rgba(194,65,12,0.15)"
+                background: "linear-gradient(135deg, #fbbf24, #f97316)",
+                border: "2px solid rgba(255,255,255,0.5)"
               }}>
-                <span className="absolute top-1 right-2 text-orange-300/60 text-sm select-none">✦</span>
-                <p className="text-2xl font-black leading-none" style={{ color: "#c2410c" }}><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
-                <p className="font-bold text-xs mt-1" style={{ color: "#c2410c99" }}>Day Streak</p>
+                <span className="absolute top-1 right-2 text-white/40 text-sm select-none">✦</span>
+                <p className="text-2xl font-black leading-none text-white"><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
+                <p className="font-bold text-xs mt-1 text-white/90">Day Streak</p>
               </div>
               {/* Challenges Won */}
               <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
-                background: "#f3f0f8",
-                border: "1.5px solid rgba(124,58,237,0.15)"
+                background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+                border: "2px solid rgba(255,255,255,0.5)"
               }}>
-                <span className="absolute top-1 right-2 text-purple-300/60 text-sm select-none">✦</span>
-                <p className="text-2xl font-black leading-none" style={{ color: "#7c3aed" }}><span className="emoji-swords">⚔️</span> {challengesWon}</p>
-                <p className="font-bold text-xs mt-1" style={{ color: "#7c3aed99" }}>Challenges Won</p>
+                <span className="absolute top-1 right-2 text-white/40 text-sm select-none">✦</span>
+                <p className="text-2xl font-black leading-none text-white"><span className="emoji-swords">⚔️</span> {challengesWon}</p>
+                <p className="font-bold text-xs mt-1 text-white/90">Challenges Won</p>
               </div>
               {/* Best Flow */}
               <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
-                background: "#eff8ff",
-                border: "1.5px solid rgba(14,165,233,0.15)"
+                background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
+                border: "2px solid rgba(255,255,255,0.5)"
               }}>
-                <span className="absolute top-1 right-2 text-sky-300/60 text-sm select-none">✦</span>
-                <p className="text-2xl font-black leading-none" style={{ color: "#0ea5e9" }}><span className="emoji-lightning">⚡</span> {bestFlow}</p>
-                <p className="font-bold text-xs mt-1" style={{ color: "#0ea5e999" }}>Best Flow</p>
+                <span className="absolute top-1 right-2 text-white/40 text-sm select-none">✦</span>
+                <p className="text-2xl font-black leading-none text-white"><span className="emoji-lightning">⚡</span> {bestFlow}</p>
+                <p className="font-bold text-xs mt-1 text-white/90">Best Flow</p>
               </div>
             </div>
 
@@ -2773,7 +2773,9 @@ export default function HablaBeat() {
           {/* Curriculum - Accordion Sections */}
           <div className="p-2 space-y-4 pb-32">
               {curriculumData.map((category) => (
-                <div key={category.id} className="space-y-2 mb-4">
+                <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm mb-4" style={{
+                  background: "linear-gradient(160deg, #e0f7ff 0%, #ede9fe 35%, #fce7f3 65%, #fef3c7 100%)"
+                }}>
                   {/* Main Category Header */}
                   <div className="px-4 pt-4 pb-2">
                     <h1 className="text-2xl font-bold text-gray-900">{category.title}</h1>
