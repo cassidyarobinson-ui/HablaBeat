@@ -2324,7 +2324,29 @@ export default function HablaBeat() {
   if (currentView === "songs") {
     return (
       <div className="min-h-screen bg-white">
-        <div className="max-w-md mx-auto min-h-screen" style={{ background: "linear-gradient(180deg, #e0fdf4 0%, #f0fffe 100%)" }}>
+        {/* Animated swirl background styles */}
+        <style>{`
+          @keyframes swirlBg {
+            0%   { background-position: 0% 50%; }
+            25%  { background-position: 50% 100%; }
+            50%  { background-position: 100% 50%; }
+            75%  { background-position: 50% 0%; }
+            100% { background-position: 0% 50%; }
+          }
+          .swirl-bg {
+            background: linear-gradient(
+              135deg,
+              #e0fdf4 0%,
+              #dbeeff 25%,
+              #e0fdf4 50%,
+              #cff3ff 75%,
+              #e0fdf4 100%
+            );
+            background-size: 400% 400%;
+            animation: swirlBg 12s ease-in-out infinite;
+          }
+        `}</style>
+        <div className="max-w-md mx-auto min-h-screen swirl-bg">
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
