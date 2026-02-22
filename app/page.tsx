@@ -1543,8 +1543,13 @@ export default function HablaBeat() {
   useEffect(() => { localStorage.setItem("hablabeat-active-theme", JSON.stringify(activeTheme)) }, [activeTheme])
 
   // Called when user sends a challenge
-  const handleChallengeSent = () => {
+  const handleChallengeSent = (songNum?: number) => {
     setTotalChallengesSent(prev => prev + 1)
+    // Simulate winning: award coin for this song's section and increment challengeCoins
+    if (songNum !== undefined) {
+      awardChallengeWinCoin(songNum)
+      setChallengeCoins(prev => prev + 5)
+    }
   }
 
   // Store helpers
@@ -1826,34 +1831,33 @@ export default function HablaBeat() {
     }
   }, [currentView])
 
-  // Check if section badge is unlocked
+  // Check if section badge is unlocked (now requires a challenge win)
   const isSectionBadgeUnlocked = (section: any) => {
-    return section.songs.some((song: any) => song.playCount >= 5)
+    return challengesWon > 0 && section.songs.some((song: any) => song.playCount >= 1)
   }
 
-  // Auto-collect any claimable coins when curriculum data changes
-  useEffect(() => {
+  // Award a coin for a section when a challenge is won for a song in that section
+  const awardChallengeWinCoin = (songNum: number) => {
     const allSecs = curriculumData.flatMap((cat) => cat.sections)
-    allSecs.forEach((section) => {
-      if (isSectionBadgeUnlocked(section)) {
-        const coinId = `${section.id}-coin`
-        setLunasPurse((prev) => {
-          if (prev.some((item) => item.id === coinId)) return prev
-          return [
-            ...prev,
-            {
-              id: coinId,
-              name: section.title,
-              description: `Earned by completing ${section.title}`,
-              icon: section.icon,
-              type: "coin",
-              earnedDate: new Date().toLocaleDateString(),
-            },
-          ]
-        })
-      }
+    const section = allSecs.find((sec: any) => sec.songs.some((s: any) => s.number === songNum))
+    if (!section) return
+    const coinId = `${section.id}-coin`
+    setLunasPurse((prev) => {
+      if (prev.some((item) => item.id === coinId)) return prev
+      return [
+        ...prev,
+        {
+          id: coinId,
+          name: section.title,
+          description: `Earned by beating a friend on ${section.title}`,
+          icon: section.icon,
+          type: "coin",
+          earnedDate: new Date().toLocaleDateString(),
+        },
+      ]
     })
-  }, [curriculumData])
+    setChallengesWon(prev => prev + 1)
+  }
 
   // Callback when DDR game ends: update best flow, total vocab bank, best grade, play count
   const handleDDRGameEnd = (songNum: number, flow: number, bank: number, grade: string) => {
@@ -2273,18 +2277,18 @@ export default function HablaBeat() {
               <Button
                 variant="ghost"
                 className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => { stopMic(); setCurrentView("visualizer") }}
-              >
-                <Sparkles className="h-7 w-7" />
-                <span className="text-xs font-semibold">Visualizer</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => { stopMic(); setCurrentView("store") }}
               >
                 <ShoppingBag className="h-7 w-7" />
                 <span className="text-xs font-semibold">Store</span>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                onClick={() => { stopMic(); setCurrentView("visualizer") }}
+              >
+                <Sparkles className="h-7 w-7" />
+                <span className="text-xs font-semibold">Visualizer</span>
               </Button>
             </div>
           </div>
@@ -2363,7 +2367,18 @@ export default function HablaBeat() {
                     <p className="text-white font-black leading-none" style={{ fontSize: "2rem" }}>{earnedCoins.length} <span className="text-lg">coins collected</span></p>
                     <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">YOUR COLLECTION</p>
                   </div>
-                  <span className="text-5xl drop-shadow-lg">🪙</span>
+                  <div style={{
+                    width: "56px", height: "56px", borderRadius: "50%",
+                    background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+                    border: "3px solid #92400E",
+                    boxShadow: "0 3px 10px rgba(0,0,0,0.3), inset 0 -3px 6px rgba(120,53,0,0.4), inset 2px 2px 6px rgba(254,243,199,0.5), 0 0 12px rgba(251,191,36,0.4)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    flexShrink: 0, position: "relative", overflow: "hidden"
+                  }}>
+                    <div style={{ position: "absolute", inset: "3px", borderRadius: "50%", border: "2px solid rgba(254,243,199,0.4)" }} />
+                    <div style={{ position: "absolute", top: "8%", left: "15%", width: "32%", height: "20%", background: "radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
+                    <span style={{ fontSize: "20px" }}>🏆</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2375,9 +2390,20 @@ export default function HablaBeat() {
 
             {earnedCoins.length === 0 ? (
               <div className="text-center py-8">
-                <div className="text-6xl mb-4">🪙</div>
+                <div className="flex justify-center mb-4">
+                  <div style={{
+                    width: "64px", height: "64px", borderRadius: "50%",
+                    background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+                    border: "3px solid #92400E",
+                    boxShadow: "0 3px 10px rgba(0,0,0,0.2), inset 0 -3px 6px rgba(120,53,0,0.4), inset 2px 2px 6px rgba(254,243,199,0.5)",
+                    display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden"
+                  }}>
+                    <div style={{ position: "absolute", inset: "3px", borderRadius: "50%", border: "2px solid rgba(254,243,199,0.4)" }} />
+                    <span style={{ fontSize: "24px" }}>🏆</span>
+                  </div>
+                </div>
                 <p className="text-gray-500">No coins earned yet!</p>
-                <p className="text-gray-400 text-sm mt-2">Play and Sing songs to earn coins</p>
+                <p className="text-gray-400 text-sm mt-2">Beat a friend in a challenge to earn coins 🏆</p>
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-4">
@@ -2397,7 +2423,7 @@ export default function HablaBeat() {
             {notYetCollected.length > 0 && (
               <div className="mt-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-1">Not Yet Collected</h3>
-                <p className="text-xs text-gray-500 mb-4 italic">Play and Sing a song 3 times to unlock</p>
+                <p className="text-xs text-gray-500 mb-4 italic">Beat a friend in a challenge to unlock 🏆</p>
                 <div className="flex flex-wrap gap-3">
                   {notYetCollected.map((section) => (
                     <div key={section.id} className="w-14 h-14 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center opacity-40">
@@ -2432,18 +2458,18 @@ export default function HablaBeat() {
               <Button
                 variant="ghost"
                 className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("visualizer")}
-              >
-                <Sparkles className="h-7 w-7" />
-                <span className="text-xs font-semibold">Visualizer</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => setCurrentView("store")}
               >
                 <ShoppingBag className="h-7 w-7" />
                 <span className="text-xs font-semibold">Store</span>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                onClick={() => setCurrentView("visualizer")}
+              >
+                <Sparkles className="h-7 w-7" />
+                <span className="text-xs font-semibold">Visualizer</span>
               </Button>
             </div>
           </div>
@@ -2927,18 +2953,18 @@ export default function HablaBeat() {
                 <Button
                   variant="ghost"
                   className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                  onClick={() => setCurrentView("visualizer")}
-                >
-                  <Sparkles className="h-7 w-7" />
-                  <span className="text-xs font-semibold">Visualizer</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                   onClick={() => setCurrentView("store")}
                 >
                   <ShoppingBag className="h-7 w-7" />
                   <span className="text-xs font-semibold">Store</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                  onClick={() => setCurrentView("visualizer")}
+                >
+                  <Sparkles className="h-7 w-7" />
+                  <span className="text-xs font-semibold">Visualizer</span>
                 </Button>
               </div>
             </div>
@@ -2973,20 +2999,20 @@ export default function HablaBeat() {
               </Button>
               <Button
                 variant="ghost"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                onClick={() => setCurrentView("store")}
+              >
+                <ShoppingBag className="h-7 w-7" />
+                <span className="text-xs font-semibold">Store</span>
+              </Button>
+              <Button
+                variant="ghost"
                 className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
                 style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
                 onClick={() => setCurrentView("visualizer")}
               >
                 <Sparkles className="h-7 w-7" />
                 <span className="text-xs font-bold">Visualizer</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("store")}
-              >
-                <ShoppingBag className="h-7 w-7" />
-                <span className="text-xs font-semibold">Store</span>
               </Button>
             </div>
           </div>
@@ -3060,7 +3086,17 @@ export default function HablaBeat() {
                 background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
                 border: "2px solid rgba(255,255,255,0.6)"
               }}>
-                <span className="text-xl">🪙</span>
+                <div style={{
+                  width: "28px", height: "28px", borderRadius: "50%",
+                  background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+                  border: "2px solid #92400E",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.25), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0, position: "relative", overflow: "hidden"
+                }}>
+                  <div style={{ position: "absolute", inset: "2px", borderRadius: "50%", border: "1px solid rgba(254,243,199,0.4)" }} />
+                  <span style={{ fontSize: "11px" }}>🏆</span>
+                </div>
                 <span className="text-white font-black text-lg">{challengeCoins}</span>
                 <span className="text-white/80 font-semibold text-sm">coins</span>
               </div>
@@ -3112,7 +3148,10 @@ export default function HablaBeat() {
                         color: "white"
                       } : { background: "#e5e7eb", color: "#9ca3af" }}
                     >
-                      {item.cost} 🪙
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                        {item.cost}
+                        <span style={{ display: "inline-block", width: "16px", height: "16px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", boxShadow: "inset 0 -1px 3px rgba(120,53,0,0.4)", verticalAlign: "middle" }} />
+                      </span>
                     </button>
                   </div>
                 )
@@ -3152,10 +3191,16 @@ export default function HablaBeat() {
                       className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95"
                       style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", color: "white" }}
                     >
-                      Buy — {item.cost} 🪙
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                        Buy — {item.cost}
+                        <span style={{ display: "inline-block", width: "16px", height: "16px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", boxShadow: "inset 0 -1px 3px rgba(120,53,0,0.4)", verticalAlign: "middle" }} />
+                      </span>
                     </button>
                   ) : (
-                    <span className="text-xs text-gray-400 font-semibold">Need {item.cost} 🪙</span>
+                    <span className="text-xs text-gray-400 font-semibold" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      Need {item.cost}
+                      <span style={{ display: "inline-block", width: "14px", height: "14px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", opacity: 0.7, verticalAlign: "middle" }} />
+                    </span>
                   )}
                 </div>
               )
@@ -3173,13 +3218,13 @@ export default function HablaBeat() {
                 <Coins className="h-7 w-7" />
                 <span className="text-xs font-semibold">Bank</span>
               </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
-                <Sparkles className="h-7 w-7" />
-                <span className="text-xs font-semibold">Visualizer</span>
-              </Button>
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("store")}>
                 <ShoppingBag className="h-7 w-7" />
                 <span className="text-xs font-bold">Store</span>
+              </Button>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+                <Sparkles className="h-7 w-7" />
+                <span className="text-xs font-semibold">Visualizer</span>
               </Button>
             </div>
           </div>
