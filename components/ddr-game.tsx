@@ -102,6 +102,7 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
   const [speed, setSpeed] = useState<"slow" | "medium" | "fast">("fast")
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
+  const [linkCopied, setLinkCopied] = useState(false)
   const [elapsedTime, setElapsedTime] = useState("0:00")
   const [totalTime, setTotalTime] = useState("0:00")
   const [isPaused, setIsPaused] = useState(false)
@@ -888,6 +889,26 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
     )
   }
 
+  // Generate + copy a challenge link
+  const handleChallenge = () => {
+    const { grade } = getGrade()
+    const payload = btoa(JSON.stringify({
+      s: songNumber,         // song number
+      t: songTitle,          // song title
+      sc: scoreRef.current,  // challenger's score
+      g: grade,              // challenger's grade
+      fc: maxComboRef.current, // challenger's flow combo
+    }))
+    const url = `${window.location.origin}/challenge/${payload}`
+    navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 3000)
+    }).catch(() => {
+      // Fallback: prompt with URL
+      window.prompt("Copy this challenge link:", url)
+    })
+  }
+
   // END SCREEN
   if (gameState === "ended") {
     const { grade, color: gradeColor } = getGrade()
@@ -1001,6 +1022,14 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 rounded-xl font-bold text-lg text-white hover:from-purple-500 hover:to-pink-500 transition-all"
             >
               {showTranslations ? "↻ Play Again!" : "↻ ¡Jugar Otra Vez!"}
+            </button>
+            {/* Challenge a Friend */}
+            <button
+              onClick={handleChallenge}
+              className="w-full px-6 py-3 rounded-xl font-bold text-lg text-white transition-all"
+              style={{ backgroundColor: linkCopied ? "#16a34a" : "#6A9FC0" }}
+            >
+              {linkCopied ? "✅ Link Copied! Send it to a friend!" : "⚔️ Challenge a Friend"}
             </button>
             <div className="flex gap-2 w-full">
               <button onClick={onBack} className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm">
