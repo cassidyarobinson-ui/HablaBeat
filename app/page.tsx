@@ -48,6 +48,8 @@ interface StoreItem {
 const SECTION_GRADIENTS: Record<string, string> = {
   "alphabet-vowels":  "linear-gradient(135deg, #fbbf24, #f59e0b)",
   "the-self":         "linear-gradient(135deg, #2dd4bf, #0d9488)",
+  "body-world":       "linear-gradient(135deg, #f472b6, #ec4899)",
+  "roles-world":      "linear-gradient(135deg, #fb923c, #ea580c)",
   "pets-syllables":   "linear-gradient(135deg, #22d3ee, #0891b2)",
   "places":           "linear-gradient(135deg, #34d399, #059669)",
   "numbers":          "linear-gradient(135deg, #a78bfa, #7c3aed)",
@@ -147,9 +149,9 @@ const languages = {
             ],
           },
           {
-            id: "the-self",
-            title: "You World",
-            icon: "👤",
+            id: "body-world",
+            title: "Body World",
+            icon: "🧍",
             color: latinoColors.teal,
             badgeUnlocked: false,
             songs: [
@@ -162,6 +164,15 @@ const languages = {
                 youtubeId: "VKhs4BvGWAk",
               },
               { id: "ropa", title: "Ropa Linda", number: 5, playCount: 4, completed: false, youtubeId: "MW1ksRG6xOU" },
+            ],
+          },
+          {
+            id: "roles-world",
+            title: "Roles World",
+            icon: "👨‍👩‍👧",
+            color: latinoColors.orange,
+            badgeUnlocked: false,
+            songs: [
               {
                 id: "familia",
                 title: "Mi Familia",
