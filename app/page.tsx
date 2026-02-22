@@ -1469,7 +1469,8 @@ export default function HablaBeat() {
   const [searchQuery, setSearchQuery] = useState("")
   const [bestFlow, setBestFlow] = useState(0)
   const [totalVocabBank, setTotalVocabBank] = useState(0)
-  const [openSectionId, setOpenSectionId] = useState<string>("alphabet-vowels")
+  const [openSectionId, setOpenSectionId] = useState<string>("")
+  const [worldClosing, setWorldClosing] = useState(false)
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
 
@@ -2557,6 +2558,22 @@ export default function HablaBeat() {
             50%       { transform: translateY(-4px); }
           }
           .world-float { animation: worldFloat 3.5s ease-in-out infinite; }
+          @keyframes worldZoomIn {
+            0%   { clip-path: circle(6% at var(--ox) var(--oy)); opacity: 0.7; }
+            60%  { clip-path: circle(80% at 50% 50%); opacity: 1; }
+            100% { clip-path: circle(150% at 50% 50%); opacity: 1; }
+          }
+          @keyframes worldZoomOut {
+            0%   { clip-path: circle(150% at 50% 50%); opacity: 1; }
+            100% { clip-path: circle(6% at var(--ox) var(--oy)); opacity: 0; }
+          }
+          .world-zoom-in  { animation: worldZoomIn  0.45s cubic-bezier(0.4,0,0.2,1) forwards; }
+          .world-zoom-out { animation: worldZoomOut 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+          @keyframes worldContentFadeIn {
+            0%   { opacity: 0; transform: scale(0.92); }
+            100% { opacity: 1; transform: scale(1); }
+          }
+          .world-content-in { animation: worldContentFadeIn 0.3s ease 0.25s both; }
           @keyframes shootingStar {
             0%   { transform: translateX(0) translateY(0) rotate(-40deg); opacity: 0; }
             8%   { opacity: 1; }
@@ -2825,6 +2842,126 @@ export default function HablaBeat() {
             </div>
           </div>
 
+          {/* ✨ World overlay — zooms in when a world is tapped */}
+          {(() => {
+            if (!openSectionId) return null
+            // Find the open section + its category
+            let openSection: typeof curriculumData[0]["sections"][0] | null = null
+            let openCategory: typeof curriculumData[0] | null = null
+            for (const cat of curriculumData) {
+              const sec = cat.sections.find(s => s.id === openSectionId)
+              if (sec) { openSection = sec; openCategory = cat; break }
+            }
+            if (!openSection || !openCategory) return null
+            const sectionGradient = SECTION_GRADIENTS[openSection.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+            const closeWorld = () => {
+              setWorldClosing(true)
+              setTimeout(() => { setOpenSectionId(""); setWorldClosing(false) }, 350)
+            }
+            return (
+              <div
+                className={worldClosing ? "world-zoom-out" : "world-zoom-in"}
+                style={{
+                  position: "fixed", inset: 0, zIndex: 60,
+                  background: sectionGradient,
+                  "--ox": "50%", "--oy": "50%",
+                } as React.CSSProperties}
+              >
+                {/* Starfield inside world */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  <span className="star-twinkle absolute text-white/60" style={{ top:"6%",  left:"12%",  fontSize:"14px", animationDuration:"2.1s" }}>★</span>
+                  <span className="star-twinkle absolute text-white/40" style={{ top:"5%",  left:"55%",  fontSize:"10px", animationDuration:"1.7s", animationDelay:"0.4s" }}>✦</span>
+                  <span className="star-twinkle absolute text-white/50" style={{ top:"10%", left:"80%",  fontSize:"12px", animationDuration:"2.5s", animationDelay:"0.8s" }}>★</span>
+                  <span className="star-twinkle absolute text-white/40" style={{ top:"18%", left:"5%",   fontSize:"9px",  animationDuration:"1.9s", animationDelay:"1.2s" }}>✦</span>
+                  <span className="star-twinkle absolute text-white/60" style={{ top:"22%", left:"90%",  fontSize:"11px", animationDuration:"2.3s", animationDelay:"0.2s" }}>★</span>
+                  <span className="star-twinkle absolute text-white/30" style={{ top:"45%", left:"3%",   fontSize:"8px",  animationDuration:"1.8s", animationDelay:"1.5s" }}>✦</span>
+                  <span className="star-twinkle absolute text-white/50" style={{ top:"60%", left:"92%",  fontSize:"10px", animationDuration:"2.7s", animationDelay:"0.6s" }}>★</span>
+                  <span className="star-twinkle absolute text-white/40" style={{ top:"75%", left:"20%",  fontSize:"8px",  animationDuration:"2.0s", animationDelay:"1.0s" }}>✦</span>
+                  <span className="star-twinkle absolute text-white/50" style={{ top:"85%", left:"70%",  fontSize:"12px", animationDuration:"1.6s", animationDelay:"0.3s" }}>★</span>
+                  <span className="star-twinkle absolute text-white/30" style={{ top:"90%", left:"40%",  fontSize:"9px",  animationDuration:"2.2s", animationDelay:"1.8s" }}>✦</span>
+                </div>
+                {/* Content */}
+                <div className="world-content-in flex flex-col h-full max-w-md mx-auto">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 px-4 pt-10 pb-4">
+                    <button
+                      onClick={closeWorld}
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-xl active:scale-90 transition-all"
+                      style={{ background: "rgba(0,0,0,0.25)" }}
+                    >←</button>
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-3xl">
+                        {openSection.id === "ar-verbs" ? "🅰️"
+                          : openSection.id === "er-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"rgba(0,0,0,0.30)" }}>E</span>
+                          : openSection.id === "ir-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"rgba(0,0,0,0.30)" }}>I</span>
+                          : openSection.icon}
+                      </span>
+                      <div>
+                        <h2 className="text-white font-black text-xl leading-tight drop-shadow">{openSection.title}</h2>
+                        <p className="text-white/70 text-xs font-semibold">{openSection.songs.length} songs · {openCategory.title}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Song list */}
+                  <div className="flex-1 overflow-y-auto pb-24 px-3">
+                    <div className="bg-white/15 backdrop-blur-sm rounded-3xl overflow-hidden">
+                      {openSection.songs.map((song, idx) => {
+                        const isClickable = song.youtubeId && song.youtubeId !== ""
+                        const songBestGrade = bestGrades[song.number]
+                        return (
+                          <div
+                            key={song.id}
+                            className="px-4 py-3 transition-all active:scale-[0.99]"
+                            style={{ borderBottom: idx < openSection!.songs.length - 1 ? "1px solid rgba(255,255,255,0.15)" : "none" }}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-xs font-bold text-white/50 w-5 text-center flex-shrink-0">{song.number}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <h4 className="font-bold text-white truncate text-sm drop-shadow-sm">{song.title}</h4>
+                                  {selectedLanguage === "spanish" && (
+                                    <span className="text-sm leading-none flex-shrink-0">{getSongCountry(song.number).flag}</span>
+                                  )}
+                                </div>
+                                <div className="h-1 w-20 rounded-full mt-1 overflow-hidden" style={{ background: "rgba(255,255,255,0.2)" }}>
+                                  <div className="h-full rounded-full transition-all duration-500" style={{
+                                    width: `${Math.min(100, ((song.playCount || 0) / 3) * 100)}%`,
+                                    background: song.playCount >= 3 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)"
+                                  }} />
+                                </div>
+                              </div>
+                              {songBestGrade && (
+                                <span className="text-xs font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(255,255,255,0.25)", color: "white" }}>
+                                  {songBestGrade}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex gap-2 mt-2 ml-7">
+                              {selectedLanguage === "spanish" && (
+                                <button
+                                  onClick={() => { closeWorld(); setTimeout(() => handlePlayDDR(song.id, openCategory!.id, openSection!.id), 360) }}
+                                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
+                                  style={{ background: "rgba(0,0,0,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
+                                >🥕 Play</button>
+                              )}
+                              {isClickable && (
+                                <button
+                                  onClick={() => { closeWorld(); setTimeout(() => handlePlaySong(song.id, openCategory!.id, openSection!.id), 360) }}
+                                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
+                                  style={{ background: "rgba(0,0,0,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
+                                >🎤 Sing</button>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+
           {/* Curriculum - Accordion Sections */}
           <div className="p-2 space-y-4 pb-32">
               {curriculumData.map((category) => (
@@ -2905,118 +3042,40 @@ export default function HablaBeat() {
                   {/* 3-Column Section Card Grid */}
                   <div className="grid grid-cols-3 gap-2.5 px-3 pb-4 relative z-10">
                     {category.sections.map((section, sectionIdx) => {
-                      const isOpen = openSectionId === section.id
                       const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
                       return (
-                        <React.Fragment key={section.id}>
-                          {/* Square card */}
-                          <button
-                            onClick={() => setOpenSectionId(isOpen ? "" : section.id)}
-                            className="relative flex flex-col items-center justify-center gap-1 rounded-full p-2 aspect-square transition-all active:scale-95 world-float"
-                            style={{
-                              background: sectionGradient,
-                              border: isOpen ? "3px solid rgba(255,255,255,0.9)" : "2px solid rgba(255,255,255,0.5)",
-                              boxShadow: isOpen
-                                ? "0 4px 16px rgba(0,0,0,0.18), 0 0 0 2px rgba(255,255,255,0.25)"
-                                : "0 2px 8px rgba(0,0,0,0.12)",
-                              animationDelay: `${(sectionIdx * 0.4) % 3}s`,
-                              animationPlayState: isOpen ? "paused" : "running",
-                            }}
-                          >
-                            {/* Unlock dot */}
-                            {isSectionBadgeUnlocked(section) && (
-                              <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm" />
-                            )}
-                            {/* Icon */}
-                            {section.id === "ar-verbs" ? (
-                              <span className="text-2xl leading-none">🅰️</span>
-                            ) : section.id === "er-verbs" ? (
-                              <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>E</span>
-                            ) : section.id === "ir-verbs" ? (
-                              <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>I</span>
-                            ) : (
-                              <span className="text-2xl leading-none">{section.icon}</span>
-                            )}
-                            {/* Name */}
-                            <span className="text-white font-black text-[11px] text-center leading-tight drop-shadow-sm px-0.5">
-                              {section.title}
-                            </span>
-                            {/* Song count */}
-                            <span className="text-white/80 text-[10px] font-semibold">{section.songs.length} songs</span>
-                          </button>
-
-                          {/* Full-width expanded song list */}
-                          {isOpen && (
-                            <div style={{ gridColumn: "1 / -1" }} className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                              {/* Section header strip */}
-                              <div className="px-4 py-2.5 flex items-center gap-2" style={{ background: sectionGradient }}>
-                                <span className="text-lg">{section.icon}</span>
-                                <span className="text-white font-black text-sm">{section.title}</span>
-                                <span className="text-white/70 text-xs ml-auto">{section.songs.length} songs</span>
-                              </div>
-                              {/* Songs */}
-                              <div className="divide-y divide-gray-50">
-                                {section.songs.map((song) => {
-                                  const isClickable = song.youtubeId && song.youtubeId !== ""
-                                  const songBestGrade = bestGrades[song.number]
-                                  return (
-                                    <div
-                                      key={song.id}
-                                      className="px-3 py-2.5 transition-all hover:bg-gray-50 active:scale-[0.99]"
-                                    >
-                                      <div className="flex items-center gap-2.5">
-                                        <span className="text-xs font-bold text-gray-400 w-5 text-center flex-shrink-0">{song.number}</span>
-                                        <div className="flex-1 min-w-0">
-                                          <div className="flex items-center gap-1.5">
-                                            <h4 className="font-bold text-gray-900 truncate text-sm">{song.title}</h4>
-                                            {selectedLanguage === "spanish" && (
-                                              <span className="text-sm leading-none flex-shrink-0" title={getSongCountry(song.number).country}>
-                                                {getSongCountry(song.number).flag}
-                                              </span>
-                                            )}
-                                          </div>
-                                          {/* Completion bar */}
-                                          <div className="h-1 w-20 bg-gray-100 rounded-full mt-1 overflow-hidden">
-                                            <div className="h-full rounded-full transition-all duration-500" style={{
-                                              width: `${Math.min(100, ((song.playCount || 0) / 3) * 100)}%`,
-                                              background: song.playCount >= 3 ? "linear-gradient(90deg, #34d399, #22d3ee)" : "linear-gradient(90deg, #a78bfa, #818cf8)"
-                                            }} />
-                                          </div>
-                                        </div>
-                                        {songBestGrade && (
-                                          <span className="text-xs font-black px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 border border-yellow-300 flex-shrink-0">
-                                            {songBestGrade}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {/* Action buttons */}
-                                      <div className="flex gap-2 mt-2 ml-7">
-                                        {selectedLanguage === "spanish" && (
-                                          <button
-                                            onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
-                                            style={{ background: "linear-gradient(135deg, #4ade80, #16a34a)", boxShadow: "0 3px 10px rgba(34,197,94,0.45)" }}
-                                          >
-                                            🥕 Play
-                                          </button>
-                                        )}
-                                        {isClickable && (
-                                          <button
-                                            onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
-                                            style={{ background: "linear-gradient(135deg, #e879f9, #a855f7)", boxShadow: "0 3px 10px rgba(168,85,247,0.45)" }}
-                                          >
-                                            🎤 Sing
-                                          </button>
-                                        )}
-                                      </div>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            </div>
+                        <button
+                          key={section.id}
+                          onClick={() => setOpenSectionId(section.id)}
+                          className="relative flex flex-col items-center justify-center gap-1 rounded-full p-2 aspect-square transition-all active:scale-90 world-float"
+                          style={{
+                            background: sectionGradient,
+                            border: "2px solid rgba(255,255,255,0.5)",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                            animationDelay: `${(sectionIdx * 0.4) % 3}s`,
+                          }}
+                        >
+                          {/* Unlock dot */}
+                          {isSectionBadgeUnlocked(section) && (
+                            <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm" />
                           )}
-                        </React.Fragment>
+                          {/* Icon */}
+                          {section.id === "ar-verbs" ? (
+                            <span className="text-2xl leading-none">🅰️</span>
+                          ) : section.id === "er-verbs" ? (
+                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>E</span>
+                          ) : section.id === "ir-verbs" ? (
+                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>I</span>
+                          ) : (
+                            <span className="text-2xl leading-none">{section.icon}</span>
+                          )}
+                          {/* Name */}
+                          <span className="text-white font-black text-[11px] text-center leading-tight drop-shadow-sm px-0.5">
+                            {section.title}
+                          </span>
+                          {/* Song count */}
+                          <span className="text-white/80 text-[10px] font-semibold">{section.songs.length} songs</span>
+                        </button>
                       )
                     })}
                   </div>
