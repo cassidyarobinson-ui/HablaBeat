@@ -10,6 +10,7 @@ const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr:
 import {
   Play,
   BookOpen,
+  Music,
   Pause,
   SkipBack,
   SkipForward,
@@ -2185,7 +2186,7 @@ export default function HablaBeat() {
                 className="flex flex-col items-center gap-1 text-gray-900 pt-3"
                 onClick={() => { stopMic(); setCurrentView("songs") }}
               >
-                <BookOpen className="h-5 w-5" />
+                <Music className="h-5 w-5" />
                 <span className="text-xs">Songs</span>
               </Button>
               <Button
@@ -2194,7 +2195,7 @@ export default function HablaBeat() {
                 onClick={() => { stopMic(); setCurrentView("coins") }}
               >
                 <Coins className="h-5 w-5" />
-                <span className="text-xs">Coins</span>
+                <span className="text-xs">Bank</span>
               </Button>
               <Button
                 variant="ghost"
@@ -2295,7 +2296,7 @@ export default function HablaBeat() {
                 className="flex flex-col items-center gap-1 text-gray-900 pt-3"
                 onClick={() => setCurrentView("songs")}
               >
-                <BookOpen className="h-5 w-5" />
+                <Music className="h-5 w-5" />
                 <span className="text-xs">Songs</span>
               </Button>
               <Button
@@ -2304,7 +2305,7 @@ export default function HablaBeat() {
                 onClick={() => setCurrentView("coins")}
               >
                 <Coins className="h-5 w-5" />
-                <span className="text-xs">Coins</span>
+                <span className="text-xs">Bank</span>
               </Button>
               <Button
                 variant="ghost"
@@ -2768,7 +2769,7 @@ export default function HablaBeat() {
                   className="flex flex-col items-center gap-1 text-gray-900 pt-3"
                   onClick={() => setCurrentView("songs")}
                 >
-                  <BookOpen className="h-5 w-5" />
+                  <Music className="h-5 w-5" />
                   <span className="text-xs">Songs</span>
                 </Button>
                 <Button
@@ -2777,7 +2778,7 @@ export default function HablaBeat() {
                   onClick={() => setCurrentView("coins")}
                 >
                   <Coins className="h-5 w-5" />
-                  <span className="text-xs">Coins</span>
+                  <span className="text-xs">Bank</span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -2807,7 +2808,7 @@ export default function HablaBeat() {
                 className="flex flex-col items-center gap-1 text-gray-500 pt-3"
                 onClick={() => setCurrentView("songs")}
               >
-                <BookOpen className="h-5 w-5" />
+                <Music className="h-5 w-5" />
                 <span className="text-xs">Songs</span>
               </Button>
               <Button
@@ -2816,7 +2817,7 @@ export default function HablaBeat() {
                 onClick={() => setCurrentView("coins")}
               >
                 <Coins className="h-5 w-5" />
-                <span className="text-xs">Coins</span>
+                <span className="text-xs">Bank</span>
               </Button>
               <Button
                 variant="ghost"
