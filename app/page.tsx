@@ -2222,34 +2222,68 @@ export default function HablaBeat() {
     })
 
     return (
-      <div className="min-h-screen bg-white">
-        <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
-          {/* Header */}
-          <div className="text-gray-900 p-4">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-44 h-44 flex-shrink-0">
+      <div className="min-h-screen swirl-bg">
+        <div className="max-w-md mx-auto min-h-screen">
+
+          {/* Header — matches songs page style */}
+          <div className="relative overflow-hidden pb-5" style={{
+            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
+          }}>
+            {/* cloud blobs */}
+            <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+            <div className="absolute top-2 right-[-10px] w-28 h-16 rounded-full opacity-35" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+            <span className="absolute top-8 right-8 text-yellow-300 text-xl select-none" style={{ filter: "drop-shadow(0 0 4px gold)" }}>✦</span>
+            <span className="absolute top-16 left-6 text-yellow-200 text-sm select-none" style={{ filter: "drop-shadow(0 0 3px gold)" }}>✦</span>
+
+            {/* Bunny + Title row */}
+            <div className="flex items-end px-3 pt-4 gap-0">
+              <div className="w-32 h-32 flex-shrink-0 relative z-10" style={{ marginBottom: "-12px" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/super-bunny-heart.gif"
-                  alt="HablaBeat Bunny"
-                  className="w-full h-full object-contain"
-                />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl" />
               </div>
-              <div className="flex-1 text-left">
-                <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
-                <p className="text-lg" style={{ color: "#6A9FC0" }}>Your Vocab Bank 💰</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Coins className="h-4 w-4 text-teal-600" />
-                  <span className="text-teal-600 font-medium">
-                    {earnedCoins.length} coins collected
-                  </span>
+              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
+                <div className="relative rounded-2xl px-4 py-3 shadow-lg overflow-hidden" style={{
+                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
+                  border: "3px solid rgba(255,255,255,0.7)",
+                  boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
+                }}>
+                  <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
+                  <span className="absolute bottom-1 right-6 text-white/30 text-xs select-none">✦</span>
+                  <h1 className="text-2xl font-black text-white text-center tracking-wide drop-shadow-md"
+                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25)" }}>
+                    Vocab Bank 💰
+                  </h1>
+                </div>
+                <div className="mx-6 h-3 rounded-b-xl shadow-sm" style={{
+                  background: "linear-gradient(90deg, #34d399, #06b6d4)",
+                  clipPath: "polygon(0 0, 100% 0, 90% 100%, 10% 100%)"
+                }} />
+              </div>
+            </div>
+
+            {/* Stats — earned count wide card */}
+            <div className="px-3 mt-4">
+              <div className="relative overflow-hidden rounded-2xl px-5 py-4 shadow-lg" style={{
+                background: "linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #6ee7b7 100%)",
+                border: "2px solid rgba(255,255,255,0.6)",
+                boxShadow: "0 4px 20px rgba(52,211,153,0.4)"
+              }}>
+                <span className="absolute top-2 right-8 text-white/40 text-xl select-none">✦</span>
+                <span className="absolute bottom-2 right-16 text-white/25 text-sm select-none">✦</span>
+                <div className="absolute right-12 top-0 bottom-0 w-24 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white font-black leading-none" style={{ fontSize: "2rem" }}>{earnedCoins.length} <span className="text-lg">coins collected</span></p>
+                    <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">YOUR COLLECTION</p>
+                  </div>
+                  <span className="text-5xl drop-shadow-lg">🪙</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Coin Collection Display */}
-          <div className="px-4 space-y-4">
+          <div className="px-4 pt-4 space-y-4 pb-32">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Coins Collected</h2>
 
             {earnedCoins.length === 0 ? (
@@ -2261,21 +2295,21 @@ export default function HablaBeat() {
             ) : (
               <div className="grid grid-cols-3 gap-4">
                 {earnedCoins.map((coin) => (
-                    <div key={coin.id} className="flex flex-col items-center">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 border-4 border-yellow-400 shadow-lg flex items-center justify-center relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent"></div>
-                        <span className="text-2xl relative z-10">{coin.icon}</span>
-                      </div>
-                      <h3 className="font-bold text-gray-800 text-xs mt-2 text-center">{coin.name}</h3>
+                  <div key={coin.id} className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 border-4 border-yellow-400 shadow-lg flex items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent"></div>
+                      <span className="text-2xl relative z-10">{coin.icon}</span>
                     </div>
-                  ))}
+                    <h3 className="font-bold text-gray-800 text-xs mt-2 text-center">{coin.name}</h3>
+                  </div>
+                ))}
               </div>
             )}
 
-            {/* Not Yet Collected - greyed out, emoji only, 5 per row */}
+            {/* Not Yet Collected */}
             {notYetCollected.length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Not Yet Collected</h3>
+              <div className="mt-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-1">Not Yet Collected</h3>
                 <p className="text-xs text-gray-500 mb-4 italic">Play and Sing a song 3 times to unlock</p>
                 <div className="flex flex-wrap gap-3">
                   {notYetCollected.map((section) => (
@@ -2293,7 +2327,7 @@ export default function HablaBeat() {
             <div className="flex justify-around">
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-900 pt-3"
+                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
                 onClick={() => setCurrentView("songs")}
               >
                 <Music className="h-5 w-5" />
@@ -2490,7 +2524,7 @@ export default function HablaBeat() {
 
           {/* ── HEADER ── */}
           <div className="relative overflow-hidden pb-5" style={{
-            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #f0fff8 100%)"
+            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             {/* soft cloud blobs */}
             <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
