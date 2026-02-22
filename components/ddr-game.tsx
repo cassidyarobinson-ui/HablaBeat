@@ -1041,25 +1041,44 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
               {linkCopied ? "✅ Link Copied!" : "⚔️ Challenge a Friend"}
             </button>
 
-            {/* Challenge modal — phone number input */}
+            {/* Challenge modal — phone number input + contact picker */}
             {showChallengeModal && (
               <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4" onClick={() => setShowChallengeModal(false)}>
                 <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
                   <p className="text-3xl text-center mb-2">⚔️</p>
                   <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
-                  <p className="text-sm text-gray-500 text-center mb-4">Enter their phone number and we'll open a text with the link!</p>
+                  <p className="text-sm text-gray-500 text-center mb-4">Send them a text with your score to beat!</p>
+
+                  {/* Contact picker — only shown if browser supports it (Android Chrome / iOS Safari 16+) */}
+                  {"contacts" in navigator && "ContactsManager" in window && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          // @ts-ignore — Contact Picker API not yet in TS types
+                          const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
+                          if (contacts?.length && contacts[0].tel?.length) {
+                            setChallengePhone(contacts[0].tel[0])
+                          }
+                        } catch { /* user cancelled */ }
+                      }}
+                      className="w-full py-3 rounded-xl font-bold text-white text-base mb-3"
+                      style={{ backgroundColor: "#6A9FC0" }}
+                    >
+                      👥 Pick from Contacts
+                    </button>
+                  )}
+
                   <input
                     type="tel"
-                    placeholder="📱 Friend's phone number"
+                    placeholder="📱 Or type a phone number"
                     value={challengePhone}
                     onChange={e => setChallengePhone(e.target.value)}
                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg text-center font-medium mb-3 focus:outline-none focus:border-blue-400"
-                    autoFocus
                   />
                   <button
                     onClick={handleSendChallenge}
                     className="w-full py-3 rounded-xl font-bold text-white text-lg mb-2"
-                    style={{ backgroundColor: "#6A9FC0" }}
+                    style={{ backgroundColor: challengePhone.replace(/\D/g,"").length >= 10 ? "#6A9FC0" : "#9CA3AF" }}
                   >
                     📲 Send Challenge Text
                   </button>
@@ -1073,6 +1092,12 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
                     className="w-full py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 text-sm"
                   >
                     📋 Just Copy the Link
+                  </button>
+                  <button
+                    onClick={() => setShowChallengeModal(false)}
+                    className="w-full py-2 mt-1 text-gray-400 text-sm"
+                  >
+                    Cancel
                   </button>
                 </div>
               </div>
