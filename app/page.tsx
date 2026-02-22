@@ -2742,7 +2742,7 @@ export default function HablaBeat() {
           )}
 
           {/* ── HEADER ── */}
-          <div className="relative overflow-hidden pb-5" style={{
+          <div className="relative overflow-hidden pb-5 rounded-3xl" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             {/* soft cloud blobs */}
