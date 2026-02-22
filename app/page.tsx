@@ -2553,25 +2553,42 @@ export default function HablaBeat() {
           }
           .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
           @keyframes worldFloat {
-            0%, 100% { transform: translateY(0px); }
-            50%       { transform: translateY(-6px); }
+            0%   { transform: translateY(0px) rotate(0deg); }
+            25%  { transform: translateY(-10px) rotate(-1deg); }
+            50%  { transform: translateY(-14px) rotate(0.5deg); }
+            75%  { transform: translateY(-6px) rotate(1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
           }
-          .world-float { animation: worldFloat 3s ease-in-out infinite; }
+          .world-float { animation: worldFloat 3.5s ease-in-out infinite; }
           @keyframes shootingStar {
-            0%   { transform: translateX(0) translateY(0) rotate(-35deg); opacity: 1; }
-            70%  { opacity: 1; }
-            100% { transform: translateX(120px) translateY(60px) rotate(-35deg); opacity: 0; }
+            0%   { transform: translateX(0) translateY(0) rotate(-40deg); opacity: 0; }
+            8%   { opacity: 1; }
+            80%  { opacity: 0.8; }
+            100% { transform: translateX(200px) translateY(90px) rotate(-40deg); opacity: 0; }
+          }
+          @keyframes shootingStarB {
+            0%   { transform: translateX(0) translateY(0) rotate(-20deg); opacity: 0; }
+            8%   { opacity: 1; }
+            80%  { opacity: 0.8; }
+            100% { transform: translateX(180px) translateY(50px) rotate(-20deg); opacity: 0; }
           }
           @keyframes twinkle {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50%       { opacity: 1;   transform: scale(1.2); }
+            0%, 100% { opacity: 0.15; transform: scale(0.7); }
+            50%       { opacity: 1;    transform: scale(1.3); }
+          }
+          @keyframes twinkleSlow {
+            0%, 100% { opacity: 0.1; transform: scale(0.6) rotate(0deg); }
+            50%       { opacity: 0.9; transform: scale(1.4) rotate(20deg); }
           }
           @keyframes alienFloat {
-            0%, 100% { transform: translateY(0px) rotate(-4deg); }
-            50%       { transform: translateY(-8px) rotate(4deg); }
+            0%, 100% { transform: translateY(0px) rotate(-5deg) translateX(0px); }
+            33%       { transform: translateY(-12px) rotate(3deg) translateX(6px); }
+            66%       { transform: translateY(-6px) rotate(-2deg) translateX(-4px); }
           }
           .star-twinkle { animation: twinkle ease-in-out infinite; }
+          .star-twinkle-slow { animation: twinkleSlow ease-in-out infinite; }
           .shooting-star { animation: shootingStar linear infinite; }
+          .shooting-star-b { animation: shootingStarB linear infinite; }
           .alien-float { animation: alienFloat ease-in-out infinite; }
         `}</style>
         <div className="max-w-md mx-auto min-h-screen">
@@ -2819,27 +2836,43 @@ export default function HablaBeat() {
                 }}>
                   {/* ✨ Galaxy decorations — stars, shooting stars, aliens, UFOs */}
                   <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ zIndex: 0 }}>
-                    {/* Static twinkling stars */}
-                    <span className="star-twinkle absolute text-yellow-400" style={{ top: "8%",  left: "12%",  fontSize: "10px", animationDuration: "2.1s", animationDelay: "0s"   }}>★</span>
-                    <span className="star-twinkle absolute text-purple-400" style={{ top: "6%",  left: "55%",  fontSize: "8px",  animationDuration: "1.7s", animationDelay: "0.4s" }}>★</span>
-                    <span className="star-twinkle absolute text-blue-400"   style={{ top: "14%", left: "80%",  fontSize: "12px", animationDuration: "2.5s", animationDelay: "0.8s" }}>★</span>
-                    <span className="star-twinkle absolute text-pink-400"   style={{ top: "22%", left: "33%",  fontSize: "7px",  animationDuration: "1.9s", animationDelay: "1.2s" }}>✦</span>
-                    <span className="star-twinkle absolute text-yellow-300" style={{ top: "30%", left: "90%",  fontSize: "9px",  animationDuration: "2.3s", animationDelay: "0.2s" }}>★</span>
-                    <span className="star-twinkle absolute text-cyan-400"   style={{ top: "55%", left: "5%",   fontSize: "11px", animationDuration: "1.8s", animationDelay: "1.5s" }}>✦</span>
-                    <span className="star-twinkle absolute text-purple-300" style={{ top: "65%", left: "70%",  fontSize: "8px",  animationDuration: "2.7s", animationDelay: "0.6s" }}>★</span>
-                    <span className="star-twinkle absolute text-yellow-400" style={{ top: "80%", left: "45%",  fontSize: "10px", animationDuration: "2.0s", animationDelay: "1.0s" }}>★</span>
-                    <span className="star-twinkle absolute text-pink-300"   style={{ top: "88%", left: "18%",  fontSize: "7px",  animationDuration: "1.6s", animationDelay: "0.3s" }}>✦</span>
-                    <span className="star-twinkle absolute text-blue-300"   style={{ top: "75%", left: "88%",  fontSize: "9px",  animationDuration: "2.2s", animationDelay: "1.8s" }}>★</span>
-                    {/* Shooting stars */}
-                    <span className="shooting-star absolute text-yellow-300" style={{ top: "10%", left: "5%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "0.5s",  opacity: 0 }}>💫</span>
-                    <span className="shooting-star absolute text-white"      style={{ top: "40%", left: "2%",  fontSize: "10px", animationDuration: "4.2s", animationDelay: "2.1s",  opacity: 0 }}>✨</span>
-                    <span className="shooting-star absolute text-yellow-200" style={{ top: "70%", left: "8%",  fontSize: "12px", animationDuration: "3.8s", animationDelay: "3.7s",  opacity: 0 }}>💫</span>
-                    {/* Aliens */}
-                    <span className="alien-float absolute" style={{ top: "15%", right: "8%",  fontSize: "20px", animationDuration: "3.2s", animationDelay: "0.7s"  }}>👽</span>
-                    <span className="alien-float absolute" style={{ top: "60%", left: "2%",   fontSize: "16px", animationDuration: "2.8s", animationDelay: "1.4s"  }}>👾</span>
-                    {/* UFOs */}
-                    <span className="alien-float absolute" style={{ top: "45%", right: "4%",  fontSize: "18px", animationDuration: "4.0s", animationDelay: "0.2s"  }}>🛸</span>
-                    <span className="alien-float absolute" style={{ top: "82%", left: "60%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "2.0s"  }}>🛸</span>
+                    {/* === TWINKLING STARS — spread across top & side edges, away from world grid === */}
+                    {/* Top row */}
+                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "4%",  left: "8%",   fontSize: "12px", animationDuration: "2.1s", animationDelay: "0s"    }}>★</span>
+                    <span className="star-twinkle absolute text-purple-400"  style={{ top: "3%",  left: "28%",  fontSize: "9px",  animationDuration: "1.7s", animationDelay: "0.4s"  }}>✦</span>
+                    <span className="star-twinkle absolute text-blue-400"    style={{ top: "5%",  left: "50%",  fontSize: "11px", animationDuration: "2.5s", animationDelay: "0.8s"  }}>★</span>
+                    <span className="star-twinkle absolute text-pink-400"    style={{ top: "4%",  left: "72%",  fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.2s"  }}>✦</span>
+                    <span className="star-twinkle absolute text-yellow-300"  style={{ top: "3%",  left: "90%",  fontSize: "10px", animationDuration: "2.3s", animationDelay: "0.2s"  }}>★</span>
+                    {/* Second row */}
+                    <span className="star-twinkle absolute text-cyan-400"    style={{ top: "10%", left: "2%",   fontSize: "8px",  animationDuration: "1.8s", animationDelay: "1.5s"  }}>★</span>
+                    <span className="star-twinkle absolute text-purple-300"  style={{ top: "11%", left: "40%",  fontSize: "7px",  animationDuration: "2.7s", animationDelay: "0.6s"  }}>✦</span>
+                    <span className="star-twinkle-slow absolute text-white"  style={{ top: "9%",  left: "62%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "0.9s"  }}>✧</span>
+                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "12%", left: "85%",  fontSize: "9px",  animationDuration: "2.0s", animationDelay: "1.0s"  }}>★</span>
+                    {/* Left edge */}
+                    <span className="star-twinkle absolute text-pink-300"    style={{ top: "18%", left: "3%",   fontSize: "10px", animationDuration: "1.6s", animationDelay: "0.3s"  }}>★</span>
+                    <span className="star-twinkle-slow absolute text-cyan-300" style={{ top: "25%", left: "1%", fontSize: "8px",  animationDuration: "3.2s", animationDelay: "1.7s"  }}>✦</span>
+                    {/* Right edge */}
+                    <span className="star-twinkle absolute text-blue-300"    style={{ top: "18%", right: "2%",  fontSize: "11px", animationDuration: "2.2s", animationDelay: "1.8s"  }}>★</span>
+                    <span className="star-twinkle-slow absolute text-purple-300" style={{ top: "26%", right: "1%", fontSize: "8px", animationDuration: "2.9s", animationDelay: "0.5s" }}>✦</span>
+                    {/* Bottom corners (below the world grid area) */}
+                    <span className="star-twinkle absolute text-yellow-300"  style={{ bottom: "3%", left: "4%",  fontSize: "9px",  animationDuration: "2.4s", animationDelay: "0.7s"  }}>★</span>
+                    <span className="star-twinkle absolute text-pink-400"    style={{ bottom: "5%", left: "22%", fontSize: "7px",  animationDuration: "1.9s", animationDelay: "1.3s"  }}>✦</span>
+                    <span className="star-twinkle-slow absolute text-white"  style={{ bottom: "4%", left: "50%", fontSize: "12px", animationDuration: "3.0s", animationDelay: "2.2s"  }}>✧</span>
+                    <span className="star-twinkle absolute text-blue-400"    style={{ bottom: "3%", right: "15%",fontSize: "8px",  animationDuration: "2.1s", animationDelay: "0.4s"  }}>★</span>
+                    <span className="star-twinkle absolute text-yellow-400"  style={{ bottom: "5%", right: "3%", fontSize: "10px", animationDuration: "1.7s", animationDelay: "1.1s"  }}>★</span>
+                    {/* === SHOOTING STARS — start from left/top edges, travel right-down === */}
+                    <span className="shooting-star   absolute text-yellow-200" style={{ top: "5%",  left: "3%",  fontSize: "16px", animationDuration: "3.2s", animationDelay: "0.3s"  }}>💫</span>
+                    <span className="shooting-star-b absolute text-white"      style={{ top: "8%",  left: "15%", fontSize: "12px", animationDuration: "4.0s", animationDelay: "1.8s"  }}>✨</span>
+                    <span className="shooting-star   absolute text-yellow-300" style={{ top: "3%",  left: "45%", fontSize: "14px", animationDuration: "3.7s", animationDelay: "3.2s"  }}>💫</span>
+                    <span className="shooting-star-b absolute text-cyan-200"   style={{ top: "6%",  left: "68%", fontSize: "11px", animationDuration: "4.5s", animationDelay: "5.0s"  }}>✨</span>
+                    <span className="shooting-star   absolute text-white"      style={{ top: "12%", left: "5%",  fontSize: "13px", animationDuration: "3.9s", animationDelay: "6.5s"  }}>💫</span>
+                    <span className="shooting-star-b absolute text-yellow-100" style={{ top: "2%",  left: "80%", fontSize: "10px", animationDuration: "3.4s", animationDelay: "2.6s"  }}>✨</span>
+                    {/* === ALIENS — float on the sides === */}
+                    <span className="alien-float absolute" style={{ top: "14%", right: "3%",  fontSize: "22px", animationDuration: "3.4s", animationDelay: "0.7s"  }}>👽</span>
+                    <span className="alien-float absolute" style={{ top: "20%", left: "1%",   fontSize: "18px", animationDuration: "2.9s", animationDelay: "1.6s"  }}>👾</span>
+                    {/* === UFOs — float on the sides === */}
+                    <span className="alien-float absolute" style={{ top: "7%",  right: "12%", fontSize: "20px", animationDuration: "4.2s", animationDelay: "0.2s"  }}>🛸</span>
+                    <span className="alien-float absolute" style={{ top: "17%", left: "30%",  fontSize: "16px", animationDuration: "3.7s", animationDelay: "2.3s"  }}>🛸</span>
                   </div>
                   {/* Main Category Header */}
                   <div className="px-4 pt-4 pb-2 relative z-10">
@@ -2890,12 +2923,15 @@ export default function HablaBeat() {
                               <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm" />
                             )}
                             {/* Icon */}
-                            <span className="text-2xl leading-none">
-                              {section.id === "ar-verbs" ? "🅰️"
-                                : section.id === "er-verbs" ? "🇪"
-                                : section.id === "ir-verbs" ? "🇮"
-                                : section.icon}
-                            </span>
+                            {section.id === "ar-verbs" ? (
+                              <span className="text-2xl leading-none">🅰️</span>
+                            ) : section.id === "er-verbs" ? (
+                              <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>E</span>
+                            ) : section.id === "ir-verbs" ? (
+                              <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>I</span>
+                            ) : (
+                              <span className="text-2xl leading-none">{section.icon}</span>
+                            )}
                             {/* Name */}
                             <span className="text-white font-black text-[11px] text-center leading-tight drop-shadow-sm px-0.5">
                               {section.title}
