@@ -107,7 +107,7 @@ const languages = {
     curriculum: [
       {
         id: "people-places-things",
-        title: "People Places Things",
+        title: "Noun Galaxy",
         icon: "🌟",
         color: latinoColors.orange,
         isMainCategory: true,
@@ -328,7 +328,7 @@ const languages = {
       },
       {
         id: "verbs",
-        title: "Verbs",
+        title: "Verb Galaxy",
         icon: "⚡",
         color: latinoColors.teal,
         isMainCategory: true,
