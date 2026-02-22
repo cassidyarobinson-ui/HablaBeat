@@ -17,7 +17,8 @@ interface ChallengeData {
   vb?: number  // total vocab bank
   bf?: number  // best flow
   cs?: number  // total challenges sent
-  str?: number // challenge streak
+  cw?: number  // challenges won
+  str?: number // daily streak
 }
 
 type Stage = "intro" | "playing" | "result"
@@ -85,7 +86,7 @@ export default function ChallengePage() {
 
   // ── Intro / accept screen ──
   if (stage === "intro") {
-    const hasStats = challenge.vb || challenge.bf || challenge.cs || challenge.str
+    const hasStats = challenge.vb || challenge.bf || challenge.cw || challenge.str
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4 py-8">
         <div className="max-w-sm w-full text-center">
@@ -109,7 +110,7 @@ export default function ChallengePage() {
                 <p className="text-xl font-black text-gray-900 leading-tight">{challengerName}</p>
                 <p className="text-sm text-gray-500 leading-tight">has challenged you! ⚔️</p>
                 {(challenge.str ?? 0) >= 2 && (
-                  <span className="inline-block mt-1 bg-pink-100 text-pink-600 text-xs font-bold px-2 py-0.5 rounded-full">
+                  <span className="inline-block mt-1 bg-orange-100 text-orange-600 text-xs font-bold px-2 py-0.5 rounded-full">
                     🔥 {challenge.str}-day streak!
                   </span>
                 )}
@@ -131,10 +132,10 @@ export default function ChallengePage() {
                     <p className="text-xs text-orange-600">🔥 Flow</p>
                   </div>
                 )}
-                {(challenge.cs ?? 0) > 0 && (
+                {(challenge.cw ?? 0) > 0 && (
                   <div className="bg-blue-50 rounded-xl p-2 text-center border border-blue-200">
-                    <p className="text-lg font-black" style={{ color: "#6A9FC0" }}>{challenge.cs}</p>
-                    <p className="text-xs" style={{ color: "#6A9FC0" }}>⚔️ Sent</p>
+                    <p className="text-lg font-black" style={{ color: "#6A9FC0" }}>{challenge.cw}</p>
+                    <p className="text-xs" style={{ color: "#6A9FC0" }}>⚔️ Won</p>
                   </div>
                 )}
               </div>

@@ -1419,10 +1419,11 @@ export default function HablaBeat() {
   const [showProfileModal, setShowProfileModal] = useState(false)
   const profilePhotoInputRef = useRef<HTMLInputElement | null>(null)
 
-  // Challenge streak state
+  // Streak + challenge stats
   const [totalChallengesSent, setTotalChallengesSent] = useState(0)
-  const [challengeStreak, setChallengeStreak] = useState(0)
-  const [lastChallengeDate, setLastChallengeDate] = useState("") // YYYY-MM-DD
+  const [challengesWon, setChallengesWon] = useState(0)
+  const [dailyStreak, setDailyStreak] = useState(0)
+  const [lastPlayDate, setLastPlayDate] = useState("") // YYYY-MM-DD
 
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
@@ -1451,8 +1452,27 @@ export default function HablaBeat() {
     setUserName(loadPersisted("hablabeat-user-name", ""))
     setUserPhoto(loadPersisted("hablabeat-user-photo", ""))
     setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
-    setChallengeStreak(loadPersisted("hablabeat-challenge-streak", 0))
-    setLastChallengeDate(loadPersisted("hablabeat-last-challenge-date", ""))
+    setChallengesWon(loadPersisted("hablabeat-challenges-won", 0))
+    const savedStreak = loadPersisted("hablabeat-daily-streak", 0)
+    const savedLastPlay = loadPersisted("hablabeat-last-play-date", "")
+    // Update daily streak on app open
+    const today = new Date().toISOString().slice(0, 10)
+    if (!savedLastPlay) {
+      setDailyStreak(1)
+      setLastPlayDate(today)
+    } else {
+      const diffDays = Math.round((new Date(today).getTime() - new Date(savedLastPlay).getTime()) / 86400000)
+      if (diffDays === 0) {
+        setDailyStreak(savedStreak)
+        setLastPlayDate(savedLastPlay)
+      } else if (diffDays === 1) {
+        setDailyStreak(savedStreak + 1)
+        setLastPlayDate(today)
+      } else {
+        setDailyStreak(1)
+        setLastPlayDate(today)
+      }
+    }
   }, [])
 
   // Persist stats when they change
@@ -1463,23 +1483,13 @@ export default function HablaBeat() {
   useEffect(() => { localStorage.setItem("hablabeat-user-name", JSON.stringify(userName)) }, [userName])
   useEffect(() => { localStorage.setItem("hablabeat-user-photo", JSON.stringify(userPhoto)) }, [userPhoto])
   useEffect(() => { localStorage.setItem("hablabeat-challenges-sent", JSON.stringify(totalChallengesSent)) }, [totalChallengesSent])
-  useEffect(() => { localStorage.setItem("hablabeat-challenge-streak", JSON.stringify(challengeStreak)) }, [challengeStreak])
-  useEffect(() => { localStorage.setItem("hablabeat-last-challenge-date", JSON.stringify(lastChallengeDate)) }, [lastChallengeDate])
+  useEffect(() => { localStorage.setItem("hablabeat-challenges-won", JSON.stringify(challengesWon)) }, [challengesWon])
+  useEffect(() => { localStorage.setItem("hablabeat-daily-streak", JSON.stringify(dailyStreak)) }, [dailyStreak])
+  useEffect(() => { localStorage.setItem("hablabeat-last-play-date", JSON.stringify(lastPlayDate)) }, [lastPlayDate])
 
-  // Called when user sends a challenge — updates streak + count
+  // Called when user sends a challenge
   const handleChallengeSent = () => {
-    const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
     setTotalChallengesSent(prev => prev + 1)
-    setChallengeStreak(prev => {
-      if (!lastChallengeDate) return 1
-      const last = new Date(lastChallengeDate)
-      const now = new Date(today)
-      const diffDays = Math.round((now.getTime() - last.getTime()) / 86400000)
-      if (diffDays === 0) return prev          // already challenged today, no change
-      if (diffDays === 1) return prev + 1      // consecutive day → extend streak
-      return 1                                  // gap → reset
-    })
-    setLastChallengeDate(today)
   }
 
   // Singing detection: start/stop mic
@@ -1971,7 +1981,8 @@ export default function HablaBeat() {
         userName={userName}
         userPhoto={userPhoto}
         totalChallengesSent={totalChallengesSent}
-        challengeStreak={challengeStreak}
+        challengesWon={challengesWon}
+        dailyStreak={dailyStreak}
         totalVocabBank={totalVocabBank}
         bestFlow={bestFlow}
         onBack={() => setCurrentView("songs")}
@@ -2389,14 +2400,14 @@ export default function HablaBeat() {
                     <p className="text-xs text-orange-600 font-semibold mt-0.5">🔥 Best Flow</p>
                   </div>
                   <div className="bg-blue-50 rounded-2xl p-3 border border-blue-200 text-center">
-                    <p className="text-2xl font-black" style={{ color: "#6A9FC0" }}>{totalChallengesSent}</p>
-                    <p className="text-xs font-semibold mt-0.5" style={{ color: "#6A9FC0" }}>⚔️ Challenges Sent</p>
+                    <p className="text-2xl font-black" style={{ color: "#6A9FC0" }}>{challengesWon}</p>
+                    <p className="text-xs font-semibold mt-0.5" style={{ color: "#6A9FC0" }}>⚔️ Chall. Won</p>
                   </div>
-                  <div className={`rounded-2xl p-3 border text-center ${challengeStreak >= 3 ? "bg-pink-50 border-pink-200" : "bg-gray-50 border-gray-200"}`}>
-                    <p className={`text-2xl font-black ${challengeStreak >= 3 ? "text-pink-500" : "text-gray-500"}`}>
-                      {challengeStreak > 0 ? `${challengeStreak}🔥` : "—"}
+                  <div className={`rounded-2xl p-3 border text-center ${dailyStreak >= 3 ? "bg-orange-50 border-orange-200" : "bg-gray-50 border-gray-200"}`}>
+                    <p className={`text-2xl font-black ${dailyStreak >= 3 ? "text-orange-500" : "text-gray-500"}`}>
+                      {dailyStreak > 0 ? `${dailyStreak}🔥` : "—"}
                     </p>
-                    <p className={`text-xs font-semibold mt-0.5 ${challengeStreak >= 3 ? "text-pink-500" : "text-gray-400"}`}>Challenge Streak</p>
+                    <p className={`text-xs font-semibold mt-0.5 ${dailyStreak >= 3 ? "text-orange-500" : "text-gray-400"}`}>Day Streak</p>
                   </div>
                 </div>
 
@@ -2442,21 +2453,30 @@ export default function HablaBeat() {
                 </div>
                 <p className="text-lg leading-tight" style={{ color: "#6A9FC0" }}>Collect coins with</p>
                 <p className="text-lg leading-tight font-bold" style={{ color: "#6A9FC0" }}>Blue Bunny!</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-xl">🔥</span>
-                  <span className="text-teal-600 font-bold">Best Flow: {bestFlow}</span>
-                </div>
               </div>
             </div>
 
-            {/* Vocab Bank */}
-            <div className="px-4 mb-3">
-              <div className="bg-yellow-100 rounded-xl p-3 border border-yellow-300 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">💰</span>
-                  <span className="text-yellow-800 font-bold text-lg">Vocab Bank</span>
-                </div>
-                <span className="text-yellow-700 font-black text-2xl">{totalVocabBank}</span>
+            {/* Stats grid */}
+            <div className="px-4 mb-3 grid grid-cols-2 gap-2">
+              <div className="bg-yellow-100 rounded-xl p-3 border border-yellow-300 shadow-sm text-center">
+                <p className="text-yellow-700 font-black text-2xl">{totalVocabBank}</p>
+                <p className="text-yellow-800 font-semibold text-xs mt-0.5">💰 Vocab Bank</p>
+              </div>
+              <div className={`rounded-xl p-3 border shadow-sm text-center ${dailyStreak >= 3 ? "bg-orange-100 border-orange-300" : "bg-gray-100 border-gray-200"}`}>
+                <p className={`font-black text-2xl ${dailyStreak >= 3 ? "text-orange-500" : "text-gray-500"}`}>
+                  {dailyStreak > 0 ? dailyStreak : "—"}
+                </p>
+                <p className={`font-semibold text-xs mt-0.5 ${dailyStreak >= 3 ? "text-orange-600" : "text-gray-500"}`}>
+                  🔥 Day Streak
+                </p>
+              </div>
+              <div className="bg-teal-50 rounded-xl p-3 border border-teal-200 shadow-sm text-center">
+                <p className="text-teal-600 font-black text-2xl">{bestFlow}</p>
+                <p className="text-teal-700 font-semibold text-xs mt-0.5">⚡ Best Flow</p>
+              </div>
+              <div className="bg-blue-50 rounded-xl p-3 border border-blue-200 shadow-sm text-center">
+                <p className="font-black text-2xl" style={{ color: "#6A9FC0" }}>{challengesWon}</p>
+                <p className="font-semibold text-xs mt-0.5" style={{ color: "#6A9FC0" }}>⚔️ Challenges Won</p>
               </div>
             </div>
 
