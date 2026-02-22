@@ -2324,7 +2324,7 @@ export default function HablaBeat() {
   if (currentView === "songs") {
     return (
       <div className="min-h-screen bg-white">
-        <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
+        <div className="max-w-md mx-auto min-h-screen" style={{ background: "linear-gradient(180deg, #e0fdf4 0%, #f0fffe 100%)" }}>
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
@@ -2631,7 +2631,7 @@ export default function HablaBeat() {
 
                         {/* Song List - only shown when section is open */}
                         {isOpen && (
-                          <div className="space-y-0.5 pl-4 pr-2 pb-2 bg-white/50">
+                          <div className="space-y-0.5 pl-4 pr-2 pb-2 bg-white rounded-b-lg">
                             {section.songs.map((song) => {
                               const isClickable = song.youtubeId && song.youtubeId !== ""
                               const songBestGrade = bestGrades[song.number]
