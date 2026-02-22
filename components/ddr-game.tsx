@@ -41,10 +41,15 @@ interface DDRGameProps {
   songNumber: number
   songTitle: string
   userName?: string
-  userPhoto?: string   // base64 thumbnail
+  userPhoto?: string        // base64 thumbnail
+  totalChallengesSent?: number
+  challengeStreak?: number
+  totalVocabBank?: number
+  bestFlow?: number
   onBack: () => void
   onNextSong?: () => void
   onGameEnd?: (songNumber: number, flow: number, bank: number, grade: string) => void
+  onChallengeSent?: () => void
 }
 
 // Constants
@@ -94,7 +99,7 @@ const CARROT_SVGS: Record<string, string> = {
   </svg>`,
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", onBack, onNextSong, onGameEnd }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengeStreak = 0, totalVocabBank = 0, bestFlow = 0, onBack, onNextSong, onGameEnd, onChallengeSent }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
@@ -902,11 +907,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     }
     if (userName) payload.n = userName
     if (userPhoto) payload.p = userPhoto
+    if (totalVocabBank) payload.vb = totalVocabBank
+    if (bestFlow) payload.bf = bestFlow
+    if (totalChallengesSent) payload.cs = totalChallengesSent + 1  // +1 for this challenge
+    if (challengeStreak) payload.str = challengeStreak
     const raw = btoa(JSON.stringify(payload)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
     const url = `${window.location.origin}/challenge/${raw}`
     setChallengeUrl(url)
     setChallengePhone("")
     setShowChallengeModal(true)
+    onChallengeSent?.()
   }
 
   const handleSendChallenge = () => {

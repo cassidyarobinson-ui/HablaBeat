@@ -1419,6 +1419,11 @@ export default function HablaBeat() {
   const [showProfileModal, setShowProfileModal] = useState(false)
   const profilePhotoInputRef = useRef<HTMLInputElement | null>(null)
 
+  // Challenge streak state
+  const [totalChallengesSent, setTotalChallengesSent] = useState(0)
+  const [challengeStreak, setChallengeStreak] = useState(0)
+  const [lastChallengeDate, setLastChallengeDate] = useState("") // YYYY-MM-DD
+
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
   const [singScore, setSingScore] = useState(0)
@@ -1445,6 +1450,9 @@ export default function HablaBeat() {
     setSongPlayCounts(loadPersisted("hablabeat-song-play-counts", {}))
     setUserName(loadPersisted("hablabeat-user-name", ""))
     setUserPhoto(loadPersisted("hablabeat-user-photo", ""))
+    setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
+    setChallengeStreak(loadPersisted("hablabeat-challenge-streak", 0))
+    setLastChallengeDate(loadPersisted("hablabeat-last-challenge-date", ""))
   }, [])
 
   // Persist stats when they change
@@ -1454,6 +1462,25 @@ export default function HablaBeat() {
   useEffect(() => { if (Object.keys(songPlayCounts).length > 0) localStorage.setItem("hablabeat-song-play-counts", JSON.stringify(songPlayCounts)) }, [songPlayCounts])
   useEffect(() => { localStorage.setItem("hablabeat-user-name", JSON.stringify(userName)) }, [userName])
   useEffect(() => { localStorage.setItem("hablabeat-user-photo", JSON.stringify(userPhoto)) }, [userPhoto])
+  useEffect(() => { localStorage.setItem("hablabeat-challenges-sent", JSON.stringify(totalChallengesSent)) }, [totalChallengesSent])
+  useEffect(() => { localStorage.setItem("hablabeat-challenge-streak", JSON.stringify(challengeStreak)) }, [challengeStreak])
+  useEffect(() => { localStorage.setItem("hablabeat-last-challenge-date", JSON.stringify(lastChallengeDate)) }, [lastChallengeDate])
+
+  // Called when user sends a challenge — updates streak + count
+  const handleChallengeSent = () => {
+    const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+    setTotalChallengesSent(prev => prev + 1)
+    setChallengeStreak(prev => {
+      if (!lastChallengeDate) return 1
+      const last = new Date(lastChallengeDate)
+      const now = new Date(today)
+      const diffDays = Math.round((now.getTime() - last.getTime()) / 86400000)
+      if (diffDays === 0) return prev          // already challenged today, no change
+      if (diffDays === 1) return prev + 1      // consecutive day → extend streak
+      return 1                                  // gap → reset
+    })
+    setLastChallengeDate(today)
+  }
 
   // Singing detection: start/stop mic
   const startMic = async () => {
@@ -1943,12 +1970,17 @@ export default function HablaBeat() {
         songTitle={currentSong.title}
         userName={userName}
         userPhoto={userPhoto}
+        totalChallengesSent={totalChallengesSent}
+        challengeStreak={challengeStreak}
+        totalVocabBank={totalVocabBank}
+        bestFlow={bestFlow}
         onBack={() => setCurrentView("songs")}
         onNextSong={currentSongIndex < allSongs.length - 1 ? () => {
           handleNextSong()
           setCurrentView("ddr")
         } : undefined}
         onGameEnd={handleDDRGameEnd}
+        onChallengeSent={handleChallengeSent}
       />
     )
   }
@@ -2304,20 +2336,21 @@ export default function HablaBeat() {
           {/* Profile Modal */}
           {showProfileModal && (
             <div
-              className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4"
+              className="fixed inset-0 bg-black/60 z-50 flex items-end justify-center"
               onClick={() => setShowProfileModal(false)}
             >
               <div
-                className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+                className="bg-white rounded-t-3xl p-6 w-full max-w-sm shadow-2xl pb-10"
                 onClick={e => e.stopPropagation()}
               >
-                <h2 className="text-xl font-black text-center text-gray-900 mb-4">Your Profile</h2>
+                {/* Drag handle */}
+                <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5" />
 
-                {/* Avatar preview */}
-                <div className="flex justify-center mb-4">
+                {/* Avatar + name row */}
+                <div className="flex items-center gap-4 mb-5">
                   <button
                     onClick={() => profilePhotoInputRef.current?.click()}
-                    className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-blue-300 shadow-lg hover:opacity-90 transition-opacity"
+                    className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-blue-300 shadow-lg hover:opacity-90 transition-opacity flex-shrink-0"
                     style={{ backgroundColor: "#e0f2fe" }}
                   >
                     {userPhoto ? (
@@ -2326,21 +2359,46 @@ export default function HablaBeat() {
                     ) : (
                       <span className="flex items-center justify-center w-full h-full text-4xl">🐰</span>
                     )}
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs py-1 text-center">
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs py-0.5 text-center">
                       {userPhoto ? "Change" : "Add Photo"}
                     </div>
                   </button>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      placeholder="Your name (e.g. Cassidy)"
+                      value={userName}
+                      onChange={e => setUserName(e.target.value)}
+                      maxLength={24}
+                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-base font-medium focus:outline-none focus:border-blue-400"
+                    />
+                    {userName && (
+                      <p className="text-xs text-gray-400 mt-1 px-1">This name shows in challenges 🥕</p>
+                    )}
+                  </div>
                 </div>
 
-                {/* Name input */}
-                <input
-                  type="text"
-                  placeholder="Your name (e.g. Cassidy)"
-                  value={userName}
-                  onChange={e => setUserName(e.target.value)}
-                  maxLength={24}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg text-center font-medium mb-4 focus:outline-none focus:border-blue-400"
-                />
+                {/* Stats grid */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <div className="bg-yellow-50 rounded-2xl p-3 border border-yellow-200 text-center">
+                    <p className="text-2xl font-black text-yellow-600">{totalVocabBank}</p>
+                    <p className="text-xs text-yellow-700 font-semibold mt-0.5">💰 Vocab Bank</p>
+                  </div>
+                  <div className="bg-orange-50 rounded-2xl p-3 border border-orange-200 text-center">
+                    <p className="text-2xl font-black text-orange-500">{bestFlow}</p>
+                    <p className="text-xs text-orange-600 font-semibold mt-0.5">🔥 Best Flow</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-2xl p-3 border border-blue-200 text-center">
+                    <p className="text-2xl font-black" style={{ color: "#6A9FC0" }}>{totalChallengesSent}</p>
+                    <p className="text-xs font-semibold mt-0.5" style={{ color: "#6A9FC0" }}>⚔️ Challenges Sent</p>
+                  </div>
+                  <div className={`rounded-2xl p-3 border text-center ${challengeStreak >= 3 ? "bg-pink-50 border-pink-200" : "bg-gray-50 border-gray-200"}`}>
+                    <p className={`text-2xl font-black ${challengeStreak >= 3 ? "text-pink-500" : "text-gray-500"}`}>
+                      {challengeStreak > 0 ? `${challengeStreak}🔥` : "—"}
+                    </p>
+                    <p className={`text-xs font-semibold mt-0.5 ${challengeStreak >= 3 ? "text-pink-500" : "text-gray-400"}`}>Challenge Streak</p>
+                  </div>
+                </div>
 
                 <button
                   onClick={() => setShowProfileModal(false)}

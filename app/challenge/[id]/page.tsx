@@ -7,13 +7,17 @@ import dynamic from "next/dynamic"
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 
 interface ChallengeData {
-  s: number   // song number
-  t: string   // song title
-  sc: number  // challenger score
-  g: string   // challenger grade
-  fc: number  // challenger flow combo
-  n?: string  // challenger name (optional)
-  p?: string  // challenger photo base64 (optional)
+  s: number    // song number
+  t: string    // song title
+  sc: number   // challenger score
+  g: string    // challenger grade
+  fc: number   // challenger flow combo
+  n?: string   // challenger name
+  p?: string   // challenger photo base64
+  vb?: number  // total vocab bank
+  bf?: number  // best flow
+  cs?: number  // total challenges sent
+  str?: number // challenge streak
 }
 
 type Stage = "intro" | "playing" | "result"
@@ -81,47 +85,77 @@ export default function ChallengePage() {
 
   // ── Intro / accept screen ──
   if (stage === "intro") {
+    const hasStats = challenge.vb || challenge.bf || challenge.cs || challenge.str
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4 py-8">
         <div className="max-w-sm w-full text-center">
 
-          {/* Challenger avatar */}
-          <div className="flex justify-center mb-3">
-            <div
-              className="w-24 h-24 rounded-full overflow-hidden border-4 shadow-lg"
-              style={{ borderColor: "#6A9FC0", backgroundColor: "#e0f2fe" }}
-            >
-              {challengerPhoto ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={challengerPhoto} alt={challengerName} className="w-full h-full object-cover" />
-              ) : (
-                <span className="flex items-center justify-center w-full h-full text-5xl">🐰</span>
-              )}
+          {/* Challenger profile card */}
+          <div className="bg-white rounded-3xl border-2 border-blue-200 shadow-xl p-5 mb-5">
+            {/* Avatar + name */}
+            <div className="flex items-center gap-4 mb-4">
+              <div
+                className="w-20 h-20 rounded-full overflow-hidden border-4 shadow-md flex-shrink-0"
+                style={{ borderColor: "#6A9FC0", backgroundColor: "#e0f2fe" }}
+              >
+                {challengerPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={challengerPhoto} alt={challengerName} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="flex items-center justify-center w-full h-full text-4xl">🐰</span>
+                )}
+              </div>
+              <div className="text-left flex-1">
+                <p className="text-xl font-black text-gray-900 leading-tight">{challengerName}</p>
+                <p className="text-sm text-gray-500 leading-tight">has challenged you! ⚔️</p>
+                {(challenge.str ?? 0) >= 2 && (
+                  <span className="inline-block mt-1 bg-pink-100 text-pink-600 text-xs font-bold px-2 py-0.5 rounded-full">
+                    🔥 {challenge.str}-day streak!
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
 
-          <p className="text-2xl font-black text-gray-900 mb-0.5">
-            {challengerName} has challenged you!
-          </p>
-          <p className="text-gray-500 mb-5 text-sm">
-            Can you beat their score on <span className="font-bold text-gray-800">{challenge.t}</span>? ⚔️
-          </p>
+            {/* Stats row — only shown if challenger has stats */}
+            {hasStats && (
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {(challenge.vb ?? 0) > 0 && (
+                  <div className="bg-yellow-50 rounded-xl p-2 text-center border border-yellow-200">
+                    <p className="text-lg font-black text-yellow-600">{challenge.vb}</p>
+                    <p className="text-xs text-yellow-700">💰 Bank</p>
+                  </div>
+                )}
+                {(challenge.bf ?? 0) > 0 && (
+                  <div className="bg-orange-50 rounded-xl p-2 text-center border border-orange-200">
+                    <p className="text-lg font-black text-orange-500">{challenge.bf}</p>
+                    <p className="text-xs text-orange-600">🔥 Flow</p>
+                  </div>
+                )}
+                {(challenge.cs ?? 0) > 0 && (
+                  <div className="bg-blue-50 rounded-xl p-2 text-center border border-blue-200">
+                    <p className="text-lg font-black" style={{ color: "#6A9FC0" }}>{challenge.cs}</p>
+                    <p className="text-xs" style={{ color: "#6A9FC0" }}>⚔️ Sent</p>
+                  </div>
+                )}
+              </div>
+            )}
 
-          {/* Challenger's score card */}
-          <div className="bg-white rounded-2xl border-2 border-blue-200 shadow-lg p-5 mb-6">
-            <p className="text-sm text-gray-400 uppercase tracking-widest mb-3">Their Score to Beat</p>
-            <div className="flex justify-center gap-6">
-              <div className="text-center">
-                <p className="text-4xl font-black text-yellow-500">{challenge.g}</p>
-                <p className="text-xs text-gray-400 mt-1">Grade</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-black text-yellow-600">{challenge.sc}</p>
-                <p className="text-xs text-gray-400 mt-1">💰 Bank</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-black text-orange-500">{challenge.fc}</p>
-                <p className="text-xs text-gray-400 mt-1">🔥 Flow</p>
+            {/* Score to beat */}
+            <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
+              <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">Score to Beat on {challenge.t}</p>
+              <div className="flex justify-center gap-6">
+                <div className="text-center">
+                  <p className="text-3xl font-black text-yellow-500">{challenge.g}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Grade</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-3xl font-black text-yellow-600">{challenge.sc}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">💰 Bank</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-3xl font-black text-orange-500">{challenge.fc}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">🔥 Flow</p>
+                </div>
               </div>
             </div>
           </div>
