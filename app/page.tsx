@@ -2553,11 +2553,8 @@ export default function HablaBeat() {
           }
           .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
           @keyframes worldFloat {
-            0%   { transform: translateY(0px) rotate(0deg); }
-            25%  { transform: translateY(-10px) rotate(-1deg); }
-            50%  { transform: translateY(-14px) rotate(0.5deg); }
-            75%  { transform: translateY(-6px) rotate(1deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-4px); }
           }
           .world-float { animation: worldFloat 3.5s ease-in-out infinite; }
           @keyframes shootingStar {
