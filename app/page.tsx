@@ -2394,11 +2394,11 @@ export default function HablaBeat() {
           {/* Profile Modal */}
           {showProfileModal && (
             <div
-              className="fixed inset-0 bg-black/60 z-50 flex items-end justify-center"
+              className="fixed inset-0 bg-black/60 z-50 flex items-end justify-center pb-16"
               onClick={() => setShowProfileModal(false)}
             >
               <div
-                className="bg-white rounded-t-3xl p-6 w-full max-w-sm shadow-2xl pb-10"
+                className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl mx-4"
                 onClick={e => e.stopPropagation()}
               >
                 {/* Drag handle */}
