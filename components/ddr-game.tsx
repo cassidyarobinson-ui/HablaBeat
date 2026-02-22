@@ -892,9 +892,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
         <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-3 pt-6 pb-12 relative z-10">
 
-          {/* Header card — purple→blue→teal→green gradient (matches HablaBeat ribbon) */}
+          {/* Header card — yellow→purple→blue→teal→green gradient (matches HablaBeat ribbon) */}
           <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
-            background: "linear-gradient(90deg, #a855f7 0%, #3b82f6 35%, #06b6d4 65%, #34d399 100%)",
+            background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 80%, #34d399 100%)",
             border: "2px solid rgba(255,255,255,0.35)"
           }}>
             <div className="absolute inset-0 pointer-events-none" style={{
