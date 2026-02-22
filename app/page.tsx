@@ -2557,6 +2557,22 @@ export default function HablaBeat() {
             50%       { transform: translateY(-6px); }
           }
           .world-float { animation: worldFloat 3s ease-in-out infinite; }
+          @keyframes shootingStar {
+            0%   { transform: translateX(0) translateY(0) rotate(-35deg); opacity: 1; }
+            70%  { opacity: 1; }
+            100% { transform: translateX(120px) translateY(60px) rotate(-35deg); opacity: 0; }
+          }
+          @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50%       { opacity: 1;   transform: scale(1.2); }
+          }
+          @keyframes alienFloat {
+            0%, 100% { transform: translateY(0px) rotate(-4deg); }
+            50%       { transform: translateY(-8px) rotate(4deg); }
+          }
+          .star-twinkle { animation: twinkle ease-in-out infinite; }
+          .shooting-star { animation: shootingStar linear infinite; }
+          .alien-float { animation: alienFloat ease-in-out infinite; }
         `}</style>
         <div className="max-w-md mx-auto min-h-screen">
           {/* Profile photo hidden input */}
@@ -2798,11 +2814,35 @@ export default function HablaBeat() {
           {/* Curriculum - Accordion Sections */}
           <div className="p-2 space-y-4 pb-32">
               {curriculumData.map((category) => (
-                <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm mb-4" style={{
+                <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm mb-4 relative" style={{
                   background: "linear-gradient(160deg, #e0f7ff 0%, #ede9fe 35%, #fce7f3 65%, #fef3c7 100%)"
                 }}>
+                  {/* ✨ Galaxy decorations — stars, shooting stars, aliens, UFOs */}
+                  <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ zIndex: 0 }}>
+                    {/* Static twinkling stars */}
+                    <span className="star-twinkle absolute text-yellow-400" style={{ top: "8%",  left: "12%",  fontSize: "10px", animationDuration: "2.1s", animationDelay: "0s"   }}>★</span>
+                    <span className="star-twinkle absolute text-purple-400" style={{ top: "6%",  left: "55%",  fontSize: "8px",  animationDuration: "1.7s", animationDelay: "0.4s" }}>★</span>
+                    <span className="star-twinkle absolute text-blue-400"   style={{ top: "14%", left: "80%",  fontSize: "12px", animationDuration: "2.5s", animationDelay: "0.8s" }}>★</span>
+                    <span className="star-twinkle absolute text-pink-400"   style={{ top: "22%", left: "33%",  fontSize: "7px",  animationDuration: "1.9s", animationDelay: "1.2s" }}>✦</span>
+                    <span className="star-twinkle absolute text-yellow-300" style={{ top: "30%", left: "90%",  fontSize: "9px",  animationDuration: "2.3s", animationDelay: "0.2s" }}>★</span>
+                    <span className="star-twinkle absolute text-cyan-400"   style={{ top: "55%", left: "5%",   fontSize: "11px", animationDuration: "1.8s", animationDelay: "1.5s" }}>✦</span>
+                    <span className="star-twinkle absolute text-purple-300" style={{ top: "65%", left: "70%",  fontSize: "8px",  animationDuration: "2.7s", animationDelay: "0.6s" }}>★</span>
+                    <span className="star-twinkle absolute text-yellow-400" style={{ top: "80%", left: "45%",  fontSize: "10px", animationDuration: "2.0s", animationDelay: "1.0s" }}>★</span>
+                    <span className="star-twinkle absolute text-pink-300"   style={{ top: "88%", left: "18%",  fontSize: "7px",  animationDuration: "1.6s", animationDelay: "0.3s" }}>✦</span>
+                    <span className="star-twinkle absolute text-blue-300"   style={{ top: "75%", left: "88%",  fontSize: "9px",  animationDuration: "2.2s", animationDelay: "1.8s" }}>★</span>
+                    {/* Shooting stars */}
+                    <span className="shooting-star absolute text-yellow-300" style={{ top: "10%", left: "5%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "0.5s",  opacity: 0 }}>💫</span>
+                    <span className="shooting-star absolute text-white"      style={{ top: "40%", left: "2%",  fontSize: "10px", animationDuration: "4.2s", animationDelay: "2.1s",  opacity: 0 }}>✨</span>
+                    <span className="shooting-star absolute text-yellow-200" style={{ top: "70%", left: "8%",  fontSize: "12px", animationDuration: "3.8s", animationDelay: "3.7s",  opacity: 0 }}>💫</span>
+                    {/* Aliens */}
+                    <span className="alien-float absolute" style={{ top: "15%", right: "8%",  fontSize: "20px", animationDuration: "3.2s", animationDelay: "0.7s"  }}>👽</span>
+                    <span className="alien-float absolute" style={{ top: "60%", left: "2%",   fontSize: "16px", animationDuration: "2.8s", animationDelay: "1.4s"  }}>👾</span>
+                    {/* UFOs */}
+                    <span className="alien-float absolute" style={{ top: "45%", right: "4%",  fontSize: "18px", animationDuration: "4.0s", animationDelay: "0.2s"  }}>🛸</span>
+                    <span className="alien-float absolute" style={{ top: "82%", left: "60%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "2.0s"  }}>🛸</span>
+                  </div>
                   {/* Main Category Header */}
-                  <div className="px-4 pt-4 pb-2">
+                  <div className="px-4 pt-4 pb-2 relative z-10">
                     <h1 className="text-2xl font-bold text-gray-900">{category.title}</h1>
                     <div className="text-sm text-gray-500 mt-1">
                       {category.sections.reduce((sum, section) => sum + section.songs.length, 0)} songs total
@@ -2825,7 +2865,7 @@ export default function HablaBeat() {
                   </div>
 
                   {/* 3-Column Section Card Grid */}
-                  <div className="grid grid-cols-3 gap-2.5 px-3 pb-4">
+                  <div className="grid grid-cols-3 gap-2.5 px-3 pb-4 relative z-10">
                     {category.sections.map((section, sectionIdx) => {
                       const isOpen = openSectionId === section.id
                       const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
