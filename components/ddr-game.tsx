@@ -99,7 +99,7 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
   const [combo, setCombo] = useState(0)
   const [maxCombo, setMaxCombo] = useState(0)
   const [totalHits, setTotalHits] = useState(0)
-  const [speed, setSpeed] = useState<"slow" | "medium" | "fast">("medium")
+  const [speed, setSpeed] = useState<"slow" | "medium" | "fast">("fast")
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
   const [elapsedTime, setElapsedTime] = useState("0:00")
@@ -858,10 +858,11 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
                     className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${
                       speed === s
                         ? s === "slow" ? "bg-green-600 text-white shadow-lg shadow-green-600/30"
-                        : s === "medium" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                        : "bg-red-600 text-white shadow-lg shadow-red-600/30"
+                        : s === "fast" ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+                        : "text-white shadow-lg"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
+                    style={speed === s && s === "medium" ? { backgroundColor: "#6A9FC0", boxShadow: "0 4px 14px rgba(106,159,192,0.4)" } : {}}
                   >
                     {s === "slow" ? "🐢 Slow" : s === "medium" ? "🎵 Medium" : "⚡ Fast"}
                   </button>
