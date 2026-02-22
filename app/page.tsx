@@ -2406,30 +2406,48 @@ export default function HablaBeat() {
                       className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-base font-medium focus:outline-none focus:border-blue-400"
                     />
                     {userName && (
-                      <p className="text-xs text-gray-400 mt-1 px-1">This name shows in challenges 🥕</p>
+                      <p className="text-xs text-gray-400 mt-1 px-1">Your Name 🥕</p>
                     )}
                   </div>
                 </div>
 
                 {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                  <div className="bg-yellow-50 rounded-2xl p-3 border border-yellow-200 text-center">
-                    <p className="text-2xl font-black text-yellow-600">{totalVocabBank}</p>
-                    <p className="text-xs text-yellow-700 font-semibold mt-0.5">💰 Vocab Bank</p>
+                  {/* Vocab Bank — green */}
+                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
+                    background: "linear-gradient(135deg, #34d399 0%, #22d3ee 100%)",
+                    border: "2px solid rgba(255,255,255,0.5)"
+                  }}>
+                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
+                    <p className="text-white text-2xl font-black leading-none">💰 {totalVocabBank.toLocaleString()}</p>
+                    <p className="text-white/90 font-bold text-xs mt-1">Vocab Bank</p>
                   </div>
-                  <div className="bg-orange-50 rounded-2xl p-3 border border-orange-200 text-center">
-                    <p className="text-2xl font-black text-orange-500">{bestFlow}</p>
-                    <p className="text-xs text-orange-600 font-semibold mt-0.5">🔥 Best Flow</p>
+                  {/* Best Flow — sky blue */}
+                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
+                    background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
+                    border: "2px solid rgba(255,255,255,0.5)"
+                  }}>
+                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
+                    <p className="text-white text-2xl font-black leading-none">⚡ {bestFlow}</p>
+                    <p className="text-white/90 font-bold text-xs mt-1">Best Flow</p>
                   </div>
-                  <div className="bg-blue-50 rounded-2xl p-3 border border-blue-200 text-center">
-                    <p className="text-2xl font-black" style={{ color: "#6A9FC0" }}>{challengesWon}</p>
-                    <p className="text-xs font-semibold mt-0.5" style={{ color: "#6A9FC0" }}>⚔️ Chall. Won</p>
+                  {/* Challenges Won — purple */}
+                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
+                    background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+                    border: "2px solid rgba(255,255,255,0.5)"
+                  }}>
+                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
+                    <p className="text-white text-2xl font-black leading-none">⚔️ {challengesWon}</p>
+                    <p className="text-white/90 font-bold text-xs mt-1">Challenges Won</p>
                   </div>
-                  <div className={`rounded-2xl p-3 border text-center ${dailyStreak >= 3 ? "bg-orange-50 border-orange-200" : "bg-gray-50 border-gray-200"}`}>
-                    <p className={`text-2xl font-black ${dailyStreak >= 3 ? "text-orange-500" : "text-gray-500"}`}>
-                      {dailyStreak > 0 ? `${dailyStreak}🔥` : "—"}
-                    </p>
-                    <p className={`text-xs font-semibold mt-0.5 ${dailyStreak >= 3 ? "text-orange-500" : "text-gray-400"}`}>Day Streak</p>
+                  {/* Day Streak — orange */}
+                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
+                    background: "linear-gradient(135deg, #fbbf24, #f97316)",
+                    border: "2px solid rgba(255,255,255,0.5)"
+                  }}>
+                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
+                    <p className="text-white text-2xl font-black leading-none">🔥 {dailyStreak > 0 ? dailyStreak : "0"}</p>
+                    <p className="text-white/90 font-bold text-xs mt-1">Day Streak</p>
                   </div>
                 </div>
 
