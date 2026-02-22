@@ -1353,6 +1353,33 @@ const loadPersisted = (key: string, fallback: any) => {
   } catch { return fallback }
 }
 
+// Helper: compress image file to small square JPEG base64 thumbnail (~80x80)
+function compressPhoto(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new window.Image()
+      img.onload = () => {
+        const size = 80
+        const canvas = document.createElement("canvas")
+        canvas.width = size
+        canvas.height = size
+        const ctx = canvas.getContext("2d")!
+        // Cover-crop: center the image in the square
+        const scale = Math.max(size / img.width, size / img.height)
+        const dw = img.width * scale
+        const dh = img.height * scale
+        ctx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh)
+        resolve(canvas.toDataURL("image/jpeg", 0.7))
+      }
+      img.onerror = reject
+      img.src = e.target!.result as string
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function HablaBeat() {
   const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer">("songs")
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
@@ -1386,6 +1413,12 @@ export default function HablaBeat() {
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
 
+  // Profile state
+  const [userName, setUserName] = useState("")
+  const [userPhoto, setUserPhoto] = useState("") // base64 thumbnail
+  const [showProfileModal, setShowProfileModal] = useState(false)
+  const profilePhotoInputRef = useRef<HTMLInputElement | null>(null)
+
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
   const [singScore, setSingScore] = useState(0)
@@ -1410,6 +1443,8 @@ export default function HablaBeat() {
     setTotalVocabBank(loadPersisted("hablabeat-total-vocab-bank", 0))
     setBestGrades(loadPersisted("hablabeat-best-grades", {}))
     setSongPlayCounts(loadPersisted("hablabeat-song-play-counts", {}))
+    setUserName(loadPersisted("hablabeat-user-name", ""))
+    setUserPhoto(loadPersisted("hablabeat-user-photo", ""))
   }, [])
 
   // Persist stats when they change
@@ -1417,6 +1452,8 @@ export default function HablaBeat() {
   useEffect(() => { if (totalVocabBank > 0) localStorage.setItem("hablabeat-total-vocab-bank", JSON.stringify(totalVocabBank)) }, [totalVocabBank])
   useEffect(() => { if (Object.keys(bestGrades).length > 0) localStorage.setItem("hablabeat-best-grades", JSON.stringify(bestGrades)) }, [bestGrades])
   useEffect(() => { if (Object.keys(songPlayCounts).length > 0) localStorage.setItem("hablabeat-song-play-counts", JSON.stringify(songPlayCounts)) }, [songPlayCounts])
+  useEffect(() => { localStorage.setItem("hablabeat-user-name", JSON.stringify(userName)) }, [userName])
+  useEffect(() => { localStorage.setItem("hablabeat-user-photo", JSON.stringify(userPhoto)) }, [userPhoto])
 
   // Singing detection: start/stop mic
   const startMic = async () => {
@@ -1904,6 +1941,8 @@ export default function HablaBeat() {
       <DDRGame
         songNumber={currentSong.number}
         songTitle={currentSong.title}
+        userName={userName}
+        userPhoto={userPhoto}
         onBack={() => setCurrentView("songs")}
         onNextSong={currentSongIndex < allSongs.length - 1 ? () => {
           handleNextSong()
@@ -2243,6 +2282,77 @@ export default function HablaBeat() {
     return (
       <div className="min-h-screen bg-white">
         <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
+          {/* Profile photo hidden input */}
+          <input
+            ref={profilePhotoInputRef}
+            type="file"
+            accept="image/*"
+            capture="user"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              try {
+                const thumb = await compressPhoto(file)
+                setUserPhoto(thumb)
+              } catch { /* ignore */ }
+              // reset so same file can be re-selected
+              e.target.value = ""
+            }}
+          />
+
+          {/* Profile Modal */}
+          {showProfileModal && (
+            <div
+              className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4"
+              onClick={() => setShowProfileModal(false)}
+            >
+              <div
+                className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+                onClick={e => e.stopPropagation()}
+              >
+                <h2 className="text-xl font-black text-center text-gray-900 mb-4">Your Profile</h2>
+
+                {/* Avatar preview */}
+                <div className="flex justify-center mb-4">
+                  <button
+                    onClick={() => profilePhotoInputRef.current?.click()}
+                    className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-blue-300 shadow-lg hover:opacity-90 transition-opacity"
+                    style={{ backgroundColor: "#e0f2fe" }}
+                  >
+                    {userPhoto ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={userPhoto} alt="Your photo" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="flex items-center justify-center w-full h-full text-4xl">🐰</span>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs py-1 text-center">
+                      {userPhoto ? "Change" : "Add Photo"}
+                    </div>
+                  </button>
+                </div>
+
+                {/* Name input */}
+                <input
+                  type="text"
+                  placeholder="Your name (e.g. Cassidy)"
+                  value={userName}
+                  onChange={e => setUserName(e.target.value)}
+                  maxLength={24}
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg text-center font-medium mb-4 focus:outline-none focus:border-blue-400"
+                />
+
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="w-full py-3 rounded-xl font-bold text-white text-lg"
+                  style={{ backgroundColor: "#6A9FC0" }}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Header with Super Bunny */}
           <div className="text-gray-900 p-4">
             <div className="flex items-center gap-4 mb-4">
@@ -2255,7 +2365,23 @@ export default function HablaBeat() {
                 />
               </div>
               <div className="flex-1 text-left">
-                <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
+                {/* Profile avatar top-right */}
+                <div className="flex items-start justify-between">
+                  <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
+                  <button
+                    onClick={() => setShowProfileModal(true)}
+                    className="mt-2 w-12 h-12 rounded-full overflow-hidden border-2 border-blue-300 shadow flex-shrink-0 hover:opacity-90 transition-opacity"
+                    style={{ backgroundColor: "#e0f2fe" }}
+                    title="Edit profile"
+                  >
+                    {userPhoto ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="flex items-center justify-center w-full h-full text-2xl">🐰</span>
+                    )}
+                  </button>
+                </div>
                 <p className="text-lg leading-tight" style={{ color: "#6A9FC0" }}>Collect coins with</p>
                 <p className="text-lg leading-tight font-bold" style={{ color: "#6A9FC0" }}>Blue Bunny!</p>
                 <div className="flex items-center gap-2 mt-2">

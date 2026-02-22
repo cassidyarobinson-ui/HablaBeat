@@ -12,6 +12,8 @@ interface ChallengeData {
   sc: number  // challenger score
   g: string   // challenger grade
   fc: number  // challenger flow combo
+  n?: string  // challenger name (optional)
+  p?: string  // challenger photo base64 (optional)
 }
 
 type Stage = "intro" | "playing" | "result"
@@ -74,14 +76,36 @@ export default function ChallengePage() {
     )
   }
 
+  const challengerName = challenge.n || "Someone"
+  const challengerPhoto = challenge.p || ""
+
   // ── Intro / accept screen ──
   if (stage === "intro") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4">
         <div className="max-w-sm w-full text-center">
-          <p className="text-7xl mb-4">⚔️</p>
-          <h1 className="text-3xl font-black text-gray-900 mb-1">You've Been Challenged!</h1>
-          <p className="text-gray-500 mb-6">Can you beat their score on <span className="font-bold text-gray-800">{challenge.t}</span>?</p>
+
+          {/* Challenger avatar */}
+          <div className="flex justify-center mb-3">
+            <div
+              className="w-24 h-24 rounded-full overflow-hidden border-4 shadow-lg"
+              style={{ borderColor: "#6A9FC0", backgroundColor: "#e0f2fe" }}
+            >
+              {challengerPhoto ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={challengerPhoto} alt={challengerName} className="w-full h-full object-cover" />
+              ) : (
+                <span className="flex items-center justify-center w-full h-full text-5xl">🐰</span>
+              )}
+            </div>
+          </div>
+
+          <p className="text-2xl font-black text-gray-900 mb-0.5">
+            {challengerName} has challenged you!
+          </p>
+          <p className="text-gray-500 mb-5 text-sm">
+            Can you beat their score on <span className="font-bold text-gray-800">{challenge.t}</span>? ⚔️
+          </p>
 
           {/* Challenger's score card */}
           <div className="bg-white rounded-2xl border-2 border-blue-200 shadow-lg p-5 mb-6">
@@ -132,7 +156,6 @@ export default function ChallengePage() {
   // ── Result screen ──
   const myRank = gradeRank(myGrade)
   const theirRank = gradeRank(challenge.g)
-  const scoreDiff = myScore - challenge.sc
 
   let outcome: "win" | "lose" | "tie"
   if (myRank > theirRank) outcome = "win"
@@ -142,7 +165,7 @@ export default function ChallengePage() {
   else outcome = "tie"
 
   const resultConfig = {
-    win:  { emoji: "🎉", headline: "You Win!", sub: "Amazing — you crushed the challenge!", bg: "from-yellow-50 to-white", border: "border-yellow-300", color: "#f59e0b" },
+    win:  { emoji: "🎉", headline: "You Win!", sub: `You crushed ${challengerName}'s score!`, bg: "from-yellow-50 to-white", border: "border-yellow-300", color: "#f59e0b" },
     lose: { emoji: "😅", headline: "You Lose!", sub: "So close! Challenge them back to a rematch!", bg: "from-red-50 to-white", border: "border-red-200", color: "#ef4444" },
     tie:  { emoji: "🤝", headline: "It's a Tie!", sub: "Dead even — incredibly close!", bg: "from-blue-50 to-white", border: "border-blue-200", color: "#6A9FC0" },
   }[outcome]
@@ -156,10 +179,23 @@ export default function ChallengePage() {
 
         {/* Score comparison */}
         <div className={`bg-white rounded-2xl border-2 ${resultConfig.border} shadow-lg p-5 mb-6`}>
-          <div className="grid grid-cols-3 gap-2 text-center mb-3">
+          {/* Column headers with challenger avatar */}
+          <div className="grid grid-cols-3 gap-2 text-center mb-3 items-center">
             <div className="text-xs text-gray-400 uppercase tracking-wider font-bold"></div>
             <div className="text-xs font-bold" style={{ color: "#6A9FC0" }}>YOU</div>
-            <div className="text-xs text-gray-400 font-bold">THEM</div>
+            <div className="flex flex-col items-center gap-0.5">
+              {challengerPhoto ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={challengerPhoto}
+                  alt={challengerName}
+                  className="w-7 h-7 rounded-full object-cover border border-gray-300"
+                />
+              ) : (
+                <span className="text-lg">🐰</span>
+              )}
+              <span className="text-xs text-gray-400 font-bold truncate w-16">{challengerName.slice(0, 8)}</span>
+            </div>
           </div>
           {/* Grade row */}
           <div className="grid grid-cols-3 gap-2 text-center items-center py-2 border-b border-gray-100">

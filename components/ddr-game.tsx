@@ -40,6 +40,8 @@ interface Note {
 interface DDRGameProps {
   songNumber: number
   songTitle: string
+  userName?: string
+  userPhoto?: string   // base64 thumbnail
   onBack: () => void
   onNextSong?: () => void
   onGameEnd?: (songNumber: number, flow: number, bank: number, grade: string) => void
@@ -92,7 +94,7 @@ const CARROT_SVGS: Record<string, string> = {
   </svg>`,
 }
 
-export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onGameEnd }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", onBack, onNextSong, onGameEnd }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
@@ -891,13 +893,16 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
   const handleChallenge = () => {
     const { grade } = getGrade()
     // Use URL-safe base64 (replace +/= so the URL never breaks)
-    const raw = btoa(JSON.stringify({
+    const payload: Record<string, unknown> = {
       s: songNumber,
       t: songTitle,
       sc: scoreRef.current,
       g: grade,
       fc: maxComboRef.current,
-    })).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
+    }
+    if (userName) payload.n = userName
+    if (userPhoto) payload.p = userPhoto
+    const raw = btoa(JSON.stringify(payload)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
     const url = `${window.location.origin}/challenge/${raw}`
     setChallengeUrl(url)
     setChallengePhone("")
@@ -906,7 +911,8 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
 
   const handleSendChallenge = () => {
     const digits = challengePhone.replace(/\D/g, "")
-    const message = encodeURIComponent(`🥕 I challenge you to beat my score on HablaBeat! Can you top it? ${challengeUrl}`)
+    const senderName = userName || "Someone"
+    const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their score on HablaBeat! Can you top it? ${challengeUrl}`)
     if (digits.length >= 10) {
       window.open(`sms:${digits}?body=${message}`, "_blank")
     } else {
