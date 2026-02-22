@@ -2179,31 +2179,32 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-lg">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
             <div className="flex justify-around">
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-900 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
+                style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
                 onClick={() => { stopMic(); setCurrentView("songs") }}
               >
-                <Music className="h-5 w-5" />
-                <span className="text-xs">Songs</span>
+                <Music className="h-7 w-7" />
+                <span className="text-xs font-bold">Songs</span>
               </Button>
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => { stopMic(); setCurrentView("coins") }}
               >
-                <Coins className="h-5 w-5" />
-                <span className="text-xs">Bank</span>
+                <Coins className="h-7 w-7" />
+                <span className="text-xs font-semibold">Bank</span>
               </Button>
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => { stopMic(); setCurrentView("visualizer") }}
               >
-                <Sparkles className="h-5 w-5" />
-                <span className="text-xs">Visualizer</span>
+                <Sparkles className="h-7 w-7" />
+                <span className="text-xs font-semibold">Visualizer</span>
               </Button>
             </div>
           </div>
@@ -2323,31 +2324,32 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-lg">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
             <div className="flex justify-around">
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => setCurrentView("songs")}
               >
-                <Music className="h-5 w-5" />
-                <span className="text-xs">Songs</span>
+                <Music className="h-7 w-7" />
+                <span className="text-xs font-semibold">Songs</span>
               </Button>
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-900 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
+                style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
                 onClick={() => setCurrentView("coins")}
               >
-                <Coins className="h-5 w-5" />
-                <span className="text-xs">Bank</span>
+                <Coins className="h-7 w-7" />
+                <span className="text-xs font-bold">Bank</span>
               </Button>
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => setCurrentView("visualizer")}
               >
-                <Sparkles className="h-5 w-5" />
-                <span className="text-xs">Visualizer</span>
+                <Sparkles className="h-7 w-7" />
+                <span className="text-xs font-semibold">Visualizer</span>
               </Button>
             </div>
           </div>
@@ -2623,21 +2625,23 @@ export default function HablaBeat() {
             {/* Vocab Bank — wide card */}
             <div className="px-3 mt-2">
               <div className="relative overflow-hidden rounded-2xl px-5 py-4 shadow-lg" style={{
-                background: "linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #6ee7b7 100%)",
+                background: "linear-gradient(135deg, #FFD700 0%, #FFB800 50%, #FFA500 100%)",
                 border: "2px solid rgba(255,255,255,0.6)",
-                boxShadow: "0 4px 20px rgba(52,211,153,0.4)"
+                boxShadow: "0 4px 20px rgba(255,180,0,0.45)"
               }}>
                 {/* sparkle scatter */}
-                <span className="absolute top-2 right-8 text-white/40 text-xl select-none">✦</span>
-                <span className="absolute bottom-2 right-16 text-white/25 text-sm select-none">✦</span>
-                <span className="absolute top-3 left-1/3 text-white/20 text-lg select-none">✦</span>
-                <span className="absolute bottom-3 left-1/2 text-white/20 text-xs select-none opacity-60">✦</span>
+                <span className="absolute top-2 right-8 text-white/50 text-xl select-none">✦</span>
+                <span className="absolute bottom-2 right-16 text-white/30 text-sm select-none">✦</span>
+                <span className="absolute top-3 left-1/3 text-white/25 text-lg select-none">✦</span>
                 {/* inner glow blob */}
                 <div className="absolute right-12 top-0 bottom-0 w-24 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                {/* ring decoration */}
+                <div className="absolute top-2 right-2 w-9 h-9 rounded-full pointer-events-none" style={{ border: "3px solid rgba(255,255,255,0.5)" }} />
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white font-black leading-none" style={{ fontSize: "2.4rem" }}>{totalVocabBank.toLocaleString()}</p>
+                    <p className="text-white font-black leading-none drop-shadow" style={{ fontSize: "2.4rem", textShadow: "0 2px 4px rgba(0,0,0,0.15)" }}>{totalVocabBank.toLocaleString()}</p>
                     <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">VOCAB BANK</p>
+                    <p className="text-white/70 text-xs mt-1 font-semibold">Keep playing to grow! 🌱</p>
                   </div>
                   <span className="emoji-moneybag text-5xl drop-shadow-lg">💰</span>
                 </div>
@@ -2648,7 +2652,7 @@ export default function HablaBeat() {
           {/* Curriculum - Accordion Sections */}
           <div className="p-2 space-y-4 pb-32">
               {curriculumData.map((category) => (
-                <div key={category.id} className="space-y-2">
+                <div key={category.id} className="space-y-2 mb-6">
                   {/* Main Category Header */}
                   <div className="px-4 pt-4 pb-2">
                     <h1 className="text-2xl font-bold text-gray-900">{category.title}</h1>
@@ -2680,7 +2684,7 @@ export default function HablaBeat() {
                         {/* Section Header - clickable accordion toggle */}
                         <button
                           onClick={() => setOpenSectionId(isOpen ? "" : section.id)}
-                          className={`w-full p-3 px-4 flex items-center gap-3 transition-all rounded-lg ${
+                          className={`w-full p-3 px-4 flex items-center gap-3 transition-all rounded-lg active:scale-[0.97] ${
                             isOpen ? "bg-white shadow-sm" : "hover:bg-white/60"
                           } ${isSectionBadgeUnlocked(section) ? "border-l-4 border-yellow-400" : ""}`}
                         >
@@ -2738,10 +2742,11 @@ export default function HablaBeat() {
                               return (
                                 <div
                                   key={song.id}
-                                  className="p-2.5 rounded-lg transition-all hover:bg-gray-100"
+                                  className="p-2.5 rounded-xl transition-all hover:bg-white/70 active:scale-[0.98]"
+                                  style={{ transition: "all 0.15s ease" }}
                                 >
                                   <div className="flex items-center gap-3">
-                                    <div className="w-7 h-7 flex items-center justify-center text-gray-500">
+                                    <div className="w-7 h-7 flex items-center justify-center text-gray-400">
                                       <span className="text-sm font-medium">{song.number}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -2753,6 +2758,13 @@ export default function HablaBeat() {
                                           </span>
                                         )}
                                       </div>
+                                      {/* Completion bar — fills based on play count (max 3) */}
+                                      <div className="h-1 w-24 bg-gray-200 rounded-full mt-1 overflow-hidden">
+                                        <div className="h-full rounded-full transition-all duration-500" style={{
+                                          width: `${Math.min(100, ((song.playCount || 0) / 3) * 100)}%`,
+                                          background: song.playCount >= 3 ? "linear-gradient(90deg, #34d399, #22d3ee)" : "linear-gradient(90deg, #a78bfa, #818cf8)"
+                                        }} />
+                                      </div>
                                     </div>
                                     {/* Best grade badge */}
                                     {songBestGrade && (
@@ -2761,12 +2773,13 @@ export default function HablaBeat() {
                                       </span>
                                     )}
                                   </div>
-                                  {/* Action buttons - Play first, Sing second, bigger with spacing */}
-                                  <div className="flex gap-3 mt-2 ml-10">
+                                  {/* Action buttons — Play filled, Sing outline */}
+                                  <div className="flex gap-2 mt-2 ml-10">
                                     {selectedLanguage === "spanish" && (
                                       <button
                                         onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-black bg-white border-2 border-black transition-colors hover:bg-gray-50"
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-white transition-all active:scale-95"
+                                        style={{ background: "linear-gradient(135deg, #4ade80, #22c55e)", boxShadow: "0 2px 8px rgba(34,197,94,0.4)" }}
                                       >
                                         🥕 Play
                                       </button>
@@ -2774,7 +2787,8 @@ export default function HablaBeat() {
                                     {isClickable && (
                                       <button
                                         onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-black bg-white border-2 border-black transition-colors hover:bg-gray-50"
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all active:scale-95"
+                                        style={{ color: "#22c55e", background: "transparent", border: "2px solid #22c55e" }}
                                       >
                                         🎤 Sing
                                       </button>
@@ -2796,31 +2810,32 @@ export default function HablaBeat() {
             <MiniPlayer />
 
             {/* Bottom Navigation */}
-            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-lg">
+            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
               <div className="flex justify-around">
                 <Button
                   variant="ghost"
-                  className="flex flex-col items-center gap-1 text-gray-900 pt-3"
+                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
+                  style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
                   onClick={() => setCurrentView("songs")}
                 >
-                  <Music className="h-5 w-5" />
-                  <span className="text-xs">Songs</span>
+                  <Music className="h-7 w-7" />
+                  <span className="text-xs font-bold">Songs</span>
                 </Button>
                 <Button
                   variant="ghost"
-                  className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                   onClick={() => setCurrentView("coins")}
                 >
-                  <Coins className="h-5 w-5" />
-                  <span className="text-xs">Bank</span>
+                  <Coins className="h-7 w-7" />
+                  <span className="text-xs font-semibold">Bank</span>
                 </Button>
                 <Button
                   variant="ghost"
-                  className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                   onClick={() => setCurrentView("visualizer")}
                 >
-                  <Sparkles className="h-5 w-5" />
-                  <span className="text-xs">Visualizer</span>
+                  <Sparkles className="h-7 w-7" />
+                  <span className="text-xs font-semibold">Visualizer</span>
                 </Button>
               </div>
             </div>
@@ -2835,31 +2850,32 @@ export default function HablaBeat() {
         <div className="max-w-md mx-auto min-h-screen flex flex-col">
           <VisualizerView onBack={() => setCurrentView("songs")} />
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-lg z-50">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => setCurrentView("songs")}
               >
-                <Music className="h-5 w-5" />
-                <span className="text-xs">Songs</span>
+                <Music className="h-7 w-7" />
+                <span className="text-xs font-semibold">Songs</span>
               </Button>
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-500 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => setCurrentView("coins")}
               >
-                <Coins className="h-5 w-5" />
-                <span className="text-xs">Bank</span>
+                <Coins className="h-7 w-7" />
+                <span className="text-xs font-semibold">Bank</span>
               </Button>
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 text-gray-900 pt-3"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
+                style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
                 onClick={() => setCurrentView("visualizer")}
               >
-                <Sparkles className="h-5 w-5" />
-                <span className="text-xs">Visualizer</span>
+                <Sparkles className="h-7 w-7" />
+                <span className="text-xs font-bold">Visualizer</span>
               </Button>
             </div>
           </div>
