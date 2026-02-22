@@ -515,6 +515,28 @@ const LYRIC_VIDEO_QUERIES: Record<number, Record<number, string>> = {
     27: "choose profession graduation",
   },
 
+  // ── Song 18: Colores ──────────────────────────────────────────────────
+  18: {
+    0:  "red color abstract background",             // Rojo, naranja, amarillo, verde, azul
+    1:  "purple color abstract background",          // Morado, blanco, negro, gris
+    2:  "red color abstract background",             // repeat chorus
+    3:  "purple color abstract background",
+    4:  "red apple fruit close up",                  // La manzana roja, mariposa naranja
+    5:  "bright yellow sun sky",                     // El sol amarillo, la hoja verde
+    6:  "blue sky clouds bright",                    // El cielo azul, la uva morada
+    7:  "white clouds sky clean",                    // La nube blanca, el gato negro
+    8:  "gray stone pebbles texture",                // Y la piedra gris
+    9:  "red apple fruit close up",                  // repeat verse
+    10: "bright yellow sun sky",
+    11: "blue sky clouds bright",
+    12: "white clouds sky clean",
+    13: "gray stone pebbles texture",
+    14: "rainbow colorful arc sky",                  // Mira el arco iris
+    15: "rainbow colorful arc sky",                  // Brillan en el cielo
+    16: "red color abstract background",             // final chorus
+    17: "purple color abstract background",
+  },
+
   // ── Song 8: AEIOU Pet World ───────────────────────────────────────────
   8: {
     // AEIOU intro
@@ -560,6 +582,174 @@ const LYRIC_VIDEO_QUERIES: Record<number, Record<number, string>> = {
 
 // Songs that use lyric-driven video (no generic country rotation)
 const LYRIC_VIDEO_SONGS = new Set(Object.keys(LYRIC_VIDEO_QUERIES).map(Number))
+
+// ─────────────────────────────────────────────
+// English translations per song → line ID
+// Shown above the active Spanish lyric line
+// ─────────────────────────────────────────────
+const LYRIC_TRANSLATIONS: Record<number, Record<number, string>> = {
+  1: { 0:"A B C D E F G", 1:"H I J K L M N", 2:"Ñ O P Q R S T", 3:"U V W X Y Z", 4:"The Alphabet!", 5:"Sing along with me!", 6:"A B C D E F G", 7:"H I J K L M N", 8:"Ñ O P Q R S T", 9:"U V W X Y Z", 10:"The Alphabet!", 11:"Sing along with me!" },
+  2: { 0:"Ñ, CH, RR, LL", 1:"Special letters in Spanish!", 2:"Ñ like piñata", 3:"CH like chocolate", 4:"RR rolls your tongue", 5:"LL like llama", 6:"Ñ, CH, RR, LL", 7:"Special letters in Spanish!", 8:"Ñ like piñata", 9:"CH like chocolate", 10:"RR rolls your tongue", 11:"LL like llama" },
+  3: { 0:"A E I O U, sing!", 1:"A E I O U again!", 2:"Open your mouth wide!", 3:"These are the vowels!", 4:"A E I O U, sing!", 5:"A E I O U again!", 6:"Open your mouth wide!", 7:"These are the vowels!" },
+  4: {
+    0:  "Let's touch the body parts,",
+    1:  "Touch your head and hair, your neck and throat,",
+    2:  "Shoulders and arms,",
+    3:  "Elbows, fingers, wrists and hands,",
+    4:  "The back, the belly,",
+    5:  "The leg, knee and feet,",
+    6:  "Let's touch the parts of the face,",
+    7:  "Eyes, nose, lips and teeth,",
+    8:  "The ear, the mouth,",
+    9:  "The tongue and the forehead,",
+    10: "And now let's dance, dance, dance, dance!",
+    11: "And now let's dance, dance, dance, dance!",
+    12: "Let's touch the body parts,",
+    13: "Touch your head and hair, your neck and throat,",
+    14: "Shoulders and arms,",
+    15: "Elbows, fingers, wrists and hands,",
+    16: "The back, the belly,",
+    17: "The leg, knee and feet,",
+    18: "Let's touch the parts of the face,",
+    19: "Eyes, nose, lips and teeth,",
+    20: "The ear, the mouth,",
+    21: "The tongue and the forehead,",
+    22: "And now let's dance, dance, dance, dance!",
+  },
+  5: {
+    0:  "Shirt, pants,",
+    1:  "shoes and belt.",
+    2:  "Hat, gloves, sock,",
+    3:  "beautiful clothes for me.",
+    4:  "Skirt, sweater, jacket,",
+    5:  "I dress like a star.",
+    6:  "Scarf for the cold,",
+    7:  "suit for the uncle.",
+    8:  "Dress, pajamas and boots,",
+    9:  "sandals for the others.",
+    10: "I'll say clothes in Spanish,",
+    11: "Every day I'll learn!",
+    12: "Shirt, pants,",
+    13: "shoes and belt.",
+    14: "Hat, gloves, sock,",
+    15: "beautiful clothes for me.",
+    16: "Skirt, sweater, jacket,",
+    17: "I dress like a star.",
+    18: "Scarf for the cold,",
+    19: "suit for the uncle.",
+    20: "Dress, pajamas and boots,",
+    21: "sandals for the others.",
+    22: "I'll say clothes in Spanish,",
+    23: "Every day I'll learn!",
+  },
+  6: {
+    0:  "Hello, hello!",
+    1:  "Let's sing,",
+    2:  "I'm going to name my family members.",
+    3:  "Dad and mom,",
+    4:  "Brother, sister,",
+    5:  "Uncle, aunt,",
+    6:  "And the healthy grandma.",
+    7:  "Happy grandpa,",
+    8:  "Male cousin and female cousin,",
+    9:  "Nephew, niece,",
+    10: "Pet that walks.",
+    11: "My family is the best for me!",
+    12: "Hello, hello!",
+    13: "Let's sing,",
+    14: "I'm going to name my family members.",
+    15: "Dad and mom,",
+    16: "Brother, sister,",
+    17: "Uncle, aunt,",
+    18: "And the healthy grandma.",
+    19: "Happy grandpa,",
+    20: "Male cousin and female cousin,",
+    21: "Nephew, niece,",
+    22: "Pet that walks.",
+    23: "My family is the best for me!",
+  },
+  7: {
+    0:  "What Do You Want to Be?",
+    1:  "What Do You Want to Be?",
+    2:  "Doctor, firefighter, baker,",
+    3:  "teacher, pilot, carpenter,",
+    4:  "singer, chef, gardener,",
+    5:  "dentist, artist, engineer.",
+    6:  "Police officer, farmer, painter,",
+    7:  "actor, nurse, writer,",
+    8:  "veterinarian, driver,",
+    9:  "architect, translator.",
+    10: "So many things you can be!",
+    11: "You just have to learn.",
+    12: "With joy and with love,",
+    13: "Choose your profession!",
+    14: "What Do You Want to Be?",
+    15: "What Do You Want to Be?",
+    16: "Doctor, firefighter, baker,",
+    17: "teacher, pilot, carpenter,",
+    18: "singer, chef, gardener,",
+    19: "dentist, artist, engineer.",
+    20: "Police officer, farmer, painter,",
+    21: "actor, nurse, writer,",
+    22: "veterinarian, driver,",
+    23: "architect, translator.",
+    24: "So many things you can be!",
+    25: "You just have to learn.",
+    26: "With joy and with love,",
+    27: "Choose your profession!",
+  },
+  8: {
+    0:"A Spider,", 1:"E Elephant,", 2:"I Iguana,", 3:"O Big Bear,", 4:"U Unicorn U Unicorn,", 5:"A-E-I-O-U Unicorn!",
+    6:"B Owl, B Owl,", 7:"Ba be bi bo bu owl", 8:"C Rabbit, C Rabbit,", 9:"Ca ce ci co cu rabbit",
+    10:"Ch Goat, Ch Goat,", 11:"Cha che chi cho chu goat", 12:"D Dolphin, D Dolphin,", 13:"Da de di do du dolphin",
+    14:"F Flamingo, F Flamingo,", 15:"Fa fe fi fo fu flamingo", 16:"G Cat, G Cat,", 17:"Ga gue gui go gu cat",
+    18:"H Hippo, H Hippo,", 19:"Ha he hi ho hu hippo", 20:"J Giraffe, J Giraffe,", 21:"Ja je ji jo ju giraffe",
+    22:"K Koala, K Koala,", 23:"Ka ke ki ko ku koala", 24:"L Lion, L Lion,", 25:"La le li lo lu lion",
+    26:"M Monkey, M Monkey,", 27:"Ma me mi mo mu monkey", 28:"N Otter, N Otter,", 29:"Na ne ni no nu otter",
+    30:"Ñ Rhea, Ñ Rhea,", 31:"Ña ñe ñi ño ñu rhea", 32:"P Penguin, P Penguin,", 33:"Pa pe pi po pu penguin",
+    34:"Q Quetzal, Q Quetzal,", 35:"Que qui qué quo quoo quetzal", 36:"R Rhino, R Rhino,", 37:"Ra re ri ro ru rhino",
+    38:"S Snake, S Snake,", 39:"Sa se si so su snake", 40:"T Tiger, T Tiger,", 41:"Ta te ti to tu tiger",
+    42:"V Cow, V Cow,", 43:"Va ve vi vo vu cow", 44:"W Wombat, W Wombat,", 45:"Wa we wi wo wu wombat",
+    46:"X Xoloitzcuintle, X Xolo,", 47:"Xa xe xi xo xu xolo", 48:"Y Yak, Y Yak,", 49:"Ya ye yi yo yu yak",
+    50:"Z Fox, Z Fox,", 51:"Za ze zi zo zu fox",
+    52:"A Spider,", 53:"E Elephant,", 54:"I Iguana,", 55:"O Big Bear,", 56:"U Unicorn U Unicorn,", 57:"A-E-I-O-U Unicorn!",
+  },
+  9:  { 0:"My Pets", 1:"I have a dog,", 2:"I have a cat,", 3:"I have a fish,", 4:"I have a bird,", 5:"I have a rabbit,", 6:"My pets!", 7:"I love my pets!", 8:"My Pets", 9:"I have a dog,", 10:"I have a cat,", 11:"I have a fish,", 12:"I have a bird,", 13:"I have a rabbit,", 14:"My pets!", 15:"I love my pets!" },
+  10: { 0:"Animal Habitats", 1:"The lion lives in the savanna,", 2:"The fish lives in the ocean,", 3:"The bear lives in the forest,", 4:"The camel lives in the desert,", 5:"The penguin lives in Antarctica,", 6:"Animal habitats!", 7:"Animal Habitats", 8:"The lion lives in the savanna,", 9:"The fish lives in the ocean,", 10:"The bear lives in the forest,", 11:"The camel lives in the desert,", 12:"The penguin lives in Antarctica,", 13:"Animal habitats!" },
+  11: { 0:"In My House", 1:"The kitchen,", 2:"the bedroom,", 3:"the living room,", 4:"the bathroom,", 5:"the dining room.", 6:"In my house!", 7:"In My House", 8:"The kitchen,", 9:"the bedroom,", 10:"the living room,", 11:"the bathroom,", 12:"the dining room.", 13:"In my house!" },
+  12: { 0:"Where Is It?", 1:"The book is on the table,", 2:"The pencil is in the box,", 3:"The ball is under the chair,", 4:"The cat is next to the door,", 5:"Where is it?", 6:"Where Is It?", 7:"The book is on the table,", 8:"The pencil is in the box,", 9:"The ball is under the chair,", 10:"The cat is next to the door,", 11:"Where is it?" },
+  13: { 0:"The Directions", 1:"Go straight ahead,", 2:"Turn left,", 3:"Turn right,", 4:"Stop here!", 5:"The directions!", 6:"The Directions", 7:"Go straight ahead,", 8:"Turn left,", 9:"Turn right,", 10:"Stop here!", 11:"The directions!" },
+  14: { 0:"One to Twenty", 1:"One, two, three,", 2:"four, five, six,", 3:"seven, eight, nine,", 4:"ten, eleven, twelve,", 5:"thirteen, fourteen, fifteen,", 6:"sixteen, seventeen, eighteen,", 7:"nineteen, twenty!", 8:"One to Twenty", 9:"One, two, three,", 10:"four, five, six,", 11:"seven, eight, nine,", 12:"ten, eleven, twelve,", 13:"thirteen, fourteen, fifteen,", 14:"sixteen, seventeen, eighteen,", 15:"nineteen, twenty!" },
+  15: { 0:"Ten to One Hundred", 1:"Ten, twenty, thirty,", 2:"forty, fifty, sixty,", 3:"seventy, eighty, ninety,", 4:"one hundred!", 5:"Ten to One Hundred", 6:"Ten, twenty, thirty,", 7:"forty, fifty, sixty,", 8:"seventy, eighty, ninety,", 9:"one hundred!" },
+  16: { 0:"Days, Months and Seasons", 1:"Monday, Tuesday, Wednesday,", 2:"Thursday, Friday,", 3:"Saturday and Sunday.", 4:"January, February, March,", 5:"April, May, June,", 6:"July, August, September,", 7:"October, November, December.", 8:"Spring, Summer, Fall, Winter!", 9:"Days, Months and Seasons", 10:"Monday, Tuesday, Wednesday,", 11:"Thursday, Friday,", 12:"Saturday and Sunday.", 13:"January, February, March,", 14:"April, May, June,", 15:"July, August, September,", 16:"October, November, December.", 17:"Spring, Summer, Fall, Winter!" },
+  17: { 0:"What time is it?", 1:"It is one o'clock,", 2:"It is two o'clock,", 3:"It is three o'clock,", 4:"It is four o'clock,", 5:"It is five o'clock,", 6:"What time is it?", 7:"What time is it?", 8:"It is one o'clock,", 9:"It is two o'clock,", 10:"It is three o'clock,", 11:"It is four o'clock,", 12:"It is five o'clock,", 13:"What time is it?" },
+  18: {
+    0:  "Red, orange, yellow, green, blue,",
+    1:  "Purple, white, black, gray, how cool!",
+    2:  "Red, orange, yellow, green, blue,",
+    3:  "Purple, white, black, gray, how cool!",
+    4:  "The red apple, the orange butterfly,",
+    5:  "The yellow sun, the green leaf,",
+    6:  "The blue sky, the purple grape,",
+    7:  "The white cloud, the black cat,",
+    8:  "And the gray stone — What pretty colors!",
+    9:  "The red apple, the orange butterfly,",
+    10: "The yellow sun, the green leaf,",
+    11: "The blue sky, the purple grape,",
+    12: "The white cloud, the black cat,",
+    13: "And the gray stone — What pretty colors!",
+    14: "Look at the rainbow, all the colors,",
+    15: "They shine in the sky, all in colors.",
+    16: "Red, orange, yellow, green and blue,",
+    17: "Purple, white, black, gray, how cool!",
+  },
+  19: { 0:"I Am Happy", 1:"I am happy,", 2:"I am sad,", 3:"I am angry,", 4:"I am scared,", 5:"I am surprised!", 6:"How do you feel?", 7:"I Am Happy", 8:"I am happy,", 9:"I am sad,", 10:"I am angry,", 11:"I am scared,", 12:"I am surprised!", 13:"How do you feel?" },
+  20: { 0:"I Am Thirsty", 1:"I am thirsty,", 2:"I am hungry,", 3:"I am tired,", 4:"I am sick,", 5:"I am sleepy!", 6:"How are you feeling?", 7:"I Am Thirsty", 8:"I am thirsty,", 9:"I am hungry,", 10:"I am tired,", 11:"I am sick,", 12:"I am sleepy!", 13:"How are you feeling?" },
+  21: { 0:"The Fruits", 1:"Apple, banana, orange,", 2:"strawberry, grape, mango,", 3:"pineapple, watermelon, pear,", 4:"peach, cherry, lemon.", 5:"Delicious fruits!", 6:"The Fruits", 7:"Apple, banana, orange,", 8:"strawberry, grape, mango,", 9:"pineapple, watermelon, pear,", 10:"peach, cherry, lemon.", 11:"Delicious fruits!" },
+  22: { 0:"The Vegetables", 1:"Carrot, tomato, potato,", 2:"broccoli, onion, spinach,", 3:"corn, cucumber, pepper,", 4:"lettuce, peas, garlic.", 5:"Healthy vegetables!", 6:"The Vegetables", 7:"Carrot, tomato, potato,", 8:"broccoli, onion, spinach,", 9:"corn, cucumber, pepper,", 10:"lettuce, peas, garlic.", 11:"Healthy vegetables!" },
+  23: { 0:"Breakfast, Lunch, Dinner", 1:"For breakfast I eat...", 2:"eggs and toast!", 3:"For lunch I eat...", 4:"rice and beans!", 5:"For dinner I eat...", 6:"soup and bread!", 7:"Breakfast, Lunch, Dinner", 8:"For breakfast I eat...", 9:"eggs and toast!", 10:"For lunch I eat...", 11:"rice and beans!", 12:"For dinner I eat...", 13:"soup and bread!" },
+  24: { 0:"I Want to Order", 1:"I would like...", 2:"a glass of water, please.", 3:"I would like...", 4:"a coffee, please.", 5:"How much does it cost?", 6:"I Want to Order", 7:"I would like...", 8:"a glass of water, please.", 9:"I would like...", 10:"a coffee, please.", 11:"How much does it cost?" },
+}
 
 // Convenience alias for legacy song-8 references
 const SONG8_ANIMAL_QUERIES = LYRIC_VIDEO_QUERIES[8]
@@ -918,20 +1108,31 @@ export default function SingModeView({
         const offX = (W * (zoom - 1)) / 2
         const offY = (H * (zoom - 1)) / 2
 
+        // Lyric-video songs use contain-fit so animals/colors are never cropped on mobile.
+        // Generic country songs use cover-fit to fill the full background.
+        const useContain = LYRIC_VIDEO_SONGS.has(song.number)
+
         if (hasVideo) {
-          // Cover-fit: preserve aspect ratio, no distortion when window is resized
           const vw = vid!.videoWidth || W
           const vh = vid!.videoHeight || H
-          const vscale = Math.max(W / vw, H / vh)
+          const vscale = useContain ? Math.min(W / vw, H / vh) : Math.max(W / vw, H / vh)
           const vdw = vw * vscale * zoom
           const vdh = vh * vscale * zoom
-          ctx.drawImage(vid!, -offX + (W - vdw) / 2, -offY + (H - vdh) / 2, vdw, vdh)
+          if (useContain) {
+            // Dark letterbox behind the video so edges aren't just black canvas
+            ctx.fillStyle = "rgba(0,0,0,0.85)"
+            ctx.fillRect(0, 0, W, H)
+          }
+          ctx.drawImage(vid!, (W - vdw) / 2, (H - vdh) / 2, vdw, vdh)
         } else if (hasImage) {
-          // Draw image cover-fit
           const iw = img!.naturalWidth, ih = img!.naturalHeight
-          const scale = Math.max(W / iw, H / ih)
-          const dw = iw * scale, dh = ih * scale
-          ctx.drawImage(img!, -offX + (W - dw) / 2, -offY + (H - dh) / 2, dw * zoom, dh * zoom)
+          const scale = useContain ? Math.min(W / iw, H / ih) : Math.max(W / iw, H / ih)
+          const dw = iw * scale * zoom, dh = ih * scale * zoom
+          if (useContain) {
+            ctx.fillStyle = "rgba(0,0,0,0.85)"
+            ctx.fillRect(0, 0, W, H)
+          }
+          ctx.drawImage(img!, (W - dw) / 2, (H - dh) / 2, dw, dh)
         }
 
         // Light overlay for text legibility
@@ -1076,10 +1277,11 @@ export default function SingModeView({
       <div className="flex-1" />
 
       {/* ── Lyrics near bottom ── */}
-      <div className="relative z-10 px-6 pb-2 flex flex-col items-center gap-2">
-        {prevLine && (
-          <p className="text-center text-sm leading-snug" style={{ opacity: 0.45 }}>
-            {renderLine(prevLine, false)}
+      <div className="relative z-10 px-6 pb-2 flex flex-col items-center gap-1">
+        {/* English translation above active Spanish line */}
+        {activeLine && LYRIC_TRANSLATIONS[song.number]?.[activeLine.id] && (
+          <p className="text-center text-sm leading-snug font-medium" style={{ color: "rgba(255,255,180,0.85)", letterSpacing: "0.01em" }}>
+            {LYRIC_TRANSLATIONS[song.number][activeLine.id]}
           </p>
         )}
         {activeLine && (
@@ -1087,8 +1289,9 @@ export default function SingModeView({
             {renderLine(activeLine, true)}
           </p>
         )}
+        {/* Next line preview below */}
         {nextLine && (
-          <p className="text-center text-sm leading-snug" style={{ opacity: 0.45 }}>
+          <p className="text-center text-sm leading-snug mt-1" style={{ opacity: 0.4 }}>
             {renderLine(nextLine, false)}
           </p>
         )}
