@@ -868,8 +868,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             40%      { transform: scaleX(1.2) skewX(-6deg); filter: brightness(1.7) drop-shadow(0 0 4px #fff); }
             70%      { transform: scaleX(0.9) skewX(3deg); filter: brightness(1.2); }
           }
-          .emoji-turtle    { display:inline-block; animation: turtleWaddle 1.6s ease-in-out infinite; }
-          .emoji-setup-zap { display:inline-block; animation: setupLightning 1.8s ease-in-out infinite; }
+          .emoji-turtle    { display:inline-block; font-size: 1.4em; animation: turtleWaddle 1.6s ease-in-out infinite; }
+          .emoji-setup-zap { display:inline-block; font-size: 1.4em; animation: setupLightning 1.8s ease-in-out infinite; }
         `}</style>
 
         {/* Iridescent bubble decorations */}
@@ -892,9 +892,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
         <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-3 pt-6 pb-12 relative z-10">
 
-          {/* Header card — purple→pink→orange gradient (matches home ribbon) */}
+          {/* Header card — purple→blue→teal→green gradient (matches HablaBeat ribbon) */}
           <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
-            background: "linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #ea580c 100%)",
+            background: "linear-gradient(90deg, #a855f7 0%, #3b82f6 35%, #06b6d4 65%, #34d399 100%)",
             border: "2px solid rgba(255,255,255,0.35)"
           }}>
             <div className="absolute inset-0 pointer-events-none" style={{
@@ -928,8 +928,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             backdropFilter: "blur(20px)",
             border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
-            <p className="font-black text-blue-700 mb-1">🎯 Your Mission:</p>
-            <p className="text-blue-900 text-sm leading-relaxed">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
+            <p className="font-black text-blue-700 mb-2 text-base">🎯 Your Mission:</p>
+            <p className="text-blue-900 text-base leading-relaxed font-medium">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
           </div>
 
           {/* Speed card — frosted glass with pill buttons matching home style */}
@@ -944,7 +944,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 <button
                   key={s}
                   onClick={() => setSpeed(s)}
-                  className="flex-1 py-3.5 rounded-full font-bold text-base transition-all"
+                  className="flex-1 py-3.5 rounded-full font-bold text-lg transition-all"
                   style={speed === s ? {
                     background: "#000",
                     color: "#fff",
