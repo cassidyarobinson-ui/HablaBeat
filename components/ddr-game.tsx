@@ -868,8 +868,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             40%      { transform: scaleX(1.2) skewX(-6deg); filter: brightness(1.7) drop-shadow(0 0 4px #fff); }
             70%      { transform: scaleX(0.9) skewX(3deg); filter: brightness(1.2); }
           }
-          .emoji-turtle    { display:inline-block; font-size: 1.4em; animation: turtleWaddle 1.6s ease-in-out infinite; }
-          .emoji-setup-zap { display:inline-block; font-size: 1.4em; animation: setupLightning 1.8s ease-in-out infinite; }
+          @keyframes playPulse {
+            0%,100% { transform: translateX(0) scale(1); }
+            40%      { transform: translateX(4px) scale(1.15); }
+            70%      { transform: translateX(2px) scale(1.05); }
+          }
+          .emoji-turtle    { display:inline-block; font-size: 1.7em; animation: turtleWaddle 1.6s ease-in-out infinite; }
+          .emoji-setup-zap { display:inline-block; font-size: 1.7em; animation: setupLightning 1.8s ease-in-out infinite; }
+          .emoji-play-btn  { display:inline-block; animation: playPulse 1.2s ease-in-out infinite; }
         `}</style>
 
         {/* Iridescent bubble decorations */}
@@ -977,7 +983,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4)"
               }}
             >
-              ▶ Start!
+              <span className="emoji-play-btn">▶</span> Start!
             </button>
           </div>
 
