@@ -866,10 +866,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                   <button
                     key={s}
                     onClick={() => setSpeed(s)}
-                    className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${
-                      speed === s ? "text-white shadow-lg" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    className={`flex-1 py-3 rounded-full font-bold text-sm transition-all border-2 border-black ${
+                      speed === s ? "bg-black text-white" : "bg-white text-black hover:bg-gray-50"
                     }`}
-                    style={speed === s ? { backgroundColor: "#6A9FC0", boxShadow: "0 4px 14px rgba(106,159,192,0.4)" } : {}}
                   >
                     {s === "slower" ? "🐢 Slower" : "⚡ Normal"}
                   </button>
