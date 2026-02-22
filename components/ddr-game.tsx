@@ -829,66 +829,100 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   // SETUP SCREEN
   if (gameState === "setup") {
-    const setupBgUrl = `/images/backgrounds/song-${songNumber}.jpg`
     return (
-      <div className="min-h-screen text-gray-900 bg-gray-50">
-        <div className="max-w-md mx-auto p-4">
-          {/* Header */}
-          <div className="relative rounded-2xl overflow-hidden mb-4 mt-4 bg-gradient-to-br from-purple-600 to-pink-600">
-            <div className="relative px-4 py-5">
-              <div className="flex items-center justify-between mb-3">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20" onClick={onBack}>
-                  <ChevronLeft className="h-6 w-6" />
-                </Button>
-                <h1 className="text-2xl font-black text-center flex-1 tracking-wider uppercase text-white">🎮 PLAY</h1>
+      <div className="min-h-screen relative overflow-hidden flex flex-col" style={{
+        background: "linear-gradient(160deg, #a78bfa 0%, #f472b6 25%, #fb923c 45%, #86efac 65%, #67e8f9 82%, #818cf8 100%)"
+      }}>
+        {/* Bubble decorations */}
+        <div className="absolute bottom-10 left-4 w-20 h-20 rounded-full opacity-30" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1.5px solid rgba(255,255,255,0.5)" }} />
+        <div className="absolute bottom-24 left-12 w-10 h-10 rounded-full opacity-25" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1px solid rgba(255,255,255,0.4)" }} />
+        <div className="absolute bottom-6 right-8 w-14 h-14 rounded-full opacity-20" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1.5px solid rgba(255,255,255,0.4)" }} />
+        <div className="absolute bottom-32 right-2 w-8 h-8 rounded-full opacity-20" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1px solid rgba(255,255,255,0.3)" }} />
+
+        <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-4 pt-6 pb-10">
+
+          {/* Header card */}
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
+            background: "linear-gradient(135deg, #7c3aed, #db2777, #ea580c)",
+            border: "2px solid rgba(255,255,255,0.3)"
+          }}>
+            {/* sparkle dots */}
+            <span className="absolute top-4 left-6 text-white/40 text-lg select-none">✦</span>
+            <span className="absolute top-6 right-10 text-white/30 text-sm select-none">✦</span>
+            <span className="absolute bottom-4 right-6 text-white/20 text-base select-none">✦</span>
+            <div className="px-5 py-5">
+              <div className="flex items-center justify-between mb-2">
+                <button
+                  onClick={onBack}
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center"
+                  style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                >
+                  <ChevronLeft className="h-5 w-5 text-white" />
+                </button>
+                <h1 className="text-2xl font-black text-center flex-1 tracking-widest uppercase text-white">🎮 PLAY</h1>
                 <div className="w-10" />
               </div>
               <div className="text-center">
-                <h2 className="text-2xl font-bold mb-1 text-white">{songTitle}</h2>
-                <p className="text-purple-200 text-sm">Song #{songNumber}</p>
+                <h2 className="text-2xl font-black text-white leading-tight">{songTitle}</h2>
+                <p className="text-white/70 text-sm mt-0.5">Song #{songNumber}</p>
               </div>
             </div>
           </div>
 
-          {/* Your Mission */}
-          <div className="bg-blue-50 rounded-xl p-3 text-sm mb-4 border border-blue-200">
-            <p className="font-bold mb-1 text-blue-800">🎯 Your Mission:</p>
-            <p className="text-blue-700">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
+          {/* Mission card */}
+          <div className="rounded-3xl px-5 py-4 shadow-lg" style={{
+            background: "rgba(255,255,255,0.55)",
+            backdropFilter: "blur(16px)",
+            border: "1.5px solid rgba(255,255,255,0.7)"
+          }}>
+            <p className="font-black text-blue-700 mb-1">🎯 Your Mission:</p>
+            <p className="text-blue-800 text-sm leading-relaxed">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
           </div>
 
-          {/* Settings */}
-          <div className="bg-white rounded-xl p-6 space-y-6 mb-6 shadow-sm border border-gray-200">
-            {/* Speed Selection */}
-            <div>
-              <label className="block mb-3 font-semibold text-gray-900">Song Speed</label>
-              <div className="flex gap-3">
-                {(["slower", "normal"] as const).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSpeed(s)}
-                    className={`flex-1 py-3 rounded-full font-bold text-sm transition-all border-2 border-black ${
-                      speed === s ? "bg-black text-white" : "bg-white text-black hover:bg-gray-50"
-                    }`}
-                  >
-                    {s === "slower" ? "🐢 Slower" : "⚡ Normal"}
-                  </button>
-                ))}
-              </div>
+          {/* Speed card */}
+          <div className="rounded-3xl px-5 py-5 shadow-lg" style={{
+            background: "rgba(255,255,255,0.55)",
+            backdropFilter: "blur(16px)",
+            border: "1.5px solid rgba(255,255,255,0.7)"
+          }}>
+            <p className="font-black text-gray-800 mb-3">Song Speed</p>
+            <div className="flex gap-3">
+              {(["slower", "normal"] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSpeed(s)}
+                  className="flex-1 py-3.5 rounded-full font-bold text-base transition-all"
+                  style={speed === s ? {
+                    background: "linear-gradient(135deg, #38bdf8, #6A9FC0)",
+                    color: "white",
+                    border: "2px solid rgba(255,255,255,0.5)",
+                    boxShadow: "0 4px 15px rgba(56,189,248,0.5)"
+                  } : {
+                    background: "rgba(255,255,255,0.7)",
+                    color: "#1e293b",
+                    border: "2px solid rgba(255,255,255,0.8)"
+                  }}
+                >
+                  {s === "slower" ? "🐢 Slower" : "⚡ Normal"}
+                </button>
+              ))}
             </div>
-
-            {/* Total bubbles info */}
-            <div className="text-center text-sm text-gray-500">
-              {totalNotes} vocab words
-            </div>
+            <p className="text-center text-sm text-gray-500 mt-3">{totalNotes} vocab words</p>
           </div>
 
           {/* Start button */}
           <button
             onClick={startGame}
-            className="w-full bg-green-600 hover:bg-green-700 py-4 rounded-xl font-bold text-2xl text-white transition-colors"
+            className="w-full py-5 rounded-full font-black text-2xl text-white shadow-2xl transition-all active:scale-95"
+            style={{
+              background: "linear-gradient(135deg, #34d399, #22d3ee, #6ee7b7)",
+              border: "2.5px solid rgba(255,255,255,0.5)",
+              boxShadow: "0 6px 30px rgba(52,211,153,0.5)"
+            }}
           >
-            {showTranslations ? "▶ Start!" : "▶ ¡Empezar!"}
+            ▶ Start!
           </button>
+
         </div>
       </div>
     )
