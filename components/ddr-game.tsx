@@ -99,7 +99,7 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
   const [combo, setCombo] = useState(0)
   const [maxCombo, setMaxCombo] = useState(0)
   const [totalHits, setTotalHits] = useState(0)
-  const [speed, setSpeed] = useState<"slow" | "medium" | "fast">("fast")
+  const [speed, setSpeed] = useState<"slower" | "normal">("normal")
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
@@ -143,9 +143,8 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
 
   // Speed multiplier: affects playback rate (pitch preserved via Web Audio or playbackRate)
   const getSpeedRate = useCallback(() => {
-    if (speed === "slow") return 0.65
-    if (speed === "medium") return 0.85
-    return 1.0
+    if (speed === "slower") return 0.85  // medium pace
+    return 1.0                           // normal / fast
   }, [speed])
 
   // Create notes from timing data — all bubbles always shown (no difficulty filter)
@@ -852,20 +851,16 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
             <div>
               <label className="block mb-3 font-semibold text-gray-900">Song Speed</label>
               <div className="flex gap-3">
-                {(["slow", "medium", "fast"] as const).map((s) => (
+                {(["slower", "normal"] as const).map((s) => (
                   <button
                     key={s}
                     onClick={() => setSpeed(s)}
                     className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${
-                      speed === s
-                        ? s === "slow" ? "bg-green-600 text-white shadow-lg shadow-green-600/30"
-                        : s === "fast" ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
-                        : "text-white shadow-lg"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      speed === s ? "text-white shadow-lg" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
-                    style={speed === s && s === "medium" ? { backgroundColor: "#6A9FC0", boxShadow: "0 4px 14px rgba(106,159,192,0.4)" } : {}}
+                    style={speed === s ? { backgroundColor: "#6A9FC0", boxShadow: "0 4px 14px rgba(106,159,192,0.4)" } : {}}
                   >
-                    {s === "slow" ? "🐢 Slow" : s === "medium" ? "🎵 Medium" : "⚡ Fast"}
+                    {s === "slower" ? "🐢 Slower" : "⚡ Normal"}
                   </button>
                 ))}
               </div>
