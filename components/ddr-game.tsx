@@ -842,7 +842,7 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
           {/* Your Mission */}
           <div className="bg-blue-50 rounded-xl p-3 text-sm mb-4 border border-blue-200">
             <p className="font-bold mb-1 text-blue-800">🎯 Your Mission:</p>
-            <p className="text-blue-700">Pop the bubbles with your carrot arrows to get your vocab bank back!</p>
+            <p className="text-blue-700">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
           </div>
 
           {/* Settings */}
