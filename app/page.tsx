@@ -2839,7 +2839,7 @@ export default function HablaBeat() {
 
             {/* Vocab Bank — wide card */}
             <div className="px-3 mt-2">
-              <div className="relative overflow-hidden rounded-2xl px-5 py-4 shadow-lg" style={{
+              <div className="relative overflow-hidden rounded-3xl px-5 py-4 shadow-lg" style={{
                 background: "linear-gradient(135deg, #FFD700 0%, #FFB800 50%, #FFA500 100%)",
                 border: "2px solid rgba(255,255,255,0.6)",
                 boxShadow: "0 4px 20px rgba(255,180,0,0.45)"
