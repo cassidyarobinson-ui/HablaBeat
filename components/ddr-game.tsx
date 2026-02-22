@@ -899,34 +899,90 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-3 pt-6 pb-12 relative z-10">
 
           {/* Header card — yellow→purple→blue→teal→green gradient (matches HablaBeat ribbon) */}
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
-            background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 80%, #34d399 100%)",
-            border: "2px solid rgba(255,255,255,0.35)"
-          }}>
-            <div className="absolute inset-0 pointer-events-none" style={{
-              background: "linear-gradient(120deg, rgba(255,255,255,0.18) 0%, transparent 50%)"
-            }} />
-            <span className="absolute top-3 left-8 text-white/40 text-base select-none">✦</span>
-            <span className="absolute top-5 right-12 text-white/25 text-sm select-none">✦</span>
-            <span className="absolute bottom-3 right-8 text-white/20 text-base select-none">✦</span>
-            <div className="px-5 py-5 relative">
-              <div className="flex items-center justify-between mb-2">
-                <button
-                  onClick={onBack}
-                  className="w-10 h-10 rounded-2xl flex items-center justify-center backdrop-blur-sm"
-                  style={{ backgroundColor: "rgba(255,255,255,0.22)", border: "1px solid rgba(255,255,255,0.3)" }}
-                >
-                  <ChevronLeft className="h-5 w-5 text-white" />
-                </button>
-                <h1 className="text-2xl font-black text-center flex-1 tracking-widest uppercase text-white drop-shadow">🎮 PLAY</h1>
-                <div className="w-10" />
+          {(() => {
+            const songDescriptions: Record<number, string> = {
+              1:  "The Spanish alphabet letters",
+              2:  "The special letters in Spanish",
+              3:  "Spanish vowel sounds",
+              4:  "Body parts and face vocab",
+              5:  "Clothing words in Spanish",
+              6:  "Family members in Spanish",
+              7:  "Jobs and careers vocab",
+              8:  "Vowels with a unicorn twist",
+              9:  "Pets and animals vocab",
+              10: "Animal habitats and homes",
+              11: "Rooms in your house",
+              12: "Where is it? location words",
+              13: "Giving and following directions",
+              14: "Numbers one through twenty",
+              15: "Counting by tens to one hundred",
+              16: "Days, months, and seasons",
+              17: "Telling time in Spanish",
+              18: "Colors in Spanish",
+              19: "Feelings and emotions",
+              20: "Hunger and thirst expressions",
+              21: "Fruit names in Spanish",
+              22: "Vegetable names in Spanish",
+              23: "Breakfast, lunch, and dinner",
+              24: "Ordering and asking for things",
+              25: "AR verbs conjugation",
+              26: "Gustar — to like something",
+              27: "Estar — to be (temporary)",
+              28: "ER verbs conjugation",
+              29: "Tener — to have",
+              30: "Ser — to be (permanent)",
+              31: "IR verbs conjugation",
+              32: "IR — to go places",
+              33: "Decir — to say or tell",
+              34: "When to use preterite tense",
+              35: "AR verbs in the past",
+              36: "ER and IR verbs in the past",
+              37: "Irregular past tense verbs",
+              38: "Imperfect tense for the past",
+              39: "Irregular imperfect verbs",
+              40: "Imperfect vs preterite tense",
+              41: "Future tense in Spanish",
+              42: "Irregular future tense verbs",
+              43: "Conditional — would do something",
+              44: "Irregular conditional verbs",
+              45: "Personal and reflexive pronouns",
+              46: "Direct and indirect object pronouns",
+              47: "Commands and instructions",
+              48: "Por vs para — tricky prepositions",
+              49: "Subjunctive mood basics",
+              50: "Fun phrases and expressions",
+            }
+            const desc = songDescriptions[songNumber] ?? "Vocabulary and grammar"
+            return (
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
+                background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 80%, #34d399 100%)",
+                border: "2px solid rgba(255,255,255,0.35)"
+              }}>
+                <div className="absolute inset-0 pointer-events-none" style={{
+                  background: "linear-gradient(120deg, rgba(255,255,255,0.18) 0%, transparent 50%)"
+                }} />
+                <span className="absolute top-3 left-8 text-white/40 text-base select-none">✦</span>
+                <span className="absolute top-5 right-12 text-white/25 text-sm select-none">✦</span>
+                <span className="absolute bottom-3 right-8 text-white/20 text-base select-none">✦</span>
+                <div className="px-5 py-5 relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <button
+                      onClick={onBack}
+                      className="w-10 h-10 rounded-2xl flex items-center justify-center backdrop-blur-sm flex-shrink-0"
+                      style={{ backgroundColor: "rgba(255,255,255,0.22)", border: "1px solid rgba(255,255,255,0.3)" }}
+                    >
+                      <ChevronLeft className="h-5 w-5 text-white" />
+                    </button>
+                    <div className="text-center flex-1 px-2">
+                      <h1 className="text-2xl font-black text-white leading-tight drop-shadow">{songTitle}</h1>
+                      <p className="text-white/80 text-sm font-medium mt-1">{desc}</p>
+                    </div>
+                    <div className="w-10 flex-shrink-0" />
+                  </div>
+                </div>
               </div>
-              <div className="text-center">
-                <h2 className="text-xl font-black text-white leading-tight drop-shadow">{songTitle}</h2>
-                <p className="text-white/65 text-sm mt-0.5">Song #{songNumber}</p>
-              </div>
-            </div>
-          </div>
+            )
+          })()}
 
           {/* Mission card — frosted glass */}
           <div className="rounded-3xl px-5 py-4 shadow-lg" style={{
