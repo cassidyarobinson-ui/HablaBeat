@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
 
@@ -42,6 +42,26 @@ interface StoreItem {
   category: StoreItemCategory
   description: string
   imageSrc?: string
+}
+
+// ── SECTION GRADIENTS ───────────────────────────────────────────────────────
+const SECTION_GRADIENTS: Record<string, string> = {
+  "alphabet-vowels":  "linear-gradient(135deg, #fbbf24, #f59e0b)",
+  "the-self":         "linear-gradient(135deg, #2dd4bf, #0d9488)",
+  "pets-syllables":   "linear-gradient(135deg, #22d3ee, #0891b2)",
+  "places":           "linear-gradient(135deg, #34d399, #059669)",
+  "numbers-time":     "linear-gradient(135deg, #a78bfa, #7c3aed)",
+  "colors-feelings":  "linear-gradient(135deg, #f97316, #dc2626)",
+  "foods":            "linear-gradient(135deg, #fb923c, #f59e0b)",
+  "ar-verbs":         "linear-gradient(135deg, #22d3ee, #0284c7)",
+  "er-verbs":         "linear-gradient(135deg, #4ade80, #16a34a)",
+  "ir-verbs":         "linear-gradient(135deg, #c084fc, #9333ea)",
+  "preterite":        "linear-gradient(135deg, #fb923c, #ea580c)",
+  "imperfecto":       "linear-gradient(135deg, #fde047, #ca8a04)",
+  "futuro":           "linear-gradient(135deg, #38bdf8, #0369a1)",
+  "conditional":      "linear-gradient(135deg, #67e8f9, #0e7490)",
+  "pronouns":         "linear-gradient(135deg, #6ee7b7, #047857)",
+  "advanced":         "linear-gradient(135deg, #818cf8, #4338ca)",
 }
 
 const STORE_CATALOG: StoreItem[] = [
@@ -2799,132 +2819,119 @@ export default function HablaBeat() {
                     </div>
                   </div>
 
-                  {/* Accordion Sections */}
-                  {category.sections.map((section) => {
-                    const isOpen = openSectionId === section.id
-                    return (
-                      <div key={section.id}>
-                        {/* Section Header - clickable accordion toggle */}
-                        <button
-                          onClick={() => setOpenSectionId(isOpen ? "" : section.id)}
-                          className={`w-full p-3 px-4 flex items-center gap-3 transition-all rounded-lg active:scale-[0.97] ${
-                            isOpen ? "bg-white shadow-sm" : "hover:bg-white/60"
-                          } ${isSectionBadgeUnlocked(section) ? "border-l-4 border-yellow-400" : ""}`}
-                        >
-                          <div
-                            className={`w-10 h-10 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0 transition-all shadow-sm ${
-                              isSectionBadgeUnlocked(section)
-                                ? "border-2 border-yellow-500 shadow-lg shadow-yellow-400/30"
-                                : "opacity-50 from-gray-200 via-gray-300 to-gray-400"
-                            }`}
+                  {/* 3-Column Section Card Grid */}
+                  <div className="grid grid-cols-3 gap-2.5 px-3 pb-4">
+                    {category.sections.map((section) => {
+                      const isOpen = openSectionId === section.id
+                      const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+                      return (
+                        <React.Fragment key={section.id}>
+                          {/* Square card */}
+                          <button
+                            onClick={() => setOpenSectionId(isOpen ? "" : section.id)}
+                            className="relative flex flex-col items-center justify-center gap-1 rounded-2xl p-2 aspect-square transition-all active:scale-95"
+                            style={{
+                              background: sectionGradient,
+                              border: isOpen ? "3px solid rgba(255,255,255,0.9)" : "2px solid rgba(255,255,255,0.5)",
+                              boxShadow: isOpen
+                                ? "0 4px 16px rgba(0,0,0,0.18), 0 0 0 2px rgba(255,255,255,0.25)"
+                                : "0 2px 8px rgba(0,0,0,0.12)",
+                            }}
                           >
-                            {section.id === "ar-verbs" ? <span className="text-sm font-black text-cyan-700">AR</span>
-                              : section.id === "er-verbs" ? <span className="text-sm font-black text-emerald-700">ER</span>
-                              : section.id === "ir-verbs" ? <span className="text-sm font-black text-purple-700">IR</span>
-                              : <span className="text-lg">{section.icon}</span>}
-                          </div>
-                          <div className="flex-1 text-left">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <h2 className="text-base font-bold text-gray-900">{section.title}</h2>
-                              {selectedLanguage === "spanish" && section.songs.length > 0 && (() => {
-                                const seen = new Set<string>()
-                                return section.songs
-                                  .map(s => getSongCountry(s.number))
-                                  .filter(c => { if (seen.has(c.flag)) return false; seen.add(c.flag); return true })
-                                  .map(c => (
-                                    <span key={c.flag} className="text-base leading-none" title={c.country}>
-                                      {c.flag}
-                                    </span>
-                                  ))
-                              })()}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {section.songs.length} songs • {section.songs.reduce((sum: number, song: any) => sum + song.playCount, 0)} plays
-                              {selectedLanguage === "spanish" && section.songs.length > 0 && (() => {
-                                const seen = new Set<string>()
-                                const countries = section.songs
-                                  .map((s: any) => getSongCountry(s.number))
-                                  .filter((c: SongCountryData) => { if (seen.has(c.country)) return false; seen.add(c.country); return true })
-                                  .map((c: SongCountryData) => c.country)
-                                  .join(', ')
-                                return <span className="ml-1 text-gray-400">· {countries}</span>
-                              })()}
-                            </div>
-                          </div>
-                          <div className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}>
-                            <ChevronRight className="h-4 w-4 text-gray-400" />
-                          </div>
-                        </button>
+                            {/* Unlock dot */}
+                            {isSectionBadgeUnlocked(section) && (
+                              <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm" />
+                            )}
+                            {/* Icon */}
+                            <span className="text-2xl leading-none">
+                              {section.id === "ar-verbs" ? "🅰️"
+                                : section.id === "er-verbs" ? "🇪"
+                                : section.id === "ir-verbs" ? "🇮"
+                                : section.icon}
+                            </span>
+                            {/* Name */}
+                            <span className="text-white font-black text-[11px] text-center leading-tight drop-shadow-sm px-0.5">
+                              {section.title}
+                            </span>
+                            {/* Song count */}
+                            <span className="text-white/80 text-[10px] font-semibold">{section.songs.length} songs</span>
+                          </button>
 
-                        {/* Song List - only shown when section is open */}
-                        {isOpen && (
-                          <div className="space-y-0.5 pl-4 pr-2 pb-2 bg-white rounded-b-lg">
-                            {section.songs.map((song) => {
-                              const isClickable = song.youtubeId && song.youtubeId !== ""
-                              const songBestGrade = bestGrades[song.number]
-                              return (
-                                <div
-                                  key={song.id}
-                                  className="p-2.5 rounded-xl transition-all hover:bg-white/70 active:scale-[0.98]"
-                                  style={{ transition: "all 0.15s ease" }}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-7 h-7 flex items-center justify-center text-gray-400">
-                                      <span className="text-sm font-medium">{song.number}</span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-1.5">
-                                        <h4 className="font-bold text-gray-900 truncate text-base">{song.title}</h4>
-                                        {selectedLanguage === "spanish" && (
-                                          <span className="text-sm leading-none flex-shrink-0" title={getSongCountry(song.number).country}>
-                                            {getSongCountry(song.number).flag}
+                          {/* Full-width expanded song list */}
+                          {isOpen && (
+                            <div style={{ gridColumn: "1 / -1" }} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                              {/* Section header strip */}
+                              <div className="px-4 py-2.5 flex items-center gap-2" style={{ background: sectionGradient }}>
+                                <span className="text-lg">{section.icon}</span>
+                                <span className="text-white font-black text-sm">{section.title}</span>
+                                <span className="text-white/70 text-xs ml-auto">{section.songs.length} songs</span>
+                              </div>
+                              {/* Songs */}
+                              <div className="divide-y divide-gray-50">
+                                {section.songs.map((song) => {
+                                  const isClickable = song.youtubeId && song.youtubeId !== ""
+                                  const songBestGrade = bestGrades[song.number]
+                                  return (
+                                    <div
+                                      key={song.id}
+                                      className="px-3 py-2.5 transition-all hover:bg-gray-50 active:scale-[0.99]"
+                                    >
+                                      <div className="flex items-center gap-2.5">
+                                        <span className="text-xs font-bold text-gray-400 w-5 text-center flex-shrink-0">{song.number}</span>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-1.5">
+                                            <h4 className="font-bold text-gray-900 truncate text-sm">{song.title}</h4>
+                                            {selectedLanguage === "spanish" && (
+                                              <span className="text-sm leading-none flex-shrink-0" title={getSongCountry(song.number).country}>
+                                                {getSongCountry(song.number).flag}
+                                              </span>
+                                            )}
+                                          </div>
+                                          {/* Completion bar */}
+                                          <div className="h-1 w-20 bg-gray-100 rounded-full mt-1 overflow-hidden">
+                                            <div className="h-full rounded-full transition-all duration-500" style={{
+                                              width: `${Math.min(100, ((song.playCount || 0) / 3) * 100)}%`,
+                                              background: song.playCount >= 3 ? "linear-gradient(90deg, #34d399, #22d3ee)" : "linear-gradient(90deg, #a78bfa, #818cf8)"
+                                            }} />
+                                          </div>
+                                        </div>
+                                        {songBestGrade && (
+                                          <span className="text-xs font-black px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 border border-yellow-300 flex-shrink-0">
+                                            {songBestGrade}
                                           </span>
                                         )}
                                       </div>
-                                      {/* Completion bar — fills based on play count (max 3) */}
-                                      <div className="h-1 w-24 bg-gray-200 rounded-full mt-1 overflow-hidden">
-                                        <div className="h-full rounded-full transition-all duration-500" style={{
-                                          width: `${Math.min(100, ((song.playCount || 0) / 3) * 100)}%`,
-                                          background: song.playCount >= 3 ? "linear-gradient(90deg, #34d399, #22d3ee)" : "linear-gradient(90deg, #a78bfa, #818cf8)"
-                                        }} />
+                                      {/* Action buttons */}
+                                      <div className="flex gap-2 mt-2 ml-7">
+                                        {selectedLanguage === "spanish" && (
+                                          <button
+                                            onClick={() => handlePlayDDR(song.id, category.id, section.id)}
+                                            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
+                                            style={{ background: "linear-gradient(135deg, #4ade80, #16a34a)", boxShadow: "0 3px 10px rgba(34,197,94,0.45)" }}
+                                          >
+                                            🥕 Play
+                                          </button>
+                                        )}
+                                        {isClickable && (
+                                          <button
+                                            onClick={() => handlePlaySong(song.id, category.id, section.id)}
+                                            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
+                                            style={{ background: "linear-gradient(135deg, #e879f9, #a855f7)", boxShadow: "0 3px 10px rgba(168,85,247,0.45)" }}
+                                          >
+                                            🎤 Sing
+                                          </button>
+                                        )}
                                       </div>
                                     </div>
-                                    {/* Best grade badge */}
-                                    {songBestGrade && (
-                                      <span className="text-xs font-black px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 border border-yellow-300">
-                                        {songBestGrade}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {/* Action buttons — Play filled, Sing outline */}
-                                  <div className="flex gap-2 mt-2 ml-10">
-                                    {selectedLanguage === "spanish" && (
-                                      <button
-                                        onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-white transition-all active:scale-95"
-                                        style={{ background: "linear-gradient(135deg, #4ade80, #22c55e)", boxShadow: "0 2px 8px rgba(34,197,94,0.4)" }}
-                                      >
-                                        🥕 Play
-                                      </button>
-                                    )}
-                                    {isClickable && (
-                                      <button
-                                        onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all active:scale-95"
-                                        style={{ color: "#22c55e", background: "transparent", border: "2px solid #22c55e" }}
-                                      >
-                                        🎤 Sing
-                                      </button>
-                                    )}
-                                  </div>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </React.Fragment>
+                      )
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
