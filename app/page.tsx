@@ -2601,7 +2601,7 @@ export default function HablaBeat() {
                                     {selectedLanguage === "spanish" && (
                                       <button
                                         onClick={() => handlePlayDDR(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors" style={{ backgroundColor: "#6A9FC0" }}
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-black bg-white border-2 border-black transition-colors hover:bg-gray-50"
                                       >
                                         🥕 Play
                                       </button>
@@ -2609,7 +2609,7 @@ export default function HablaBeat() {
                                     {isClickable && (
                                       <button
                                         onClick={() => handlePlaySong(song.id, category.id, section.id)}
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors" style={{ backgroundColor: "#6A9FC0" }}
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-black bg-white border-2 border-black transition-colors hover:bg-gray-50"
                                       >
                                         🎤 Sing
                                       </button>
