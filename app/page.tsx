@@ -2834,45 +2834,53 @@ export default function HablaBeat() {
                 <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm mb-4 relative" style={{
                   background: "linear-gradient(160deg, #e0f7ff 0%, #ede9fe 35%, #fce7f3 65%, #fef3c7 100%)"
                 }}>
-                  {/* ✨ Galaxy decorations — stars, shooting stars, aliens, UFOs */}
+                  {/* ✨ Galaxy decorations — stars & shooting stars across the whole card */}
                   <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ zIndex: 0 }}>
-                    {/* === TWINKLING STARS — spread across top & side edges, away from world grid === */}
-                    {/* Top row */}
-                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "4%",  left: "8%",   fontSize: "12px", animationDuration: "2.1s", animationDelay: "0s"    }}>★</span>
-                    <span className="star-twinkle absolute text-purple-400"  style={{ top: "3%",  left: "28%",  fontSize: "9px",  animationDuration: "1.7s", animationDelay: "0.4s"  }}>✦</span>
-                    <span className="star-twinkle absolute text-blue-400"    style={{ top: "5%",  left: "50%",  fontSize: "11px", animationDuration: "2.5s", animationDelay: "0.8s"  }}>★</span>
-                    <span className="star-twinkle absolute text-pink-400"    style={{ top: "4%",  left: "72%",  fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.2s"  }}>✦</span>
-                    <span className="star-twinkle absolute text-yellow-300"  style={{ top: "3%",  left: "90%",  fontSize: "10px", animationDuration: "2.3s", animationDelay: "0.2s"  }}>★</span>
-                    {/* Second row */}
+                    {/* === TWINKLING STARS — scattered across entire card === */}
+                    {/* Top area */}
+                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "3%",  left: "8%",   fontSize: "12px", animationDuration: "2.1s", animationDelay: "0s"    }}>★</span>
+                    <span className="star-twinkle absolute text-purple-400"  style={{ top: "4%",  left: "28%",  fontSize: "9px",  animationDuration: "1.7s", animationDelay: "0.4s"  }}>✦</span>
+                    <span className="star-twinkle absolute text-blue-400"    style={{ top: "5%",  left: "52%",  fontSize: "11px", animationDuration: "2.5s", animationDelay: "0.8s"  }}>★</span>
+                    <span className="star-twinkle absolute text-pink-400"    style={{ top: "3%",  left: "74%",  fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.2s"  }}>✦</span>
+                    <span className="star-twinkle absolute text-yellow-300"  style={{ top: "4%",  left: "91%",  fontSize: "10px", animationDuration: "2.3s", animationDelay: "0.2s"  }}>★</span>
+                    {/* Left strip — full height */}
                     <span className="star-twinkle absolute text-cyan-400"    style={{ top: "10%", left: "2%",   fontSize: "8px",  animationDuration: "1.8s", animationDelay: "1.5s"  }}>★</span>
-                    <span className="star-twinkle absolute text-purple-300"  style={{ top: "11%", left: "40%",  fontSize: "7px",  animationDuration: "2.7s", animationDelay: "0.6s"  }}>✦</span>
-                    <span className="star-twinkle-slow absolute text-white"  style={{ top: "9%",  left: "62%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "0.9s"  }}>✧</span>
-                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "12%", left: "85%",  fontSize: "9px",  animationDuration: "2.0s", animationDelay: "1.0s"  }}>★</span>
-                    {/* Left edge */}
-                    <span className="star-twinkle absolute text-pink-300"    style={{ top: "18%", left: "3%",   fontSize: "10px", animationDuration: "1.6s", animationDelay: "0.3s"  }}>★</span>
-                    <span className="star-twinkle-slow absolute text-cyan-300" style={{ top: "25%", left: "1%", fontSize: "8px",  animationDuration: "3.2s", animationDelay: "1.7s"  }}>✦</span>
-                    {/* Right edge */}
-                    <span className="star-twinkle absolute text-blue-300"    style={{ top: "18%", right: "2%",  fontSize: "11px", animationDuration: "2.2s", animationDelay: "1.8s"  }}>★</span>
-                    <span className="star-twinkle-slow absolute text-purple-300" style={{ top: "26%", right: "1%", fontSize: "8px", animationDuration: "2.9s", animationDelay: "0.5s" }}>✦</span>
-                    {/* Bottom corners (below the world grid area) */}
-                    <span className="star-twinkle absolute text-yellow-300"  style={{ bottom: "3%", left: "4%",  fontSize: "9px",  animationDuration: "2.4s", animationDelay: "0.7s"  }}>★</span>
-                    <span className="star-twinkle absolute text-pink-400"    style={{ bottom: "5%", left: "22%", fontSize: "7px",  animationDuration: "1.9s", animationDelay: "1.3s"  }}>✦</span>
-                    <span className="star-twinkle-slow absolute text-white"  style={{ bottom: "4%", left: "50%", fontSize: "12px", animationDuration: "3.0s", animationDelay: "2.2s"  }}>✧</span>
-                    <span className="star-twinkle absolute text-blue-400"    style={{ bottom: "3%", right: "15%",fontSize: "8px",  animationDuration: "2.1s", animationDelay: "0.4s"  }}>★</span>
-                    <span className="star-twinkle absolute text-yellow-400"  style={{ bottom: "5%", right: "3%", fontSize: "10px", animationDuration: "1.7s", animationDelay: "1.1s"  }}>★</span>
-                    {/* === SHOOTING STARS — start from left/top edges, travel right-down === */}
-                    <span className="shooting-star   absolute text-yellow-200" style={{ top: "5%",  left: "3%",  fontSize: "16px", animationDuration: "3.2s", animationDelay: "0.3s"  }}>💫</span>
+                    <span className="star-twinkle-slow absolute text-pink-300" style={{ top: "22%", left: "1%", fontSize: "10px", animationDuration: "3.2s", animationDelay: "0.3s"  }}>✦</span>
+                    <span className="star-twinkle absolute text-yellow-300"  style={{ top: "38%", left: "3%",   fontSize: "8px",  animationDuration: "2.0s", animationDelay: "1.9s"  }}>★</span>
+                    <span className="star-twinkle-slow absolute text-cyan-300" style={{ top: "54%", left: "2%", fontSize: "7px",  animationDuration: "2.8s", animationDelay: "0.8s"  }}>✦</span>
+                    <span className="star-twinkle absolute text-purple-300"  style={{ top: "70%", left: "1%",   fontSize: "9px",  animationDuration: "2.4s", animationDelay: "2.1s"  }}>★</span>
+                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "85%", left: "3%",   fontSize: "8px",  animationDuration: "1.6s", animationDelay: "0.6s"  }}>✦</span>
+                    {/* Right strip — full height */}
+                    <span className="star-twinkle absolute text-blue-300"    style={{ top: "10%", right: "2%",  fontSize: "11px", animationDuration: "2.2s", animationDelay: "1.8s"  }}>★</span>
+                    <span className="star-twinkle-slow absolute text-purple-300" style={{ top: "22%", right: "1%", fontSize: "8px", animationDuration: "2.9s", animationDelay: "0.5s" }}>✦</span>
+                    <span className="star-twinkle absolute text-pink-300"    style={{ top: "38%", right: "2%",  fontSize: "9px",  animationDuration: "2.1s", animationDelay: "1.3s"  }}>★</span>
+                    <span className="star-twinkle-slow absolute text-yellow-300" style={{ top: "54%", right: "1%", fontSize: "7px", animationDuration: "3.1s", animationDelay: "2.4s" }}>✦</span>
+                    <span className="star-twinkle absolute text-blue-400"    style={{ top: "70%", right: "3%",  fontSize: "10px", animationDuration: "1.9s", animationDelay: "0.9s"  }}>★</span>
+                    <span className="star-twinkle absolute text-cyan-300"    style={{ top: "85%", right: "2%",  fontSize: "8px",  animationDuration: "2.6s", animationDelay: "1.6s"  }}>✦</span>
+                    {/* Middle scatter — fills the gap between header and worlds, and below worlds */}
+                    <span className="star-twinkle absolute text-purple-300"  style={{ top: "13%", left: "40%",  fontSize: "7px",  animationDuration: "2.7s", animationDelay: "0.6s"  }}>✦</span>
+                    <span className="star-twinkle-slow absolute text-white"  style={{ top: "11%", left: "62%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "0.9s"  }}>✧</span>
+                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "14%", left: "85%",  fontSize: "9px",  animationDuration: "2.0s", animationDelay: "1.0s"  }}>★</span>
+                    <span className="star-twinkle absolute text-pink-400"    style={{ top: "20%", left: "18%",  fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.4s"  }}>✦</span>
+                    <span className="star-twinkle-slow absolute text-white"  style={{ top: "20%", left: "50%",  fontSize: "10px", animationDuration: "3.3s", animationDelay: "2.0s"  }}>✧</span>
+                    <span className="star-twinkle absolute text-blue-300"    style={{ top: "20%", left: "78%",  fontSize: "7px",  animationDuration: "2.1s", animationDelay: "0.5s"  }}>★</span>
+                    {/* Bottom area — below world grid */}
+                    <span className="star-twinkle absolute text-yellow-300"  style={{ bottom: "3%", left: "8%",  fontSize: "11px", animationDuration: "2.4s", animationDelay: "0.7s"  }}>★</span>
+                    <span className="star-twinkle absolute text-pink-400"    style={{ bottom: "4%", left: "25%", fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.3s"  }}>✦</span>
+                    <span className="star-twinkle-slow absolute text-white"  style={{ bottom: "5%", left: "44%", fontSize: "13px", animationDuration: "3.0s", animationDelay: "2.2s"  }}>✧</span>
+                    <span className="star-twinkle absolute text-cyan-400"    style={{ bottom: "3%", left: "63%", fontSize: "9px",  animationDuration: "2.1s", animationDelay: "0.4s"  }}>★</span>
+                    <span className="star-twinkle absolute text-purple-400"  style={{ bottom: "4%", left: "80%", fontSize: "7px",  animationDuration: "1.7s", animationDelay: "1.1s"  }}>✦</span>
+                    <span className="star-twinkle-slow absolute text-yellow-300" style={{ bottom: "9%", left: "15%", fontSize: "8px", animationDuration: "2.6s", animationDelay: "1.8s" }}>★</span>
+                    <span className="star-twinkle absolute text-blue-400"    style={{ bottom: "8%", left: "38%", fontSize: "10px", animationDuration: "2.3s", animationDelay: "0.3s"  }}>✦</span>
+                    <span className="star-twinkle absolute text-pink-300"    style={{ bottom: "9%", left: "58%", fontSize: "8px",  animationDuration: "1.8s", animationDelay: "2.5s"  }}>★</span>
+                    <span className="star-twinkle-slow absolute text-yellow-400" style={{ bottom: "8%", left: "78%", fontSize: "9px", animationDuration: "2.9s", animationDelay: "0.9s" }}>✦</span>
+                    {/* === SHOOTING STARS — cross the whole card === */}
+                    <span className="shooting-star   absolute text-yellow-200" style={{ top: "4%",  left: "3%",  fontSize: "16px", animationDuration: "3.2s", animationDelay: "0.3s"  }}>💫</span>
                     <span className="shooting-star-b absolute text-white"      style={{ top: "8%",  left: "15%", fontSize: "12px", animationDuration: "4.0s", animationDelay: "1.8s"  }}>✨</span>
-                    <span className="shooting-star   absolute text-yellow-300" style={{ top: "3%",  left: "45%", fontSize: "14px", animationDuration: "3.7s", animationDelay: "3.2s"  }}>💫</span>
-                    <span className="shooting-star-b absolute text-cyan-200"   style={{ top: "6%",  left: "68%", fontSize: "11px", animationDuration: "4.5s", animationDelay: "5.0s"  }}>✨</span>
-                    <span className="shooting-star   absolute text-white"      style={{ top: "12%", left: "5%",  fontSize: "13px", animationDuration: "3.9s", animationDelay: "6.5s"  }}>💫</span>
-                    <span className="shooting-star-b absolute text-yellow-100" style={{ top: "2%",  left: "80%", fontSize: "10px", animationDuration: "3.4s", animationDelay: "2.6s"  }}>✨</span>
-                    {/* === ALIENS — float on the sides === */}
-                    <span className="alien-float absolute" style={{ top: "14%", right: "3%",  fontSize: "22px", animationDuration: "3.4s", animationDelay: "0.7s"  }}>👽</span>
-                    <span className="alien-float absolute" style={{ top: "20%", left: "1%",   fontSize: "18px", animationDuration: "2.9s", animationDelay: "1.6s"  }}>👾</span>
-                    {/* === UFOs — float on the sides === */}
-                    <span className="alien-float absolute" style={{ top: "7%",  right: "12%", fontSize: "20px", animationDuration: "4.2s", animationDelay: "0.2s"  }}>🛸</span>
-                    <span className="alien-float absolute" style={{ top: "17%", left: "30%",  fontSize: "16px", animationDuration: "3.7s", animationDelay: "2.3s"  }}>🛸</span>
+                    <span className="shooting-star   absolute text-yellow-300" style={{ top: "3%",  left: "50%", fontSize: "14px", animationDuration: "3.7s", animationDelay: "3.2s"  }}>💫</span>
+                    <span className="shooting-star-b absolute text-cyan-200"   style={{ top: "6%",  left: "70%", fontSize: "11px", animationDuration: "4.5s", animationDelay: "5.0s"  }}>✨</span>
+                    <span className="shooting-star   absolute text-white"      style={{ top: "13%", left: "5%",  fontSize: "13px", animationDuration: "3.9s", animationDelay: "6.5s"  }}>💫</span>
+                    <span className="shooting-star-b absolute text-yellow-100" style={{ top: "2%",  left: "82%", fontSize: "10px", animationDuration: "3.4s", animationDelay: "2.6s"  }}>✨</span>
                   </div>
                   {/* Main Category Header */}
                   <div className="px-4 pt-4 pb-2 relative z-10">
