@@ -967,9 +967,9 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
           })}
         </div>
 
-        <div className="max-w-md mx-auto px-4 py-2 text-center relative z-10 flex flex-col items-center justify-center h-full">
+        <div className="max-w-md mx-auto px-4 py-4 text-center relative z-10 flex flex-col items-center w-full overflow-y-auto" style={{ maxHeight: "100dvh" }}>
           {/* Trophy centered, larger, bouncing */}
-          <div className="relative w-44 h-44 md:w-56 md:h-56 flex-shrink-0 mx-auto mb-2" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
+          <div className="relative w-32 h-32 md:w-44 md:h-44 flex-shrink-0 mx-auto mb-2" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
             <Image
               src="/images/trophy.png"
               alt="Trophy"
