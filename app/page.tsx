@@ -2422,91 +2422,131 @@ export default function HablaBeat() {
             </div>
           )}
 
-          {/* Header with Super Bunny */}
-          <div className="text-gray-900 p-4">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-44 h-44 flex-shrink-0">
+          {/* ── HEADER ── */}
+          <div className="relative overflow-hidden rounded-b-3xl mb-1 pb-5" style={{
+            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #f0fff8 100%)"
+          }}>
+            {/* soft cloud blobs */}
+            <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+            <div className="absolute top-2 right-[-10px] w-28 h-16 rounded-full opacity-35" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+            <div className="absolute bottom-8 left-1/3 w-24 h-12 rounded-full opacity-30" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+            {/* sparkle stars */}
+            <span className="absolute top-8 right-8 text-yellow-300 text-xl select-none" style={{ filter: "drop-shadow(0 0 4px gold)" }}>✦</span>
+            <span className="absolute top-16 left-6 text-yellow-200 text-sm select-none" style={{ filter: "drop-shadow(0 0 3px gold)" }}>✦</span>
+            <span className="absolute top-5 left-1/2 text-white text-xs select-none opacity-60">✦</span>
+
+            {/* Profile button — top right */}
+            <div className="absolute top-3 right-3 z-10">
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="w-11 h-11 rounded-full overflow-hidden border-2 shadow-lg hover:opacity-90 transition-opacity"
+                style={{ borderColor: "rgba(255,255,255,0.8)", backgroundColor: "#e0f2fe" }}
+                title="Edit profile"
+              >
+                {userPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="flex items-center justify-center w-full h-full text-xl">🐰</span>
+                )}
+              </button>
+            </div>
+
+            {/* Bunny + Title ribbon row */}
+            <div className="flex items-end px-3 pt-4 gap-0">
+              {/* Bunny GIF — overlaps slightly downward */}
+              <div className="w-36 h-36 flex-shrink-0 relative z-10" style={{ marginBottom: "-12px" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/super-bunny-heart.gif"
-                  alt="HablaBeat Bunny"
-                  className="w-full h-full object-contain"
-                />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl" />
               </div>
-              <div className="flex-1 text-left">
-                {/* Profile avatar top-right */}
-                <div className="flex items-start justify-between">
-                  <h1 className="text-3xl font-bold mb-1 mt-3 text-gray-900">HablaBeat</h1>
-                  <button
-                    onClick={() => setShowProfileModal(true)}
-                    className="mt-2 w-12 h-12 rounded-full overflow-hidden border-2 border-blue-300 shadow flex-shrink-0 hover:opacity-90 transition-opacity"
-                    style={{ backgroundColor: "#e0f2fe" }}
-                    title="Edit profile"
-                  >
-                    {userPhoto ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="flex items-center justify-center w-full h-full text-2xl">🐰</span>
-                    )}
-                  </button>
+
+              {/* Title ribbon */}
+              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
+                {/* ribbon shape */}
+                <div className="relative rounded-2xl px-4 py-3 shadow-lg overflow-hidden" style={{
+                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
+                  border: "3px solid rgba(255,255,255,0.7)",
+                  boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
+                }}>
+                  {/* ribbon tail left */}
+                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
+                    borderTop: "14px solid transparent",
+                    borderBottom: "14px solid transparent",
+                    borderRight: "12px solid #fbbf24"
+                  }} />
+                  <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
+                  <span className="absolute bottom-1 right-6 text-white/30 text-xs select-none">✦</span>
+                  <h1 className="text-3xl font-black text-white text-center tracking-wide drop-shadow-md"
+                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
+                    HablaBeat
+                  </h1>
                 </div>
-                <p className="text-lg leading-tight" style={{ color: "#6A9FC0" }}>Collect coins with</p>
-                <p className="text-lg leading-tight font-bold" style={{ color: "#6A9FC0" }}>Blue Bunny!</p>
+                {/* ribbon bottom green tail */}
+                <div className="mx-6 h-3 rounded-b-xl shadow-sm" style={{
+                  background: "linear-gradient(90deg, #34d399, #06b6d4)",
+                  clipPath: "polygon(0 0, 100% 0, 90% 100%, 10% 100%)"
+                }} />
               </div>
             </div>
 
-            {/* Stats cards */}
-            <div className="px-4 mb-3 space-y-2">
-              {/* Row 1 — Day Streak + Challenges Won */}
-              <div className="grid grid-cols-2 gap-2">
-                {/* Day Streak */}
-                <div className="relative overflow-hidden rounded-2xl p-4 shadow-md" style={{ background: "linear-gradient(135deg, #fbbf24, #f97316)" }}>
-                  {/* sparkle dots */}
-                  <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
-                  <span className="absolute bottom-3 left-3 text-white/20 text-xs select-none">✦</span>
-                  <p className="text-white text-3xl font-black leading-none">
-                    🔥 {dailyStreak > 0 ? dailyStreak : "0"}
-                  </p>
-                  <p className="text-white/90 font-bold text-sm mt-1">Day Streak</p>
-                </div>
-                {/* Challenges Won */}
-                <div className="relative overflow-hidden rounded-2xl p-4 shadow-md" style={{ background: "linear-gradient(135deg, #93c5fd, #6A9FC0)" }}>
-                  <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
-                  <span className="absolute bottom-3 left-3 text-white/20 text-xs select-none">✦</span>
-                  <p className="text-white text-3xl font-black leading-none">⚔️ {challengesWon}</p>
-                  <p className="text-white/90 font-bold text-sm mt-1">Challenges Won</p>
-                </div>
+            {/* Stats row — 3 tiles */}
+            <div className="px-3 mt-4 grid grid-cols-3 gap-2">
+              {/* Day Streak */}
+              <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
+                background: "linear-gradient(135deg, #fbbf24, #f97316)",
+                border: "2px solid rgba(255,255,255,0.5)"
+              }}>
+                <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
+                <p className="text-white text-2xl font-black leading-none">🔥 {dailyStreak > 0 ? dailyStreak : "0"}</p>
+                <p className="text-white/90 font-bold text-xs mt-1">Day Streak</p>
               </div>
+              {/* Challenges Won */}
+              <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
+                background: "linear-gradient(135deg, #93c5fd, #6A9FC0)",
+                border: "2px solid rgba(255,255,255,0.5)"
+              }}>
+                <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
+                <p className="text-white text-2xl font-black leading-none">⚔️ {challengesWon}</p>
+                <p className="text-white/90 font-bold text-xs mt-1">Chall. Won</p>
+              </div>
+              {/* Best Flow */}
+              <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
+                background: "linear-gradient(135deg, #fde68a, #fbbf24)",
+                border: "2px solid rgba(255,255,255,0.5)"
+              }}>
+                <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
+                <p className="text-white text-2xl font-black leading-none">⚡ {bestFlow}</p>
+                <p className="text-white/90 font-bold text-xs mt-1">Best Flow</p>
+              </div>
+            </div>
 
-              {/* Row 2 — Vocab Bank (wide) */}
-              <div className="relative overflow-hidden rounded-2xl px-5 py-4 shadow-md" style={{ background: "linear-gradient(135deg, #86efac, #34d399, #6ee7b7)" }}>
-                <span className="absolute top-2 right-4 text-white/30 text-xl select-none">✦</span>
-                <span className="absolute bottom-2 left-6 text-white/20 text-sm select-none">✦</span>
-                <span className="absolute top-4 left-1/2 text-white/10 text-2xl select-none">✦</span>
+            {/* Vocab Bank — wide card */}
+            <div className="px-3 mt-2">
+              <div className="relative overflow-hidden rounded-2xl px-5 py-4 shadow-lg" style={{
+                background: "linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #6ee7b7 100%)",
+                border: "2px solid rgba(255,255,255,0.6)",
+                boxShadow: "0 4px 20px rgba(52,211,153,0.4)"
+              }}>
+                {/* sparkle scatter */}
+                <span className="absolute top-2 right-8 text-white/40 text-xl select-none">✦</span>
+                <span className="absolute bottom-2 right-16 text-white/25 text-sm select-none">✦</span>
+                <span className="absolute top-3 left-1/3 text-white/20 text-lg select-none">✦</span>
+                <span className="absolute bottom-3 left-1/2 text-white/20 text-xs select-none opacity-60">✦</span>
+                {/* inner glow blob */}
+                <div className="absolute right-12 top-0 bottom-0 w-24 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white font-black text-4xl leading-none">{totalVocabBank.toLocaleString()}</p>
-                    <p className="text-white/90 font-bold text-sm mt-1">VOCAB BANK</p>
+                    <p className="text-white font-black leading-none" style={{ fontSize: "2.4rem" }}>{totalVocabBank.toLocaleString()}</p>
+                    <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">VOCAB BANK</p>
                   </div>
-                  <span className="text-4xl">💰</span>
-                </div>
-              </div>
-
-              {/* Row 3 — Best Flow (wide) */}
-              <div className="relative overflow-hidden rounded-2xl px-5 py-3 shadow-md" style={{ background: "linear-gradient(135deg, #67e8f9, #22d3ee, #6A9FC0)" }}>
-                <span className="absolute top-2 right-4 text-white/30 text-lg select-none">✦</span>
-                <span className="absolute bottom-2 left-6 text-white/15 text-sm select-none">✦</span>
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">⚡</span>
-                  <p className="text-white font-black text-2xl">Best Flow</p>
-                  <p className="text-white font-black text-2xl ml-auto">{bestFlow}</p>
+                  <span className="text-5xl drop-shadow-lg">💰</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Curriculum - Accordion Sections */}
-            <div className="p-2 space-y-4 pb-32">
+          {/* Curriculum - Accordion Sections */}
+          <div className="p-2 space-y-4 pb-32">
               {curriculumData.map((category) => (
                 <div key={category.id} className="space-y-2">
                   {/* Main Category Header */}
@@ -2684,7 +2724,6 @@ export default function HablaBeat() {
                 </Button>
               </div>
             </div>
-          </div>
         </div>
       </div>
     )
