@@ -2348,7 +2348,7 @@ export default function HablaBeat() {
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
               </div>
               <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
-                <div className="relative rounded-2xl px-4 py-3 shadow-lg overflow-hidden" style={{
+                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
                   background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
                   border: "3px solid rgba(255,255,255,0.7)",
                   boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
@@ -2745,7 +2745,7 @@ export default function HablaBeat() {
               {/* Title ribbon */}
               <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
                 {/* ribbon shape */}
-                <div className="relative rounded-2xl px-4 py-3 shadow-lg overflow-hidden" style={{
+                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
                   background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
                   border: "3px solid rgba(255,255,255,0.7)",
                   boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
@@ -3213,7 +3213,7 @@ export default function HablaBeat() {
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
               </div>
               <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
-                <div className="relative rounded-2xl px-4 py-3 shadow-lg overflow-hidden" style={{
+                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
                   background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
                   border: "3px solid rgba(255,255,255,0.7)",
                   boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
