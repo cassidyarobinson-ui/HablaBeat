@@ -2445,7 +2445,7 @@ export default function HablaBeat() {
           )}
 
           {/* ── HEADER ── */}
-          <div className="relative overflow-hidden rounded-b-3xl mb-1 pb-5" style={{
+          <div className="relative overflow-hidden pb-5" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #f0fff8 100%)"
           }}>
             {/* soft cloud blobs */}
@@ -2533,7 +2533,7 @@ export default function HablaBeat() {
               </div>
               {/* Best Flow — blue */}
               <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                background: "linear-gradient(135deg, #93c5fd, #6A9FC0)",
+                background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
                 border: "2px solid rgba(255,255,255,0.5)"
               }}>
                 <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
