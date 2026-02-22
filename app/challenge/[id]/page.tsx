@@ -166,7 +166,7 @@ export default function ChallengePage() {
 
   const resultConfig = {
     win:  { emoji: "🎉", headline: "You Win!", sub: `You crushed ${challengerName}'s score!`, bg: "from-yellow-50 to-white", border: "border-yellow-300", color: "#f59e0b" },
-    lose: { emoji: "😅", headline: "You Lose!", sub: "So close! Challenge them back to a rematch!", bg: "from-red-50 to-white", border: "border-red-200", color: "#ef4444" },
+    lose: { emoji: "😅", headline: "You Lose!", sub: `${challengerName} got you this time… rematch?? 🥕`, bg: "from-red-50 to-white", border: "border-red-200", color: "#ef4444" },
     tie:  { emoji: "🤝", headline: "It's a Tie!", sub: "Dead even — incredibly close!", bg: "from-blue-50 to-white", border: "border-blue-200", color: "#6A9FC0" },
   }[outcome]
 
