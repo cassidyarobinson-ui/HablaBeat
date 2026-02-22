@@ -2387,9 +2387,8 @@ export default function HablaBeat() {
                     Vocab Bank 💰
                   </h1>
                 </div>
-                <div className="mx-6 h-3 rounded-b-xl shadow-sm" style={{
-                  background: "linear-gradient(90deg, #34d399, #06b6d4)",
-                  clipPath: "polygon(0 0, 100% 0, 90% 100%, 10% 100%)"
+                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{
+                  background: "linear-gradient(90deg, #34d399, #06b6d4)"
                 }} />
               </div>
             </div>
@@ -2798,10 +2797,9 @@ export default function HablaBeat() {
                     </button>
                   </div>
                 </div>
-                {/* ribbon bottom green tail */}
-                <div className="mx-6 h-3 rounded-b-xl shadow-sm" style={{
-                  background: "linear-gradient(90deg, #34d399, #06b6d4)",
-                  clipPath: "polygon(0 0, 100% 0, 90% 100%, 10% 100%)"
+                {/* ribbon bottom rounded tab */}
+                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{
+                  background: "linear-gradient(90deg, #34d399, #06b6d4)"
                 }} />
               </div>
             </div>
@@ -3250,9 +3248,8 @@ export default function HablaBeat() {
                     Store 🛍️
                   </h1>
                 </div>
-                <div className="mx-6 h-3 rounded-b-xl shadow-sm" style={{
-                  background: "linear-gradient(90deg, #34d399, #06b6d4)",
-                  clipPath: "polygon(0 0, 100% 0, 90% 100%, 10% 100%)"
+                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{
+                  background: "linear-gradient(90deg, #34d399, #06b6d4)"
                 }} />
               </div>
             </div>
