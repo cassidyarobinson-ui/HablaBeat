@@ -20,6 +20,7 @@ import {
   Mic,
   MicOff,
   Sparkles,
+  ShoppingBag,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -29,6 +30,44 @@ declare global {
     onYouTubeIframeAPIReady: () => void
     YT: any
   }
+}
+
+// ── STORE CATALOG ───────────────────────────────────────────────────────────
+type StoreItemCategory = "bunny" | "theme" | "hint"
+interface StoreItem {
+  id: string
+  name: string
+  emoji: string
+  cost: number
+  category: StoreItemCategory
+  description: string
+  imageSrc?: string
+}
+
+const STORE_CATALOG: StoreItem[] = [
+  // Bunny Skins
+  { id: "bunny-classic", name: "Classic Bunny", emoji: "🐰", cost: 0, category: "bunny", description: "The original HablaBeat mascot", imageSrc: "/images/super-bunny-heart.gif" },
+  { id: "bunny-blue", name: "Blue Bunny", emoji: "🩵", cost: 5, category: "bunny", description: "Cool blue vibes", imageSrc: "/images/super-bunny-blue.gif" },
+  { id: "bunny-ninja", name: "Ninja Bunny", emoji: "🥷", cost: 10, category: "bunny", description: "Silent but deadly at vocab", imageSrc: "/images/super-bunny-heart.gif" },
+  { id: "bunny-space", name: "Space Bunny", emoji: "🚀", cost: 12, category: "bunny", description: "Out of this world Spanish skills", imageSrc: "/images/super-bunny-heart.gif" },
+  { id: "bunny-chef", name: "Chef Bunny", emoji: "👨‍🍳", cost: 8, category: "bunny", description: "Cooking up some vocabulary", imageSrc: "/images/super-bunny-heart.gif" },
+  { id: "bunny-rainbow", name: "Rainbow Bunny", emoji: "🌈", cost: 15, category: "bunny", description: "All the colors of Spanish", imageSrc: "/images/super-bunny-heart.gif" },
+  // Profile Themes
+  { id: "theme-default", name: "HablaBeat Classic", emoji: "🎨", cost: 0, category: "theme", description: "The original teal-to-mint gradient" },
+  { id: "theme-sunset", name: "Sunset Fiesta", emoji: "🌅", cost: 5, category: "theme", description: "Warm orange and pink glow" },
+  { id: "theme-ocean", name: "Deep Ocean", emoji: "🌊", cost: 7, category: "theme", description: "Cool deep blue tones" },
+  { id: "theme-galaxy", name: "Galaxy Mode", emoji: "🌌", cost: 10, category: "theme", description: "Dark purple starfield" },
+  { id: "theme-tropical", name: "Tropical Paradise", emoji: "🌴", cost: 8, category: "theme", description: "Bright greens and yellows" },
+  // Hints (consumable)
+  { id: "hint-consumable", name: "Song Hint", emoji: "💡", cost: 3, category: "hint", description: "Reveal a lyrics hint for any locked song" },
+]
+
+const THEME_GRADIENTS: Record<string, string> = {
+  "theme-default":  "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)",
+  "theme-sunset":   "linear-gradient(180deg, #fff7ed 0%, #fed7aa 40%, #fda4af 70%, #fce7f3 100%)",
+  "theme-ocean":    "linear-gradient(180deg, #eff6ff 0%, #bfdbfe 40%, #93c5fd 70%, #dbeafe 100%)",
+  "theme-galaxy":   "linear-gradient(180deg, #0f0520 0%, #1e1b4b 40%, #312e81 70%, #1e1b4b 100%)",
+  "theme-tropical": "linear-gradient(180deg, #f0fdf4 0%, #bbf7d0 40%, #fef9c3 70%, #ecfdf5 100%)",
 }
 
 // Latino-inspired color palette
@@ -1382,7 +1421,7 @@ function compressPhoto(file: File): Promise<string> {
 }
 
 export default function HablaBeat() {
-  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer">("songs")
+  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer" | "store">("songs")
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
@@ -1426,6 +1465,13 @@ export default function HablaBeat() {
   const [dailyStreak, setDailyStreak] = useState(0)
   const [lastPlayDate, setLastPlayDate] = useState("") // YYYY-MM-DD
 
+  // Store state
+  const [challengeCoins, setChallengeCoins] = useState(0)
+  const [storeOwned, setStoreOwned] = useState<string[]>(["bunny-classic"])
+  const [activeBunny, setActiveBunny] = useState("bunny-classic")
+  const [activeTheme, setActiveTheme] = useState("theme-default")
+  const [storeTab, setStoreTab] = useState<"bunny" | "theme" | "hint">("bunny")
+
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
   const [singScore, setSingScore] = useState(0)
@@ -1454,6 +1500,10 @@ export default function HablaBeat() {
     setUserPhoto(loadPersisted("hablabeat-user-photo", ""))
     setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
     setChallengesWon(loadPersisted("hablabeat-challenges-won", 0))
+    setChallengeCoins(loadPersisted("hablabeat-challenge-coins", 0))
+    setStoreOwned(loadPersisted("hablabeat-store-owned", ["bunny-classic"]))
+    setActiveBunny(loadPersisted("hablabeat-active-bunny", "bunny-classic"))
+    setActiveTheme(loadPersisted("hablabeat-active-theme", "theme-default"))
     const savedStreak = loadPersisted("hablabeat-daily-streak", 0)
     const savedLastPlay = loadPersisted("hablabeat-last-play-date", "")
     // Update daily streak on app open
@@ -1487,11 +1537,33 @@ export default function HablaBeat() {
   useEffect(() => { localStorage.setItem("hablabeat-challenges-won", JSON.stringify(challengesWon)) }, [challengesWon])
   useEffect(() => { localStorage.setItem("hablabeat-daily-streak", JSON.stringify(dailyStreak)) }, [dailyStreak])
   useEffect(() => { localStorage.setItem("hablabeat-last-play-date", JSON.stringify(lastPlayDate)) }, [lastPlayDate])
+  useEffect(() => { localStorage.setItem("hablabeat-challenge-coins", JSON.stringify(challengeCoins)) }, [challengeCoins])
+  useEffect(() => { localStorage.setItem("hablabeat-store-owned", JSON.stringify(storeOwned)) }, [storeOwned])
+  useEffect(() => { localStorage.setItem("hablabeat-active-bunny", JSON.stringify(activeBunny)) }, [activeBunny])
+  useEffect(() => { localStorage.setItem("hablabeat-active-theme", JSON.stringify(activeTheme)) }, [activeTheme])
 
   // Called when user sends a challenge
   const handleChallengeSent = () => {
     setTotalChallengesSent(prev => prev + 1)
   }
+
+  // Store helpers
+  const handleStorePurchase = (item: StoreItem) => {
+    if (challengeCoins < item.cost || storeOwned.includes(item.id)) return
+    setChallengeCoins(prev => prev - item.cost)
+    setStoreOwned(prev => [...prev, item.id])
+    if (item.category === "bunny") setActiveBunny(item.id)
+    if (item.category === "theme") setActiveTheme(item.id)
+  }
+  const handleStoreEquip = (item: StoreItem) => {
+    if (!storeOwned.includes(item.id)) return
+    if (item.category === "bunny") setActiveBunny(item.id)
+    if (item.category === "theme") setActiveTheme(item.id)
+  }
+
+  // Derived: active bunny image src
+  const activeBunnyItem = STORE_CATALOG.find(i => i.id === activeBunny)
+  const activeBunnySrc = activeBunnyItem?.imageSrc ?? "/images/super-bunny-heart.gif"
 
   // Singing detection: start/stop mic
   const startMic = async () => {
@@ -2206,6 +2278,14 @@ export default function HablaBeat() {
                 <Sparkles className="h-7 w-7" />
                 <span className="text-xs font-semibold">Visualizer</span>
               </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                onClick={() => { stopMic(); setCurrentView("store") }}
+              >
+                <ShoppingBag className="h-7 w-7" />
+                <span className="text-xs font-semibold">Store</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -2238,9 +2318,9 @@ export default function HablaBeat() {
 
             {/* Bunny + Title row */}
             <div className="flex items-end px-3 pt-4 gap-0">
-              <div className="w-32 h-32 flex-shrink-0 relative z-10" style={{ marginBottom: "-12px" }}>
+              <div className="w-28 h-28 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl" />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
               </div>
               <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
                 <div className="relative rounded-2xl px-4 py-3 shadow-lg overflow-hidden" style={{
@@ -2248,10 +2328,16 @@ export default function HablaBeat() {
                   border: "3px solid rgba(255,255,255,0.7)",
                   boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
                 }}>
+                  {/* ribbon tail left */}
+                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
+                    borderTop: "14px solid transparent",
+                    borderBottom: "14px solid transparent",
+                    borderRight: "12px solid #fbbf24"
+                  }} />
                   <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
                   <span className="absolute bottom-1 right-6 text-white/30 text-xs select-none">✦</span>
-                  <h1 className="text-2xl font-black text-white text-center tracking-wide drop-shadow-md"
-                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25)" }}>
+                  <h1 className="text-3xl font-black text-white text-center tracking-wide drop-shadow-md"
+                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
                     Vocab Bank 💰
                   </h1>
                 </div>
@@ -2351,6 +2437,14 @@ export default function HablaBeat() {
                 <Sparkles className="h-7 w-7" />
                 <span className="text-xs font-semibold">Visualizer</span>
               </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                onClick={() => setCurrentView("store")}
+              >
+                <ShoppingBag className="h-7 w-7" />
+                <span className="text-xs font-semibold">Store</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -2407,6 +2501,11 @@ export default function HablaBeat() {
           .emoji-swords   { display:inline-block; animation: swordSparks 2.4s ease-in-out infinite; }
           .emoji-lightning{ display:inline-block; animation: lightningShimmer 2s ease-in-out infinite; }
           .emoji-moneybag { display:inline-block; animation: moneybagBounce 2.2s ease-in-out infinite; }
+          @keyframes bunnyTilt {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(1deg); }
+          }
+          .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
         `}</style>
         <div className="max-w-md mx-auto min-h-screen">
           {/* Profile photo hidden input */}
@@ -2537,29 +2636,12 @@ export default function HablaBeat() {
             <span className="absolute top-16 left-6 text-yellow-200 text-sm select-none" style={{ filter: "drop-shadow(0 0 3px gold)" }}>✦</span>
             <span className="absolute top-5 left-1/2 text-white text-xs select-none opacity-60">✦</span>
 
-            {/* Profile button — top right */}
-            <div className="absolute top-3 right-3 z-10">
-              <button
-                onClick={() => setShowProfileModal(true)}
-                className="w-11 h-11 rounded-full overflow-hidden border-2 shadow-lg hover:opacity-90 transition-opacity"
-                style={{ borderColor: "rgba(255,255,255,0.8)", backgroundColor: "#e0f2fe" }}
-                title="Edit profile"
-              >
-                {userPhoto ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="flex items-center justify-center w-full h-full text-xl">🐰</span>
-                )}
-              </button>
-            </div>
-
             {/* Bunny + Title ribbon row */}
             <div className="flex items-end px-3 pt-4 gap-0">
               {/* Bunny GIF — overlaps slightly downward */}
-              <div className="w-36 h-36 flex-shrink-0 relative z-10" style={{ marginBottom: "-12px" }}>
+              <div className="w-28 h-28 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl" />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
               </div>
 
               {/* Title ribbon */}
@@ -2577,11 +2659,25 @@ export default function HablaBeat() {
                     borderRight: "12px solid #fbbf24"
                   }} />
                   <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
-                  <span className="absolute bottom-1 right-6 text-white/30 text-xs select-none">✦</span>
-                  <h1 className="text-3xl font-black text-white text-center tracking-wide drop-shadow-md"
-                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
-                    HablaBeat
-                  </h1>
+                  <div className="flex items-center justify-between gap-2">
+                    <h1 className="text-3xl font-black text-white tracking-wide drop-shadow-md"
+                      style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
+                      HablaBeat
+                    </h1>
+                    <button
+                      onClick={() => setShowProfileModal(true)}
+                      className="w-10 h-10 rounded-full overflow-hidden border-2 shadow-md hover:opacity-90 transition-opacity flex-shrink-0"
+                      style={{ borderColor: "rgba(255,255,255,0.7)", backgroundColor: "#e0f2fe" }}
+                      title="Edit profile"
+                    >
+                      {userPhoto ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="flex items-center justify-center w-full h-full text-xl">🐰</span>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 {/* ribbon bottom green tail */}
                 <div className="mx-6 h-3 rounded-b-xl shadow-sm" style={{
@@ -2594,31 +2690,31 @@ export default function HablaBeat() {
             {/* Stats row — 3 tiles */}
             <div className="px-3 mt-4 grid grid-cols-3 gap-2">
               {/* Day Streak */}
-              <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                background: "linear-gradient(135deg, #fbbf24, #f97316)",
-                border: "2px solid rgba(255,255,255,0.5)"
+              <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
+                background: "#f5f0e8",
+                border: "1.5px solid rgba(194,65,12,0.15)"
               }}>
-                <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
-                <p className="text-white text-2xl font-black leading-none"><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
-                <p className="text-white/90 font-bold text-xs mt-1">Day Streak</p>
+                <span className="absolute top-1 right-2 text-orange-300/60 text-sm select-none">✦</span>
+                <p className="text-2xl font-black leading-none" style={{ color: "#c2410c" }}><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
+                <p className="font-bold text-xs mt-1" style={{ color: "#c2410c99" }}>Day Streak</p>
               </div>
-              {/* Challenges Won — purple matching ribbon */}
-              <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                background: "linear-gradient(135deg, #a855f7, #7c3aed)",
-                border: "2px solid rgba(255,255,255,0.5)"
+              {/* Challenges Won */}
+              <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
+                background: "#f3f0f8",
+                border: "1.5px solid rgba(124,58,237,0.15)"
               }}>
-                <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
-                <p className="text-white text-2xl font-black leading-none"><span className="emoji-swords">⚔️</span> {challengesWon}</p>
-                <p className="text-white/90 font-bold text-xs mt-1">Challenges Won</p>
+                <span className="absolute top-1 right-2 text-purple-300/60 text-sm select-none">✦</span>
+                <p className="text-2xl font-black leading-none" style={{ color: "#7c3aed" }}><span className="emoji-swords">⚔️</span> {challengesWon}</p>
+                <p className="font-bold text-xs mt-1" style={{ color: "#7c3aed99" }}>Challenges Won</p>
               </div>
-              {/* Best Flow — blue */}
-              <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
-                border: "2px solid rgba(255,255,255,0.5)"
+              {/* Best Flow */}
+              <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
+                background: "#eff8ff",
+                border: "1.5px solid rgba(14,165,233,0.15)"
               }}>
-                <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
-                <p className="text-white text-2xl font-black leading-none"><span className="emoji-lightning">⚡</span> {bestFlow}</p>
-                <p className="text-white/90 font-bold text-xs mt-1">Best Flow</p>
+                <span className="absolute top-1 right-2 text-sky-300/60 text-sm select-none">✦</span>
+                <p className="text-2xl font-black leading-none" style={{ color: "#0ea5e9" }}><span className="emoji-lightning">⚡</span> {bestFlow}</p>
+                <p className="font-bold text-xs mt-1" style={{ color: "#0ea5e999" }}>Best Flow</p>
               </div>
             </div>
 
@@ -2641,7 +2737,6 @@ export default function HablaBeat() {
                   <div>
                     <p className="text-white font-black leading-none drop-shadow" style={{ fontSize: "2.4rem", textShadow: "0 2px 4px rgba(0,0,0,0.15)" }}>{totalVocabBank.toLocaleString()}</p>
                     <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">VOCAB BANK</p>
-                    <p className="text-white/70 text-xs mt-1 font-semibold">Keep playing to grow! 🌱</p>
                   </div>
                   <span className="emoji-moneybag text-5xl drop-shadow-lg">💰</span>
                 </div>
@@ -2652,7 +2747,7 @@ export default function HablaBeat() {
           {/* Curriculum - Accordion Sections */}
           <div className="p-2 space-y-4 pb-32">
               {curriculumData.map((category) => (
-                <div key={category.id} className="space-y-2 mb-6">
+                <div key={category.id} className="space-y-2 mb-4">
                   {/* Main Category Header */}
                   <div className="px-4 pt-4 pb-2">
                     <h1 className="text-2xl font-bold text-gray-900">{category.title}</h1>
@@ -2837,6 +2932,14 @@ export default function HablaBeat() {
                   <Sparkles className="h-7 w-7" />
                   <span className="text-xs font-semibold">Visualizer</span>
                 </Button>
+                <Button
+                  variant="ghost"
+                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                  onClick={() => setCurrentView("store")}
+                >
+                  <ShoppingBag className="h-7 w-7" />
+                  <span className="text-xs font-semibold">Store</span>
+                </Button>
               </div>
             </div>
         </div>
@@ -2876,6 +2979,207 @@ export default function HablaBeat() {
               >
                 <Sparkles className="h-7 w-7" />
                 <span className="text-xs font-bold">Visualizer</span>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
+                onClick={() => setCurrentView("store")}
+              >
+                <ShoppingBag className="h-7 w-7" />
+                <span className="text-xs font-semibold">Store</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (currentView === "store") {
+    const storeItems = STORE_CATALOG.filter(item => item.category === storeTab)
+    return (
+      <div className="min-h-screen swirl-bg">
+        <style>{`
+          @keyframes swirlBg {
+            0%   { background-position: 0% 50%; }
+            25%  { background-position: 50% 100%; }
+            50%  { background-position: 100% 50%; }
+            75%  { background-position: 50% 0%; }
+            100% { background-position: 0% 50%; }
+          }
+          .swirl-bg {
+            background: linear-gradient(135deg, #e0f7ff, #d4f5e9, #fde8ff, #fff3d4);
+            background-size: 400% 400%;
+            animation: swirlBg 12s ease-in-out infinite;
+          }
+        `}</style>
+        <div className="max-w-md mx-auto min-h-screen">
+
+          {/* Header — same style as Songs/Bank */}
+          <div className="relative overflow-hidden pb-5" style={{
+            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
+          }}>
+            <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+            <div className="absolute top-2 right-[-10px] w-28 h-16 rounded-full opacity-35" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+            <span className="absolute top-8 right-8 text-yellow-300 text-xl select-none" style={{ filter: "drop-shadow(0 0 4px gold)" }}>✦</span>
+            <span className="absolute top-16 left-6 text-yellow-200 text-sm select-none" style={{ filter: "drop-shadow(0 0 3px gold)" }}>✦</span>
+
+            {/* Bunny + Title row */}
+            <div className="flex items-end px-3 pt-4 gap-0">
+              <div className="w-28 h-28 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
+              </div>
+              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
+                <div className="relative rounded-2xl px-4 py-3 shadow-lg overflow-hidden" style={{
+                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
+                  border: "3px solid rgba(255,255,255,0.7)",
+                  boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
+                }}>
+                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
+                    borderTop: "14px solid transparent",
+                    borderBottom: "14px solid transparent",
+                    borderRight: "12px solid #fbbf24"
+                  }} />
+                  <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
+                  <h1 className="text-3xl font-black text-white text-center tracking-wide drop-shadow-md"
+                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
+                    Store 🛍️
+                  </h1>
+                </div>
+                <div className="mx-6 h-3 rounded-b-xl shadow-sm" style={{
+                  background: "linear-gradient(90deg, #34d399, #06b6d4)",
+                  clipPath: "polygon(0 0, 100% 0, 90% 100%, 10% 100%)"
+                }} />
+              </div>
+            </div>
+
+            {/* Coin balance */}
+            <div className="px-4 mt-3">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{
+                background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
+                border: "2px solid rgba(255,255,255,0.6)"
+              }}>
+                <span className="text-xl">🪙</span>
+                <span className="text-white font-black text-lg">{challengeCoins}</span>
+                <span className="text-white/80 font-semibold text-sm">coins</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Tab Selector */}
+          <div className="px-4 pt-4">
+            <div className="flex gap-2 bg-gray-100 p-1 rounded-2xl">
+              {(["bunny", "theme", "hint"] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setStoreTab(tab)}
+                  className="flex-1 py-2 rounded-xl text-sm font-bold transition-all"
+                  style={storeTab === tab ? {
+                    background: "linear-gradient(135deg, #a855f7, #6366f1)",
+                    color: "white",
+                    boxShadow: "0 2px 8px rgba(168,85,247,0.4)"
+                  } : { color: "#6b7280" }}
+                >
+                  {tab === "bunny" ? "🐰 Bunnies" : tab === "theme" ? "🎨 Themes" : "💡 Hints"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Item Grid */}
+          <div className={`px-4 pt-4 pb-32 ${storeTab === "hint" ? "space-y-3" : "grid grid-cols-2 gap-4"}`}>
+            {storeItems.map(item => {
+              const isOwned = storeOwned.includes(item.id)
+              const isActive = (item.category === "bunny" && activeBunny === item.id) ||
+                               (item.category === "theme" && activeTheme === item.id)
+              const canAfford = challengeCoins >= item.cost
+
+              if (storeTab === "hint") {
+                return (
+                  <div key={item.id} className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <span className="text-4xl">{item.emoji}</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-gray-900">{item.name}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+                    </div>
+                    <button
+                      onClick={() => handleStorePurchase(item)}
+                      disabled={!canAfford}
+                      className="px-4 py-2 rounded-full text-sm font-bold transition-all active:scale-95"
+                      style={canAfford ? {
+                        background: "linear-gradient(135deg, #a855f7, #6366f1)",
+                        color: "white"
+                      } : { background: "#e5e7eb", color: "#9ca3af" }}
+                    >
+                      {item.cost} 🪙
+                    </button>
+                  </div>
+                )
+              }
+
+              return (
+                <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
+                  style={isActive ? { border: "2px solid #34d399", boxShadow: "0 0 0 3px rgba(52,211,153,0.15)" } : {}}>
+
+                  {/* Preview */}
+                  {item.category === "bunny" && item.imageSrc ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.imageSrc} alt={item.name} className="w-20 h-20 object-contain" />
+                  ) : item.category === "theme" ? (
+                    <div className="w-20 h-14 rounded-xl shadow-inner border border-white/50" style={{ background: THEME_GRADIENTS[item.id] ?? "#e0f7ff" }} />
+                  ) : (
+                    <span className="text-4xl">{item.emoji}</span>
+                  )}
+
+                  <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
+                  <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
+
+                  {/* Action */}
+                  {isActive ? (
+                    <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
+                  ) : isOwned ? (
+                    <button
+                      onClick={() => handleStoreEquip(item)}
+                      className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95"
+                      style={{ background: "linear-gradient(135deg, #2dd4bf, #22d3ee)", color: "white" }}
+                    >
+                      Equip
+                    </button>
+                  ) : canAfford ? (
+                    <button
+                      onClick={() => handleStorePurchase(item)}
+                      className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95"
+                      style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", color: "white" }}
+                    >
+                      Buy — {item.cost} 🪙
+                    </button>
+                  ) : (
+                    <span className="text-xs text-gray-400 font-semibold">Need {item.cost} 🪙</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Bottom Navigation */}
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
+            <div className="flex justify-around">
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
+                <Music className="h-7 w-7" />
+                <span className="text-xs font-semibold">Songs</span>
+              </Button>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
+                <Coins className="h-7 w-7" />
+                <span className="text-xs font-semibold">Bank</span>
+              </Button>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+                <Sparkles className="h-7 w-7" />
+                <span className="text-xs font-semibold">Visualizer</span>
+              </Button>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("store")}>
+                <ShoppingBag className="h-7 w-7" />
+                <span className="text-xs font-bold">Store</span>
               </Button>
             </div>
           </div>
