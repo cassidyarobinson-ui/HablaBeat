@@ -1116,7 +1116,7 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
           <div
             className="absolute left-0 right-0 pointer-events-none z-[6]"
             style={{
-              bottom: "18%",
+              bottom: "14%",
               height: "2px",
               background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 12px, transparent 12px, transparent 22px)",
               boxShadow: "0 0 6px rgba(255,255,255,0.25)",
