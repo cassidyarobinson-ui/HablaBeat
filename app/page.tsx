@@ -1466,24 +1466,7 @@ export default function HablaBeat() {
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
-  const [lunasPurse, setLunasPurse] = useState([
-    {
-      id: "alphabet-vowels-coin",
-      name: "Alphabet World",
-      description: "Earned by completing Alphabet World section",
-      icon: "📚",
-      type: "coin",
-      earnedDate: new Date().toLocaleDateString(),
-    },
-    {
-      id: "the-self-coin",
-      name: "You World",
-      description: "Earned by completing You World section",
-      icon: "👤",
-      type: "coin",
-      earnedDate: new Date().toLocaleDateString(),
-    },
-  ])
+  const [lunasPurse, setLunasPurse] = useState<{id: string; name: string; description: string; icon: string; type: string; earnedDate: string}[]>([])
   const [currentSong, setCurrentSong] = useState(null)
   const [currentSongIndex, setCurrentSongIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -1512,7 +1495,7 @@ export default function HablaBeat() {
   const [storeOwned, setStoreOwned] = useState<string[]>(["bunny-classic"])
   const [activeBunny, setActiveBunny] = useState("bunny-classic")
   const [activeTheme, setActiveTheme] = useState("theme-default")
-  const [storeTab, setStoreTab] = useState<"bunny" | "theme" | "hint">("bunny")
+  const [storeTab, setStoreTab] = useState<"bunny" | "theme">("bunny")
 
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
@@ -1546,6 +1529,7 @@ export default function HablaBeat() {
     setStoreOwned(loadPersisted("hablabeat-store-owned", ["bunny-classic"]))
     setActiveBunny(loadPersisted("hablabeat-active-bunny", "bunny-classic"))
     setActiveTheme(loadPersisted("hablabeat-active-theme", "theme-default"))
+    setLunasPurse(loadPersisted("hablabeat-lunas-purse", []))
     const savedStreak = loadPersisted("hablabeat-daily-streak", 0)
     const savedLastPlay = loadPersisted("hablabeat-last-play-date", "")
     // Update daily streak on app open
@@ -1583,6 +1567,7 @@ export default function HablaBeat() {
   useEffect(() => { localStorage.setItem("hablabeat-store-owned", JSON.stringify(storeOwned)) }, [storeOwned])
   useEffect(() => { localStorage.setItem("hablabeat-active-bunny", JSON.stringify(activeBunny)) }, [activeBunny])
   useEffect(() => { localStorage.setItem("hablabeat-active-theme", JSON.stringify(activeTheme)) }, [activeTheme])
+  useEffect(() => { localStorage.setItem("hablabeat-lunas-purse", JSON.stringify(lunasPurse)) }, [lunasPurse])
 
   // Called when user sends a challenge
   const handleChallengeSent = (songNum?: number) => {
@@ -2353,7 +2338,7 @@ export default function HablaBeat() {
         <div className="max-w-md mx-auto min-h-screen">
 
           {/* Header — matches songs page style */}
-          <div className="relative overflow-hidden pb-5" style={{
+          <div className="relative overflow-hidden pb-5 rounded-3xl" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             {/* cloud blobs */}
@@ -2393,58 +2378,44 @@ export default function HablaBeat() {
               </div>
             </div>
 
-            {/* Stats — earned count wide card */}
-            <div className="px-3 mt-4">
-              <div className="relative overflow-hidden rounded-2xl px-5 py-4 shadow-lg" style={{
+            {/* Stats — two cards: worlds collected + vocab bank */}
+            <div className="px-3 mt-4 flex gap-3">
+              {/* Worlds Collected */}
+              <div className="flex-1 relative overflow-hidden rounded-2xl px-4 py-4 shadow-lg" style={{
                 background: "linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #6ee7b7 100%)",
                 border: "2px solid rgba(255,255,255,0.6)",
                 boxShadow: "0 4px 20px rgba(52,211,153,0.4)"
               }}>
-                <span className="absolute top-2 right-8 text-white/40 text-xl select-none">✦</span>
-                <span className="absolute bottom-2 right-16 text-white/25 text-sm select-none">✦</span>
-                <div className="absolute right-12 top-0 bottom-0 w-24 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-black leading-none" style={{ fontSize: "2rem" }}>{earnedCoins.length} <span className="text-lg">coins collected</span></p>
-                    <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">YOUR COLLECTION</p>
-                  </div>
-                  <div style={{
-                    width: "56px", height: "56px", borderRadius: "50%",
-                    background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-                    border: "3px solid #92400E",
-                    boxShadow: "0 3px 10px rgba(0,0,0,0.3), inset 0 -3px 6px rgba(120,53,0,0.4), inset 2px 2px 6px rgba(254,243,199,0.5), 0 0 12px rgba(251,191,36,0.4)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0, position: "relative", overflow: "hidden"
-                  }}>
-                    <div style={{ position: "absolute", inset: "3px", borderRadius: "50%", border: "2px solid rgba(254,243,199,0.4)" }} />
-                    <div style={{ position: "absolute", top: "8%", left: "15%", width: "32%", height: "20%", background: "radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
-                    <span style={{ fontSize: "20px" }}>🏆</span>
-                  </div>
-                </div>
+                <span className="absolute top-2 right-4 text-white/40 text-lg select-none">✦</span>
+                <div className="absolute right-3 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                <p className="text-white font-black leading-none" style={{ fontSize: "1.9rem" }}>{earnedCoins.length}</p>
+                <p className="text-white font-bold text-sm leading-tight mt-0.5">worlds<br/>collected 🌍</p>
+              </div>
+              {/* Vocab Bank Total */}
+              <div className="flex-1 relative overflow-hidden rounded-2xl px-4 py-4 shadow-lg" style={{
+                background: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 60%, #6d28d9 100%)",
+                border: "2px solid rgba(255,255,255,0.6)",
+                boxShadow: "0 4px 20px rgba(167,139,250,0.4)"
+              }}>
+                <span className="absolute top-2 right-4 text-white/40 text-lg select-none">✦</span>
+                <div className="absolute right-3 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                <p className="text-white font-black leading-none" style={{ fontSize: "1.9rem" }}>{totalVocabBank.toLocaleString()}</p>
+                <p className="text-white font-bold text-sm leading-tight mt-0.5">vocab bank<br/>coins total 💰</p>
               </div>
             </div>
           </div>
 
-          {/* Coin Collection Display */}
+          {/* World Collection Display */}
           <div className="px-4 pt-4 space-y-4 pb-32">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Coins Collected</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Worlds Collected</h2>
 
             {earnedCoins.length === 0 ? (
               <div className="text-center py-8">
                 <div className="flex justify-center mb-4">
-                  <div style={{
-                    width: "64px", height: "64px", borderRadius: "50%",
-                    background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-                    border: "3px solid #92400E",
-                    boxShadow: "0 3px 10px rgba(0,0,0,0.2), inset 0 -3px 6px rgba(120,53,0,0.4), inset 2px 2px 6px rgba(254,243,199,0.5)",
-                    display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden"
-                  }}>
-                    <div style={{ position: "absolute", inset: "3px", borderRadius: "50%", border: "2px solid rgba(254,243,199,0.4)" }} />
-                    <span style={{ fontSize: "24px" }}>🏆</span>
-                  </div>
+                  <span style={{ fontSize: "52px" }}>🌍</span>
                 </div>
-                <p className="text-gray-500">No coins earned yet!</p>
-                <p className="text-gray-400 text-sm mt-2">Beat a friend in a challenge to earn coins 🏆</p>
+                <p className="text-gray-500">No worlds collected yet!</p>
+                <p className="text-gray-400 text-sm mt-2">Beat a friend in a challenge to collect worlds 🏆</p>
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-4">
@@ -2463,7 +2434,7 @@ export default function HablaBeat() {
             {/* Not Yet Collected */}
             {notYetCollected.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Not Yet Collected</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">Worlds Not Yet Collected</h3>
                 <p className="text-xs text-gray-500 mb-4 italic">Beat a friend in a challenge to unlock 🏆</p>
                 <div className="flex flex-wrap gap-3">
                   {notYetCollected.map((section) => (
@@ -2579,21 +2550,22 @@ export default function HablaBeat() {
           }
           .world-float { animation: worldFloat 3.5s ease-in-out infinite; }
           @keyframes worldZoomIn {
-            0%   { clip-path: circle(6% at var(--ox) var(--oy)); opacity: 0.7; }
-            60%  { clip-path: circle(80% at 50% 50%); opacity: 1; }
+            0%   { clip-path: circle(5% at var(--ox) var(--oy)); opacity: 0.6; }
+            30%  { clip-path: circle(30% at 50% 50%); opacity: 0.9; }
+            65%  { clip-path: circle(78% at 50% 50%); opacity: 1; }
             100% { clip-path: circle(150% at 50% 50%); opacity: 1; }
           }
           @keyframes worldZoomOut {
             0%   { clip-path: circle(150% at 50% 50%); opacity: 1; }
-            100% { clip-path: circle(6% at var(--ox) var(--oy)); opacity: 0; }
+            100% { clip-path: circle(5% at var(--ox) var(--oy)); opacity: 0; }
           }
-          .world-zoom-in  { animation: worldZoomIn  0.45s cubic-bezier(0.4,0,0.2,1) forwards; }
-          .world-zoom-out { animation: worldZoomOut 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+          .world-zoom-in  { animation: worldZoomIn  1.1s cubic-bezier(0.16,1,0.3,1) forwards; }
+          .world-zoom-out { animation: worldZoomOut 0.45s cubic-bezier(0.4,0,0.2,1) forwards; }
           @keyframes worldContentFadeIn {
             0%   { opacity: 0; transform: scale(0.92); }
             100% { opacity: 1; transform: scale(1); }
           }
-          .world-content-in { animation: worldContentFadeIn 0.3s ease 0.25s both; }
+          .world-content-in { animation: worldContentFadeIn 0.4s ease 0.7s both; }
           @keyframes shootingStar {
             0%   { transform: translateX(0) translateY(0) rotate(-40deg); opacity: 0; }
             8%   { opacity: 1; }
@@ -2742,7 +2714,7 @@ export default function HablaBeat() {
           )}
 
           {/* ── HEADER ── */}
-          <div className="relative overflow-hidden pb-8 rounded-3xl" style={{
+          <div className="relative overflow-hidden pb-4 rounded-3xl" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             {/* soft cloud blobs */}
@@ -2875,7 +2847,7 @@ export default function HablaBeat() {
             const sectionGradient = SECTION_GRADIENTS[openSection.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
             const closeWorld = () => {
               setWorldClosing(true)
-              setTimeout(() => { setOpenSectionId(""); setWorldClosing(false) }, 350)
+              setTimeout(() => { setOpenSectionId(""); setWorldClosing(false) }, 450)
             }
             return (
               <div
@@ -2982,7 +2954,7 @@ export default function HablaBeat() {
           })()}
 
           {/* Curriculum - Accordion Sections */}
-          <div className="px-2 pt-8 space-y-8 pb-32">
+          <div className="px-2 pt-4 space-y-4 pb-32">
               {curriculumData.map((category) => (
                 <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm relative" style={{
                   background: "linear-gradient(160deg, #e0f7ff 0%, #ede9fe 35%, #fce7f3 65%, #fef3c7 100%)"
@@ -3217,7 +3189,7 @@ export default function HablaBeat() {
         <div className="max-w-md mx-auto min-h-screen">
 
           {/* Header — same style as Songs/Bank */}
-          <div className="relative overflow-hidden pb-5" style={{
+          <div className="relative overflow-hidden pb-5 rounded-3xl" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
@@ -3280,7 +3252,7 @@ export default function HablaBeat() {
           {/* Tab Selector */}
           <div className="px-4 pt-4">
             <div className="flex gap-2 bg-gray-100 p-1 rounded-2xl">
-              {(["bunny", "theme", "hint"] as const).map(tab => (
+              {(["bunny", "theme"] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setStoreTab(tab)}
@@ -3291,45 +3263,19 @@ export default function HablaBeat() {
                     boxShadow: "0 2px 8px rgba(168,85,247,0.4)"
                   } : { color: "#6b7280" }}
                 >
-                  {tab === "bunny" ? "🐰 Bunnies" : tab === "theme" ? "🎨 Themes" : "💡 Hints"}
+                  {tab === "bunny" ? "🐰 Bunnies" : "🎨 Themes"}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Item Grid */}
-          <div className={`px-4 pt-4 pb-32 ${storeTab === "hint" ? "space-y-3" : "grid grid-cols-2 gap-4"}`}>
+          <div className="px-4 pt-4 pb-32 grid grid-cols-2 gap-4">
             {storeItems.map(item => {
               const isOwned = storeOwned.includes(item.id)
               const isActive = (item.category === "bunny" && activeBunny === item.id) ||
                                (item.category === "theme" && activeTheme === item.id)
               const canAfford = challengeCoins >= item.cost
-
-              if (storeTab === "hint") {
-                return (
-                  <div key={item.id} className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-                    <span className="text-4xl">{item.emoji}</span>
-                    <div className="flex-1">
-                      <p className="font-bold text-gray-900">{item.name}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
-                    </div>
-                    <button
-                      onClick={() => handleStorePurchase(item)}
-                      disabled={!canAfford}
-                      className="px-4 py-2 rounded-full text-sm font-bold transition-all active:scale-95"
-                      style={canAfford ? {
-                        background: "linear-gradient(135deg, #a855f7, #6366f1)",
-                        color: "white"
-                      } : { background: "#e5e7eb", color: "#9ca3af" }}
-                    >
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                        {item.cost}
-                        <span style={{ display: "inline-block", width: "16px", height: "16px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", boxShadow: "inset 0 -1px 3px rgba(120,53,0,0.4)", verticalAlign: "middle" }} />
-                      </span>
-                    </button>
-                  </div>
-                )
-              }
 
               return (
                 <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
