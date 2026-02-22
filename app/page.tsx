@@ -2444,7 +2444,7 @@ export default function HablaBeat() {
                     border: "2px solid rgba(255,255,255,0.5)"
                   }}>
                     <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none">💰 {totalVocabBank.toLocaleString()}</p>
+                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-moneybag">💰</span> {totalVocabBank.toLocaleString()}</p>
                     <p className="text-white/90 font-bold text-xs mt-1">Vocab Bank</p>
                   </div>
                   {/* Best Flow — sky blue */}
@@ -2453,7 +2453,7 @@ export default function HablaBeat() {
                     border: "2px solid rgba(255,255,255,0.5)"
                   }}>
                     <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none">⚡ {bestFlow}</p>
+                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-lightning">⚡</span> {bestFlow}</p>
                     <p className="text-white/90 font-bold text-xs mt-1">Best Flow</p>
                   </div>
                   {/* Challenges Won — purple */}
@@ -2462,7 +2462,7 @@ export default function HablaBeat() {
                     border: "2px solid rgba(255,255,255,0.5)"
                   }}>
                     <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none">⚔️ {challengesWon}</p>
+                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-swords">⚔️</span> {challengesWon}</p>
                     <p className="text-white/90 font-bold text-xs mt-1">Challenges Won</p>
                   </div>
                   {/* Day Streak — orange */}
@@ -2471,7 +2471,7 @@ export default function HablaBeat() {
                     border: "2px solid rgba(255,255,255,0.5)"
                   }}>
                     <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none">🔥 {dailyStreak > 0 ? dailyStreak : "0"}</p>
+                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
                     <p className="text-white/90 font-bold text-xs mt-1">Day Streak</p>
                   </div>
                 </div>
