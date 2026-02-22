@@ -2345,6 +2345,31 @@ export default function HablaBeat() {
             background-size: 400% 400%;
             animation: swirlBg 12s ease-in-out infinite;
           }
+          @keyframes fireFlicker {
+            0%,100% { transform: scaleY(1) rotate(-3deg); }
+            25%      { transform: scaleY(1.08) rotate(2deg); }
+            50%      { transform: scaleY(0.95) rotate(-2deg); }
+            75%      { transform: scaleY(1.05) rotate(3deg); }
+          }
+          @keyframes swordSparks {
+            0%,100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+            30%      { transform: scale(1.12) rotate(-4deg); filter: brightness(1.4); }
+            60%      { transform: scale(0.96) rotate(4deg); filter: brightness(1.2); }
+          }
+          @keyframes lightningShimmer {
+            0%,100% { transform: scaleX(1); filter: brightness(1); }
+            40%      { transform: scaleX(1.15) skewX(-5deg); filter: brightness(1.6) drop-shadow(0 0 4px #fff); }
+            70%      { transform: scaleX(0.9) skewX(3deg); filter: brightness(1.2); }
+          }
+          @keyframes moneybagBounce {
+            0%,100% { transform: translateY(0) rotate(0deg); }
+            30%      { transform: translateY(-5px) rotate(-4deg); }
+            60%      { transform: translateY(-2px) rotate(3deg); }
+          }
+          .emoji-fire     { display:inline-block; animation: fireFlicker 1.8s ease-in-out infinite; transform-origin: bottom center; }
+          .emoji-swords   { display:inline-block; animation: swordSparks 2.4s ease-in-out infinite; }
+          .emoji-lightning{ display:inline-block; animation: lightningShimmer 2s ease-in-out infinite; }
+          .emoji-moneybag { display:inline-block; animation: moneybagBounce 2.2s ease-in-out infinite; }
         `}</style>
         <div className="max-w-md mx-auto min-h-screen">
           {/* Profile photo hidden input */}
@@ -2537,7 +2562,7 @@ export default function HablaBeat() {
                 border: "2px solid rgba(255,255,255,0.5)"
               }}>
                 <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
-                <p className="text-white text-2xl font-black leading-none">🔥 {dailyStreak > 0 ? dailyStreak : "0"}</p>
+                <p className="text-white text-2xl font-black leading-none"><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
                 <p className="text-white/90 font-bold text-xs mt-1">Day Streak</p>
               </div>
               {/* Challenges Won — purple matching ribbon */}
@@ -2546,7 +2571,7 @@ export default function HablaBeat() {
                 border: "2px solid rgba(255,255,255,0.5)"
               }}>
                 <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
-                <p className="text-white text-2xl font-black leading-none">⚔️ {challengesWon}</p>
+                <p className="text-white text-2xl font-black leading-none"><span className="emoji-swords">⚔️</span> {challengesWon}</p>
                 <p className="text-white/90 font-bold text-xs mt-1">Challenges Won</p>
               </div>
               {/* Best Flow — blue */}
@@ -2555,7 +2580,7 @@ export default function HablaBeat() {
                 border: "2px solid rgba(255,255,255,0.5)"
               }}>
                 <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
-                <p className="text-white text-2xl font-black leading-none">⚡ {bestFlow}</p>
+                <p className="text-white text-2xl font-black leading-none"><span className="emoji-lightning">⚡</span> {bestFlow}</p>
                 <p className="text-white/90 font-bold text-xs mt-1">Best Flow</p>
               </div>
             </div>
@@ -2579,7 +2604,7 @@ export default function HablaBeat() {
                     <p className="text-white font-black leading-none" style={{ fontSize: "2.4rem" }}>{totalVocabBank.toLocaleString()}</p>
                     <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">VOCAB BANK</p>
                   </div>
-                  <span className="text-5xl drop-shadow-lg">💰</span>
+                  <span className="emoji-moneybag text-5xl drop-shadow-lg">💰</span>
                 </div>
               </div>
             </div>
