@@ -50,7 +50,8 @@ const SECTION_GRADIENTS: Record<string, string> = {
   "the-self":         "linear-gradient(135deg, #2dd4bf, #0d9488)",
   "pets-syllables":   "linear-gradient(135deg, #22d3ee, #0891b2)",
   "places":           "linear-gradient(135deg, #34d399, #059669)",
-  "numbers-time":     "linear-gradient(135deg, #a78bfa, #7c3aed)",
+  "numbers":          "linear-gradient(135deg, #a78bfa, #7c3aed)",
+  "numbers-time":     "linear-gradient(135deg, #06b6d4, #0891b2)",
   "colors-feelings":  "linear-gradient(135deg, #f97316, #dc2626)",
   "foods":            "linear-gradient(135deg, #fb923c, #f59e0b)",
   "ar-verbs":         "linear-gradient(135deg, #22d3ee, #0284c7)",
@@ -239,9 +240,9 @@ const languages = {
             ],
           },
           {
-            id: "numbers-time",
-            title: "Time World",
-            icon: "🕐",
+            id: "numbers",
+            title: "Numbers World",
+            icon: "🔢",
             color: latinoColors.purple,
             badgeUnlocked: false,
             songs: [
@@ -261,6 +262,15 @@ const languages = {
                 completed: false,
                 youtubeId: "bPCBcZT9HTg",
               },
+            ],
+          },
+          {
+            id: "numbers-time",
+            title: "Time World",
+            icon: "🕐",
+            color: latinoColors.aqua,
+            badgeUnlocked: false,
+            songs: [
               {
                 id: "dias-meses",
                 title: "Días, Meses Y Estaciones",
