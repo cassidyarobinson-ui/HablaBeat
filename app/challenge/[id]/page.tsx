@@ -25,11 +25,14 @@ export default function ChallengePage() {
   const [myGrade, setMyGrade] = useState("")
   const [myFlow, setMyFlow] = useState(0)
 
-  // Decode the base64 challenge payload
+  // Decode the URL-safe base64 challenge payload
   useEffect(() => {
     try {
       const id = Array.isArray(params.id) ? params.id[0] : params.id
-      const decoded = JSON.parse(atob(id))
+      // Restore standard base64 from URL-safe variant
+      const standard = id.replace(/-/g, "+").replace(/_/g, "/")
+      const padded = standard + "==".slice(0, (4 - standard.length % 4) % 4)
+      const decoded = JSON.parse(atob(padded))
       setChallenge(decoded)
     } catch {
       setError(true)

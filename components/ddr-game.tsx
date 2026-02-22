@@ -103,6 +103,9 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
+  const [showChallengeModal, setShowChallengeModal] = useState(false)
+  const [challengePhone, setChallengePhone] = useState("")
+  const [challengeUrl, setChallengeUrl] = useState("")
   const [elapsedTime, setElapsedTime] = useState("0:00")
   const [totalTime, setTotalTime] = useState("0:00")
   const [isPaused, setIsPaused] = useState(false)
@@ -884,24 +887,35 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
     )
   }
 
-  // Generate + copy a challenge link
+  // Generate a URL-safe challenge link and open the send modal
   const handleChallenge = () => {
     const { grade } = getGrade()
-    const payload = btoa(JSON.stringify({
-      s: songNumber,         // song number
-      t: songTitle,          // song title
-      sc: scoreRef.current,  // challenger's score
-      g: grade,              // challenger's grade
-      fc: maxComboRef.current, // challenger's flow combo
-    }))
-    const url = `${window.location.origin}/challenge/${payload}`
-    navigator.clipboard.writeText(url).then(() => {
+    // Use URL-safe base64 (replace +/= so the URL never breaks)
+    const raw = btoa(JSON.stringify({
+      s: songNumber,
+      t: songTitle,
+      sc: scoreRef.current,
+      g: grade,
+      fc: maxComboRef.current,
+    })).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
+    const url = `${window.location.origin}/challenge/${raw}`
+    setChallengeUrl(url)
+    setChallengePhone("")
+    setShowChallengeModal(true)
+  }
+
+  const handleSendChallenge = () => {
+    const digits = challengePhone.replace(/\D/g, "")
+    const message = encodeURIComponent(`🥕 I challenge you to beat my score on HablaBeat! Can you top it? ${challengeUrl}`)
+    if (digits.length >= 10) {
+      window.open(`sms:${digits}?body=${message}`, "_blank")
+    } else {
+      // No valid number — just copy the link
+      navigator.clipboard.writeText(challengeUrl).catch(() => {})
       setLinkCopied(true)
       setTimeout(() => setLinkCopied(false), 3000)
-    }).catch(() => {
-      // Fallback: prompt with URL
-      window.prompt("Copy this challenge link:", url)
-    })
+    }
+    setShowChallengeModal(false)
   }
 
   // END SCREEN
@@ -1024,8 +1038,45 @@ export default function DDRGame({ songNumber, songTitle, onBack, onNextSong, onG
               className="w-full px-6 py-3 rounded-xl font-bold text-lg text-white transition-all"
               style={{ backgroundColor: linkCopied ? "#16a34a" : "#6A9FC0" }}
             >
-              {linkCopied ? "✅ Link Copied! Send it to a friend!" : "⚔️ Challenge a Friend"}
+              {linkCopied ? "✅ Link Copied!" : "⚔️ Challenge a Friend"}
             </button>
+
+            {/* Challenge modal — phone number input */}
+            {showChallengeModal && (
+              <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4" onClick={() => setShowChallengeModal(false)}>
+                <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+                  <p className="text-3xl text-center mb-2">⚔️</p>
+                  <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
+                  <p className="text-sm text-gray-500 text-center mb-4">Enter their phone number and we'll open a text with the link!</p>
+                  <input
+                    type="tel"
+                    placeholder="📱 Friend's phone number"
+                    value={challengePhone}
+                    onChange={e => setChallengePhone(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg text-center font-medium mb-3 focus:outline-none focus:border-blue-400"
+                    autoFocus
+                  />
+                  <button
+                    onClick={handleSendChallenge}
+                    className="w-full py-3 rounded-xl font-bold text-white text-lg mb-2"
+                    style={{ backgroundColor: "#6A9FC0" }}
+                  >
+                    📲 Send Challenge Text
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(challengeUrl).catch(() => {})
+                      setLinkCopied(true)
+                      setTimeout(() => setLinkCopied(false), 3000)
+                      setShowChallengeModal(false)
+                    }}
+                    className="w-full py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 text-sm"
+                  >
+                    📋 Just Copy the Link
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="flex gap-2 w-full">
               <button onClick={onBack} className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm">
                 ← Back to Songs
