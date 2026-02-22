@@ -2456,27 +2456,52 @@ export default function HablaBeat() {
               </div>
             </div>
 
-            {/* Stats grid */}
-            <div className="px-4 mb-3 grid grid-cols-2 gap-2">
-              <div className="bg-yellow-100 rounded-xl p-3 border border-yellow-300 shadow-sm text-center">
-                <p className="text-yellow-700 font-black text-2xl">{totalVocabBank}</p>
-                <p className="text-yellow-800 font-semibold text-xs mt-0.5">💰 Vocab Bank</p>
+            {/* Stats cards */}
+            <div className="px-4 mb-3 space-y-2">
+              {/* Row 1 — Day Streak + Challenges Won */}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Day Streak */}
+                <div className="relative overflow-hidden rounded-2xl p-4 shadow-md" style={{ background: "linear-gradient(135deg, #fbbf24, #f97316)" }}>
+                  {/* sparkle dots */}
+                  <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
+                  <span className="absolute bottom-3 left-3 text-white/20 text-xs select-none">✦</span>
+                  <p className="text-white text-3xl font-black leading-none">
+                    🔥 {dailyStreak > 0 ? dailyStreak : "0"}
+                  </p>
+                  <p className="text-white/90 font-bold text-sm mt-1">Day Streak</p>
+                </div>
+                {/* Challenges Won */}
+                <div className="relative overflow-hidden rounded-2xl p-4 shadow-md" style={{ background: "linear-gradient(135deg, #93c5fd, #6A9FC0)" }}>
+                  <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
+                  <span className="absolute bottom-3 left-3 text-white/20 text-xs select-none">✦</span>
+                  <p className="text-white text-3xl font-black leading-none">⚔️ {challengesWon}</p>
+                  <p className="text-white/90 font-bold text-sm mt-1">Challenges Won</p>
+                </div>
               </div>
-              <div className={`rounded-xl p-3 border shadow-sm text-center ${dailyStreak >= 3 ? "bg-orange-100 border-orange-300" : "bg-gray-100 border-gray-200"}`}>
-                <p className={`font-black text-2xl ${dailyStreak >= 3 ? "text-orange-500" : "text-gray-500"}`}>
-                  {dailyStreak > 0 ? dailyStreak : "—"}
-                </p>
-                <p className={`font-semibold text-xs mt-0.5 ${dailyStreak >= 3 ? "text-orange-600" : "text-gray-500"}`}>
-                  🔥 Day Streak
-                </p>
+
+              {/* Row 2 — Vocab Bank (wide) */}
+              <div className="relative overflow-hidden rounded-2xl px-5 py-4 shadow-md" style={{ background: "linear-gradient(135deg, #86efac, #34d399, #6ee7b7)" }}>
+                <span className="absolute top-2 right-4 text-white/30 text-xl select-none">✦</span>
+                <span className="absolute bottom-2 left-6 text-white/20 text-sm select-none">✦</span>
+                <span className="absolute top-4 left-1/2 text-white/10 text-2xl select-none">✦</span>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white font-black text-4xl leading-none">{totalVocabBank.toLocaleString()}</p>
+                    <p className="text-white/90 font-bold text-sm mt-1">VOCAB BANK</p>
+                  </div>
+                  <span className="text-4xl">💰</span>
+                </div>
               </div>
-              <div className="bg-teal-50 rounded-xl p-3 border border-teal-200 shadow-sm text-center">
-                <p className="text-teal-600 font-black text-2xl">{bestFlow}</p>
-                <p className="text-teal-700 font-semibold text-xs mt-0.5">⚡ Best Flow</p>
-              </div>
-              <div className="bg-blue-50 rounded-xl p-3 border border-blue-200 shadow-sm text-center">
-                <p className="font-black text-2xl" style={{ color: "#6A9FC0" }}>{challengesWon}</p>
-                <p className="font-semibold text-xs mt-0.5" style={{ color: "#6A9FC0" }}>⚔️ Challenges Won</p>
+
+              {/* Row 3 — Best Flow (wide) */}
+              <div className="relative overflow-hidden rounded-2xl px-5 py-3 shadow-md" style={{ background: "linear-gradient(135deg, #67e8f9, #22d3ee, #6A9FC0)" }}>
+                <span className="absolute top-2 right-4 text-white/30 text-lg select-none">✦</span>
+                <span className="absolute bottom-2 left-6 text-white/15 text-sm select-none">✦</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">⚡</span>
+                  <p className="text-white font-black text-2xl">Best Flow</p>
+                  <p className="text-white font-black text-2xl ml-auto">{bestFlow}</p>
+                </div>
               </div>
             </div>
 
