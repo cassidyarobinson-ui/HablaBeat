@@ -2500,9 +2500,9 @@ export default function HablaBeat() {
                 <p className="text-white text-2xl font-black leading-none">🔥 {dailyStreak > 0 ? dailyStreak : "0"}</p>
                 <p className="text-white/90 font-bold text-xs mt-1">Day Streak</p>
               </div>
-              {/* Challenges Won — darker amber/gold for white text contrast */}
+              {/* Challenges Won — purple matching ribbon */}
               <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                background: "linear-gradient(135deg, #d97706, #b45309)",
+                background: "linear-gradient(135deg, #a855f7, #7c3aed)",
                 border: "2px solid rgba(255,255,255,0.5)"
               }}>
                 <span className="absolute top-1 right-2 text-white/50 text-sm select-none">✦</span>
