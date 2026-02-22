@@ -2338,7 +2338,7 @@ export default function HablaBeat() {
         <div className="max-w-md mx-auto min-h-screen">
 
           {/* Header — matches songs page style */}
-          <div className="relative overflow-hidden pb-5 rounded-3xl" style={{
+          <div className="relative overflow-hidden pb-5 rounded-3xl mx-2 mt-2" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             {/* cloud blobs */}
@@ -2714,7 +2714,7 @@ export default function HablaBeat() {
           )}
 
           {/* ── HEADER ── */}
-          <div className="relative overflow-hidden pb-4 rounded-3xl" style={{
+          <div className="relative overflow-hidden pb-4 rounded-3xl mx-2 mt-2" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             {/* soft cloud blobs */}
@@ -3189,7 +3189,7 @@ export default function HablaBeat() {
         <div className="max-w-md mx-auto min-h-screen">
 
           {/* Header — same style as Songs/Bank */}
-          <div className="relative overflow-hidden pb-5 rounded-3xl" style={{
+          <div className="relative overflow-hidden pb-5 rounded-3xl mx-2 mt-2" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
