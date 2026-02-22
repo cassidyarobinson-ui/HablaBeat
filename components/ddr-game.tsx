@@ -829,61 +829,91 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   // SETUP SCREEN
   if (gameState === "setup") {
+    // Bubble helper — iridescent soap-bubble style scattered around the screen
+    const bubbles: { size: number; top: string; left: string; opacity: number; hue: number }[] = [
+      { size: 110, top: "72%", left: "-6%",  opacity: 0.55, hue: 190 },
+      { size: 80,  top: "80%", left: "10%",  opacity: 0.45, hue: 210 },
+      { size: 55,  top: "88%", left: "30%",  opacity: 0.4,  hue: 170 },
+      { size: 95,  top: "75%", left: "62%",  opacity: 0.5,  hue: 200 },
+      { size: 70,  top: "83%", left: "82%",  opacity: 0.45, hue: 180 },
+      { size: 50,  top: "66%", left: "90%",  opacity: 0.35, hue: 220 },
+      { size: 40,  top: "60%", left: "5%",   opacity: 0.3,  hue: 195 },
+      { size: 30,  top: "55%", left: "50%",  opacity: 0.25, hue: 205 },
+      { size: 25,  top: "92%", left: "50%",  opacity: 0.3,  hue: 185 },
+      { size: 20,  top: "70%", left: "40%",  opacity: 0.25, hue: 175 },
+    ]
+
     return (
       <div className="min-h-screen relative overflow-hidden flex flex-col" style={{
-        background: "linear-gradient(160deg, #a78bfa 0%, #f472b6 25%, #fb923c 45%, #86efac 65%, #67e8f9 82%, #818cf8 100%)"
+        background: "linear-gradient(175deg, #a5f3fc 0%, #67e8f9 30%, #7dd3fc 55%, #86efac 80%, #bbf7d0 100%)"
       }}>
-        {/* Bubble decorations */}
-        <div className="absolute bottom-10 left-4 w-20 h-20 rounded-full opacity-30" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1.5px solid rgba(255,255,255,0.5)" }} />
-        <div className="absolute bottom-24 left-12 w-10 h-10 rounded-full opacity-25" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1px solid rgba(255,255,255,0.4)" }} />
-        <div className="absolute bottom-6 right-8 w-14 h-14 rounded-full opacity-20" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1.5px solid rgba(255,255,255,0.4)" }} />
-        <div className="absolute bottom-32 right-2 w-8 h-8 rounded-full opacity-20" style={{ background: "radial-gradient(circle at 35% 35%, white, transparent)", border: "1px solid rgba(255,255,255,0.3)" }} />
 
-        <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-4 pt-6 pb-10">
+        {/* Iridescent bubble decorations */}
+        {bubbles.map((b, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: b.size,
+              height: b.size,
+              top: b.top,
+              left: b.left,
+              opacity: b.opacity,
+              background: `radial-gradient(circle at 30% 28%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 18%, hsl(${b.hue},80%,75%) 40%, hsl(${b.hue + 30},70%,80%) 65%, rgba(255,255,255,0.1) 100%)`,
+              border: "1.5px solid rgba(255,255,255,0.6)",
+              boxShadow: `inset 0 -4px 8px rgba(255,255,255,0.3), 0 2px 8px rgba(100,200,255,0.2)`,
+            }}
+          />
+        ))}
 
-          {/* Header card */}
+        <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-3 pt-6 pb-12 relative z-10">
+
+          {/* Header card — purple→pink→orange gradient */}
           <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
-            background: "linear-gradient(135deg, #7c3aed, #db2777, #ea580c)",
-            border: "2px solid rgba(255,255,255,0.3)"
+            background: "linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #ea580c 100%)",
+            border: "2px solid rgba(255,255,255,0.35)"
           }}>
-            {/* sparkle dots */}
-            <span className="absolute top-4 left-6 text-white/40 text-lg select-none">✦</span>
-            <span className="absolute top-6 right-10 text-white/30 text-sm select-none">✦</span>
-            <span className="absolute bottom-4 right-6 text-white/20 text-base select-none">✦</span>
-            <div className="px-5 py-5">
+            {/* inner highlight shimmer */}
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: "linear-gradient(120deg, rgba(255,255,255,0.18) 0%, transparent 50%)"
+            }} />
+            <span className="absolute top-3 left-8 text-white/40 text-base select-none">✦</span>
+            <span className="absolute top-5 right-12 text-white/25 text-sm select-none">✦</span>
+            <span className="absolute bottom-3 right-8 text-white/20 text-base select-none">✦</span>
+            <div className="px-5 py-5 relative">
               <div className="flex items-center justify-between mb-2">
                 <button
                   onClick={onBack}
-                  className="w-10 h-10 rounded-2xl flex items-center justify-center"
-                  style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center backdrop-blur-sm"
+                  style={{ backgroundColor: "rgba(255,255,255,0.22)", border: "1px solid rgba(255,255,255,0.3)" }}
                 >
                   <ChevronLeft className="h-5 w-5 text-white" />
                 </button>
-                <h1 className="text-2xl font-black text-center flex-1 tracking-widest uppercase text-white">🎮 PLAY</h1>
+                <h1 className="text-2xl font-black text-center flex-1 tracking-widest uppercase text-white drop-shadow">🎮 PLAY</h1>
                 <div className="w-10" />
               </div>
               <div className="text-center">
-                <h2 className="text-2xl font-black text-white leading-tight">{songTitle}</h2>
-                <p className="text-white/70 text-sm mt-0.5">Song #{songNumber}</p>
+                <h2 className="text-xl font-black text-white leading-tight drop-shadow">{songTitle}</h2>
+                <p className="text-white/65 text-sm mt-0.5">Song #{songNumber}</p>
               </div>
             </div>
           </div>
 
-          {/* Mission card */}
+          {/* Mission card — frosted glass */}
           <div className="rounded-3xl px-5 py-4 shadow-lg" style={{
-            background: "rgba(255,255,255,0.55)",
-            backdropFilter: "blur(16px)",
-            border: "1.5px solid rgba(255,255,255,0.7)"
+            background: "rgba(255,255,255,0.52)",
+            backdropFilter: "blur(20px)",
+            border: "1.5px solid rgba(255,255,255,0.75)"
           }}>
             <p className="font-black text-blue-700 mb-1">🎯 Your Mission:</p>
-            <p className="text-blue-800 text-sm leading-relaxed">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
+            <p className="text-blue-900 text-sm leading-relaxed">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
           </div>
 
-          {/* Speed card */}
+          {/* Speed card — frosted glass */}
           <div className="rounded-3xl px-5 py-5 shadow-lg" style={{
-            background: "rgba(255,255,255,0.55)",
-            backdropFilter: "blur(16px)",
-            border: "1.5px solid rgba(255,255,255,0.7)"
+            background: "rgba(255,255,255,0.52)",
+            backdropFilter: "blur(20px)",
+            border: "1.5px solid rgba(255,255,255,0.75)"
           }}>
             <p className="font-black text-gray-800 mb-3">Song Speed</p>
             <div className="flex gap-3">
@@ -893,14 +923,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                   onClick={() => setSpeed(s)}
                   className="flex-1 py-3.5 rounded-full font-bold text-base transition-all"
                   style={speed === s ? {
-                    background: "linear-gradient(135deg, #38bdf8, #6A9FC0)",
+                    background: "linear-gradient(135deg, #38bdf8, #3b82f6)",
                     color: "white",
-                    border: "2px solid rgba(255,255,255,0.5)",
-                    boxShadow: "0 4px 15px rgba(56,189,248,0.5)"
+                    border: "2px solid rgba(255,255,255,0.6)",
+                    boxShadow: "0 4px 18px rgba(56,189,248,0.55)"
                   } : {
-                    background: "rgba(255,255,255,0.7)",
+                    background: "rgba(255,255,255,0.75)",
                     color: "#1e293b",
-                    border: "2px solid rgba(255,255,255,0.8)"
+                    border: "2px solid rgba(255,255,255,0.85)"
                   }}
                 >
                   {s === "slower" ? "🐢 Slower" : "⚡ Normal"}
@@ -910,18 +940,22 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <p className="text-center text-sm text-gray-500 mt-3">{totalNotes} vocab words</p>
           </div>
 
-          {/* Start button */}
-          <button
-            onClick={startGame}
-            className="w-full py-5 rounded-full font-black text-2xl text-white shadow-2xl transition-all active:scale-95"
-            style={{
-              background: "linear-gradient(135deg, #34d399, #22d3ee, #6ee7b7)",
-              border: "2.5px solid rgba(255,255,255,0.5)",
-              boxShadow: "0 6px 30px rgba(52,211,153,0.5)"
-            }}
-          >
-            ▶ Start!
-          </button>
+          {/* Start button — teal→green gradient with glow + outer ring */}
+          <div className="rounded-full p-[3px] shadow-2xl mt-1" style={{
+            background: "linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.1))",
+            boxShadow: "0 0 0 3px rgba(255,255,255,0.35), 0 8px 32px rgba(52,211,153,0.45)"
+          }}>
+            <button
+              onClick={startGame}
+              className="w-full py-5 rounded-full font-black text-2xl text-white transition-all active:scale-95"
+              style={{
+                background: "linear-gradient(135deg, #2dd4bf, #22d3ee, #86efac)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4)"
+              }}
+            >
+              ▶ Start!
+            </button>
+          </div>
 
         </div>
       </div>
