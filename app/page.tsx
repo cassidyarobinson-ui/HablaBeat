@@ -2323,7 +2323,7 @@ export default function HablaBeat() {
 
   if (currentView === "songs") {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen swirl-bg">
         {/* Animated swirl background styles */}
         <style>{`
           @keyframes swirlBg {
@@ -2346,7 +2346,7 @@ export default function HablaBeat() {
             animation: swirlBg 12s ease-in-out infinite;
           }
         `}</style>
-        <div className="max-w-md mx-auto min-h-screen swirl-bg">
+        <div className="max-w-md mx-auto min-h-screen">
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
