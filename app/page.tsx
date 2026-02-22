@@ -2275,7 +2275,7 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button
                 variant="ghost"
@@ -2456,7 +2456,7 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button
                 variant="ghost"
@@ -3023,7 +3023,7 @@ export default function HablaBeat() {
             <MiniPlayer />
 
             {/* Bottom Navigation */}
-            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
+            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
               <div className="flex justify-around">
                 <Button
                   variant="ghost"
@@ -3300,7 +3300,7 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
                 <Music className="h-7 w-7" />
