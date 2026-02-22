@@ -2552,6 +2552,11 @@ export default function HablaBeat() {
             50% { transform: rotate(1deg); }
           }
           .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
+          @keyframes worldFloat {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-6px); }
+          }
+          .world-float { animation: worldFloat 3s ease-in-out infinite; }
         `}</style>
         <div className="max-w-md mx-auto min-h-screen">
           {/* Profile photo hidden input */}
@@ -2821,7 +2826,7 @@ export default function HablaBeat() {
 
                   {/* 3-Column Section Card Grid */}
                   <div className="grid grid-cols-3 gap-2.5 px-3 pb-4">
-                    {category.sections.map((section) => {
+                    {category.sections.map((section, sectionIdx) => {
                       const isOpen = openSectionId === section.id
                       const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
                       return (
@@ -2829,13 +2834,15 @@ export default function HablaBeat() {
                           {/* Square card */}
                           <button
                             onClick={() => setOpenSectionId(isOpen ? "" : section.id)}
-                            className="relative flex flex-col items-center justify-center gap-1 rounded-2xl p-2 aspect-square transition-all active:scale-95"
+                            className="relative flex flex-col items-center justify-center gap-1 rounded-full p-2 aspect-square transition-all active:scale-95 world-float"
                             style={{
                               background: sectionGradient,
                               border: isOpen ? "3px solid rgba(255,255,255,0.9)" : "2px solid rgba(255,255,255,0.5)",
                               boxShadow: isOpen
                                 ? "0 4px 16px rgba(0,0,0,0.18), 0 0 0 2px rgba(255,255,255,0.25)"
                                 : "0 2px 8px rgba(0,0,0,0.12)",
+                              animationDelay: `${(sectionIdx * 0.4) % 3}s`,
+                              animationPlayState: isOpen ? "paused" : "running",
                             }}
                           >
                             {/* Unlock dot */}
