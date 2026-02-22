@@ -844,19 +844,18 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     ]
 
     return (
-      <div className="min-h-screen relative overflow-hidden flex flex-col setup-swirl-bg">
-        <style>{`
+      <div className="min-h-screen relative overflow-hidden flex flex-col" style={{
+        background: "linear-gradient(135deg, #e0fdf4 0%, #dbeeff 25%, #e0fdf4 50%, #cff3ff 75%, #e0fdf4 100%)",
+        backgroundSize: "400% 400%",
+        animation: "setupSwirlBg 12s ease-in-out infinite"
+      }}>
+        <style jsx global>{`
           @keyframes setupSwirlBg {
             0%   { background-position: 0% 50%; }
             25%  { background-position: 50% 100%; }
             50%  { background-position: 100% 50%; }
             75%  { background-position: 50% 0%; }
             100% { background-position: 0% 50%; }
-          }
-          .setup-swirl-bg {
-            background: linear-gradient(135deg, #e0fdf4 0%, #dbeeff 25%, #e0fdf4 50%, #cff3ff 75%, #e0fdf4 100%);
-            background-size: 400% 400%;
-            animation: setupSwirlBg 12s ease-in-out infinite;
           }
           @keyframes turtleWaddle {
             0%,100% { transform: rotate(-8deg) translateX(0px); }
