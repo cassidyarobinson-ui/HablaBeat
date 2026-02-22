@@ -2742,7 +2742,7 @@ export default function HablaBeat() {
           )}
 
           {/* ── HEADER ── */}
-          <div className="relative overflow-hidden pb-5 rounded-3xl" style={{
+          <div className="relative overflow-hidden pb-8 rounded-3xl" style={{
             background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
           }}>
             {/* soft cloud blobs */}
@@ -2982,9 +2982,9 @@ export default function HablaBeat() {
           })()}
 
           {/* Curriculum - Accordion Sections */}
-          <div className="p-2 space-y-4 pb-32">
+          <div className="px-2 pt-8 space-y-8 pb-32">
               {curriculumData.map((category) => (
-                <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm mb-4 relative" style={{
+                <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm relative" style={{
                   background: "linear-gradient(160deg, #e0f7ff 0%, #ede9fe 35%, #fce7f3 65%, #fef3c7 100%)"
                 }}>
                   {/* ✨ Galaxy decorations — stars & shooting stars across the whole card */}
