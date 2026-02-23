@@ -3157,15 +3157,23 @@ export default function HablaBeat() {
                                   ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
                                   : section.icon}
                           </span>
-                          {/* Name overlaid centered on top of icon */}
+                          {/* Name overlaid centered on top of icon — two lines */}
                           <span
-                            className="absolute inset-0 flex items-center justify-center text-center font-black text-[13px] leading-tight px-1.5 z-10"
+                            className="absolute inset-0 flex flex-col items-center justify-center text-center font-black leading-snug px-1 z-10"
                             style={{
                               color: "white",
                               textShadow: "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0 0 6px rgba(0,0,0,0.7)",
                             }}
                           >
-                            {section.title}
+                            {(() => {
+                              const words = section.title.split(" ")
+                              const last = words[words.length - 1]
+                              const rest = words.slice(0, -1).join(" ")
+                              return <>
+                                <span style={{ fontSize: "13px" }}>{rest}</span>
+                                <span style={{ fontSize: "13px" }}>{last}</span>
+                              </>
+                            })()}
                           </span>
                         </button>
                       )
