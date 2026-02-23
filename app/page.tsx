@@ -3159,7 +3159,7 @@ export default function HablaBeat() {
                           </span>
                           {/* Name overlaid centered on top of icon */}
                           <span
-                            className="absolute inset-0 flex items-center justify-center text-center font-black text-[11px] leading-tight px-2 z-10"
+                            className="absolute inset-0 flex items-center justify-center text-center font-black text-[13px] leading-tight px-1.5 z-10"
                             style={{
                               color: "white",
                               textShadow: "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0 0 6px rgba(0,0,0,0.7)",
