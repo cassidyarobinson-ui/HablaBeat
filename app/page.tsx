@@ -2052,7 +2052,8 @@ export default function HablaBeat() {
 
     return (
       <div
-        className="bg-white border-t border-gray-200 p-3 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm"
+        className="fixed left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm z-40"
+        style={{ bottom: "72px" }}
         onClick={() => setCurrentView("player")}
       >
         <div className="flex items-center gap-3">
@@ -3176,7 +3177,7 @@ export default function HablaBeat() {
             })}
           </div>
 
-            {/* Mini Player */}
+            {/* Mini Player — fixed above nav */}
             <MiniPlayer />
 
             {/* Bottom Navigation */}
