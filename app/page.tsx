@@ -2981,8 +2981,8 @@ export default function HablaBeat() {
                     <div className="flex items-center gap-2.5">
                       <span className="text-3xl">
                         {openSection.id === "ar-verbs" ? "🅰️"
-                          : openSection.id === "er-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"rgba(0,0,0,0.30)" }}>E</span>
-                          : openSection.id === "ir-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"rgba(0,0,0,0.30)" }}>I</span>
+                          : openSection.id === "er-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#4ade80,#16a34a)", boxShadow:"0 2px 6px rgba(0,0,0,0.25)" }}>E</span>
+                          : openSection.id === "ir-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#c084fc,#9333ea)", boxShadow:"0 2px 6px rgba(0,0,0,0.25)" }}>I</span>
                           : openSection.icon}
                       </span>
                       <div>
@@ -3152,9 +3152,9 @@ export default function HablaBeat() {
                           {section.id === "ar-verbs" ? (
                             <span className="text-2xl leading-none">🅰️</span>
                           ) : section.id === "er-verbs" ? (
-                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>E</span>
+                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 6px rgba(0,0,0,0.2)", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>E</span>
                           ) : section.id === "ir-verbs" ? (
-                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "rgba(0,0,0,0.30)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>I</span>
+                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 6px rgba(0,0,0,0.2)", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>I</span>
                           ) : (
                             <span className="text-2xl leading-none">{section.icon}</span>
                           )}
