@@ -1484,6 +1484,8 @@ export default function HablaBeat() {
   const [totalVocabBank, setTotalVocabBank] = useState(0)
   const [openSectionId, setOpenSectionId] = useState<string>("")
   const [worldClosing, setWorldClosing] = useState(false)
+  const [openCategoryId, setOpenCategoryId] = useState<string>("")
+  const [categoryClosing, setCategoryClosing] = useState(false)
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
 
@@ -3051,168 +3053,160 @@ export default function HablaBeat() {
             )
           })()}
 
-          {/* Curriculum - Accordion Sections */}
-          <div className="px-2 pt-4 space-y-4 pb-[88px]">
-              {curriculumData.map((category) => (
-                <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm relative" style={{
-                  background: "linear-gradient(160deg, #e0f7ff 0%, #ede9fe 35%, #fce7f3 65%, #fef3c7 100%)"
-                }}>
-                  {/* ✨ Galaxy decorations — stars & shooting stars across the whole card */}
-                  <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ zIndex: 0 }}>
-                    {/* === TWINKLING STARS — scattered across entire card === */}
-                    {/* Top area */}
-                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "3%",  left: "8%",   fontSize: "12px", animationDuration: "2.1s", animationDelay: "0s"    }}>★</span>
-                    <span className="star-twinkle absolute text-purple-400"  style={{ top: "4%",  left: "28%",  fontSize: "9px",  animationDuration: "1.7s", animationDelay: "0.4s"  }}>✦</span>
-                    <span className="star-twinkle absolute text-blue-400"    style={{ top: "5%",  left: "52%",  fontSize: "11px", animationDuration: "2.5s", animationDelay: "0.8s"  }}>★</span>
-                    <span className="star-twinkle absolute text-pink-400"    style={{ top: "3%",  left: "74%",  fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.2s"  }}>✦</span>
-                    <span className="star-twinkle absolute text-yellow-300"  style={{ top: "4%",  left: "91%",  fontSize: "10px", animationDuration: "2.3s", animationDelay: "0.2s"  }}>★</span>
-                    {/* Left strip — full height */}
-                    <span className="star-twinkle absolute text-cyan-400"    style={{ top: "10%", left: "2%",   fontSize: "8px",  animationDuration: "1.8s", animationDelay: "1.5s"  }}>★</span>
-                    <span className="star-twinkle-slow absolute text-pink-300" style={{ top: "22%", left: "1%", fontSize: "10px", animationDuration: "3.2s", animationDelay: "0.3s"  }}>✦</span>
-                    <span className="star-twinkle absolute text-yellow-300"  style={{ top: "38%", left: "3%",   fontSize: "8px",  animationDuration: "2.0s", animationDelay: "1.9s"  }}>★</span>
-                    <span className="star-twinkle-slow absolute text-cyan-300" style={{ top: "54%", left: "2%", fontSize: "7px",  animationDuration: "2.8s", animationDelay: "0.8s"  }}>✦</span>
-                    <span className="star-twinkle absolute text-purple-300"  style={{ top: "70%", left: "1%",   fontSize: "9px",  animationDuration: "2.4s", animationDelay: "2.1s"  }}>★</span>
-                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "85%", left: "3%",   fontSize: "8px",  animationDuration: "1.6s", animationDelay: "0.6s"  }}>✦</span>
-                    {/* Right strip — full height */}
-                    <span className="star-twinkle absolute text-blue-300"    style={{ top: "10%", right: "2%",  fontSize: "11px", animationDuration: "2.2s", animationDelay: "1.8s"  }}>★</span>
-                    <span className="star-twinkle-slow absolute text-purple-300" style={{ top: "22%", right: "1%", fontSize: "8px", animationDuration: "2.9s", animationDelay: "0.5s" }}>✦</span>
-                    <span className="star-twinkle absolute text-pink-300"    style={{ top: "38%", right: "2%",  fontSize: "9px",  animationDuration: "2.1s", animationDelay: "1.3s"  }}>★</span>
-                    <span className="star-twinkle-slow absolute text-yellow-300" style={{ top: "54%", right: "1%", fontSize: "7px", animationDuration: "3.1s", animationDelay: "2.4s" }}>✦</span>
-                    <span className="star-twinkle absolute text-blue-400"    style={{ top: "70%", right: "3%",  fontSize: "10px", animationDuration: "1.9s", animationDelay: "0.9s"  }}>★</span>
-                    <span className="star-twinkle absolute text-cyan-300"    style={{ top: "85%", right: "2%",  fontSize: "8px",  animationDuration: "2.6s", animationDelay: "1.6s"  }}>✦</span>
-                    {/* Middle scatter — fills the gap between header and worlds, and below worlds */}
-                    <span className="star-twinkle absolute text-purple-300"  style={{ top: "13%", left: "40%",  fontSize: "7px",  animationDuration: "2.7s", animationDelay: "0.6s"  }}>✦</span>
-                    <span className="star-twinkle-slow absolute text-white"  style={{ top: "11%", left: "62%",  fontSize: "14px", animationDuration: "3.5s", animationDelay: "0.9s"  }}>✧</span>
-                    <span className="star-twinkle absolute text-yellow-400"  style={{ top: "14%", left: "85%",  fontSize: "9px",  animationDuration: "2.0s", animationDelay: "1.0s"  }}>★</span>
-                    <span className="star-twinkle absolute text-pink-400"    style={{ top: "20%", left: "18%",  fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.4s"  }}>✦</span>
-                    <span className="star-twinkle-slow absolute text-white"  style={{ top: "20%", left: "50%",  fontSize: "10px", animationDuration: "3.3s", animationDelay: "2.0s"  }}>✧</span>
-                    <span className="star-twinkle absolute text-blue-300"    style={{ top: "20%", left: "78%",  fontSize: "7px",  animationDuration: "2.1s", animationDelay: "0.5s"  }}>★</span>
-                    {/* Bottom area — below world grid */}
-                    <span className="star-twinkle absolute text-yellow-300"  style={{ bottom: "3%", left: "8%",  fontSize: "11px", animationDuration: "2.4s", animationDelay: "0.7s"  }}>★</span>
-                    <span className="star-twinkle absolute text-pink-400"    style={{ bottom: "4%", left: "25%", fontSize: "8px",  animationDuration: "1.9s", animationDelay: "1.3s"  }}>✦</span>
-                    <span className="star-twinkle-slow absolute text-white"  style={{ bottom: "5%", left: "44%", fontSize: "13px", animationDuration: "3.0s", animationDelay: "2.2s"  }}>✧</span>
-                    <span className="star-twinkle absolute text-cyan-400"    style={{ bottom: "3%", left: "63%", fontSize: "9px",  animationDuration: "2.1s", animationDelay: "0.4s"  }}>★</span>
-                    <span className="star-twinkle absolute text-purple-400"  style={{ bottom: "4%", left: "80%", fontSize: "7px",  animationDuration: "1.7s", animationDelay: "1.1s"  }}>✦</span>
-                    <span className="star-twinkle-slow absolute text-yellow-300" style={{ bottom: "9%", left: "15%", fontSize: "8px", animationDuration: "2.6s", animationDelay: "1.8s" }}>★</span>
-                    <span className="star-twinkle absolute text-blue-400"    style={{ bottom: "8%", left: "38%", fontSize: "10px", animationDuration: "2.3s", animationDelay: "0.3s"  }}>✦</span>
-                    <span className="star-twinkle absolute text-pink-300"    style={{ bottom: "9%", left: "58%", fontSize: "8px",  animationDuration: "1.8s", animationDelay: "2.5s"  }}>★</span>
-                    <span className="star-twinkle-slow absolute text-yellow-400" style={{ bottom: "8%", left: "78%", fontSize: "9px", animationDuration: "2.9s", animationDelay: "0.9s" }}>✦</span>
-                    {/* === SHOOTING STARS — cross the whole card === */}
-                    <span className="shooting-star   absolute text-yellow-200" style={{ top: "4%",  left: "3%",  fontSize: "16px", animationDuration: "3.2s", animationDelay: "0.3s"  }}>💫</span>
-                    <span className="shooting-star-b absolute text-white"      style={{ top: "8%",  left: "15%", fontSize: "12px", animationDuration: "4.0s", animationDelay: "1.8s"  }}>✨</span>
-                    <span className="shooting-star   absolute text-yellow-300" style={{ top: "3%",  left: "50%", fontSize: "14px", animationDuration: "3.7s", animationDelay: "3.2s"  }}>💫</span>
-                    <span className="shooting-star-b absolute text-cyan-200"   style={{ top: "6%",  left: "70%", fontSize: "11px", animationDuration: "4.5s", animationDelay: "5.0s"  }}>✨</span>
-                    <span className="shooting-star   absolute text-white"      style={{ top: "13%", left: "5%",  fontSize: "13px", animationDuration: "3.9s", animationDelay: "6.5s"  }}>💫</span>
-                    <span className="shooting-star-b absolute text-yellow-100" style={{ top: "2%",  left: "82%", fontSize: "10px", animationDuration: "3.4s", animationDelay: "2.6s"  }}>✨</span>
-                  </div>
-                  {/* Main Category Header */}
-                  <div className="px-4 pt-4 pb-2 relative z-10">
-                    <h1 className="text-2xl font-bold text-gray-900">{category.title}</h1>
-                    <div className="text-sm text-gray-500 mt-1">
-                      {category.sections.reduce((sum, section) => sum + section.songs.length, 0)} songs total
-                    </div>
-                    <div className="h-0.5 bg-gray-200 rounded-full mt-3 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.round(
-                            (category.sections.reduce(
-                              (sum, section) => sum + section.songs.filter((song) => song.completed).length,
-                              0,
-                            ) /
-                              category.sections.reduce((sum, section) => sum + section.songs.length, 0)) *
-                              100,
-                          )}%`,
-                        }}
-                      ></div>
+          {/* ── GALAXY OVERLAY (zooms in when a galaxy is tapped) ── */}
+          {openCategoryId && (() => {
+            const openCat = curriculumData.find(c => c.id === openCategoryId)
+            if (!openCat) return null
+            const closeCat = () => {
+              setCategoryClosing(true)
+              setTimeout(() => { setOpenCategoryId(""); setCategoryClosing(false) }, 450)
+            }
+            return (
+              <div
+                className={categoryClosing ? "world-zoom-out" : "world-zoom-in"}
+                style={{ position: "fixed", inset: 0, zIndex: 55, background: "linear-gradient(160deg, #0d1b2a 0%, #1a1040 40%, #0d2233 70%, #0f1a2e 100%)", ["--ox"]: "50%", ["--oy"]: "50%" }}
+              >
+                {/* Stars */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  <span className="star-twinkle absolute text-yellow-400" style={{ top:"5%", left:"10%", fontSize:"12px", animationDuration:"2.1s" }}>★</span>
+                  <span className="star-twinkle absolute text-purple-400" style={{ top:"8%", left:"35%", fontSize:"8px", animationDuration:"1.7s", animationDelay:"0.4s" }}>✦</span>
+                  <span className="star-twinkle absolute text-blue-400" style={{ top:"6%", left:"60%", fontSize:"11px", animationDuration:"2.5s", animationDelay:"0.8s" }}>★</span>
+                  <span className="star-twinkle absolute text-pink-400" style={{ top:"4%", left:"80%", fontSize:"8px", animationDuration:"1.9s", animationDelay:"1.2s" }}>✦</span>
+                  <span className="star-twinkle-slow absolute text-white" style={{ top:"15%", left:"5%", fontSize:"14px", animationDuration:"3.5s", animationDelay:"0.9s" }}>✧</span>
+                  <span className="star-twinkle absolute text-cyan-300" style={{ top:"20%", left:"88%", fontSize:"10px", animationDuration:"2.3s", animationDelay:"0.6s" }}>★</span>
+                  <span className="shooting-star absolute text-yellow-200" style={{ top:"3%", left:"5%", fontSize:"16px", animationDuration:"3.2s", animationDelay:"0.3s" }}>💫</span>
+                  <span className="shooting-star-b absolute text-white" style={{ top:"7%", left:"50%", fontSize:"12px", animationDuration:"4.0s", animationDelay:"2.1s" }}>✨</span>
+                </div>
+
+                <div className="world-content-in flex flex-col h-full max-w-md mx-auto">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 px-4 pt-10 pb-3">
+                    <button onClick={closeCat} className="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-xl active:scale-90 transition-all" style={{ background: "rgba(255,255,255,0.15)" }}>←</button>
+                    <div>
+                      <h2 className="text-white font-black text-2xl leading-tight drop-shadow">{openCat.title}</h2>
+                      <p className="text-white/60 text-sm">{openCat.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs</p>
                     </div>
                   </div>
 
-                  {/* 3-Column Section Card Grid */}
-                  <div className="grid grid-cols-3 gap-2.5 px-3 pb-4 relative z-10">
-                    {category.sections.map((section, sectionIdx) => {
-                      const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
-                      return (
-                        <button
-                          key={section.id}
-                          onClick={() => setOpenSectionId(section.id)}
-                          className="relative flex items-center justify-center rounded-full aspect-square transition-all active:scale-90 world-float overflow-hidden"
-                          style={{
-                            background: sectionGradient,
-                            border: "2px solid rgba(255,255,255,0.5)",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                            animationDelay: `${(sectionIdx * 0.4) % 3}s`,
-                          }}
-                        >
-                          {/* Unlock dot */}
-                          {isSectionBadgeUnlocked(section) && (
-                            <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
-                          )}
-                          {/* Icon — nearly fills the full circle */}
-                          <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "72px", lineHeight: 1 }}>
-                            {section.id === "ar-verbs" ? "🅰️"
-                              : section.id === "er-verbs"
-                                ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>E</span>
-                                : section.id === "ir-verbs"
-                                  ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
-                                  : section.icon}
-                          </span>
-                          {/* Curved text SVG — top arc + bottom arc */}
-                          {(() => {
-                            const words = section.title.split(" ")
-                            const topText = words.slice(0, -1).join(" ")
-                            const botText = words[words.length - 1]
-                            const r = 38
-                            const cx = 50
-                            // Top arc: centred lower so text (which sits above the path) stays inside the circle
-                            const topArc = `M ${cx - r} 58 A ${r} ${r} 0 0 1 ${cx + r} 58`
-                            // Bottom arc: centred higher so text (which sits below the path) stays inside
-                            const botArc = `M ${cx - r} 52 A ${r} ${r} 0 0 0 ${cx + r} 52`
-                            const outline = "-1.2px -1.2px 0 #000, 1.2px -1.2px 0 #000, -1.2px 1.2px 0 #000, 1.2px 1.2px 0 #000, 0 0 5px rgba(0,0,0,0.8)"
-                            return (
-                              <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
-                                <defs>
-                                  <path id={`top-${section.id}`} d={topArc} />
-                                  <path id={`bot-${section.id}`} d={botArc} />
-                                  <filter id={`outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
-                                    <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
-                                    <feFlood floodColor="#000" result="color"/>
-                                    <feComposite in="color" in2="expanded" operator="in" result="outline"/>
-                                    <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                  </filter>
-                                </defs>
-                                {/* Top curved text */}
-                                <text
-                                  fill="white"
-                                  fontSize="12"
-                                  fontWeight="900"
-                                  textAnchor="middle"
-                                  filter={`url(#outline-${section.id})`}
-                                  style={{ fontFamily: "inherit" }}
-                                >
-                                  <textPath href={`#top-${section.id}`} startOffset="50%">{topText}</textPath>
-                                </text>
-                                {/* Bottom curved text */}
-                                <text
-                                  fill="white"
-                                  fontSize="12"
-                                  fontWeight="900"
-                                  textAnchor="middle"
-                                  filter={`url(#outline-${section.id})`}
-                                  style={{ fontFamily: "inherit" }}
-                                >
-                                  <textPath href={`#bot-${section.id}`} startOffset="50%">{botText}</textPath>
-                                </text>
-                              </svg>
-                            )
-                          })()}
-                        </button>
-                      )
-                    })}
+                  {/* World grid */}
+                  <div className="flex-1 overflow-y-auto px-4 pb-24">
+                    <div className="grid grid-cols-3 gap-3 pt-2">
+                      {openCat.sections.map((section, sectionIdx) => {
+                        const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+                        return (
+                          <button
+                            key={section.id}
+                            onClick={() => setOpenSectionId(section.id)}
+                            className="relative flex items-center justify-center rounded-full aspect-square transition-all active:scale-90 world-float overflow-hidden"
+                            style={{ background: sectionGradient, border: "2px solid rgba(255,255,255,0.5)", boxShadow: "0 2px 12px rgba(0,0,0,0.3)", animationDelay: `${(sectionIdx * 0.4) % 3}s` }}
+                          >
+                            {isSectionBadgeUnlocked(section) && (
+                              <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
+                            )}
+                            <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "72px", lineHeight: 1 }}>
+                              {section.id === "ar-verbs" ? "🅰️"
+                                : section.id === "er-verbs"
+                                  ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>E</span>
+                                  : section.id === "ir-verbs"
+                                    ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
+                                    : section.icon}
+                            </span>
+                            {(() => {
+                              const words = section.title.split(" ")
+                              const topText = words.slice(0, -1).join(" ")
+                              const botText = words[words.length - 1]
+                              const r = 38, cx = 50
+                              const topArc = `M ${cx - r} 58 A ${r} ${r} 0 0 1 ${cx + r} 58`
+                              const botArc = `M ${cx - r} 52 A ${r} ${r} 0 0 0 ${cx + r} 52`
+                              return (
+                                <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                                  <defs>
+                                    <path id={`ov-top-${section.id}`} d={topArc} />
+                                    <path id={`ov-bot-${section.id}`} d={botArc} />
+                                    <filter id={`ov-outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
+                                      <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
+                                      <feFlood floodColor="#000" result="color"/>
+                                      <feComposite in="color" in2="expanded" operator="in" result="outline"/>
+                                      <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                    </filter>
+                                  </defs>
+                                  <text fill="white" fontSize="12" fontWeight="900" textAnchor="middle" filter={`url(#ov-outline-${section.id})`} style={{ fontFamily: "inherit" }}>
+                                    <textPath href={`#ov-top-${section.id}`} startOffset="50%">{topText}</textPath>
+                                  </text>
+                                  <text fill="white" fontSize="12" fontWeight="900" textAnchor="middle" filter={`url(#ov-outline-${section.id})`} style={{ fontFamily: "inherit" }}>
+                                    <textPath href={`#ov-bot-${section.id}`} startOffset="50%">{botText}</textPath>
+                                  </text>
+                                </svg>
+                              )
+                            })()}
+                          </button>
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
-              ))}
+              </div>
+            )
+          })()}
+
+          {/* ── GALAXY MAP — side-by-side cards ── */}
+          <div className="px-2 pt-4 pb-[88px]">
+            <div className="flex gap-3">
+              {curriculumData.map((category, catIdx) => {
+                const catGradients = [
+                  "linear-gradient(160deg, #0d1b2a 0%, #1a1040 40%, #0d2233 70%, #0f1a2e 100%)",
+                  "linear-gradient(160deg, #1a0d2e 0%, #2d1060 40%, #1a0a3a 70%, #120d2e 100%)",
+                ]
+                const catGlow = catIdx === 0
+                  ? "0 0 30px rgba(56,189,248,0.25), 0 4px 20px rgba(0,0,0,0.4)"
+                  : "0 0 30px rgba(167,139,250,0.25), 0 4px 20px rgba(0,0,0,0.4)"
+                const catAccent = catIdx === 0
+                  ? ["#38bdf8","#22d3ee","#67e8f9"]
+                  : ["#a78bfa","#c084fc","#e879f9"]
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setOpenCategoryId(category.id)}
+                    className="relative flex-1 rounded-3xl overflow-hidden active:scale-[0.97] transition-all"
+                    style={{ background: catGradients[catIdx % 2], boxShadow: catGlow, aspectRatio: "3/4", border: "2px solid rgba(255,255,255,0.12)" }}
+                  >
+                    {/* Stars inside card */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                      <span className="star-twinkle absolute text-yellow-400" style={{ top:"6%", left:"12%", fontSize:"10px", animationDuration:"2.1s" }}>★</span>
+                      <span className="star-twinkle absolute" style={{ top:"10%", left:"55%", fontSize:"8px", animationDuration:"1.7s", animationDelay:"0.5s", color: catAccent[0] }}>✦</span>
+                      <span className="star-twinkle absolute text-white" style={{ top:"18%", left:"30%", fontSize:"6px", animationDuration:"2.5s", animationDelay:"0.9s" }}>★</span>
+                      <span className="star-twinkle absolute" style={{ top:"5%", left:"75%", fontSize:"9px", animationDuration:"1.9s", animationDelay:"1.3s", color: catAccent[1] }}>✦</span>
+                      <span className="star-twinkle-slow absolute text-white" style={{ top:"25%", left:"8%", fontSize:"12px", animationDuration:"3.5s", animationDelay:"0.8s" }}>✧</span>
+                      <span className="star-twinkle absolute" style={{ top:"22%", left:"80%", fontSize:"7px", animationDuration:"2.3s", animationDelay:"0.3s", color: catAccent[2] }}>★</span>
+                      <span className="star-twinkle absolute text-yellow-300" style={{ bottom:"18%", left:"15%", fontSize:"8px", animationDuration:"2.0s", animationDelay:"1.6s" }}>✦</span>
+                      <span className="star-twinkle absolute text-white" style={{ bottom:"22%", left:"60%", fontSize:"10px", animationDuration:"2.8s", animationDelay:"2.0s" }}>✧</span>
+                      <span className="star-twinkle absolute" style={{ bottom:"12%", left:"40%", fontSize:"7px", animationDuration:"1.8s", animationDelay:"0.4s", color: catAccent[0] }}>★</span>
+                      <span className="shooting-star absolute" style={{ top:"4%", left:"5%", fontSize:"14px", animationDuration:`${3.2 + catIdx}s`, animationDelay:`${catIdx * 1.5}s`, color:"rgba(255,255,180,0.7)" }}>💫</span>
+                    </div>
+
+                    {/* Central glowing planet orb */}
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ marginTop: "-10%" }}>
+                      <div style={{
+                        width: "80px", height: "80px", borderRadius: "50%",
+                        background: `radial-gradient(circle at 35% 35%, ${catAccent[2]}, ${catAccent[0]} 50%, ${catAccent[1]})`,
+                        boxShadow: `0 0 24px ${catAccent[0]}88, 0 0 48px ${catAccent[0]}44`,
+                        border: "2px solid rgba(255,255,255,0.2)",
+                        position: "relative",
+                      }}>
+                        <div style={{ position:"absolute", top:"12%", left:"18%", width:"28%", height:"18%", background:"radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%)", borderRadius:"50%", transform:"rotate(-20deg)" }} />
+                      </div>
+                    </div>
+
+                    {/* Title + subtitle at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3 text-center" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)" }}>
+                      <p className="text-white font-black text-lg leading-tight drop-shadow-lg">{category.title}</p>
+                      <p className="font-semibold text-xs mt-0.5" style={{ color: catAccent[0] }}>{category.sections.length} worlds · {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs</p>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
+          </div>
 
             {/* Mini Player */}
             <MiniPlayer />
