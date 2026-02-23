@@ -2775,15 +2775,6 @@ export default function HablaBeat() {
 
                 {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                  {/* Vocab Bank — green */}
-                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                    background: "linear-gradient(135deg, #34d399 0%, #22d3ee 100%)",
-                    border: "2px solid rgba(255,255,255,0.5)"
-                  }}>
-                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-moneybag">💰</span> {totalVocabBank.toLocaleString()}</p>
-                    <p className="text-white/90 font-bold text-xs mt-1">Vocab Bank</p>
-                  </div>
                   {/* Best Flow — sky blue */}
                   <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
                     background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
@@ -2918,30 +2909,6 @@ export default function HablaBeat() {
               </div>
             </div>
 
-            {/* Vocab Bank — wide card */}
-            <div className="px-3 mt-2">
-              <div className="relative overflow-hidden rounded-3xl px-5 py-4 shadow-lg" style={{
-                background: "linear-gradient(135deg, #FFD700 0%, #FFB800 50%, #FFA500 100%)",
-                border: "2px solid rgba(255,255,255,0.6)",
-                boxShadow: "0 4px 20px rgba(255,180,0,0.45)"
-              }}>
-                {/* sparkle scatter */}
-                <span className="absolute top-2 right-8 text-white/50 text-xl select-none">✦</span>
-                <span className="absolute bottom-2 right-16 text-white/30 text-sm select-none">✦</span>
-                <span className="absolute top-3 left-1/3 text-white/25 text-lg select-none">✦</span>
-                {/* inner glow blob */}
-                <div className="absolute right-12 top-0 bottom-0 w-24 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                {/* ring decoration */}
-                <div className="absolute top-2 right-2 w-9 h-9 rounded-full pointer-events-none" style={{ border: "3px solid rgba(255,255,255,0.5)" }} />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-black leading-none drop-shadow" style={{ fontSize: "2.4rem", textShadow: "0 2px 4px rgba(0,0,0,0.15)" }}>{totalVocabBank.toLocaleString()}</p>
-                    <p className="text-white/90 font-black text-sm mt-0.5 tracking-widest">VOCAB BANK</p>
-                  </div>
-                  <span className="emoji-moneybag text-5xl drop-shadow-lg">💰</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* ✨ World overlay — zooms in when a world is tapped */}
