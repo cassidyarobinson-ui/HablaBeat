@@ -457,13 +457,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       let judgmentColor: string
 
       if (timeDelta <= HIT_WINDOWS.PERFECT) {
-        points = 25
+        points = 1
         judgmentColor = "text-yellow-300"
       } else if (timeDelta <= HIT_WINDOWS.GOOD) {
-        points = 25
+        points = 1
         judgmentColor = "text-green-300"
       } else {
-        points = 25
+        points = 1
         judgmentColor = "text-blue-300"
       }
 
@@ -530,13 +530,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         let judgmentColor: string
 
         if (timeDelta <= HIT_WINDOWS.PERFECT) {
-          points = 25
+          points = 1
           judgmentColor = "text-yellow-300"
         } else if (timeDelta <= HIT_WINDOWS.GOOD) {
-          points = 25
+          points = 1
           judgmentColor = "text-green-300"
         } else {
-          points = 25
+          points = 1
           judgmentColor = "text-blue-300"
         }
 
@@ -1109,7 +1109,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   if (gameState === "ended") {
     const { grade, color: gradeColor } = getGrade()
     return (
-      <div className="h-[100dvh] text-gray-900 flex items-center justify-center relative overflow-hidden bg-gradient-to-b from-yellow-50 to-white">
+      <div className="h-[100dvh] text-white flex items-center justify-center relative overflow-hidden" style={{
+        background: "linear-gradient(160deg, #1e1b4b 0%, #312e81 20%, #4c1d95 40%, #6d28d9 60%, #7c3aed 80%, #a855f7 100%)"
+      }}>
         {/* Falling coin bubbles background animation */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {Array.from({ length: 25 }).map((_, i) => {
@@ -1137,38 +1139,30 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                   overflow: "hidden",
                 }}
               >
-                {/* Bubble shine highlight */}
                 <div
                   className="absolute rounded-full"
                   style={{
-                    top: "8%",
-                    left: "18%",
-                    width: "35%",
-                    height: "25%",
+                    top: "8%", left: "18%", width: "35%", height: "25%",
                     background: "radial-gradient(ellipse, rgba(255,255,255,0.7), rgba(255,255,255,0) 70%)",
                     transform: "rotate(-15deg)",
                   }}
                 />
-                {/* Dollar sign */}
-                <span
-                  style={{
-                    fontSize: "28px",
-                    fontWeight: 900,
-                    color: "#78350F",
-                    textShadow: "0 1px 2px rgba(0,0,0,0.15)",
-                    lineHeight: 1,
-                    position: "relative",
-                    zIndex: 1,
-                  }}
-                >
-                  $
-                </span>
+                <span style={{ fontSize: "28px", fontWeight: 900, color: "#78350F", textShadow: "0 1px 2px rgba(0,0,0,0.15)", lineHeight: 1, position: "relative", zIndex: 1 }}>$</span>
               </div>
             )
           })}
         </div>
 
+        {/* Rainbow ribbon header */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 pointer-events-none" style={{ background: "linear-gradient(90deg, #fbbf24, #a855f7, #3b82f6, #06b6d4, #34d399)" }} />
+
         <div className="max-w-md mx-auto px-4 py-4 text-center relative z-10 flex flex-col items-center w-full overflow-y-auto" style={{ maxHeight: "100dvh" }}>
+
+          {/* Song title pill */}
+          <div className="mb-3 px-4 py-1.5 rounded-full text-xs font-black tracking-wider uppercase" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(10px)" }}>
+            {songTitle}
+          </div>
+
           {/* Trophy centered, larger, bouncing */}
           <div className="relative w-32 h-32 md:w-44 md:h-44 flex-shrink-0 mx-auto mb-2" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
             <Image
@@ -1176,7 +1170,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               alt="Trophy"
               width={224}
               height={224}
-              className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(234,179,8,0.4)]"
+              className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(234,179,8,0.6)]"
             />
             {/* Grade overlaid inside the trophy cup */}
             <div className="absolute top-[18%] left-1/2 -translate-x-1/2 flex items-center justify-center">
@@ -1192,110 +1186,67 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </div>
           </div>
 
-          {/* Stats row - horizontal with large emojis */}
-          <div className="flex gap-3 w-full mb-3">
-            {/* Longest Flow */}
-            <div className="flex-1 bg-orange-50 rounded-xl px-3 py-2 border-2 border-orange-300">
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-2xl md:text-3xl">🔥</span>
-                <span className="text-orange-700 text-base md:text-lg font-semibold">Flow</span>
-                <span className="font-bold text-orange-600 text-2xl md:text-3xl">{maxCombo}</span>
+          {/* Stats row - frosted glass cards */}
+          <div className="flex gap-3 w-full mb-4">
+            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.2)", backdropFilter: "blur(12px)" }}>
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-2xl">🔥</span>
+                <span className="text-white/70 text-xs font-bold uppercase tracking-wider">Flow</span>
+                <span className="font-black text-white text-2xl">{maxCombo}</span>
               </div>
             </div>
-            {/* Vocab Bank */}
-            <div className="flex-1 bg-yellow-50 rounded-xl px-3 py-2 border-2 border-yellow-300">
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-2xl md:text-3xl">💰</span>
-                <span className="text-yellow-700 text-base md:text-lg font-semibold">Bank</span>
-                <span className="font-bold text-yellow-600 text-2xl md:text-3xl">{score}</span>
+            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.2)", backdropFilter: "blur(12px)" }}>
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-2xl">💰</span>
+                <span className="text-white/70 text-xs font-bold uppercase tracking-wider">Bank</span>
+                <span className="font-black text-white text-2xl">{score}</span>
               </div>
             </div>
           </div>
 
-          <div className="space-y-2 w-full mb-2">
-            <button
-              onClick={resetGame}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 rounded-xl font-bold text-lg text-white hover:from-purple-500 hover:to-pink-500 transition-all"
-            >
-              {showTranslations ? "↻ Play Again!" : "↻ ¡Jugar Otra Vez!"}
-            </button>
-            {/* Challenge a Friend */}
-            <button
-              onClick={handleChallenge}
-              className="w-full px-6 py-3 rounded-xl font-bold text-lg text-white transition-all"
-              style={{ backgroundColor: linkCopied ? "#16a34a" : "#6A9FC0" }}
-            >
-              {linkCopied ? "✅ Link Copied!" : "⚔️ Challenge a Friend"}
-            </button>
+          <div className="space-y-2.5 w-full mb-3">
+            {/* Play Again — orange/red gradient */}
+            <div className="rounded-full p-[2px]" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", boxShadow: "0 0 0 2px rgba(255,255,255,0.2), 0 6px 20px rgba(249,115,22,0.4)" }}>
+              <button
+                onClick={resetGame}
+                className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }}
+              >
+                <span style={{ display: "inline-block", animation: "btnBounce 0.7s ease-in-out infinite" }}>🥕</span> Play Again!
+              </button>
+            </div>
 
-            {/* Challenge modal — phone number input + contact picker */}
-            {showChallengeModal && (
-              <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4" onClick={() => setShowChallengeModal(false)}>
-                <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
-                  <p className="text-3xl text-center mb-2">⚔️</p>
-                  <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
-                  <p className="text-sm text-gray-500 text-center mb-4">Send them a text with your score to beat!</p>
+            {/* Challenge a Friend — teal/blue gradient */}
+            <div className="rounded-full p-[2px]" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", boxShadow: "0 0 0 2px rgba(255,255,255,0.2), 0 6px 20px rgba(14,165,233,0.4)" }}>
+              <button
+                onClick={handleChallenge}
+                className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                style={linkCopied
+                  ? { background: "linear-gradient(135deg, #16a34a, #15803d)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }
+                  : { background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }
+                }
+              >
+                <span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>{linkCopied ? "✅" : "⚔️"}</span>
+                {linkCopied ? "Link Copied!" : "Challenge a Friend"}
+              </button>
+            </div>
 
-                  {/* Contact picker — only shown if browser supports it (Android Chrome / iOS Safari 16+) */}
-                  {"contacts" in navigator && "ContactsManager" in window && (
-                    <button
-                      onClick={async () => {
-                        try {
-                          // @ts-ignore — Contact Picker API not yet in TS types
-                          const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
-                          if (contacts?.length && contacts[0].tel?.length) {
-                            setChallengePhone(contacts[0].tel[0])
-                          }
-                        } catch { /* user cancelled */ }
-                      }}
-                      className="w-full py-3 rounded-xl font-bold text-white text-base mb-3"
-                      style={{ backgroundColor: "#6A9FC0" }}
-                    >
-                      👥 Pick from Contacts
-                    </button>
-                  )}
-
-                  <input
-                    type="tel"
-                    placeholder="📱 Or type a phone number"
-                    value={challengePhone}
-                    onChange={e => setChallengePhone(e.target.value)}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg text-center font-medium mb-3 focus:outline-none focus:border-blue-400"
-                  />
-                  <button
-                    onClick={handleSendChallenge}
-                    className="w-full py-3 rounded-xl font-bold text-white text-lg mb-2"
-                    style={{ backgroundColor: challengePhone.replace(/\D/g,"").length >= 10 ? "#6A9FC0" : "#9CA3AF" }}
-                  >
-                    📲 Send Challenge Text
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(challengeUrl).catch(() => {})
-                      setLinkCopied(true)
-                      setTimeout(() => setLinkCopied(false), 3000)
-                      setShowChallengeModal(false)
-                    }}
-                    className="w-full py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 text-sm"
-                  >
-                    📋 Just Copy the Link
-                  </button>
-                  <button
-                    onClick={() => setShowChallengeModal(false)}
-                    className="w-full py-2 mt-1 text-gray-400 text-sm"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Back / Next Song row */}
             <div className="flex gap-2 w-full">
-              <button onClick={onBack} className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm">
-                ← Back to Songs
+              <button
+                onClick={onBack}
+                className="flex-1 py-3 rounded-full font-bold text-white/80 text-sm transition-all active:scale-95"
+                style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.2)", backdropFilter: "blur(10px)" }}
+              >
+                ← Songs
               </button>
               {onNextSong && (
-                <button onClick={onNextSong} className="flex-1 bg-green-600 hover:bg-green-500 text-white px-4 py-2.5 rounded-xl font-bold transition-colors text-sm">
-                  Next Song →
+                <button
+                  onClick={onNextSong}
+                  className="flex-1 py-3 rounded-full font-black text-white text-sm transition-all active:scale-95"
+                  style={{ background: "linear-gradient(135deg, #34d399, #059669)", boxShadow: "0 4px 14px rgba(52,211,153,0.4)" }}
+                >
+                  Next World →
                 </button>
               )}
             </div>
@@ -1303,20 +1254,125 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
           {/* Super Bunny below buttons */}
           <div className="relative flex flex-col items-center">
-            <div className="relative w-24 h-24 md:w-32 md:h-32">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+            <div className="relative w-20 h-20 md:w-28 md:h-28">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/super-bunny-heart.gif"
                 alt="HablaBeat Bunny"
-                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.1)]"
+                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]"
               />
             </div>
-            <p className="text-blue-600 text-xs italic">
+            <p className="text-white/50 text-xs italic mt-1">
               {showTranslations ? "Blue Bunny celebrates your victory!" : "¡Conejito Azul celebra tu victoria!"}
             </p>
           </div>
         </div>
+
+        {/* Challenge modal — styled to match app */}
+        {showChallengeModal && (
+          <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-8" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }} onClick={() => setShowChallengeModal(false)}>
+            <div className="w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()} style={{ background: "linear-gradient(160deg, #1e1b4b 0%, #4c1d95 60%, #6d28d9 100%)", border: "1.5px solid rgba(255,255,255,0.2)" }}>
+              {/* Modal header gradient ribbon */}
+              <div className="h-1" style={{ background: "linear-gradient(90deg, #fbbf24, #a855f7, #3b82f6, #06b6d4, #34d399)" }} />
+
+              <div className="p-6">
+                {/* Header */}
+                <div className="text-center mb-5">
+                  <p className="text-4xl mb-2" style={{ animation: "btnBounce 0.9s ease-in-out infinite" }}>⚔️</p>
+                  <h2 className="text-xl font-black text-white">Challenge a Friend</h2>
+                  <p className="text-white/60 text-sm mt-1">Send your score — can they beat it?</p>
+                </div>
+
+                {/* Score summary pill */}
+                <div className="flex items-center justify-center gap-4 mb-5 py-3 rounded-2xl" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)" }}>
+                  <div className="text-center">
+                    <p className="text-white/50 text-xs font-bold uppercase tracking-wider">Grade</p>
+                    <p className={`text-2xl font-black ${gradeColor}`}>{grade}</p>
+                  </div>
+                  <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.2)" }} />
+                  <div className="text-center">
+                    <p className="text-white/50 text-xs font-bold uppercase tracking-wider">Flow</p>
+                    <p className="text-2xl font-black text-orange-300">🔥 {maxCombo}</p>
+                  </div>
+                  <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.2)" }} />
+                  <div className="text-center">
+                    <p className="text-white/50 text-xs font-bold uppercase tracking-wider">Bank</p>
+                    <p className="text-2xl font-black text-yellow-300">💰 {score}</p>
+                  </div>
+                </div>
+
+                {/* Contact picker — only shown if browser supports it */}
+                {"contacts" in navigator && "ContactsManager" in window && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        // @ts-ignore — Contact Picker API not yet in TS types
+                        const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
+                        if (contacts?.length && contacts[0].tel?.length) {
+                          setChallengePhone(contacts[0].tel[0])
+                        }
+                      } catch { /* user cancelled */ }
+                    }}
+                    className="w-full py-3.5 rounded-full font-black text-white text-base mb-3 transition-all active:scale-95 flex items-center justify-center gap-2"
+                    style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 4px 14px rgba(14,165,233,0.4)" }}
+                  >
+                    👥 Pick from Contacts
+                  </button>
+                )}
+
+                {/* Phone input */}
+                <input
+                  type="tel"
+                  placeholder="📱 Friend's phone number"
+                  value={challengePhone}
+                  onChange={e => setChallengePhone(e.target.value)}
+                  className="w-full px-4 py-3.5 text-lg text-center font-bold mb-3 rounded-2xl focus:outline-none"
+                  style={{
+                    background: "rgba(255,255,255,0.12)",
+                    border: "1.5px solid rgba(255,255,255,0.25)",
+                    color: "white",
+                    caretColor: "white",
+                  }}
+                />
+
+                {/* Send button */}
+                <div className="rounded-full p-[2px] mb-2" style={{ background: challengePhone.replace(/\D/g,"").length >= 10 ? "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))" : "transparent", boxShadow: challengePhone.replace(/\D/g,"").length >= 10 ? "0 6px 20px rgba(249,115,22,0.4)" : "none" }}>
+                  <button
+                    onClick={handleSendChallenge}
+                    className="w-full py-3.5 rounded-full font-black text-white text-lg transition-all active:scale-95"
+                    style={challengePhone.replace(/\D/g,"").length >= 10
+                      ? { background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }
+                      : { background: "rgba(255,255,255,0.15)", opacity: 0.6 }
+                    }
+                  >
+                    📲 Send Challenge Text
+                  </button>
+                </div>
+
+                {/* Copy link */}
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(challengeUrl).catch(() => {})
+                    setLinkCopied(true)
+                    setTimeout(() => setLinkCopied(false), 3000)
+                    setShowChallengeModal(false)
+                  }}
+                  className="w-full py-3 rounded-full font-bold text-white/60 text-sm transition-all active:scale-95"
+                  style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}
+                >
+                  📋 Just Copy the Link
+                </button>
+
+                <button
+                  onClick={() => setShowChallengeModal(false)}
+                  className="w-full py-2 mt-2 text-white/35 text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* End screen animations */}
         <style jsx>{`
@@ -1337,6 +1393,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             25% { transform: translateY(-12px) scale(1.03); }
             50% { transform: translateY(0) scale(1); }
             75% { transform: translateY(-8px) scale(1.02); }
+          }
+          @keyframes btnBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
           }
         `}</style>
       </div>

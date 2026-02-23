@@ -33,7 +33,7 @@ declare global {
 }
 
 // ── STORE CATALOG ───────────────────────────────────────────────────────────
-type StoreItemCategory = "bunny" | "theme" | "hint"
+type StoreItemCategory = "effect" | "theme" | "pointer"
 interface StoreItem {
   id: string
   name: string
@@ -41,7 +41,8 @@ interface StoreItem {
   cost: number
   category: StoreItemCategory
   description: string
-  imageSrc?: string
+  previewBg?: string      // CSS background for theme preview swatch
+  previewEmoji?: string   // large emoji shown in the card image area
 }
 
 // ── SECTION GRADIENTS ───────────────────────────────────────────────────────
@@ -68,29 +69,45 @@ const SECTION_GRADIENTS: Record<string, string> = {
 }
 
 const STORE_CATALOG: StoreItem[] = [
-  // Bunny Skins
-  { id: "bunny-classic", name: "Classic Bunny", emoji: "🐰", cost: 0, category: "bunny", description: "The original HablaBeat mascot", imageSrc: "/images/super-bunny-heart.gif" },
-  { id: "bunny-blue", name: "Blue Bunny", emoji: "🩵", cost: 5, category: "bunny", description: "Cool blue vibes", imageSrc: "/images/super-bunny-blue.gif" },
-  { id: "bunny-ninja", name: "Ninja Bunny", emoji: "🥷", cost: 10, category: "bunny", description: "Silent but deadly at vocab", imageSrc: "/images/super-bunny-heart.gif" },
-  { id: "bunny-space", name: "Space Bunny", emoji: "🚀", cost: 12, category: "bunny", description: "Out of this world Spanish skills", imageSrc: "/images/super-bunny-heart.gif" },
-  { id: "bunny-chef", name: "Chef Bunny", emoji: "👨‍🍳", cost: 8, category: "bunny", description: "Cooking up some vocabulary", imageSrc: "/images/super-bunny-heart.gif" },
-  { id: "bunny-rainbow", name: "Rainbow Bunny", emoji: "🌈", cost: 15, category: "bunny", description: "All the colors of Spanish", imageSrc: "/images/super-bunny-heart.gif" },
-  // Profile Themes
-  { id: "theme-default", name: "HablaBeat Classic", emoji: "🎨", cost: 0, category: "theme", description: "The original teal-to-mint gradient" },
-  { id: "theme-sunset", name: "Sunset Fiesta", emoji: "🌅", cost: 5, category: "theme", description: "Warm orange and pink glow" },
-  { id: "theme-ocean", name: "Deep Ocean", emoji: "🌊", cost: 7, category: "theme", description: "Cool deep blue tones" },
-  { id: "theme-galaxy", name: "Galaxy Mode", emoji: "🌌", cost: 10, category: "theme", description: "Dark purple starfield" },
-  { id: "theme-tropical", name: "Tropical Paradise", emoji: "🌴", cost: 8, category: "theme", description: "Bright greens and yellows" },
-  // Hints (consumable)
-  { id: "hint-consumable", name: "Song Hint", emoji: "💡", cost: 3, category: "hint", description: "Reveal a lyrics hint for any locked song" },
+  // ── Hit Effects ──
+  { id: "effect-default",  name: "Classic Pop",       emoji: "💧", cost: 0,   category: "effect",  description: "The original bubble pop effect",            previewEmoji: "💧" },
+  { id: "effect-laser",    name: "Laser Beam",        emoji: "⚡", cost: 80,  category: "effect",  description: "Neon beam slices through each word",         previewEmoji: "⚡" },
+  { id: "effect-lightning",name: "Lightning Strike",  emoji: "🌩️", cost: 100, category: "effect",  description: "Dramatic electric crack and flash",           previewEmoji: "🌩️" },
+  { id: "effect-fire",     name: "Fire Burst",        emoji: "🔥", cost: 120, category: "effect",  description: "Word ignites and explodes into embers",       previewEmoji: "🔥" },
+  { id: "effect-crystal",  name: "Crystal Shatter",   emoji: "💎", cost: 140, category: "effect",  description: "Word turns to glass and shatters",            previewEmoji: "💎" },
+  { id: "effect-galaxy",   name: "Galaxy Collapse",   emoji: "🌑", cost: 175, category: "effect",  description: "Word collapses into a mini black hole",       previewEmoji: "🌑" },
+  { id: "effect-cyber",    name: "Neon Cyber Slash",  emoji: "🔷", cost: 150, category: "effect",  description: "Tron-style glowing diagonal cut",             previewEmoji: "🔷" },
+  { id: "effect-rainbow",  name: "Rainbow Explosion", emoji: "🌈", cost: 130, category: "effect",  description: "Colorful confetti blast on every hit",        previewEmoji: "🌈" },
+  { id: "effect-minimal",  name: "Minimal Pro",       emoji: "⬜", cost: 90,  category: "effect",  description: "Clean white pulse ring for sleek players",    previewEmoji: "⬜" },
+  // ── Background Themes ──
+  { id: "theme-default",   name: "HablaBeat Classic", emoji: "🎨", cost: 0,   category: "theme",   description: "Original teal-to-mint gradient",             previewBg: "linear-gradient(135deg, #e0f7ff 0%, #c7f0ff 50%, #d4f5e9 100%)" },
+  { id: "theme-galaxy",    name: "Galaxy Mode",       emoji: "🌌", cost: 160, category: "theme",   description: "Dark purple starfield",                       previewBg: "linear-gradient(135deg, #0f0520 0%, #1e1b4b 50%, #312e81 100%)" },
+  { id: "theme-cyber",     name: "Cyber Grid",        emoji: "🟦", cost: 130, category: "theme",   description: "Neon teal grid on dark background",           previewBg: "linear-gradient(135deg, #0a0a1a 0%, #001a33 50%, #003355 100%)" },
+  { id: "theme-sunset",    name: "Sunset Gradient",   emoji: "🌅", cost: 100, category: "theme",   description: "Warm orange and pink glow",                   previewBg: "linear-gradient(135deg, #ff6b35 0%, #f7c59f 40%, #ffe0cc 100%)" },
+  { id: "theme-aurora",    name: "Aurora Borealis",   emoji: "🌌", cost: 175, category: "theme",   description: "Dancing green and purple northern lights",    previewBg: "linear-gradient(135deg, #001a00 0%, #004d1a 30%, #002244 60%, #1a0033 100%)" },
+  { id: "theme-shadow",    name: "Dark Shadow Realm", emoji: "🌑", cost: 150, category: "theme",   description: "Deep black with crimson accents",             previewBg: "linear-gradient(135deg, #0a0000 0%, #1a0000 40%, #2d0a0a 100%)" },
+  { id: "theme-cloud",     name: "Cloud Dream",       emoji: "☁️", cost: 80,  category: "theme",   description: "Soft pastel clouds and sky blue",            previewBg: "linear-gradient(135deg, #e0f0ff 0%, #f0f8ff 40%, #fff8f0 100%)" },
+  { id: "theme-gold",      name: "Gold Elite",        emoji: "👑", cost: 200, category: "theme",   description: "Prestigious gold and black luxury look",      previewBg: "linear-gradient(135deg, #1a1200 0%, #4a3800 40%, #c9a227 100%)" },
+  { id: "theme-anime",     name: "Anime Sparkle Sky", emoji: "✨", cost: 140, category: "theme",   description: "Pastel sky with twinkling sparkles",          previewBg: "linear-gradient(135deg, #ffe0f0 0%, #e0d4ff 50%, #c8e8ff 100%)" },
+  // ── Pointer Skins ──
+  { id: "pointer-carrot",  name: "Carrot (Default)",  emoji: "🥕", cost: 0,   category: "pointer", description: "The original HablaBeat carrot arrows",        previewEmoji: "🥕" },
+  { id: "pointer-wand",    name: "Magic Wand",        emoji: "🪄", cost: 90,  category: "pointer", description: "Enchant your way through vocab",              previewEmoji: "🪄" },
+  { id: "pointer-laser",   name: "Laser Cannon",      emoji: "🔫", cost: 120, category: "pointer", description: "Fire lasers at every bubble",                 previewEmoji: "🔫" },
+  { id: "pointer-crystal", name: "Crystal Staff",     emoji: "🔮", cost: 150, category: "pointer", description: "Channel magical crystal power",               previewEmoji: "🔮" },
+  { id: "pointer-scepter", name: "Golden Scepter",    emoji: "🏆", cost: 175, category: "pointer", description: "Royalty-only vocab weapon",                   previewEmoji: "🏆" },
+  { id: "pointer-sword",   name: "Fire Sword",        emoji: "🗡️", cost: 200, category: "pointer", description: "Slice through Spanish with flames",           previewEmoji: "🗡️" },
 ]
 
 const THEME_GRADIENTS: Record<string, string> = {
-  "theme-default":  "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)",
-  "theme-sunset":   "linear-gradient(180deg, #fff7ed 0%, #fed7aa 40%, #fda4af 70%, #fce7f3 100%)",
-  "theme-ocean":    "linear-gradient(180deg, #eff6ff 0%, #bfdbfe 40%, #93c5fd 70%, #dbeafe 100%)",
-  "theme-galaxy":   "linear-gradient(180deg, #0f0520 0%, #1e1b4b 40%, #312e81 70%, #1e1b4b 100%)",
-  "theme-tropical": "linear-gradient(180deg, #f0fdf4 0%, #bbf7d0 40%, #fef9c3 70%, #ecfdf5 100%)",
+  "theme-default":  "linear-gradient(135deg, #e0f7ff 0%, #c7f0ff 50%, #d4f5e9 100%)",
+  "theme-galaxy":   "linear-gradient(135deg, #0f0520 0%, #1e1b4b 50%, #312e81 100%)",
+  "theme-cyber":    "linear-gradient(135deg, #0a0a1a 0%, #001a33 50%, #003355 100%)",
+  "theme-sunset":   "linear-gradient(135deg, #ff6b35 0%, #f7c59f 40%, #ffe0cc 100%)",
+  "theme-aurora":   "linear-gradient(135deg, #001a00 0%, #004d1a 30%, #002244 60%, #1a0033 100%)",
+  "theme-shadow":   "linear-gradient(135deg, #0a0000 0%, #1a0000 40%, #2d0a0a 100%)",
+  "theme-cloud":    "linear-gradient(135deg, #e0f0ff 0%, #f0f8ff 40%, #fff8f0 100%)",
+  "theme-gold":     "linear-gradient(135deg, #1a1200 0%, #4a3800 40%, #c9a227 100%)",
+  "theme-anime":    "linear-gradient(135deg, #ffe0f0 0%, #e0d4ff 50%, #c8e8ff 100%)",
 }
 
 // Latino-inspired color palette
@@ -1510,10 +1527,11 @@ export default function HablaBeat() {
 
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
-  const [storeOwned, setStoreOwned] = useState<string[]>(["bunny-classic"])
-  const [activeBunny, setActiveBunny] = useState("bunny-classic")
+  const [storeOwned, setStoreOwned] = useState<string[]>(["effect-default", "theme-default", "pointer-carrot"])
+  const [activeEffect, setActiveEffect] = useState("effect-default")
   const [activeTheme, setActiveTheme] = useState("theme-default")
-  const [storeTab, setStoreTab] = useState<"bunny" | "theme">("bunny")
+  const [activePointer, setActivePointer] = useState("pointer-carrot")
+  const [storeTab, setStoreTab] = useState<"effect" | "theme" | "pointer">("effect")
 
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
@@ -1544,9 +1562,10 @@ export default function HablaBeat() {
     setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
     setChallengesWon(loadPersisted("hablabeat-challenges-won", 0))
     setChallengeCoins(loadPersisted("hablabeat-challenge-coins", 0))
-    setStoreOwned(loadPersisted("hablabeat-store-owned", ["bunny-classic"]))
-    setActiveBunny(loadPersisted("hablabeat-active-bunny", "bunny-classic"))
+    setStoreOwned(loadPersisted("hablabeat-store-owned", ["effect-default", "theme-default", "pointer-carrot"]))
+    setActiveEffect(loadPersisted("hablabeat-active-effect", "effect-default"))
     setActiveTheme(loadPersisted("hablabeat-active-theme", "theme-default"))
+    setActivePointer(loadPersisted("hablabeat-active-pointer", "pointer-carrot"))
     setLunasPurse(loadPersisted("hablabeat-lunas-purse", []))
     const savedStreak = loadPersisted("hablabeat-daily-streak", 0)
     const savedLastPlay = loadPersisted("hablabeat-last-play-date", "")
@@ -1583,8 +1602,9 @@ export default function HablaBeat() {
   useEffect(() => { localStorage.setItem("hablabeat-last-play-date", JSON.stringify(lastPlayDate)) }, [lastPlayDate])
   useEffect(() => { localStorage.setItem("hablabeat-challenge-coins", JSON.stringify(challengeCoins)) }, [challengeCoins])
   useEffect(() => { localStorage.setItem("hablabeat-store-owned", JSON.stringify(storeOwned)) }, [storeOwned])
-  useEffect(() => { localStorage.setItem("hablabeat-active-bunny", JSON.stringify(activeBunny)) }, [activeBunny])
+  useEffect(() => { localStorage.setItem("hablabeat-active-effect", JSON.stringify(activeEffect)) }, [activeEffect])
   useEffect(() => { localStorage.setItem("hablabeat-active-theme", JSON.stringify(activeTheme)) }, [activeTheme])
+  useEffect(() => { localStorage.setItem("hablabeat-active-pointer", JSON.stringify(activePointer)) }, [activePointer])
   useEffect(() => { localStorage.setItem("hablabeat-lunas-purse", JSON.stringify(lunasPurse)) }, [lunasPurse])
 
   // Called when user sends a challenge
@@ -1597,23 +1617,21 @@ export default function HablaBeat() {
     }
   }
 
-  // Store helpers
+  // Store helpers — purchases deduct from vocab bank coins
   const handleStorePurchase = (item: StoreItem) => {
-    if (challengeCoins < item.cost || storeOwned.includes(item.id)) return
-    setChallengeCoins(prev => prev - item.cost)
+    if (totalVocabBank < item.cost || storeOwned.includes(item.id)) return
+    setTotalVocabBank(prev => prev - item.cost)
     setStoreOwned(prev => [...prev, item.id])
-    if (item.category === "bunny") setActiveBunny(item.id)
+    if (item.category === "effect") setActiveEffect(item.id)
     if (item.category === "theme") setActiveTheme(item.id)
+    if (item.category === "pointer") setActivePointer(item.id)
   }
   const handleStoreEquip = (item: StoreItem) => {
     if (!storeOwned.includes(item.id)) return
-    if (item.category === "bunny") setActiveBunny(item.id)
+    if (item.category === "effect") setActiveEffect(item.id)
     if (item.category === "theme") setActiveTheme(item.id)
+    if (item.category === "pointer") setActivePointer(item.id)
   }
-
-  // Derived: active bunny image src
-  const activeBunnyItem = STORE_CATALOG.find(i => i.id === activeBunny)
-  const activeBunnySrc = activeBunnyItem?.imageSrc ?? "/images/super-bunny-heart.gif"
 
   // Singing detection: start/stop mic
   const startMic = async () => {
@@ -2570,86 +2588,157 @@ export default function HablaBeat() {
             )}
 
             {/* ── ITEMS TAB ── */}
-            {bankTab === "items" && (
-              <div className="space-y-5">
-                {/* Challenge coin balance */}
-                <div className="flex items-center gap-2">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{
-                    background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
-                    border: "2px solid rgba(255,255,255,0.6)"
-                  }}>
-                    <span style={{ fontSize: "16px" }}>🏆</span>
-                    <span className="text-white font-black text-lg">{challengeCoins}</span>
-                    <span className="text-white/80 font-semibold text-sm">challenge coins</span>
-                  </div>
-                </div>
+            {bankTab === "items" && (() => {
+              // Reusable coin SVG
+              const CoinDot = ({ size = 14 }: { size?: number }) => (
+                <span style={{ display:"inline-block", width:size, height:size, borderRadius:"50%", background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border:"1.5px solid #92400E", verticalAlign:"middle", flexShrink:0 }} />
+              )
+              // Reusable store card
+              const StoreCard = ({ item, isActive, canAfford }: { item: StoreItem; isActive: boolean; canAfford: boolean }) => {
+                const isOwned = storeOwned.includes(item.id)
+                const isFree = item.cost === 0
+                return (
+                  <div
+                    className="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-1.5 transition-all active:scale-[0.97]"
+                    style={{ border: isActive ? "2px solid #34d399" : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : undefined }}
+                  >
+                    {/* Preview area */}
+                    {item.previewBg ? (
+                      <div className="w-full h-14 rounded-xl overflow-hidden relative" style={{ background: item.previewBg }}>
+                        {/* Stars for dark themes */}
+                        {(item.id === "theme-galaxy" || item.id === "theme-aurora" || item.id === "theme-shadow" || item.id === "theme-cyber" || item.id === "theme-gold") && (
+                          <>
+                            <span className="absolute text-white/60" style={{ top:"15%", left:"15%", fontSize:6 }}>★</span>
+                            <span className="absolute text-white/40" style={{ top:"25%", left:"55%", fontSize:5 }}>✦</span>
+                            <span className="absolute text-white/70" style={{ top:"55%", left:"30%", fontSize:7 }}>★</span>
+                            <span className="absolute text-white/50" style={{ top:"40%", left:"75%", fontSize:5 }}>★</span>
+                            <span className="absolute text-white/60" style={{ top:"70%", left:"65%", fontSize:6 }}>✦</span>
+                          </>
+                        )}
+                        {/* Cyber grid lines */}
+                        {item.id === "theme-cyber" && (
+                          <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(0,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.3) 1px, transparent 1px)", backgroundSize: "10px 10px" }} />
+                        )}
+                        {/* Sparkles for anime */}
+                        {item.id === "theme-anime" && (
+                          <>
+                            <span className="absolute" style={{ top:"10%", left:"20%", fontSize:10 }}>✨</span>
+                            <span className="absolute" style={{ top:"50%", left:"60%", fontSize:8 }}>⭐</span>
+                            <span className="absolute" style={{ top:"30%", left:"80%", fontSize:9 }}>✨</span>
+                          </>
+                        )}
+                        {/* Gold crown */}
+                        {item.id === "theme-gold" && (
+                          <span className="absolute" style={{ top:"50%", left:"50%", transform:"translate(-50%,-50%)", fontSize:22 }}>👑</span>
+                        )}
+                        {item.emoji && !["theme-gold","theme-anime","theme-cyber"].includes(item.id) && (
+                          <span className="absolute" style={{ top:"50%", left:"50%", transform:"translate(-50%,-50%)", fontSize:22, filter:"drop-shadow(0 1px 3px rgba(0,0,0,0.3))" }}>{item.emoji}</span>
+                        )}
+                      </div>
+                    ) : item.previewEmoji ? (
+                      <div className="w-full h-14 rounded-xl flex items-center justify-center relative overflow-hidden"
+                        style={{ background: item.category === "effect"
+                          ? item.id === "effect-laser"    ? "linear-gradient(135deg,#001533,#003366)"
+                          : item.id === "effect-lightning"? "linear-gradient(135deg,#1a1a00,#3d3300)"
+                          : item.id === "effect-fire"     ? "linear-gradient(135deg,#1a0000,#330000)"
+                          : item.id === "effect-crystal"  ? "linear-gradient(135deg,#001a33,#003355)"
+                          : item.id === "effect-galaxy"   ? "linear-gradient(135deg,#05000f,#0f0520)"
+                          : item.id === "effect-cyber"    ? "linear-gradient(135deg,#001a1a,#003333)"
+                          : item.id === "effect-rainbow"  ? "linear-gradient(135deg,#fff0f5,#f0f5ff)"
+                          : item.id === "effect-minimal"  ? "linear-gradient(135deg,#0a0a0a,#1a1a1a)"
+                          : "linear-gradient(135deg,#e0f7ff,#c7f0ff)"
+                          : "linear-gradient(135deg,#f0fdf4,#e0f7ff)"
+                        }}>
+                        {/* Effect-specific backgrounds */}
+                        {item.id === "effect-laser" && <div className="absolute inset-0 flex items-center"><div style={{ width:"100%", height:3, background:"linear-gradient(90deg, transparent, #00ffff, #0088ff, transparent)", boxShadow:"0 0 8px #00ffff, 0 0 16px #0088ff" }} /></div>}
+                        {item.id === "effect-lightning" && <><div className="absolute" style={{ top:"10%", left:"40%", width:3, height:"30%", background:"#ffe066", boxShadow:"0 0 6px #ffe066", transform:"rotate(15deg)" }} /><div className="absolute" style={{ top:"40%", left:"52%", width:2, height:"25%", background:"#ffe066", boxShadow:"0 0 6px #ffe066", transform:"rotate(-10deg)" }} /></>}
+                        {item.id === "effect-rainbow" && <div className="absolute inset-0" style={{ background:"linear-gradient(135deg, rgba(255,0,0,0.3), rgba(255,165,0,0.3), rgba(255,255,0,0.3), rgba(0,255,0,0.3), rgba(0,0,255,0.3), rgba(238,130,238,0.3))" }} />}
+                        {item.id === "effect-minimal" && <div className="absolute rounded-full" style={{ width:40, height:40, border:"2px solid rgba(255,255,255,0.5)", left:"50%", top:"50%", transform:"translate(-50%,-50%)" }} />}
+                        <span style={{ fontSize:28, position:"relative", zIndex:1, filter: item.id !== "effect-default" && item.id !== "effect-rainbow" && item.id !== "effect-minimal" ? "drop-shadow(0 0 6px currentColor)" : "none" }}>{item.previewEmoji}</span>
+                      </div>
+                    ) : null}
 
-                {/* Bunnies */}
-                <div>
-                  <h3 className="text-base font-black text-gray-800 mb-3">🐰 Bunnies</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {STORE_CATALOG.filter(item => item.category === "bunny").map(item => {
-                      const isOwned = storeOwned.includes(item.id)
-                      const isActive = activeBunny === item.id
-                      const canAfford = challengeCoins >= item.cost
-                      return (
-                        <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
-                          style={{ border: isActive ? "2px solid #34d399" : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : undefined }}>
-                          {item.imageSrc
-                            // eslint-disable-next-line @next/next/no-img-element
-                            ? <img src={item.imageSrc} alt={item.name} className="w-20 h-20 object-contain" />
-                            : <span className="text-4xl">{item.emoji}</span>}
-                          <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
-                          <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
-                          {isActive ? (
-                            <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
-                          ) : isOwned ? (
-                            <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Equip</button>
-                          ) : canAfford ? (
-                            <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white" }}>
-                              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>Buy — {item.cost} <span style={{ display:"inline-block",width:"14px",height:"14px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",verticalAlign:"middle" }} /></span>
-                            </button>
-                          ) : (
-                            <span className="text-xs text-gray-400 font-semibold" style={{ display:"inline-flex",alignItems:"center",gap:"4px" }}>Need {item.cost} <span style={{ display:"inline-block",width:"12px",height:"12px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",opacity:0.6,verticalAlign:"middle" }} /></span>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                    <p className="font-bold text-gray-900 text-xs text-center leading-tight mt-0.5">{item.name}</p>
+                    <p className="text-xs text-gray-400 text-center leading-tight" style={{ fontSize:10 }}>{item.description}</p>
 
-                {/* Themes */}
-                <div>
-                  <h3 className="text-base font-black text-gray-800 mb-3">🎨 Themes</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {STORE_CATALOG.filter(item => item.category === "theme").map(item => {
-                      const isOwned = storeOwned.includes(item.id)
-                      const isActive = activeTheme === item.id
-                      const canAfford = challengeCoins >= item.cost
-                      return (
-                        <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
-                          style={{ border: isActive ? "2px solid #34d399" : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : undefined }}>
-                          <div className="w-full h-14 rounded-xl shadow-inner border border-white/50" style={{ background: THEME_GRADIENTS[item.id] ?? "#e0f7ff" }} />
-                          <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
-                          <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
-                          {isActive ? (
-                            <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
-                          ) : isOwned ? (
-                            <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Equip</button>
-                          ) : canAfford ? (
-                            <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white" }}>
-                              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>Buy — {item.cost} <span style={{ display:"inline-block",width:"14px",height:"14px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",verticalAlign:"middle" }} /></span>
-                            </button>
-                          ) : (
-                            <span className="text-xs text-gray-400 font-semibold" style={{ display:"inline-flex",alignItems:"center",gap:"4px" }}>Need {item.cost} <span style={{ display:"inline-block",width:"12px",height:"12px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",opacity:0.6,verticalAlign:"middle" }} /></span>
-                          )}
-                        </div>
-                      )
-                    })}
+                    {/* Action button */}
+                    {isActive ? (
+                      <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Active</span>
+                    ) : isOwned ? (
+                      <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Equip</button>
+                    ) : isFree ? (
+                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Get Free</button>
+                    ) : canAfford ? (
+                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white" }}>
+                        <span style={{ display:"inline-flex", alignItems:"center", gap:3, justifyContent:"center" }}>Buy — {item.cost} <CoinDot size={12} /></span>
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-400 font-semibold" style={{ display:"inline-flex", alignItems:"center", gap:3, justifyContent:"center" }}>Need {item.cost} <CoinDot size={11} /></span>
+                    )}
                   </div>
+                )
+              }
+
+              return (
+                <div className="space-y-5">
+                  {/* Balance pill */}
+                  <div className="flex items-center gap-2">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{ background: "linear-gradient(135deg, #fbbf24, #f59e0b)", border: "2px solid rgba(255,255,255,0.6)" }}>
+                      <span style={{ fontSize: "16px" }}>💰</span>
+                      <span className="text-white font-black text-lg">{totalVocabBank.toLocaleString()}</span>
+                      <span className="text-white/80 font-semibold text-sm">vocab coins</span>
+                    </div>
+                  </div>
+
+                  {/* Category tabs */}
+                  <div className="flex gap-2">
+                    {([
+                      { key: "effect",  label: "💥 Effects" },
+                      { key: "theme",   label: "🌌 Themes" },
+                      { key: "pointer", label: "🪄 Pointers" },
+                    ] as const).map(tab => (
+                      <button
+                        key={tab.key}
+                        onClick={() => setStoreTab(tab.key)}
+                        className="flex-1 py-2 rounded-full text-xs font-black transition-all active:scale-95"
+                        style={storeTab === tab.key
+                          ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 3px 10px rgba(168,85,247,0.4)" }
+                          : { background: "#f3f4f6", color: "#6b7280" }}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Effects grid */}
+                  {storeTab === "effect" && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {STORE_CATALOG.filter(item => item.category === "effect").map(item => (
+                        <StoreCard key={item.id} item={item} isActive={activeEffect === item.id} canAfford={totalVocabBank >= item.cost} />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Themes grid */}
+                  {storeTab === "theme" && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {STORE_CATALOG.filter(item => item.category === "theme").map(item => (
+                        <StoreCard key={item.id} item={item} isActive={activeTheme === item.id} canAfford={totalVocabBank >= item.cost} />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Pointers grid */}
+                  {storeTab === "pointer" && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {STORE_CATALOG.filter(item => item.category === "pointer").map(item => (
+                        <StoreCard key={item.id} item={item} isActive={activePointer === item.id} canAfford={totalVocabBank >= item.cost} />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              )
+            })()}
           </div>
 
           {/* Bottom Navigation */}
@@ -3021,6 +3110,22 @@ export default function HablaBeat() {
                   "--ox": "50%", "--oy": "50%",
                 } as React.CSSProperties}
               >
+                {/* Giant emoji background — fills the entire screen */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
+                  <div style={{
+                    fontSize: "85vw",
+                    lineHeight: 1,
+                    opacity: 0.12,
+                    filter: "blur(8px)",
+                    userSelect: "none",
+                    transform: "rotate(-10deg) scale(1.1)",
+                  }}>
+                    {openSection.id === "ar-verbs" ? "A"
+                      : openSection.id === "er-verbs" ? "E"
+                      : openSection.id === "ir-verbs" ? "I"
+                      : openSection.icon}
+                  </div>
+                </div>
                 {/* Starfield inside world */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <span className="star-twinkle absolute text-white/60" style={{ top:"6%",  left:"12%",  fontSize:"14px", animationDuration:"2.1s" }}>★</span>
@@ -3090,30 +3195,36 @@ export default function HablaBeat() {
                                 </span>
                               )}
                             </div>
-                            {/* Play · Challenge · Sing */}
-                            <div className="flex gap-5 mt-3 ml-7">
+                            {/* Play · Challenge · Sing — oval pill buttons */}
+                            <div className="flex gap-2 mt-3 ml-7">
                               {selectedLanguage === "spanish" && (
-                                <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
-                                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 14px rgba(249,115,22,0.5)" }}>
-                                    <span style={{ display: "inline-block", fontSize: "26px", transform: "rotate(-90deg)", animation: "btnBounce 0.9s ease-in-out infinite" }}>🥕</span>
-                                  </div>
-                                  <span className="text-xs font-black text-white drop-shadow">Play</span>
+                                <button
+                                  onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
+                                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full font-black text-white text-xs transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 3px 10px rgba(249,115,22,0.5)" }}
+                                >
+                                  <span style={{ display: "inline-block", fontSize: "16px", transform: "rotate(-90deg)", animation: "btnBounce 0.9s ease-in-out infinite" }}>🥕</span>
+                                  Play
                                 </button>
                               )}
                               {selectedLanguage === "spanish" && (
-                                <button onClick={() => handleChallengeSong(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
-                                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 4px 14px rgba(14,165,233,0.5)" }}>
-                                    <span style={{ display: "inline-block", fontSize: "26px", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>⚔️</span>
-                                  </div>
-                                  <span className="text-xs font-black text-white drop-shadow">Challenge</span>
+                                <button
+                                  onClick={() => handleChallengeSong(song.id, openCategory!.id, openSection!.id)}
+                                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full font-black text-white text-xs transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 3px 10px rgba(14,165,233,0.5)" }}
+                                >
+                                  <span style={{ display: "inline-block", fontSize: "16px", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>⚔️</span>
+                                  Challenge
                                 </button>
                               )}
                               {isClickable && (
-                                <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
-                                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 14px rgba(168,85,247,0.5)" }}>
-                                    <span style={{ display: "inline-block", fontSize: "26px", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span>
-                                  </div>
-                                  <span className="text-xs font-black text-white drop-shadow">Sing</span>
+                                <button
+                                  onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
+                                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full font-black text-white text-xs transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 3px 10px rgba(168,85,247,0.5)" }}
+                                >
+                                  <span style={{ display: "inline-block", fontSize: "16px", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span>
+                                  Sing
                                 </button>
                               )}
                             </div>

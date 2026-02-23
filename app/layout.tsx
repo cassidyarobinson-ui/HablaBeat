@@ -15,13 +15,34 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "HablaBeat",
-  description: "Learn languages through song",
+  description: "Learn Spanish through song — pop bubbles, collect coins, and level up your vocabulary!",
   generator: "v0.app",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "HablaBeat",
+  },
+  openGraph: {
+    title: "HablaBeat 🥕",
+    description: "Learn Spanish through song — pop bubbles, collect coins, and level up your vocabulary!",
+    url: "https://hablabeat.com",
+    siteName: "HablaBeat",
+    images: [
+      {
+        url: "https://hablabeat.com/images/super-bunny-heart.jpg",
+        width: 1200,
+        height: 630,
+        alt: "HablaBeat — Learn Spanish through song",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HablaBeat 🥕",
+    description: "Learn Spanish through song — pop bubbles, collect coins, and level up your vocabulary!",
+    images: ["https://hablabeat.com/images/super-bunny-heart.jpg"],
   },
 }
 
