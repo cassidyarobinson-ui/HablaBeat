@@ -2966,20 +2966,28 @@ export default function HablaBeat() {
                                 </span>
                               )}
                             </div>
-                            <div className="flex gap-2 mt-2 ml-7">
+                            <div className="flex gap-4 mt-3 ml-7">
                               {selectedLanguage === "spanish" && (
                                 <button
                                   onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-white transition-all active:scale-95"
-                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 3px 12px rgba(249,115,22,0.45)" }}
-                                ><span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite" }}>🥕</span> Play</button>
+                                  className="flex flex-col items-center gap-1 transition-all active:scale-90"
+                                >
+                                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 14px rgba(249,115,22,0.5)" }}>
+                                    <span style={{ display: "inline-block", fontSize: "26px", transform: "rotate(-90deg)", animation: "btnBounce 0.9s ease-in-out infinite" }}>🥕</span>
+                                  </div>
+                                  <span className="text-xs font-black text-white drop-shadow">Play</span>
+                                </button>
                               )}
                               {isClickable && (
                                 <button
                                   onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-white transition-all active:scale-95"
-                                  style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 3px 12px rgba(168,85,247,0.45)" }}
-                                ><span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span> Sing</button>
+                                  className="flex flex-col items-center gap-1 transition-all active:scale-90"
+                                >
+                                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 14px rgba(168,85,247,0.5)" }}>
+                                    <span style={{ display: "inline-block", fontSize: "26px", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span>
+                                  </div>
+                                  <span className="text-xs font-black text-white drop-shadow">Sing</span>
+                                </button>
                               )}
                             </div>
                           </div>
