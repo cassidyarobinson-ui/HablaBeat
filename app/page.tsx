@@ -3162,12 +3162,12 @@ export default function HablaBeat() {
                             const words = section.title.split(" ")
                             const topText = words.slice(0, -1).join(" ")
                             const botText = words[words.length - 1]
-                            const r = 44 // arc radius (circle is ~90px wide, so r~44 hugs inside edge)
-                            const cx = 50, cy = 50
-                            // Top arc: left→right along top of circle
-                            const topArc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`
-                            // Bottom arc: left→right along bottom (curves downward)
-                            const botArc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`
+                            const r = 38
+                            const cx = 50
+                            // Top arc: centred lower so text (which sits above the path) stays inside the circle
+                            const topArc = `M ${cx - r} 58 A ${r} ${r} 0 0 1 ${cx + r} 58`
+                            // Bottom arc: centred higher so text (which sits below the path) stays inside
+                            const botArc = `M ${cx - r} 52 A ${r} ${r} 0 0 0 ${cx + r} 52`
                             const outline = "-1.2px -1.2px 0 #000, 1.2px -1.2px 0 #000, -1.2px 1.2px 0 #000, 1.2px 1.2px 0 #000, 0 0 5px rgba(0,0,0,0.8)"
                             return (
                               <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
