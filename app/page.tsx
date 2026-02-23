@@ -2047,45 +2047,7 @@ export default function HablaBeat() {
   )
 
   // Mini Player Component
-  const MiniPlayer = () => {
-    if (!currentSong || currentView === "player") return null
-
-    return (
-      <div
-        className="fixed left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm z-40"
-        style={{ bottom: "72px" }}
-        onClick={() => setCurrentView("player")}
-      >
-        <div className="flex items-center gap-3">
-          {/* Album Art */}
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-2xl">{currentSong.sectionIcon}</span>
-          </div>
-
-          {/* Song Info */}
-          <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-gray-900 text-sm truncate">{currentSong.title}</h4>
-            <p className="text-xs text-gray-500 truncate">{currentSong.sectionTitle}</p>
-          </div>
-
-          {/* Controls */}
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="w-8 h-8 text-gray-700 hover:bg-gray-100"
-              onClick={(e) => {
-                e.stopPropagation()
-                setIsPlaying(!isPlaying)
-              }}
-            >
-              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-            </Button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const MiniPlayer = () => null
 
   // ── SPLASH SCREEN ──────────────────────────────────────────────────────────
   if (showSplash) {
