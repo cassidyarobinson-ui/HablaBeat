@@ -1505,6 +1505,9 @@ export default function HablaBeat() {
   const [dailyStreak, setDailyStreak] = useState(0)
   const [lastPlayDate, setLastPlayDate] = useState("") // YYYY-MM-DD
 
+  // Bank tab toggle
+  const [bankTab, setBankTab] = useState<"worlds" | "items">("worlds")
+
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
   const [storeOwned, setStoreOwned] = useState<string[]>(["bunny-classic"])
@@ -2451,171 +2454,202 @@ export default function HablaBeat() {
               </div>
             </div>
 
-            {/* Stats — three cards: worlds collected + vocab bank + items */}
+            {/* Stats — three cards: vocab bank + worlds collected + items purchased */}
             <div className="px-3 mt-4 flex gap-3">
-              {/* Worlds Collected */}
-              <div className="flex-1 relative overflow-hidden rounded-2xl px-4 py-4 shadow-lg" style={{
-                background: "linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #6ee7b7 100%)",
-                border: "2px solid rgba(255,255,255,0.6)",
-                boxShadow: "0 4px 20px rgba(52,211,153,0.4)"
-              }}>
-                <span className="absolute top-2 right-4 text-white/40 text-lg select-none">✦</span>
-                <div className="absolute right-3 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                <p className="text-white font-black leading-none" style={{ fontSize: "1.9rem" }}>{earnedCoins.length}</p>
-                <p className="text-white font-bold text-sm leading-tight mt-0.5">worlds<br/>collected 🌍</p>
-              </div>
-              {/* Vocab Bank Total */}
-              <div className="flex-1 relative overflow-hidden rounded-2xl px-4 py-4 shadow-lg" style={{
+              {/* Vocab Bank */}
+              <div className="flex-1 relative overflow-hidden rounded-2xl px-3 py-4 shadow-lg" style={{
                 background: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 60%, #6d28d9 100%)",
                 border: "2px solid rgba(255,255,255,0.6)",
                 boxShadow: "0 4px 20px rgba(167,139,250,0.4)"
               }}>
-                <span className="absolute top-2 right-4 text-white/40 text-lg select-none">✦</span>
-                <div className="absolute right-3 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                <p className="text-white font-black leading-none" style={{ fontSize: "1.9rem" }}>{totalVocabBank.toLocaleString()}</p>
-                <p className="text-white font-bold text-sm leading-tight mt-0.5">vocab bank<br/>coins total 💰</p>
+                <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
+                <div className="absolute right-2 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                <p className="text-white font-black leading-none" style={{ fontSize: "1.6rem" }}>{totalVocabBank.toLocaleString()}</p>
+                <p className="text-white font-bold text-xs leading-tight mt-0.5">vocab<br/>bank 💰</p>
               </div>
-              {/* Items */}
-              <div className="flex-1 relative overflow-hidden rounded-2xl px-4 py-4 shadow-lg" style={{
+              {/* Worlds Collected */}
+              <div className="flex-1 relative overflow-hidden rounded-2xl px-3 py-4 shadow-lg" style={{
+                background: "linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #6ee7b7 100%)",
+                border: "2px solid rgba(255,255,255,0.6)",
+                boxShadow: "0 4px 20px rgba(52,211,153,0.4)"
+              }}>
+                <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
+                <div className="absolute right-2 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                <p className="text-white font-black leading-none" style={{ fontSize: "1.6rem" }}>{earnedCoins.length}</p>
+                <p className="text-white font-bold text-xs leading-tight mt-0.5">worlds<br/>collected 🌍</p>
+              </div>
+              {/* Items Purchased */}
+              <div className="flex-1 relative overflow-hidden rounded-2xl px-3 py-4 shadow-lg" style={{
                 background: "linear-gradient(135deg, #fb923c 0%, #f43f5e 60%, #e11d48 100%)",
                 border: "2px solid rgba(255,255,255,0.6)",
                 boxShadow: "0 4px 20px rgba(251,146,60,0.4)"
               }}>
-                <span className="absolute top-2 right-4 text-white/40 text-lg select-none">✦</span>
-                <div className="absolute right-3 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                <p className="text-white font-black leading-none" style={{ fontSize: "1.9rem" }}>{lunasPurse.length}</p>
-                <p className="text-white font-bold text-sm leading-tight mt-0.5">items 👛</p>
+                <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
+                <div className="absolute right-2 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                <p className="text-white font-black leading-none" style={{ fontSize: "1.6rem" }}>{storeOwned.length}</p>
+                <p className="text-white font-bold text-xs leading-tight mt-0.5">items<br/>purchased 👛</p>
               </div>
             </div>
           </div>
 
-          {/* World Collection Display */}
-          <div className="px-4 pt-4 space-y-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Worlds Collected</h2>
+          {/* ── Worlds / Items toggle + content ── */}
+          <div className="px-4 pt-4 pb-32">
 
-            {earnedCoins.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="flex justify-center mb-4">
-                  <span style={{ fontSize: "52px" }}>🌍</span>
-                </div>
-                <p className="text-gray-500">No worlds collected yet!</p>
-                <p className="text-gray-400 text-sm mt-2">Beat a friend in a challenge to collect worlds 🏆</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-4">
-                {earnedCoins.map((coin) => (
-                  <div key={coin.id} className="flex flex-col items-center">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 border-4 border-yellow-400 shadow-lg flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent"></div>
-                      <span className="text-2xl relative z-10">{coin.icon}</span>
-                    </div>
-                    <h3 className="font-bold text-gray-800 text-xs mt-2 text-center">{coin.name}</h3>
+            {/* Toggle */}
+            <div className="flex gap-2 bg-gray-100 p-1 rounded-2xl mb-5">
+              <button
+                onClick={() => setBankTab("worlds")}
+                className="flex-1 py-2.5 rounded-xl text-sm font-black transition-all"
+                style={bankTab === "worlds" ? {
+                  background: "linear-gradient(135deg, #34d399, #22d3ee)",
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(52,211,153,0.4)"
+                } : { color: "#6b7280" }}
+              >🌍 Worlds</button>
+              <button
+                onClick={() => setBankTab("items")}
+                className="flex-1 py-2.5 rounded-xl text-sm font-black transition-all"
+                style={bankTab === "items" ? {
+                  background: "linear-gradient(135deg, #a855f7, #6366f1)",
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(168,85,247,0.4)"
+                } : { color: "#6b7280" }}
+              >👛 Items</button>
+            </div>
+
+            {/* ── WORLDS TAB ── */}
+            {bankTab === "worlds" && (
+              <div className="space-y-6">
+                {/* Earned worlds */}
+                {earnedCoins.length === 0 ? (
+                  <div className="text-center py-8">
+                    <span style={{ fontSize: "52px" }}>🌍</span>
+                    <p className="text-gray-500 mt-3">No worlds collected yet!</p>
+                    <p className="text-gray-400 text-sm mt-1">Beat a friend in a challenge to collect worlds 🏆</p>
                   </div>
-                ))}
+                ) : (
+                  <>
+                    <div>
+                      <h3 className="text-base font-black text-gray-800 mb-3">Collected ✅</h3>
+                      <div className="grid grid-cols-3 gap-4">
+                        {earnedCoins.map((coin) => (
+                          <div key={coin.id} className="flex flex-col items-center">
+                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 border-4 border-yellow-400 shadow-lg flex items-center justify-center relative overflow-hidden">
+                              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent" />
+                              <span className="text-2xl relative z-10">{coin.icon}</span>
+                            </div>
+                            <h3 className="font-bold text-gray-800 text-xs mt-2 text-center leading-tight">{coin.name}</h3>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Worlds to earn */}
+                {notYetCollected.length > 0 && (
+                  <div>
+                    <h3 className="text-base font-black text-gray-800 mb-1">Worlds to Earn 🔒</h3>
+                    <p className="text-xs text-gray-400 mb-3 italic">Beat a friend in a challenge to unlock 🏆</p>
+                    <div className="grid grid-cols-3 gap-4">
+                      {notYetCollected.map((section) => (
+                        <div key={section.id} className="flex flex-col items-center opacity-50">
+                          <div className="w-20 h-20 rounded-full bg-gray-200 border-4 border-gray-300 shadow-sm flex items-center justify-center relative overflow-hidden">
+                            <span className="text-2xl grayscale">{section.icon}</span>
+                            <div className="absolute inset-0 flex items-end justify-center pb-1">
+                              <span style={{ fontSize: "14px" }}>🔒</span>
+                            </div>
+                          </div>
+                          <h3 className="font-bold text-gray-500 text-xs mt-2 text-center leading-tight">{section.title}</h3>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Not Yet Collected */}
-            {notYetCollected.length > 0 && (
-              <div className="mt-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Worlds Not Yet Collected</h3>
-                <p className="text-xs text-gray-500 mb-4 italic">Beat a friend in a challenge to unlock 🏆</p>
-                <div className="flex flex-wrap gap-3">
-                  {notYetCollected.map((section) => (
-                    <div key={section.id} className="w-14 h-14 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center opacity-40">
-                      <span className="text-2xl grayscale">{section.icon}</span>
-                    </div>
-                  ))}
+            {/* ── ITEMS TAB ── */}
+            {bankTab === "items" && (
+              <div className="space-y-5">
+                {/* Challenge coin balance */}
+                <div className="flex items-center gap-2">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{
+                    background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
+                    border: "2px solid rgba(255,255,255,0.6)"
+                  }}>
+                    <span style={{ fontSize: "16px" }}>🏆</span>
+                    <span className="text-white font-black text-lg">{challengeCoins}</span>
+                    <span className="text-white/80 font-semibold text-sm">challenge coins</span>
+                  </div>
+                </div>
+
+                {/* Bunnies */}
+                <div>
+                  <h3 className="text-base font-black text-gray-800 mb-3">🐰 Bunnies</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {STORE_CATALOG.filter(item => item.category === "bunny").map(item => {
+                      const isOwned = storeOwned.includes(item.id)
+                      const isActive = activeBunny === item.id
+                      const canAfford = challengeCoins >= item.cost
+                      return (
+                        <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
+                          style={{ border: isActive ? "2px solid #34d399" : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : undefined }}>
+                          {item.imageSrc
+                            // eslint-disable-next-line @next/next/no-img-element
+                            ? <img src={item.imageSrc} alt={item.name} className="w-20 h-20 object-contain" />
+                            : <span className="text-4xl">{item.emoji}</span>}
+                          <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
+                          <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
+                          {isActive ? (
+                            <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
+                          ) : isOwned ? (
+                            <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Equip</button>
+                          ) : canAfford ? (
+                            <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white" }}>
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>Buy — {item.cost} <span style={{ display:"inline-block",width:"14px",height:"14px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",verticalAlign:"middle" }} /></span>
+                            </button>
+                          ) : (
+                            <span className="text-xs text-gray-400 font-semibold" style={{ display:"inline-flex",alignItems:"center",gap:"4px" }}>Need {item.cost} <span style={{ display:"inline-block",width:"12px",height:"12px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",opacity:0.6,verticalAlign:"middle" }} /></span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Themes */}
+                <div>
+                  <h3 className="text-base font-black text-gray-800 mb-3">🎨 Themes</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {STORE_CATALOG.filter(item => item.category === "theme").map(item => {
+                      const isOwned = storeOwned.includes(item.id)
+                      const isActive = activeTheme === item.id
+                      const canAfford = challengeCoins >= item.cost
+                      return (
+                        <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
+                          style={{ border: isActive ? "2px solid #34d399" : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : undefined }}>
+                          <div className="w-full h-14 rounded-xl shadow-inner border border-white/50" style={{ background: THEME_GRADIENTS[item.id] ?? "#e0f7ff" }} />
+                          <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
+                          <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
+                          {isActive ? (
+                            <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
+                          ) : isOwned ? (
+                            <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Equip</button>
+                          ) : canAfford ? (
+                            <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-sm font-bold active:scale-95" style={{ background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white" }}>
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>Buy — {item.cost} <span style={{ display:"inline-block",width:"14px",height:"14px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",verticalAlign:"middle" }} /></span>
+                            </button>
+                          ) : (
+                            <span className="text-xs text-gray-400 font-semibold" style={{ display:"inline-flex",alignItems:"center",gap:"4px" }}>Need {item.cost} <span style={{ display:"inline-block",width:"12px",height:"12px",borderRadius:"50%",background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",border:"1.5px solid #92400E",opacity:0.6,verticalAlign:"middle" }} /></span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             )}
-          </div>
-
-          {/* ── Store — embedded below bank ── */}
-          <div className="px-4 pt-6 pb-32">
-            <h2 className="text-xl font-bold text-gray-900 mb-3">Store 🛍️</h2>
-
-            {/* Coin balance */}
-            <div className="mb-4">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{
-                background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
-                border: "2px solid rgba(255,255,255,0.6)"
-              }}>
-                <div style={{
-                  width: "28px", height: "28px", borderRadius: "50%",
-                  background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-                  border: "2px solid #92400E",
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.25), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0, position: "relative", overflow: "hidden"
-                }}>
-                  <div style={{ position: "absolute", inset: "2px", borderRadius: "50%", border: "1px solid rgba(254,243,199,0.4)" }} />
-                  <span style={{ fontSize: "11px" }}>🏆</span>
-                </div>
-                <span className="text-white font-black text-lg">{challengeCoins}</span>
-                <span className="text-white/80 font-semibold text-sm">coins</span>
-              </div>
-            </div>
-
-            {/* Tab Selector */}
-            <div className="flex gap-2 bg-gray-100 p-1 rounded-2xl mb-4">
-              {(["bunny", "theme"] as const).map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setStoreTab(tab)}
-                  className="flex-1 py-2 rounded-xl text-sm font-bold transition-all"
-                  style={storeTab === tab ? {
-                    background: "linear-gradient(135deg, #a855f7, #6366f1)",
-                    color: "white",
-                    boxShadow: "0 2px 8px rgba(168,85,247,0.4)"
-                  } : { color: "#6b7280" }}
-                >
-                  {tab === "bunny" ? "🐰 Bunnies" : "🎨 Themes"}
-                </button>
-              ))}
-            </div>
-
-            {/* Item Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {STORE_CATALOG.filter(item => item.category === storeTab).map(item => {
-                const isOwned = storeOwned.includes(item.id)
-                const isActive = (item.category === "bunny" && activeBunny === item.id) ||
-                                 (item.category === "theme" && activeTheme === item.id)
-                const canAfford = challengeCoins >= item.cost
-                return (
-                  <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
-                    style={isActive ? { border: "2px solid #34d399", boxShadow: "0 0 0 3px rgba(52,211,153,0.15)" } : {}}>
-                    {item.category === "bunny" && item.imageSrc ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.imageSrc} alt={item.name} className="w-20 h-20 object-contain" />
-                    ) : item.category === "theme" ? (
-                      <div className="w-20 h-14 rounded-xl shadow-inner border border-white/50" style={{ background: THEME_GRADIENTS[item.id] ?? "#e0f7ff" }} />
-                    ) : (
-                      <span className="text-4xl">{item.emoji}</span>
-                    )}
-                    <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
-                    <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
-                    {isActive ? (
-                      <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
-                    ) : isOwned ? (
-                      <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95" style={{ background: "linear-gradient(135deg, #2dd4bf, #22d3ee)", color: "white" }}>Equip</button>
-                    ) : canAfford ? (
-                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95" style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", color: "white" }}>
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                          Buy — {item.cost}
-                          <span style={{ display: "inline-block", width: "16px", height: "16px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", boxShadow: "inset 0 -1px 3px rgba(120,53,0,0.4)", verticalAlign: "middle" }} />
-                        </span>
-                      </button>
-                    ) : (
-                      <span className="text-xs text-gray-400 font-semibold" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                        Need {item.cost}
-                        <span style={{ display: "inline-block", width: "14px", height: "14px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", opacity: 0.7, verticalAlign: "middle" }} />
-                      </span>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
           </div>
 
           {/* Bottom Navigation */}
