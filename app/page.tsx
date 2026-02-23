@@ -3157,24 +3157,55 @@ export default function HablaBeat() {
                                   ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
                                   : section.icon}
                           </span>
-                          {/* Name overlaid centered on top of icon — two lines */}
-                          <span
-                            className="absolute inset-0 flex flex-col items-center justify-center text-center font-black leading-snug px-1 z-10"
-                            style={{
-                              color: "white",
-                              textShadow: "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0 0 6px rgba(0,0,0,0.7)",
-                            }}
-                          >
-                            {(() => {
-                              const words = section.title.split(" ")
-                              const last = words[words.length - 1]
-                              const rest = words.slice(0, -1).join(" ")
-                              return <>
-                                <span style={{ fontSize: "13px" }}>{rest}</span>
-                                <span style={{ fontSize: "13px" }}>{last}</span>
-                              </>
-                            })()}
-                          </span>
+                          {/* Curved text SVG — top arc + bottom arc */}
+                          {(() => {
+                            const words = section.title.split(" ")
+                            const topText = words.slice(0, -1).join(" ")
+                            const botText = words[words.length - 1]
+                            const r = 44 // arc radius (circle is ~90px wide, so r~44 hugs inside edge)
+                            const cx = 50, cy = 50
+                            // Top arc: left→right along top of circle
+                            const topArc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`
+                            // Bottom arc: left→right along bottom (curves downward)
+                            const botArc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`
+                            const outline = "-1.2px -1.2px 0 #000, 1.2px -1.2px 0 #000, -1.2px 1.2px 0 #000, 1.2px 1.2px 0 #000, 0 0 5px rgba(0,0,0,0.8)"
+                            return (
+                              <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                                <defs>
+                                  <path id={`top-${section.id}`} d={topArc} />
+                                  <path id={`bot-${section.id}`} d={botArc} />
+                                  <filter id={`outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
+                                    <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
+                                    <feFlood floodColor="#000" result="color"/>
+                                    <feComposite in="color" in2="expanded" operator="in" result="outline"/>
+                                    <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                  </filter>
+                                </defs>
+                                {/* Top curved text */}
+                                <text
+                                  fill="white"
+                                  fontSize="12"
+                                  fontWeight="900"
+                                  textAnchor="middle"
+                                  filter={`url(#outline-${section.id})`}
+                                  style={{ fontFamily: "inherit" }}
+                                >
+                                  <textPath href={`#top-${section.id}`} startOffset="50%">{topText}</textPath>
+                                </text>
+                                {/* Bottom curved text */}
+                                <text
+                                  fill="white"
+                                  fontSize="12"
+                                  fontWeight="900"
+                                  textAnchor="middle"
+                                  filter={`url(#outline-${section.id})`}
+                                  style={{ fontFamily: "inherit" }}
+                                >
+                                  <textPath href={`#bot-${section.id}`} startOffset="50%">{botText}</textPath>
+                                </text>
+                              </svg>
+                            )
+                          })()}
                         </button>
                       )
                     })}
