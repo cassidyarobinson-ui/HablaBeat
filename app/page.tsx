@@ -3143,7 +3143,7 @@ export default function HablaBeat() {
                                 const botText = words[words.length - 1]
                                 const r = 38, cx = 50
                                 const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
-                                const botArc = `M ${cx - r} 52 A ${r} ${r} 0 0 0 ${cx + r} 52`
+                                const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
                                 return (
                                   <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
                                     <defs>
