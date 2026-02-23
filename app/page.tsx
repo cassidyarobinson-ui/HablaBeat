@@ -3148,21 +3148,21 @@ export default function HablaBeat() {
                           {isSectionBadgeUnlocked(section) && (
                             <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
                           )}
-                          {/* Large icon fills the circle */}
-                          <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "50px", lineHeight: 1 }}>
+                          {/* Icon — nearly fills the full circle */}
+                          <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "72px", lineHeight: 1 }}>
                             {section.id === "ar-verbs" ? "🅰️"
                               : section.id === "er-verbs"
-                                ? <span className="flex items-center justify-center font-black text-white rounded-xl" style={{ fontSize: "38px", width: "54px", height: "54px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>E</span>
+                                ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>E</span>
                                 : section.id === "ir-verbs"
-                                  ? <span className="flex items-center justify-center font-black text-white rounded-xl" style={{ fontSize: "38px", width: "54px", height: "54px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
+                                  ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
                                   : section.icon}
                           </span>
-                          {/* Name overlaid at bottom with black outline */}
+                          {/* Name overlaid centered on top of icon */}
                           <span
-                            className="absolute bottom-0 left-0 right-0 text-center font-black text-[10px] leading-tight px-1 pb-1.5 z-10"
+                            className="absolute inset-0 flex items-center justify-center text-center font-black text-[11px] leading-tight px-2 z-10"
                             style={{
                               color: "white",
-                              textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.5)",
+                              textShadow: "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0 0 6px rgba(0,0,0,0.7)",
                             }}
                           >
                             {section.title}
