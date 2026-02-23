@@ -3116,7 +3116,7 @@ export default function HablaBeat() {
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
                     <div className="galaxy-worlds-in px-2 pt-1 pb-2">
-                      <div className="grid grid-cols-3 gap-1.5">
+                      <div className="grid grid-cols-3 gap-3">
                         {category.sections.map((section, sectionIdx) => {
                           const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
                           return (
