@@ -3004,7 +3004,7 @@ export default function HablaBeat() {
                     </div>
                   </div>
                   {/* Song list */}
-                  <div className="flex-1 overflow-y-auto pb-24 px-3">
+                  <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: "100px" }}>
                     <div className="bg-white/15 backdrop-blur-sm rounded-3xl overflow-hidden">
                       {openSection.songs.map((song, idx) => {
                         const isClickable = song.youtubeId && song.youtubeId !== ""
@@ -3037,23 +3037,26 @@ export default function HablaBeat() {
                                 </span>
                               )}
                             </div>
-                            <div className="flex gap-4 mt-3 ml-7">
+                            {/* Play · Challenge · Sing */}
+                            <div className="flex gap-5 mt-3 ml-7">
                               {selectedLanguage === "spanish" && (
-                                <button
-                                  onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex flex-col items-center gap-1 transition-all active:scale-90"
-                                >
+                                <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
                                   <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 14px rgba(249,115,22,0.5)" }}>
                                     <span style={{ display: "inline-block", fontSize: "26px", transform: "rotate(-90deg)", animation: "btnBounce 0.9s ease-in-out infinite" }}>🥕</span>
                                   </div>
                                   <span className="text-xs font-black text-white drop-shadow">Play</span>
                                 </button>
                               )}
+                              {selectedLanguage === "spanish" && (
+                                <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
+                                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 4px 14px rgba(14,165,233,0.5)" }}>
+                                    <span style={{ display: "inline-block", fontSize: "26px", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>⚔️</span>
+                                  </div>
+                                  <span className="text-xs font-black text-white drop-shadow">Challenge</span>
+                                </button>
+                              )}
                               {isClickable && (
-                                <button
-                                  onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex flex-col items-center gap-1 transition-all active:scale-90"
-                                >
+                                <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
                                   <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 14px rgba(168,85,247,0.5)" }}>
                                     <span style={{ display: "inline-block", fontSize: "26px", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span>
                                   </div>
@@ -3066,6 +3069,27 @@ export default function HablaBeat() {
                       })}
                     </div>
                   </div>
+
+                  {/* Bottom bar — next world + vocab bank */}
+                  {(() => {
+                    const allSections = curriculumData.flatMap(cat => cat.sections)
+                    const currentIdx = allSections.findIndex(s => s.id === openSection!.id)
+                    const nextSection = allSections[currentIdx + 1]
+                    return (
+                      <div className="absolute bottom-0 left-0 right-0 px-4 pb-5 pt-3" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 100%)" }}>
+                        <div className="flex items-center justify-between rounded-2xl px-4 py-3 max-w-md mx-auto" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,0.18)" }}>
+                          <div>
+                            <p className="text-white/55 text-xs font-bold uppercase tracking-wider">Next World</p>
+                            <p className="text-white font-black text-sm leading-tight">{nextSection ? nextSection.title : "🏆 All worlds complete!"}</p>
+                          </div>
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "rgba(255,200,0,0.2)", border: "1px solid rgba(255,200,0,0.3)" }}>
+                            <span style={{ fontSize: "15px" }}>💰</span>
+                            <span className="text-white font-black text-sm">{totalVocabBank.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })()}
                 </div>
               </div>
             )
