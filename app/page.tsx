@@ -1488,6 +1488,11 @@ export default function HablaBeat() {
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
 
+  // Challenge pre-select state
+  const [showFriendPicker, setShowFriendPicker] = useState(false)
+  const [pendingChallengeSong, setPendingChallengeSong] = useState<{songId: string; categoryId: string; sectionId: string} | null>(null)
+  const [friendPhone, setFriendPhone] = useState("")
+
   // Profile state
   const [userName, setUserName] = useState("")
   const [userPhoto, setUserPhoto] = useState("") // base64 thumbnail
@@ -1994,6 +1999,19 @@ export default function HablaBeat() {
     }
   }
 
+  // Challenge flow — show friend picker first, then start DDR with pre-filled phone
+  const handleChallengeSong = (songId: string, categoryId: string, sectionId: string) => {
+    setPendingChallengeSong({ songId, categoryId, sectionId })
+    setFriendPhone("")
+    setShowFriendPicker(true)
+  }
+
+  const startChallengeWithFriend = () => {
+    if (!pendingChallengeSong) return
+    setShowFriendPicker(false)
+    handlePlayDDR(pendingChallengeSong.songId, pendingChallengeSong.categoryId, pendingChallengeSong.sectionId)
+  }
+
   // Add new function to handle play count increment when song completes
   const handleSongComplete = (songId, categoryId, sectionId) => {
     // Update play count only when song completes
@@ -2151,7 +2169,8 @@ export default function HablaBeat() {
         dailyStreak={dailyStreak}
         totalVocabBank={totalVocabBank}
         bestFlow={bestFlow}
-        onBack={() => setCurrentView("songs")}
+        initialChallengePhone={friendPhone}
+        onBack={() => { setCurrentView("songs"); setFriendPhone("") }}
         onNextSong={currentSongIndex < allSongs.length - 1 ? () => {
           handleNextSong()
           setCurrentView("ddr")
@@ -3048,7 +3067,7 @@ export default function HablaBeat() {
                                 </button>
                               )}
                               {selectedLanguage === "spanish" && (
-                                <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
+                                <button onClick={() => handleChallengeSong(song.id, openCategory!.id, openSection!.id)} className="flex flex-col items-center gap-1 transition-all active:scale-90">
                                   <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 4px 14px rgba(14,165,233,0.5)" }}>
                                     <span style={{ display: "inline-block", fontSize: "26px", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>⚔️</span>
                                   </div>
@@ -3094,6 +3113,51 @@ export default function HablaBeat() {
               </div>
             )
           })()}
+
+          {/* ── Friend Picker Modal — shown before Challenge starts ── */}
+          {showFriendPicker && (
+            <div className="fixed inset-0 z-[70] flex items-center justify-center px-6" style={{ background: "rgba(0,0,0,0.65)" }} onClick={() => setShowFriendPicker(false)}>
+              <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+                <p className="text-4xl text-center mb-2">⚔️</p>
+                <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
+                <p className="text-sm text-gray-500 text-center mb-5">Pick who you want to challenge — they'll get your score to beat after you play!</p>
+
+                {/* Contact picker if supported */}
+                {"contacts" in navigator && "ContactsManager" in window && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        // @ts-ignore
+                        const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
+                        if (contacts?.length && contacts[0].tel?.length) {
+                          setFriendPhone(contacts[0].tel[0])
+                        }
+                      } catch { /* cancelled */ }
+                    }}
+                    className="w-full py-3 rounded-2xl font-bold text-white text-base mb-3"
+                    style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)" }}
+                  >👥 Pick from Contacts</button>
+                )}
+
+                <input
+                  type="tel"
+                  placeholder="📱 Friend's phone number"
+                  value={friendPhone}
+                  onChange={e => setFriendPhone(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-lg text-center font-medium mb-4 focus:outline-none focus:border-blue-400"
+                />
+
+                <button
+                  onClick={startChallengeWithFriend}
+                  className="w-full py-3.5 rounded-2xl font-black text-white text-lg mb-2 transition-all active:scale-95"
+                  style={{ background: friendPhone.replace(/\D/g,"").length >= 10 ? "linear-gradient(135deg, #f97316, #ef4444)" : "linear-gradient(135deg, #9ca3af, #6b7280)" }}
+                >
+                  {friendPhone.replace(/\D/g,"").length >= 10 ? "🥕 Let's Play!" : "Enter a number to continue"}
+                </button>
+                <button onClick={() => setShowFriendPicker(false)} className="w-full py-2 text-gray-400 text-sm">Cancel</button>
+              </div>
+            </div>
+          )}
 
           {/* ── GALAXY MAP — stacked, one always open ── */}
           <div className="px-2 pt-2 pb-[88px] space-y-2">

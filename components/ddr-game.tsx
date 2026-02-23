@@ -47,6 +47,7 @@ interface DDRGameProps {
   dailyStreak?: number
   totalVocabBank?: number
   bestFlow?: number
+  initialChallengePhone?: string  // pre-filled from challenge button flow
   onBack: () => void
   onNextSong?: () => void
   onGameEnd?: (songNumber: number, flow: number, bank: number, grade: string) => void
@@ -100,7 +101,7 @@ const CARROT_SVGS: Record<string, string> = {
   </svg>`,
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, onBack, onNextSong, onGameEnd, onChallengeSent }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
@@ -112,7 +113,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
   const [showChallengeModal, setShowChallengeModal] = useState(false)
-  const [challengePhone, setChallengePhone] = useState("")
+  const [challengePhone, setChallengePhone] = useState(initialChallengePhone)
   const [challengeUrl, setChallengeUrl] = useState("")
   const [elapsedTime, setElapsedTime] = useState("0:00")
   const [totalTime, setTotalTime] = useState("0:00")
@@ -766,11 +767,17 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     }
   }
 
-  // Fire onGameEnd when game ends
+  // Fire onGameEnd when game ends; auto-open challenge modal if pre-selected friend
   useEffect(() => {
-    if (gameState === "ended" && onGameEnd) {
-      const { grade } = getGrade()
-      onGameEnd(songNumber, maxComboRef.current, scoreRef.current, grade)
+    if (gameState === "ended") {
+      if (onGameEnd) {
+        const { grade } = getGrade()
+        onGameEnd(songNumber, maxComboRef.current, scoreRef.current, grade)
+      }
+      if (initialChallengePhone) {
+        // Auto-trigger challenge flow so score is built and modal opens
+        setTimeout(() => handleChallenge(), 800)
+      }
     }
   }, [gameState])
 
