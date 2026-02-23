@@ -3142,11 +3142,12 @@ export default function HablaBeat() {
                                 <div className="absolute top-1 right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
                               )}
                               <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "72px", lineHeight: 1 }}>
-                                {section.id === "ar-verbs" ? "🅰️"
+                                {section.id === "ar-verbs"
+                                  ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>A</span>
                                   : section.id === "er-verbs"
-                                    ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>E</span>
+                                    ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>E</span>
                                     : section.id === "ir-verbs"
-                                      ? <span className="flex items-center justify-center font-black text-white rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
+                                      ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "52px", width: "72px", height: "72px", background: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>I</span>
                                       : section.icon}
                               </span>
                               {(() => {
