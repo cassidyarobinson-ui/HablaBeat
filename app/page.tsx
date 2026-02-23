@@ -1466,8 +1466,8 @@ export default function HablaBeat() {
   const [splashFading, setSplashFading] = useState(false)
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setSplashFading(true), 1600)
-    const hideTimer = setTimeout(() => setShowSplash(false), 2100)
+    const fadeTimer = setTimeout(() => setSplashFading(true), 2400)
+    const hideTimer = setTimeout(() => setShowSplash(false), 2900)
     return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
   }, [])
 
@@ -2101,7 +2101,7 @@ export default function HablaBeat() {
       <div
         style={{
           position: "fixed", inset: 0, zIndex: 9999,
-          background: "linear-gradient(160deg, #0f1a2e 0%, #1a2a4a 40%, #0d2233 70%, #112233 100%)",
+          background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)",
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           opacity: splashFading ? 0 : 1,
           transition: "opacity 0.5s ease",
@@ -2115,13 +2115,9 @@ export default function HablaBeat() {
             85%  { opacity: 1; }
             100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)); opacity: 0; }
           }
-          @keyframes coinSpin {
-            0%   { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-          }
           @keyframes splashPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(251,191,36,0.5)); }
-            50%       { transform: scale(1.04); filter: drop-shadow(0 0 32px rgba(251,191,36,0.8)); }
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(251,191,36,0.4)); }
+            50%       { transform: scale(1.04); filter: drop-shadow(0 0 28px rgba(251,191,36,0.65)); }
           }
           @keyframes splashWordFade {
             0%   { opacity: 0; transform: translateY(8px) scale(0.95); }
@@ -2142,7 +2138,7 @@ export default function HablaBeat() {
             borderRadius: "50%",
             background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
             border: `${c.size > 30 ? 2 : 1.5}px solid #92400E`,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(120,53,0,0.5), inset 1px 1px 4px rgba(254,243,199,0.4)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
             animation: `coinFall ${c.duration} ${c.delay} ease-in infinite`,
             ["--r" as any]: `${c.rotate}deg`,
           }}>
@@ -2151,20 +2147,28 @@ export default function HablaBeat() {
         ))}
 
         {/* Bunny centered */}
-        <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "12px" }}>
+        <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "16px" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain" }} />
         </div>
 
-        {/* Logo text */}
+        {/* Logo ribbon — matches songs page style */}
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center" }}>
-          <p style={{
-            fontSize: "2.4rem", fontWeight: 900, letterSpacing: "0.02em",
-            background: "linear-gradient(90deg, #fbbf24, #f0abfc, #67e8f9, #34d399)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            textShadow: "none", lineHeight: 1,
-          }}>HablaBeat</p>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 600, marginTop: "6px", letterSpacing: "0.15em" }}>LEARN SPANISH THROUGH MUSIC</p>
+          <div style={{
+            display: "inline-block",
+            background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
+            borderRadius: "999px",
+            padding: "10px 28px",
+            border: "3px solid rgba(255,255,255,0.7)",
+            boxShadow: "0 4px 20px rgba(168,85,247,0.25), inset 0 1px 0 rgba(255,255,255,0.5)",
+          }}>
+            <p style={{
+              fontSize: "2.4rem", fontWeight: 900, color: "white", letterSpacing: "0.03em",
+              textShadow: "0 2px 8px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.3)",
+              lineHeight: 1, margin: 0,
+            }}>HablaBeat</p>
+          </div>
+          <p style={{ color: "rgba(0,0,0,0.35)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
     )
