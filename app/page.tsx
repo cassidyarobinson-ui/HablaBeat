@@ -3052,7 +3052,7 @@ export default function HablaBeat() {
           })()}
 
           {/* Curriculum - Accordion Sections */}
-          <div className="px-2 pt-4 space-y-4 pb-32">
+          <div className="px-2 pt-4 space-y-4 pb-[88px]">
               {curriculumData.map((category) => (
                 <div key={category.id} className="rounded-3xl overflow-hidden shadow-sm relative" style={{
                   background: "linear-gradient(160deg, #e0f7ff 0%, #ede9fe 35%, #fce7f3 65%, #fef3c7 100%)"
