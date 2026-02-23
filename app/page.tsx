@@ -1462,6 +1462,15 @@ function compressPhoto(file: File): Promise<string> {
 }
 
 export default function HablaBeat() {
+  const [showSplash, setShowSplash] = useState(true)
+  const [splashFading, setSplashFading] = useState(false)
+
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => setSplashFading(true), 1600)
+    const hideTimer = setTimeout(() => setShowSplash(false), 2100)
+    return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
+  }, [])
+
   const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer" | "store">("songs")
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
@@ -2071,6 +2080,91 @@ export default function HablaBeat() {
               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </Button>
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── SPLASH SCREEN ──────────────────────────────────────────────────────────
+  if (showSplash) {
+    // Generate 18 falling coins with randomized positions/delays/sizes
+    const coins = Array.from({ length: 18 }, (_, i) => ({
+      id: i,
+      left: `${5 + (i * 5.5) % 90}%`,
+      delay: `${(i * 0.11) % 1.2}s`,
+      duration: `${1.0 + (i * 0.13) % 0.8}s`,
+      size: 18 + (i * 7) % 20,
+      rotate: (i * 37) % 360,
+    }))
+
+    return (
+      <div
+        style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "linear-gradient(160deg, #0f1a2e 0%, #1a2a4a 40%, #0d2233 70%, #112233 100%)",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          opacity: splashFading ? 0 : 1,
+          transition: "opacity 0.5s ease",
+          overflow: "hidden",
+        }}
+      >
+        <style>{`
+          @keyframes coinFall {
+            0%   { transform: translateY(-60px) rotate(var(--r)); opacity: 0; }
+            15%  { opacity: 1; }
+            85%  { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)); opacity: 0; }
+          }
+          @keyframes coinSpin {
+            0%   { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+          }
+          @keyframes splashPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(251,191,36,0.5)); }
+            50%       { transform: scale(1.04); filter: drop-shadow(0 0 32px rgba(251,191,36,0.8)); }
+          }
+          @keyframes splashWordFade {
+            0%   { opacity: 0; transform: translateY(8px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+          }
+          .splash-bunny { animation: splashPulse 2s ease-in-out infinite; }
+          .splash-word  { animation: splashWordFade 0.6s ease 0.3s both; }
+        `}</style>
+
+        {/* Falling coins */}
+        {coins.map(c => (
+          <div key={c.id} style={{
+            position: "absolute",
+            left: c.left,
+            top: "-60px",
+            width: `${c.size}px`,
+            height: `${c.size}px`,
+            borderRadius: "50%",
+            background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+            border: `${c.size > 30 ? 2 : 1.5}px solid #92400E`,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(120,53,0,0.5), inset 1px 1px 4px rgba(254,243,199,0.4)",
+            animation: `coinFall ${c.duration} ${c.delay} ease-in infinite`,
+            ["--r" as any]: `${c.rotate}deg`,
+          }}>
+            <div style={{ position: "absolute", top: "15%", left: "20%", width: "30%", height: "18%", background: "radial-gradient(ellipse,rgba(255,255,255,0.55),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
+          </div>
+        ))}
+
+        {/* Bunny centered */}
+        <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "12px" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain" }} />
+        </div>
+
+        {/* Logo text */}
+        <div className="splash-word" style={{ zIndex: 2, textAlign: "center" }}>
+          <p style={{
+            fontSize: "2.4rem", fontWeight: 900, letterSpacing: "0.02em",
+            background: "linear-gradient(90deg, #fbbf24, #f0abfc, #67e8f9, #34d399)",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            textShadow: "none", lineHeight: 1,
+          }}>HablaBeat</p>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 600, marginTop: "6px", letterSpacing: "0.15em" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
     )
