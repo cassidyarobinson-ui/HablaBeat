@@ -3007,14 +3007,14 @@ export default function HablaBeat() {
                             <div className="flex gap-2 mt-2 ml-7">
                               {selectedLanguage === "spanish" && (
                                 <button
-                                  onClick={() => { closeWorld(); setTimeout(() => handlePlayDDR(song.id, openCategory!.id, openSection!.id), 360) }}
+                                  onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
                                   className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
                                   style={{ background: "rgba(0,0,0,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
                                 >🥕 Play</button>
                               )}
                               {isClickable && (
                                 <button
-                                  onClick={() => { closeWorld(); setTimeout(() => handlePlaySong(song.id, openCategory!.id, openSection!.id), 360) }}
+                                  onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
                                   className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
                                   style={{ background: "rgba(0,0,0,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
                                 >🎤 Sing</button>
