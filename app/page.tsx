@@ -3136,7 +3136,7 @@ export default function HablaBeat() {
                         <button
                           key={section.id}
                           onClick={() => setOpenSectionId(section.id)}
-                          className="relative flex flex-col items-center justify-center gap-1 rounded-full p-2 aspect-square transition-all active:scale-90 world-float"
+                          className="relative flex items-center justify-center rounded-full aspect-square transition-all active:scale-90 world-float overflow-hidden"
                           style={{
                             background: sectionGradient,
                             border: "2px solid rgba(255,255,255,0.5)",
@@ -3146,24 +3146,27 @@ export default function HablaBeat() {
                         >
                           {/* Unlock dot */}
                           {isSectionBadgeUnlocked(section) && (
-                            <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm" />
+                            <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
                           )}
-                          {/* Icon */}
-                          {section.id === "ar-verbs" ? (
-                            <span className="text-2xl leading-none">🅰️</span>
-                          ) : section.id === "er-verbs" ? (
-                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 6px rgba(0,0,0,0.2)", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>E</span>
-                          ) : section.id === "ir-verbs" ? (
-                            <span className="flex items-center justify-center font-black text-white leading-none rounded-lg" style={{ fontSize: "18px", width: "30px", height: "30px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 6px rgba(0,0,0,0.2)", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>I</span>
-                          ) : (
-                            <span className="text-2xl leading-none">{section.icon}</span>
-                          )}
-                          {/* Name */}
-                          <span className="text-white font-black text-[11px] text-center leading-tight drop-shadow-sm px-0.5">
+                          {/* Large icon fills the circle */}
+                          <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "50px", lineHeight: 1 }}>
+                            {section.id === "ar-verbs" ? "🅰️"
+                              : section.id === "er-verbs"
+                                ? <span className="flex items-center justify-center font-black text-white rounded-xl" style={{ fontSize: "38px", width: "54px", height: "54px", background: "linear-gradient(135deg,#4ade80,#16a34a)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>E</span>
+                                : section.id === "ir-verbs"
+                                  ? <span className="flex items-center justify-center font-black text-white rounded-xl" style={{ fontSize: "38px", width: "54px", height: "54px", background: "linear-gradient(135deg,#c084fc,#9333ea)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>I</span>
+                                  : section.icon}
+                          </span>
+                          {/* Name overlaid at bottom with black outline */}
+                          <span
+                            className="absolute bottom-0 left-0 right-0 text-center font-black text-[10px] leading-tight px-1 pb-1.5 z-10"
+                            style={{
+                              color: "white",
+                              textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.5)",
+                            }}
+                          >
                             {section.title}
                           </span>
-                          {/* Song count */}
-                          <span className="text-white/80 text-[10px] font-semibold">{section.songs.length} songs</span>
                         </button>
                       )
                     })}
