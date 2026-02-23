@@ -1471,7 +1471,7 @@ export default function HablaBeat() {
     return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
   }, [])
 
-  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer" | "store">("songs")
+  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer">("songs")
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
@@ -2366,14 +2366,6 @@ export default function HablaBeat() {
               <Button
                 variant="ghost"
                 className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => { stopMic(); setCurrentView("store") }}
-              >
-                <ShoppingBag className="h-7 w-7" />
-                <span className="text-xs font-semibold">Store</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                 onClick={() => { stopMic(); setCurrentView("visualizer") }}
               >
                 <Sparkles className="h-7 w-7" />
@@ -2479,7 +2471,7 @@ export default function HablaBeat() {
           </div>
 
           {/* World Collection Display */}
-          <div className="px-4 pt-4 space-y-4 pb-32">
+          <div className="px-4 pt-4 space-y-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Worlds Collected</h2>
 
             {earnedCoins.length === 0 ? (
@@ -2520,6 +2512,93 @@ export default function HablaBeat() {
             )}
           </div>
 
+          {/* ── Store — embedded below bank ── */}
+          <div className="px-4 pt-6 pb-32">
+            <h2 className="text-xl font-bold text-gray-900 mb-3">Store 🛍️</h2>
+
+            {/* Coin balance */}
+            <div className="mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{
+                background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
+                border: "2px solid rgba(255,255,255,0.6)"
+              }}>
+                <div style={{
+                  width: "28px", height: "28px", borderRadius: "50%",
+                  background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+                  border: "2px solid #92400E",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.25), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0, position: "relative", overflow: "hidden"
+                }}>
+                  <div style={{ position: "absolute", inset: "2px", borderRadius: "50%", border: "1px solid rgba(254,243,199,0.4)" }} />
+                  <span style={{ fontSize: "11px" }}>🏆</span>
+                </div>
+                <span className="text-white font-black text-lg">{challengeCoins}</span>
+                <span className="text-white/80 font-semibold text-sm">coins</span>
+              </div>
+            </div>
+
+            {/* Tab Selector */}
+            <div className="flex gap-2 bg-gray-100 p-1 rounded-2xl mb-4">
+              {(["bunny", "theme"] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setStoreTab(tab)}
+                  className="flex-1 py-2 rounded-xl text-sm font-bold transition-all"
+                  style={storeTab === tab ? {
+                    background: "linear-gradient(135deg, #a855f7, #6366f1)",
+                    color: "white",
+                    boxShadow: "0 2px 8px rgba(168,85,247,0.4)"
+                  } : { color: "#6b7280" }}
+                >
+                  {tab === "bunny" ? "🐰 Bunnies" : "🎨 Themes"}
+                </button>
+              ))}
+            </div>
+
+            {/* Item Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {STORE_CATALOG.filter(item => item.category === storeTab).map(item => {
+                const isOwned = storeOwned.includes(item.id)
+                const isActive = (item.category === "bunny" && activeBunny === item.id) ||
+                                 (item.category === "theme" && activeTheme === item.id)
+                const canAfford = challengeCoins >= item.cost
+                return (
+                  <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
+                    style={isActive ? { border: "2px solid #34d399", boxShadow: "0 0 0 3px rgba(52,211,153,0.15)" } : {}}>
+                    {item.category === "bunny" && item.imageSrc ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.imageSrc} alt={item.name} className="w-20 h-20 object-contain" />
+                    ) : item.category === "theme" ? (
+                      <div className="w-20 h-14 rounded-xl shadow-inner border border-white/50" style={{ background: THEME_GRADIENTS[item.id] ?? "#e0f7ff" }} />
+                    ) : (
+                      <span className="text-4xl">{item.emoji}</span>
+                    )}
+                    <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
+                    <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
+                    {isActive ? (
+                      <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
+                    ) : isOwned ? (
+                      <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95" style={{ background: "linear-gradient(135deg, #2dd4bf, #22d3ee)", color: "white" }}>Equip</button>
+                    ) : canAfford ? (
+                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95" style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", color: "white" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                          Buy — {item.cost}
+                          <span style={{ display: "inline-block", width: "16px", height: "16px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", boxShadow: "inset 0 -1px 3px rgba(120,53,0,0.4)", verticalAlign: "middle" }} />
+                        </span>
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-400 font-semibold" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                        Need {item.cost}
+                        <span style={{ display: "inline-block", width: "14px", height: "14px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", opacity: 0.7, verticalAlign: "middle" }} />
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
           {/* Bottom Navigation */}
           <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
@@ -2539,14 +2618,6 @@ export default function HablaBeat() {
               >
                 <Coins className="h-7 w-7" />
                 <span className="text-xs font-bold">Bank</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("store")}
-              >
-                <ShoppingBag className="h-7 w-7" />
-                <span className="text-xs font-semibold">Store</span>
               </Button>
               <Button
                 variant="ghost"
@@ -3155,14 +3226,6 @@ export default function HablaBeat() {
                 <Button
                   variant="ghost"
                   className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                  onClick={() => setCurrentView("store")}
-                >
-                  <ShoppingBag className="h-7 w-7" />
-                  <span className="text-xs font-semibold">Store</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
                   onClick={() => setCurrentView("visualizer")}
                 >
                   <Sparkles className="h-7 w-7" />
@@ -3201,14 +3264,6 @@ export default function HablaBeat() {
               </Button>
               <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("store")}
-              >
-                <ShoppingBag className="h-7 w-7" />
-                <span className="text-xs font-semibold">Store</span>
-              </Button>
-              <Button
-                variant="ghost"
                 className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
                 style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
                 onClick={() => setCurrentView("visualizer")}
@@ -3223,190 +3278,6 @@ export default function HablaBeat() {
     )
   }
 
-  if (currentView === "store") {
-    const storeItems = STORE_CATALOG.filter(item => item.category === storeTab)
-    return (
-      <div className="min-h-screen swirl-bg">
-        <style>{`
-          @keyframes swirlBg {
-            0%   { background-position: 0% 50%; }
-            25%  { background-position: 50% 100%; }
-            50%  { background-position: 100% 50%; }
-            75%  { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
-          }
-          .swirl-bg {
-            background: linear-gradient(135deg, #e0f7ff, #d4f5e9, #fde8ff, #fff3d4);
-            background-size: 400% 400%;
-            animation: swirlBg 12s ease-in-out infinite;
-          }
-        `}</style>
-        <div className="max-w-md mx-auto min-h-screen">
-
-          {/* Header — same style as Songs/Bank */}
-          <div className="relative overflow-hidden pb-5 rounded-3xl mx-2 mt-2" style={{
-            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
-          }}>
-            <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-            <div className="absolute top-2 right-[-10px] w-28 h-16 rounded-full opacity-35" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-            <span className="absolute top-8 right-8 text-yellow-300 text-xl select-none" style={{ filter: "drop-shadow(0 0 4px gold)" }}>✦</span>
-            <span className="absolute top-16 left-6 text-yellow-200 text-sm select-none" style={{ filter: "drop-shadow(0 0 3px gold)" }}>✦</span>
-
-            {/* Bunny + Title row */}
-            <div className="flex items-end px-3 pt-4 gap-0">
-              <div className="w-28 h-28 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
-              </div>
-              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
-                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
-                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
-                  border: "3px solid rgba(255,255,255,0.7)",
-                  boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
-                }}>
-                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
-                    borderTop: "14px solid transparent",
-                    borderBottom: "14px solid transparent",
-                    borderRight: "12px solid #fbbf24"
-                  }} />
-                  <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
-                  <h1 className="text-3xl font-black text-white text-center tracking-wide drop-shadow-md"
-                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
-                    Store 🛍️
-                  </h1>
-                </div>
-                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{
-                  background: "linear-gradient(90deg, #34d399, #06b6d4)"
-                }} />
-              </div>
-            </div>
-
-            {/* Coin balance */}
-            <div className="px-4 mt-3">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{
-                background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
-                border: "2px solid rgba(255,255,255,0.6)"
-              }}>
-                <div style={{
-                  width: "28px", height: "28px", borderRadius: "50%",
-                  background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-                  border: "2px solid #92400E",
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.25), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0, position: "relative", overflow: "hidden"
-                }}>
-                  <div style={{ position: "absolute", inset: "2px", borderRadius: "50%", border: "1px solid rgba(254,243,199,0.4)" }} />
-                  <span style={{ fontSize: "11px" }}>🏆</span>
-                </div>
-                <span className="text-white font-black text-lg">{challengeCoins}</span>
-                <span className="text-white/80 font-semibold text-sm">coins</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Tab Selector */}
-          <div className="px-4 pt-4">
-            <div className="flex gap-2 bg-gray-100 p-1 rounded-2xl">
-              {(["bunny", "theme"] as const).map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setStoreTab(tab)}
-                  className="flex-1 py-2 rounded-xl text-sm font-bold transition-all"
-                  style={storeTab === tab ? {
-                    background: "linear-gradient(135deg, #a855f7, #6366f1)",
-                    color: "white",
-                    boxShadow: "0 2px 8px rgba(168,85,247,0.4)"
-                  } : { color: "#6b7280" }}
-                >
-                  {tab === "bunny" ? "🐰 Bunnies" : "🎨 Themes"}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Item Grid */}
-          <div className="px-4 pt-4 pb-32 grid grid-cols-2 gap-4">
-            {storeItems.map(item => {
-              const isOwned = storeOwned.includes(item.id)
-              const isActive = (item.category === "bunny" && activeBunny === item.id) ||
-                               (item.category === "theme" && activeTheme === item.id)
-              const canAfford = challengeCoins >= item.cost
-
-              return (
-                <div key={item.id} className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition-all active:scale-[0.97]"
-                  style={isActive ? { border: "2px solid #34d399", boxShadow: "0 0 0 3px rgba(52,211,153,0.15)" } : {}}>
-
-                  {/* Preview */}
-                  {item.category === "bunny" && item.imageSrc ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={item.imageSrc} alt={item.name} className="w-20 h-20 object-contain" />
-                  ) : item.category === "theme" ? (
-                    <div className="w-20 h-14 rounded-xl shadow-inner border border-white/50" style={{ background: THEME_GRADIENTS[item.id] ?? "#e0f7ff" }} />
-                  ) : (
-                    <span className="text-4xl">{item.emoji}</span>
-                  )}
-
-                  <p className="font-bold text-gray-900 text-sm text-center leading-tight">{item.name}</p>
-                  <p className="text-xs text-gray-400 text-center leading-tight">{item.description}</p>
-
-                  {/* Action */}
-                  {isActive ? (
-                    <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Equipped</span>
-                  ) : isOwned ? (
-                    <button
-                      onClick={() => handleStoreEquip(item)}
-                      className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95"
-                      style={{ background: "linear-gradient(135deg, #2dd4bf, #22d3ee)", color: "white" }}
-                    >
-                      Equip
-                    </button>
-                  ) : canAfford ? (
-                    <button
-                      onClick={() => handleStorePurchase(item)}
-                      className="w-full py-1.5 rounded-full text-sm font-bold transition-all active:scale-95"
-                      style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", color: "white" }}
-                    >
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                        Buy — {item.cost}
-                        <span style={{ display: "inline-block", width: "16px", height: "16px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", boxShadow: "inset 0 -1px 3px rgba(120,53,0,0.4)", verticalAlign: "middle" }} />
-                      </span>
-                    </button>
-                  ) : (
-                    <span className="text-xs text-gray-400 font-semibold" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                      Need {item.cost}
-                      <span style={{ display: "inline-block", width: "14px", height: "14px", borderRadius: "50%", background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border: "1.5px solid #92400E", opacity: 0.7, verticalAlign: "middle" }} />
-                    </span>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
-            <div className="flex justify-around">
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
-                <Music className="h-7 w-7" />
-                <span className="text-xs font-semibold">Songs</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
-                <Coins className="h-7 w-7" />
-                <span className="text-xs font-semibold">Bank</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("store")}>
-                <ShoppingBag className="h-7 w-7" />
-                <span className="text-xs font-bold">Store</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
-                <Sparkles className="h-7 w-7" />
-                <span className="text-xs font-semibold">Visualizer</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return null
 }
