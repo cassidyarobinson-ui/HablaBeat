@@ -2478,7 +2478,7 @@ export default function HablaBeat() {
               </div>
             </div>
 
-            {/* Stats — two cards: worlds collected + vocab bank */}
+            {/* Stats — three cards: worlds collected + vocab bank + items */}
             <div className="px-3 mt-4 flex gap-3">
               {/* Worlds Collected */}
               <div className="flex-1 relative overflow-hidden rounded-2xl px-4 py-4 shadow-lg" style={{
@@ -2501,6 +2501,17 @@ export default function HablaBeat() {
                 <div className="absolute right-3 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
                 <p className="text-white font-black leading-none" style={{ fontSize: "1.9rem" }}>{totalVocabBank.toLocaleString()}</p>
                 <p className="text-white font-bold text-sm leading-tight mt-0.5">vocab bank<br/>coins total 💰</p>
+              </div>
+              {/* Items */}
+              <div className="flex-1 relative overflow-hidden rounded-2xl px-4 py-4 shadow-lg" style={{
+                background: "linear-gradient(135deg, #fb923c 0%, #f43f5e 60%, #e11d48 100%)",
+                border: "2px solid rgba(255,255,255,0.6)",
+                boxShadow: "0 4px 20px rgba(251,146,60,0.4)"
+              }}>
+                <span className="absolute top-2 right-4 text-white/40 text-lg select-none">✦</span>
+                <div className="absolute right-3 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
+                <p className="text-white font-black leading-none" style={{ fontSize: "1.9rem" }}>{lunasPurse.length}</p>
+                <p className="text-white font-bold text-sm leading-tight mt-0.5">items 👛</p>
               </div>
             </div>
           </div>
