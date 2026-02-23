@@ -3053,7 +3053,7 @@ export default function HablaBeat() {
           })()}
 
           {/* ── GALAXY MAP — stacked, one always open ── */}
-          <div className="px-2 pt-4 pb-[88px] space-y-3">
+          <div className="px-2 pt-2 pb-[88px] space-y-2">
             <style>{`
               @keyframes galaxyOpen {
                 from { opacity: 0; transform: scaleY(0.9); }
@@ -3080,8 +3080,8 @@ export default function HablaBeat() {
                   {/* ── Header row — always visible ── */}
                   <button
                     onClick={() => setOpenCategoryId(category.id)}
-                    className="relative w-full flex items-center gap-4 px-4 overflow-hidden active:opacity-80 transition-all"
-                    style={{ height: isOpen ? "90px" : "72px" }}
+                    className="relative w-full flex items-center gap-3 px-3 overflow-hidden active:opacity-80 transition-all"
+                    style={{ height: "60px" }}
                   >
                     {/* Stars */}
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -3094,9 +3094,9 @@ export default function HablaBeat() {
 
                     {/* Planet orb */}
                     <div style={{
-                      width: "48px", height: "48px", borderRadius: "50%", flexShrink: 0,
+                      width: "40px", height: "40px", borderRadius: "50%", flexShrink: 0,
                       background: `radial-gradient(circle at 35% 35%, ${catAccent[2]}, ${catAccent[0]} 50%, ${catAccent[1]})`,
-                      boxShadow: `0 0 14px ${catAccent[0]}88`,
+                      boxShadow: `0 0 12px ${catAccent[0]}88`,
                       border: "2px solid rgba(255,255,255,0.2)",
                       position: "relative",
                     }}>
@@ -3115,8 +3115,8 @@ export default function HablaBeat() {
 
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
-                    <div className="galaxy-worlds-in px-3 pt-1 pb-4">
-                      <div className="grid grid-cols-3 gap-2.5">
+                    <div className="galaxy-worlds-in px-2 pt-1 pb-2">
+                      <div className="grid grid-cols-3 gap-1.5">
                         {category.sections.map((section, sectionIdx) => {
                           const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
                           return (
