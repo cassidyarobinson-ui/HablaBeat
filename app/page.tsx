@@ -2959,9 +2959,9 @@ export default function HablaBeat() {
                     >←</button>
                     <div className="flex items-center gap-2.5">
                       <span className="text-3xl">
-                        {openSection.id === "ar-verbs" ? "🅰️"
-                          : openSection.id === "er-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#4ade80,#16a34a)", boxShadow:"0 2px 6px rgba(0,0,0,0.25)" }}>E</span>
-                          : openSection.id === "ir-verbs" ? <span className="flex items-center justify-center font-black text-white rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#c084fc,#9333ea)", boxShadow:"0 2px 6px rgba(0,0,0,0.25)" }}>I</span>
+                        {openSection.id === "ar-verbs" ? <span className="flex items-center justify-center font-black rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#1e1b4b,#312e81)", color:"#fbbf24", boxShadow:"0 2px 6px rgba(0,0,0,0.3)" }}>A</span>
+                          : openSection.id === "er-verbs" ? <span className="flex items-center justify-center font-black rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#164e63,#0e7490)", color:"#6ee7b7", boxShadow:"0 2px 6px rgba(0,0,0,0.3)" }}>E</span>
+                          : openSection.id === "ir-verbs" ? <span className="flex items-center justify-center font-black rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#4a1942,#831843)", color:"#f9a8d4", boxShadow:"0 2px 6px rgba(0,0,0,0.3)" }}>I</span>
                           : openSection.icon}
                       </span>
                       <div>
