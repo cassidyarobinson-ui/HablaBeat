@@ -3,6 +3,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* PWA full-screen safe area support */
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
