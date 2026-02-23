@@ -2970,16 +2970,16 @@ export default function HablaBeat() {
                               {selectedLanguage === "spanish" && (
                                 <button
                                   onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
-                                  style={{ background: "rgba(0,0,0,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
-                                >🥕 Play</button>
+                                  className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-white transition-all active:scale-95"
+                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 3px 12px rgba(249,115,22,0.45)" }}
+                                ><span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite" }}>🥕</span> Play</button>
                               )}
                               {isClickable && (
                                 <button
                                   onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-black text-white transition-all active:scale-95"
-                                  style={{ background: "rgba(0,0,0,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
-                                >🎤 Sing</button>
+                                  className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-white transition-all active:scale-95"
+                                  style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 3px 12px rgba(168,85,247,0.45)" }}
+                                ><span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span> Sing</button>
                               )}
                             </div>
                           </div>
@@ -3000,6 +3000,10 @@ export default function HablaBeat() {
                 to   { opacity: 1; transform: scaleY(1); }
               }
               .galaxy-worlds-in { animation: galaxyOpen 0.28s ease forwards; transform-origin: top; }
+              @keyframes btnBounce {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-3px); }
+              }
             `}</style>
             {curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id

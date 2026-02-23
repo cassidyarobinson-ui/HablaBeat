@@ -1001,25 +1001,34 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
             <p className="font-black text-gray-800 mb-3">Song Speed</p>
+            <style>{`
+              @keyframes btnBounce {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-3px); }
+              }
+            `}</style>
             <div className="flex gap-3">
-              {(["slower", "normal"] as const).map((s) => (
+              {(["slower", "normal"] as const).map((s, i) => (
                 <button
                   key={s}
                   onClick={() => setSpeed(s)}
-                  className="flex-1 py-3.5 rounded-full font-bold text-lg transition-all"
+                  className="flex-1 py-3.5 rounded-full font-black text-lg transition-all active:scale-95 flex items-center justify-center gap-2"
                   style={speed === s ? {
-                    background: "#000",
+                    background: s === "slower"
+                      ? "linear-gradient(135deg, #0ea5e9, #6366f1)"
+                      : "linear-gradient(135deg, #f97316, #ef4444)",
                     color: "#fff",
-                    border: "2px solid #000",
+                    boxShadow: `0 3px 12px ${s === "slower" ? "rgba(14,165,233,0.45)" : "rgba(249,115,22,0.45)"}`,
+                    border: "2px solid rgba(255,255,255,0.3)",
                   } : {
                     background: "#fff",
                     color: "#000",
-                    border: "2px solid #000",
+                    border: "2px solid #e5e7eb",
                   }}
                 >
                   {s === "slower"
-                    ? <><span className="emoji-turtle">🐢</span> Slower</>
-                    : <><span className="emoji-setup-zap">⚡</span> Normal</>}
+                    ? <><span style={{ display: "inline-block", animation: speed === s ? "btnBounce 1.1s ease-in-out infinite" : "none" }}>🐢</span> Slower</>
+                    : <><span style={{ display: "inline-block", animation: speed === s ? "btnBounce 0.8s ease-in-out infinite" : "none" }}>⚡</span> Normal</>}
                 </button>
               ))}
             </div>
@@ -1033,13 +1042,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           }}>
             <button
               onClick={startGame}
-              className="w-full py-5 rounded-full font-black text-2xl text-white transition-all active:scale-95"
+              className="w-full py-5 rounded-full font-black text-2xl text-white transition-all active:scale-95 flex items-center justify-center gap-3"
               style={{
                 background: "linear-gradient(135deg, #2dd4bf, #22d3ee, #86efac)",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4)"
               }}
             >
-              <span className="emoji-play-btn">▶</span> Start!
+              <span style={{ display: "inline-block", animation: "btnBounce 0.7s ease-in-out infinite" }}>▶</span> Start!
             </button>
           </div>
 
