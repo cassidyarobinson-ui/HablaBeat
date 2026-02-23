@@ -2661,17 +2661,16 @@ export default function HablaBeat() {
           }
           .world-float { animation: worldFloat 3.5s ease-in-out infinite; }
           @keyframes worldZoomIn {
-            0%   { clip-path: circle(5% at var(--ox) var(--oy)); opacity: 0.6; }
-            30%  { clip-path: circle(30% at 50% 50%); opacity: 0.9; }
-            65%  { clip-path: circle(78% at 50% 50%); opacity: 1; }
+            0%   { clip-path: circle(20% at var(--ox) var(--oy)); opacity: 0.7; }
+            50%  { clip-path: circle(60% at 50% 50%); opacity: 1; }
             100% { clip-path: circle(150% at 50% 50%); opacity: 1; }
           }
           @keyframes worldZoomOut {
             0%   { clip-path: circle(150% at 50% 50%); opacity: 1; }
-            100% { clip-path: circle(5% at var(--ox) var(--oy)); opacity: 0; }
+            100% { clip-path: circle(20% at var(--ox) var(--oy)); opacity: 0; }
           }
-          .world-zoom-in  { animation: worldZoomIn  1.1s cubic-bezier(0.16,1,0.3,1) forwards; }
-          .world-zoom-out { animation: worldZoomOut 0.45s cubic-bezier(0.4,0,0.2,1) forwards; }
+          .world-zoom-in  { animation: worldZoomIn  0.9s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+          .world-zoom-out { animation: worldZoomOut 0.4s cubic-bezier(0.4,0,0.2,1) forwards; }
           @keyframes worldContentFadeIn {
             0%   { opacity: 0; transform: scale(0.92); }
             100% { opacity: 1; transform: scale(1); }
