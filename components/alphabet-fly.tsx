@@ -181,6 +181,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const rafRef = useRef<number | null>(null)
   const lastTimeRef = useRef(0)
   const coinTimerRef = useRef(0)
+  const waveTimerRef = useRef(0)           // timer for continuous letter waves
+  const missedTargetRef = useRef(false)    // flag: target exited screen without being hit
 
   // Keep alphabetIdx accessible in RAF without stale closure
   const alphabetIdxRef = useRef(0)
@@ -243,27 +245,30 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     }
   }, [gamePhase, startHold, stopHold])
 
-  // ── Spawn a round of letters ──────────────────────────────────────────────
-  const spawnLetters = useCallback((targetLabel: string) => {
+  // ── Spawn a wave of letters (APPENDS — multiple waves on screen at once) ──
+  // Each wave has 1 target + 2 distractors placed at random X positions
+  const spawnWave = useCallback((targetLabel: string) => {
     const pool = ALL_ITEMS.filter(a => a.label !== targetLabel)
     const distractors = shuffle(pool).slice(0, 2)
     const targetItem = ALL_ITEMS.find(a => a.label === targetLabel)!
     const all = shuffle([targetItem, ...distractors])
-    const spacing = 28
-    const startX = 50 - spacing
+
+    // Spread across screen with randomised X so waves don't stack
+    const positions = shuffle([15, 35, 55, 72, 88]).slice(0, 3)
 
     const newLetters: FloatingLetter[] = all.map((item, i) => ({
       id: letterIdRef.current++,
       label: item.label,
       category: item.category,
-      x: startX + i * spacing,
-      y: -10,
-      speed: 0.20 + Math.random() * 0.10,   // faster — was 0.09
+      x: positions[i],
+      y: -8 - Math.random() * 6,    // stagger entry slightly
+      speed: 0.20 + Math.random() * 0.10,
       isTarget: item.label === targetLabel,
       collected: false,
       flashState: "none",
     }))
-    setLetters(newLetters)
+    // APPEND to existing letters (not replace)
+    setLetters(prev => [...prev.filter(l => !l.collected), ...newLetters])
   }, [])
 
   // ── Spawn coins (2 at a time, spread apart) ───────────────────────────────
@@ -279,32 +284,34 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     setCoinItems(prev => [...prev, ...newCoins])
   }, [])
 
-  // ── Handle correct collection ─────────────────────────────────────────────
-  const handleCorrect = useCallback(() => {
+  // ── Advance to next letter (correct hit OR missed / fell off screen) ──────
+  const advanceAlphabet = useCallback((wasCorrect: boolean) => {
     const idx = alphabetIdxRef.current
     const entry = ALPHABET_QUEUE[idx % ALPHABET_QUEUE.length]
-    setFlashScreen("correct")
-    setScore(s => s + 10)
-    setHintText(entry.hint)
-    setShowHint(true)
-    setLetters([])
-    setTimeout(() => {
-      setFlashScreen(null)
-      setShowHint(false)
-    }, 900)
+    if (wasCorrect) {
+      setFlashScreen("correct")
+      setScore(s => s + 10)
+      setHintText(entry.hint)
+      setShowHint(true)
+      setTimeout(() => { setFlashScreen(null); setShowHint(false) }, 900)
+    } else {
+      // Missed — brief red flash, no score penalty, just move on
+      setFlashScreen("wrong")
+      setTimeout(() => setFlashScreen(null), 400)
+    }
     const nextIdx = idx + 1
     setAlphabetIdx(nextIdx)
     alphabetIdxRef.current = nextIdx
-    setTimeout(() => {
-      const next = ALPHABET_QUEUE[nextIdx % ALPHABET_QUEUE.length]
-      spawnLetters(next.label)
-    }, 1100)
-  }, [spawnLetters])
+    // Reset wave timer so a new wave spawns very soon
+    waveTimerRef.current = 99999
+  }, [])
 
-  const handleWrong = useCallback(() => {
+  const handleCorrect = useCallback(() => advanceAlphabet(true),  [advanceAlphabet])
+  const handleWrong   = useCallback(() => {
+    // Wrong letter hit — flash red but DON'T advance
     setFlashScreen("wrong")
     setScore(s => Math.max(0, s - 5))
-    setTimeout(() => setFlashScreen(null), 500)
+    setTimeout(() => setFlashScreen(null), 400)
   }, [])
 
   // ── Main game loop ────────────────────────────────────────────────────────
@@ -325,26 +332,47 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
     // ── Move letters downward ──
     collectedThisFrameRef.current = false
-    setLetters(prev => prev.map(l => {
-      if (l.collected) return l
-      const newY = l.y + l.speed * (dt / 16)
-      const lxPx = (l.x / 100) * areaW
-      const lyPx = (newY / 100) * areaH
-      const bxPx = (bunnyX.current / 100) * areaW
-      const byPx = (bunnyY.current / 100) * areaH
-      const dist = Math.hypot(lxPx - bxPx, lyPx - byPx)
-      if (dist < HIT_RADIUS && !collectedThisFrameRef.current) {
-        collectedThisFrameRef.current = true
-        if (l.isTarget) {
-          handleCorrect()
-        } else {
-          handleWrong()
+    let targetMissed = false
+    setLetters(prev => {
+      const updated = prev.map(l => {
+        if (l.collected) return l
+        const newY = l.y + l.speed * (dt / 16)
+        const lxPx = (l.x / 100) * areaW
+        const lyPx = (newY / 100) * areaH
+        const bxPx = (bunnyX.current / 100) * areaW
+        const byPx = (bunnyY.current / 100) * areaH
+        const dist = Math.hypot(lxPx - bxPx, lyPx - byPx)
+        if (dist < HIT_RADIUS && !collectedThisFrameRef.current) {
+          collectedThisFrameRef.current = true
+          if (l.isTarget) {
+            handleCorrect()
+          } else {
+            handleWrong()
+          }
+          return { ...l, collected: true, flashState: (l.isTarget ? "correct" : "wrong") as FloatingLetter["flashState"] }
         }
-        return { ...l, collected: true, flashState: l.isTarget ? "correct" : "wrong" }
-      }
-      if (newY > 115) return { ...l, collected: true }
-      return { ...l, y: newY }
-    }))
+        // Target fell off screen without being hit → auto-advance
+        if (newY > 108 && l.isTarget && !l.collected) {
+          targetMissed = true
+          return { ...l, collected: true }
+        }
+        if (newY > 115) return { ...l, collected: true }
+        return { ...l, y: newY }
+      })
+      return updated
+    })
+    if (targetMissed && !collectedThisFrameRef.current) {
+      collectedThisFrameRef.current = true
+      advanceAlphabet(false)
+    }
+
+    // ── Continuous wave spawner ──
+    waveTimerRef.current += dt
+    if (waveTimerRef.current > 2200 + Math.random() * 600) {
+      waveTimerRef.current = 0
+      const cur = ALPHABET_QUEUE[alphabetIdxRef.current % ALPHABET_QUEUE.length]
+      spawnWave(cur.label)
+    }
 
     // ── Move coins ──
     setCoinItems(prev => prev.map(c => {
@@ -371,19 +399,21 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     }
 
     rafRef.current = requestAnimationFrame(gameLoop)
-  }, [handleCorrect, handleWrong, spawnCoin])
+  }, [handleCorrect, handleWrong, advanceAlphabet, spawnWave, spawnCoin])
 
   // ── Countdown → start ────────────────────────────────────────────────────
   useEffect(() => {
     if (gamePhase !== "countdown") return
     if (countdown <= 0) {
       setGamePhase("playing")
-      spawnLetters(ALPHABET_QUEUE[0].label)
+      // Kick off with the first wave immediately; wave timer will add more continuously
+      spawnWave(ALPHABET_QUEUE[0].label)
+      waveTimerRef.current = 0
       return
     }
     const t = setTimeout(() => setCountdown(c => c - 1), 1000)
     return () => clearTimeout(t)
-  }, [gamePhase, countdown, spawnLetters])
+  }, [gamePhase, countdown, spawnWave])
 
   // ── Start/stop RAF ───────────────────────────────────────────────────────
   useEffect(() => {
