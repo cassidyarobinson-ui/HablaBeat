@@ -1501,6 +1501,7 @@ export default function HablaBeat() {
   const [totalVocabBank, setTotalVocabBank] = useState(0)
   const [openSectionId, setOpenSectionId] = useState<string>("")
   const [worldClosing, setWorldClosing] = useState(false)
+  const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "theme" | "pointer" | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
@@ -1532,6 +1533,16 @@ export default function HablaBeat() {
   const [activeTheme, setActiveTheme] = useState("theme-default")
   const [activePointer, setActivePointer] = useState("pointer-carrot")
   const [storeTab, setStoreTab] = useState<"effect" | "theme" | "pointer">("effect")
+  const [storeTabAnimating, setStoreTabAnimating] = useState(false)
+
+  const handleStoreTabChange = (tab: "effect" | "theme" | "pointer") => {
+    if (tab === storeTab) return
+    setStoreTabAnimating(true)
+    setTimeout(() => {
+      setStoreTab(tab)
+      setStoreTabAnimating(false)
+    }, 120)
+  }
 
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
@@ -1899,6 +1910,24 @@ export default function HablaBeat() {
     return challengesWon > 0 && section.songs.some((song: any) => song.playCount >= 1)
   }
 
+  // Play a soft bloop sound on world hover using Web Audio API
+  const playWorldHover = () => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.type = "sine"
+      osc.frequency.setValueAtTime(520, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + 0.08)
+      gain.gain.setValueAtTime(0.08, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18)
+      osc.start(ctx.currentTime)
+      osc.stop(ctx.currentTime + 0.18)
+    } catch { /* audio not available */ }
+  }
+
   // Award a coin for a section when a challenge is won for a song in that section
   const awardChallengeWinCoin = (songNum: number) => {
     const allSecs = curriculumData.flatMap((cat) => cat.sections)
@@ -2198,6 +2227,13 @@ export default function HablaBeat() {
         } : undefined}
         onGameEnd={handleDDRGameEnd}
         onChallengeSent={handleChallengeSent}
+        activeEffect={activeEffect}
+        activeTheme={activeTheme}
+        activePointer={activePointer}
+        storeOwned={storeOwned}
+        onEquipEffect={setActiveEffect}
+        onEquipTheme={setActiveTheme}
+        onEquipPointer={setActivePointer}
       />
     )
   }
@@ -2550,15 +2586,64 @@ export default function HablaBeat() {
                     <div>
                       <h3 className="text-base font-black text-gray-800 mb-3">Collected ✅</h3>
                       <div className="grid grid-cols-3 gap-4">
-                        {earnedCoins.map((coin) => (
-                          <div key={coin.id} className="flex flex-col items-center">
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 border-4 border-yellow-400 shadow-lg flex items-center justify-center relative overflow-hidden">
-                              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent" />
-                              <span className="text-2xl relative z-10">{coin.icon}</span>
+                        {earnedCoins.map((coin) => {
+                          // Find the matching section to get its gradient + icon
+                          const matchSection = curriculumData.flatMap(c => c.sections).find(s => s.id === coin.id.replace("-coin",""))
+                          const sectionGradient = matchSection ? (SECTION_GRADIENTS[matchSection.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)") : "linear-gradient(135deg, #fbbf24, #f59e0b)"
+                          const displayIcon = matchSection?.icon ?? coin.icon
+                          const words = coin.name.split(" ")
+                          const topText = words.slice(0, -1).join(" ")
+                          const botText = words[words.length - 1]
+                          const r = 38, cx = 50
+                          const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
+                          const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
+                          return (
+                            <div key={coin.id} className="flex flex-col items-center">
+                              <div
+                                className="relative flex items-center justify-center rounded-full overflow-hidden world-float"
+                                style={{
+                                  width: "80px", height: "80px",
+                                  background: sectionGradient,
+                                  border: "2.5px solid rgba(255,255,255,0.6)",
+                                  boxShadow: "0 3px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3)",
+                                  animationDelay: `${(earnedCoins.indexOf(coin) * 0.4) % 3}s`,
+                                }}
+                              >
+                                <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "52px", lineHeight: 1 }}>
+                                  {matchSection?.id === "ar-verbs"
+                                    ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }}>A</span>
+                                    : matchSection?.id === "er-verbs"
+                                      ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }}>E</span>
+                                      : matchSection?.id === "ir-verbs"
+                                        ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" }}>I</span>
+                                        : displayIcon}
+                                </span>
+                                <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                                  <defs>
+                                    <path id={`earned-top-${coin.id}`} d={topArc} />
+                                    <path id={`earned-bot-${coin.id}`} d={botArc} />
+                                    <filter id={`earned-outline-${coin.id}`} x="-20%" y="-20%" width="140%" height="140%">
+                                      <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
+                                      <feFlood floodColor="#000" result="color"/>
+                                      <feComposite in="color" in2="expanded" operator="in" result="outline"/>
+                                      <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                    </filter>
+                                  </defs>
+                                  {topText && (
+                                    <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#earned-outline-${coin.id})`}>
+                                      <textPath href={`#earned-top-${coin.id}`} startOffset="50%">{topText}</textPath>
+                                    </text>
+                                  )}
+                                  <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#earned-outline-${coin.id})`} dy="-2">
+                                    <textPath href={`#earned-bot-${coin.id}`} startOffset="50%">{botText}</textPath>
+                                  </text>
+                                </svg>
+                                {/* Sheen */}
+                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent pointer-events-none rounded-full" />
+                              </div>
                             </div>
-                            <h3 className="font-bold text-gray-800 text-xs mt-2 text-center leading-tight">{coin.name}</h3>
-                          </div>
-                        ))}
+                          )
+                        })}
                       </div>
                     </div>
                   </>
@@ -2570,17 +2655,65 @@ export default function HablaBeat() {
                     <h3 className="text-base font-black text-gray-800 mb-1">Worlds to Earn 🔒</h3>
                     <p className="text-xs text-gray-400 mb-3 italic">Beat a friend in a challenge to unlock 🏆</p>
                     <div className="grid grid-cols-3 gap-4">
-                      {notYetCollected.map((section) => (
-                        <div key={section.id} className="flex flex-col items-center opacity-50">
-                          <div className="w-20 h-20 rounded-full bg-gray-200 border-4 border-gray-300 shadow-sm flex items-center justify-center relative overflow-hidden">
-                            <span className="text-2xl grayscale">{section.icon}</span>
-                            <div className="absolute inset-0 flex items-end justify-center pb-1">
-                              <span style={{ fontSize: "14px" }}>🔒</span>
+                      {notYetCollected.map((section, sectionIdx) => {
+                        const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+                        const words = section.title.split(" ")
+                        const topText = words.slice(0, -1).join(" ")
+                        const botText = words[words.length - 1]
+                        const r = 38, cx = 50
+                        const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
+                        const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
+                        return (
+                          <div key={section.id} className="flex flex-col items-center">
+                            <div
+                              className="relative flex items-center justify-center rounded-full aspect-square overflow-hidden"
+                              style={{
+                                width: "80px", height: "80px",
+                                background: sectionGradient,
+                                border: "2px solid rgba(255,255,255,0.3)",
+                                boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+                                filter: "grayscale(1) brightness(0.55)",
+                              }}
+                            >
+                              {/* Big emoji centered */}
+                              <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "52px", lineHeight: 1 }}>
+                                {section.id === "ar-verbs"
+                                  ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }}>A</span>
+                                  : section.id === "er-verbs"
+                                    ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }}>E</span>
+                                    : section.id === "ir-verbs"
+                                      ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" }}>I</span>
+                                      : section.icon}
+                              </span>
+                              {/* Curved text label */}
+                              <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                                <defs>
+                                  <path id={`locked-top-${section.id}`} d={topArc} />
+                                  <path id={`locked-bot-${section.id}`} d={botArc} />
+                                  <filter id={`locked-outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
+                                    <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
+                                    <feFlood floodColor="#000" result="color"/>
+                                    <feComposite in="color" in2="expanded" operator="in" result="outline"/>
+                                    <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                  </filter>
+                                </defs>
+                                {topText && (
+                                  <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#locked-outline-${section.id})`}>
+                                    <textPath href={`#locked-top-${section.id}`} startOffset="50%">{topText}</textPath>
+                                  </text>
+                                )}
+                                <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#locked-outline-${section.id})`} dy="-2">
+                                  <textPath href={`#locked-bot-${section.id}`} startOffset="50%">{botText}</textPath>
+                                </text>
+                              </svg>
+                              {/* Lock overlay */}
+                              <div className="absolute inset-0 flex items-center justify-center z-20" style={{ background: "rgba(0,0,0,0.15)" }}>
+                                <span style={{ fontSize: "22px", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.5))" }}>🔒</span>
+                              </div>
                             </div>
                           </div>
-                          <h3 className="font-bold text-gray-500 text-xs mt-2 text-center leading-tight">{section.title}</h3>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   </div>
                 )}
@@ -2699,43 +2832,56 @@ export default function HablaBeat() {
                     ] as const).map(tab => (
                       <button
                         key={tab.key}
-                        onClick={() => setStoreTab(tab.key)}
-                        className="flex-1 py-2 rounded-full text-xs font-black transition-all active:scale-95"
-                        style={storeTab === tab.key
-                          ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 3px 10px rgba(168,85,247,0.4)" }
-                          : { background: "#f3f4f6", color: "#6b7280" }}
+                        onClick={() => handleStoreTabChange(tab.key)}
+                        className="flex-1 py-2 rounded-full text-xs font-black"
+                        style={{
+                          ...(storeTab === tab.key
+                            ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 3px 10px rgba(168,85,247,0.4)" }
+                            : { background: "#f3f4f6", color: "#6b7280" }),
+                          transition: "transform 0.08s cubic-bezier(0.34,1.56,0.64,1), background 0.15s, box-shadow 0.15s",
+                          transform: storeTab === tab.key ? "scale(1.06) translateY(-1px)" : "scale(1) translateY(0px)",
+                        }}
                       >
-                        {tab.label}
+                        <span style={{
+                          display: "inline-block",
+                          transition: "transform 0.12s cubic-bezier(0.34,1.56,0.64,1)",
+                          transform: storeTab === tab.key ? "rotate(0deg) scale(1.15)" : "rotate(0deg) scale(1)",
+                        }}>
+                          {tab.label}
+                        </span>
                       </button>
                     ))}
                   </div>
 
-                  {/* Effects grid */}
-                  {storeTab === "effect" && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {STORE_CATALOG.filter(item => item.category === "effect").map(item => (
-                        <StoreCard key={item.id} item={item} isActive={activeEffect === item.id} canAfford={totalVocabBank >= item.cost} />
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Themes grid */}
-                  {storeTab === "theme" && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {STORE_CATALOG.filter(item => item.category === "theme").map(item => (
-                        <StoreCard key={item.id} item={item} isActive={activeTheme === item.id} canAfford={totalVocabBank >= item.cost} />
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Pointers grid */}
-                  {storeTab === "pointer" && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {STORE_CATALOG.filter(item => item.category === "pointer").map(item => (
-                        <StoreCard key={item.id} item={item} isActive={activePointer === item.id} canAfford={totalVocabBank >= item.cost} />
-                      ))}
-                    </div>
-                  )}
+                  {/* Item grid — animates in when tab changes */}
+                  <div style={{
+                    animation: storeTabAnimating ? "none" : "storeTabIn 0.18s cubic-bezier(0.34,1.56,0.64,1) both",
+                    opacity: storeTabAnimating ? 0 : 1,
+                    transform: storeTabAnimating ? "scale(0.97) translateY(4px)" : "scale(1) translateY(0)",
+                    transition: storeTabAnimating ? "opacity 0.08s, transform 0.08s" : "none",
+                  }}>
+                    {storeTab === "effect" && (
+                      <div className="grid grid-cols-2 gap-3">
+                        {STORE_CATALOG.filter(item => item.category === "effect").map(item => (
+                          <StoreCard key={item.id} item={item} isActive={activeEffect === item.id} canAfford={totalVocabBank >= item.cost} />
+                        ))}
+                      </div>
+                    )}
+                    {storeTab === "theme" && (
+                      <div className="grid grid-cols-2 gap-3">
+                        {STORE_CATALOG.filter(item => item.category === "theme").map(item => (
+                          <StoreCard key={item.id} item={item} isActive={activeTheme === item.id} canAfford={totalVocabBank >= item.cost} />
+                        ))}
+                      </div>
+                    )}
+                    {storeTab === "pointer" && (
+                      <div className="grid grid-cols-2 gap-3">
+                        {STORE_CATALOG.filter(item => item.category === "pointer").map(item => (
+                          <StoreCard key={item.id} item={item} isActive={activePointer === item.id} canAfford={totalVocabBank >= item.cost} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )
             })()}
@@ -3110,15 +3256,15 @@ export default function HablaBeat() {
                   "--ox": "50%", "--oy": "50%",
                 } as React.CSSProperties}
               >
-                {/* Giant emoji background — fills the entire screen */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
+                {/* Emoji background — fills the phone screen like a soft watermark */}
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
                   <div style={{
-                    fontSize: "85vw",
+                    fontSize: "min(90vw, 90vh)",
                     lineHeight: 1,
-                    opacity: 0.12,
-                    filter: "blur(8px)",
+                    opacity: 0.2,
+                    filter: "blur(0px)",
                     userSelect: "none",
-                    transform: "rotate(-10deg) scale(1.1)",
+                    transform: "rotate(-10deg)",
                   }}>
                     {openSection.id === "ar-verbs" ? "A"
                       : openSection.id === "er-verbs" ? "E"
@@ -3161,6 +3307,88 @@ export default function HablaBeat() {
                       </div>
                     </div>
                   </div>
+                  {/* Loadout bar — shows active gear, tap to swap */}
+                  {(() => {
+                    const activeEffectItem = STORE_CATALOG.find(i => i.id === activeEffect)
+                    const activeThemeItem  = STORE_CATALOG.find(i => i.id === activeTheme)
+                    const activePointerItem= STORE_CATALOG.find(i => i.id === activePointer)
+                    const chips = [
+                      { key: "effect" as const,  label: "Effect",  item: activeEffectItem },
+                      { key: "theme" as const,   label: "Theme",   item: activeThemeItem },
+                      { key: "pointer" as const, label: "Pointer", item: activePointerItem },
+                    ]
+                    return (
+                      <div className="px-3 pb-2">
+                        <div className="flex gap-2 items-center">
+                          <span className="text-white/60 text-xs font-bold tracking-wide uppercase shrink-0">Loadout</span>
+                          <div className="flex gap-1.5 flex-1">
+                            {chips.map(chip => (
+                              <button
+                                key={chip.key}
+                                onClick={() => setLoadoutOpen(loadoutOpen === chip.key ? null : chip.key)}
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-black transition-all active:scale-90"
+                                style={{
+                                  background: loadoutOpen === chip.key ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.18)",
+                                  border: loadoutOpen === chip.key ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid rgba(255,255,255,0.3)",
+                                  color: "white",
+                                  backdropFilter: "blur(8px)",
+                                }}
+                              >
+                                <span>{chip.item?.emoji ?? "?"}</span>
+                                <span className="opacity-80">{chip.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Quick-swap drawer */}
+                        {loadoutOpen && (
+                          <div className="mt-2 rounded-2xl overflow-hidden" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+                            <div className="flex gap-2 overflow-x-auto px-3 py-2.5" style={{ scrollbarWidth: "none" }}>
+                              {STORE_CATALOG.filter(i => i.category === loadoutOpen && storeOwned.includes(i.id)).map(item => {
+                                const isActive = (loadoutOpen === "effect" ? activeEffect : loadoutOpen === "theme" ? activeTheme : activePointer) === item.id
+                                return (
+                                  <button
+                                    key={item.id}
+                                    onClick={() => {
+                                      if (loadoutOpen === "effect") setActiveEffect(item.id)
+                                      else if (loadoutOpen === "theme") setActiveTheme(item.id)
+                                      else setActivePointer(item.id)
+                                      setLoadoutOpen(null)
+                                    }}
+                                    className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl transition-all active:scale-90"
+                                    style={{
+                                      background: isActive ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.08)",
+                                      border: isActive ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid transparent",
+                                      minWidth: "56px",
+                                    }}
+                                  >
+                                    <span style={{ fontSize: "22px" }}>{item.emoji}</span>
+                                    <span className="text-white text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px" }}>{item.name.split(" ")[0]}</span>
+                                    {isActive && <span className="text-green-300 text-[9px] font-black">✓ ON</span>}
+                                  </button>
+                                )
+                              })}
+                              {STORE_CATALOG.filter(i => i.category === loadoutOpen && !storeOwned.includes(i.id)).map(item => (
+                                <button
+                                  key={item.id}
+                                  onClick={() => setLoadoutOpen(null)}
+                                  className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl opacity-40"
+                                  style={{ minWidth: "56px", cursor: "default" }}
+                                >
+                                  <span style={{ fontSize: "22px", filter: "grayscale(1)" }}>{item.emoji}</span>
+                                  <span className="text-white text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px" }}>{item.name.split(" ")[0]}</span>
+                                  <span className="text-white/60 text-[9px]">🔒</span>
+                                </button>
+                              ))}
+                            </div>
+                            <p className="text-center text-white/40 text-[10px] pb-2">Unlock more in the Shop 👛</p>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })()}
+
                   {/* Song list */}
                   <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: "100px" }}>
                     <div className="bg-white/15 backdrop-blur-sm rounded-3xl overflow-hidden">
@@ -3195,35 +3423,35 @@ export default function HablaBeat() {
                                 </span>
                               )}
                             </div>
-                            {/* Play · Challenge · Sing — oval pill buttons */}
-                            <div className="flex gap-2 mt-3 ml-7">
+                            {/* Play · Challenge · Sing — pill buttons */}
+                            <div className="flex flex-wrap gap-2 mt-2.5 ml-7">
                               {selectedLanguage === "spanish" && (
                                 <button
                                   onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full font-black text-white text-xs transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 3px 10px rgba(249,115,22,0.5)" }}
+                                  className="flex items-center gap-1.5 px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 12px rgba(249,115,22,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
                                 >
-                                  <span style={{ display: "inline-block", fontSize: "16px", transform: "rotate(-90deg)", animation: "btnBounce 0.9s ease-in-out infinite" }}>🥕</span>
+                                  <span style={{ display: "inline-block", fontSize: "18px", animation: "btnBounce 0.9s ease-in-out infinite" }}>{STORE_CATALOG.find(i => i.id === activePointer)?.emoji ?? "🥕"}</span>
                                   Play
                                 </button>
                               )}
                               {selectedLanguage === "spanish" && (
                                 <button
                                   onClick={() => handleChallengeSong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full font-black text-white text-xs transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 3px 10px rgba(14,165,233,0.5)" }}
+                                  className="flex items-center gap-1.5 px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 4px 12px rgba(14,165,233,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
                                 >
-                                  <span style={{ display: "inline-block", fontSize: "16px", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>⚔️</span>
+                                  <span style={{ display: "inline-block", fontSize: "18px", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>⚔️</span>
                                   Challenge
                                 </button>
                               )}
                               {isClickable && (
                                 <button
                                   onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full font-black text-white text-xs transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 3px 10px rgba(168,85,247,0.5)" }}
+                                  className="flex items-center gap-1.5 px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 12px rgba(168,85,247,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
                                 >
-                                  <span style={{ display: "inline-block", fontSize: "16px", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span>
+                                  <span style={{ display: "inline-block", fontSize: "18px", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span>
                                   Sing
                                 </button>
                               )}
@@ -3312,6 +3540,22 @@ export default function HablaBeat() {
                 to   { opacity: 1; transform: scaleY(1); }
               }
               .galaxy-worlds-in { animation: galaxyOpen 0.28s ease forwards; transform-origin: top; }
+              .world-btn {
+                transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+              }
+              .world-btn:hover {
+                transform: scale(1.13) translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 3px rgba(255,255,255,0.3);
+                z-index: 10;
+              }
+              .world-btn:active {
+                transform: scale(0.9);
+              }
+              @keyframes storeTabIn {
+                0%   { opacity: 0; transform: scale(0.95) translateY(6px); }
+                60%  { opacity: 1; transform: scale(1.01) translateY(-1px); }
+                100% { opacity: 1; transform: scale(1) translateY(0); }
+              }
               @keyframes btnBounce {
                 0%, 100% { transform: translateY(0px); }
                 50% { transform: translateY(-3px); }
@@ -3320,11 +3564,11 @@ export default function HablaBeat() {
             {curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id
               const catGradient = catIdx === 0
-                ? "linear-gradient(160deg, #0d1b2a 0%, #1a1040 40%, #0d2233 70%, #0f1a2e 100%)"
-                : "linear-gradient(160deg, #1a0d2e 0%, #2d1060 40%, #1a0a3a 70%, #120d2e 100%)"
+                ? "linear-gradient(160deg, #3a6fa8 0%, #4a4ebd 40%, #2e6fa8 70%, #3a5aaa 100%)"
+                : "linear-gradient(160deg, #6b3faa 0%, #8a4ed4 40%, #6a3aaa 70%, #5a3aaa 100%)"
               const catGlow = catIdx === 0
-                ? "0 0 24px rgba(56,189,248,0.22), 0 4px 16px rgba(0,0,0,0.35)"
-                : "0 0 24px rgba(167,139,250,0.22), 0 4px 16px rgba(0,0,0,0.35)"
+                ? "0 0 28px rgba(56,189,248,0.3), 0 4px 16px rgba(0,0,0,0.2)"
+                : "0 0 28px rgba(167,139,250,0.3), 0 4px 16px rgba(0,0,0,0.2)"
               const catAccent = catIdx === 0
                 ? ["#38bdf8","#22d3ee","#67e8f9"]
                 : ["#a78bfa","#c084fc","#e879f9"]
@@ -3379,7 +3623,9 @@ export default function HablaBeat() {
                             <button
                               key={section.id}
                               onClick={() => setOpenSectionId(section.id)}
-                              className="relative flex items-center justify-center rounded-full aspect-square transition-all active:scale-90 world-float overflow-hidden"
+                              onMouseEnter={playWorldHover}
+                              onTouchStart={playWorldHover}
+                              className="world-btn relative flex items-center justify-center rounded-full aspect-square world-float overflow-hidden"
                               style={{ background: sectionGradient, border: "2px solid rgba(255,255,255,0.5)", boxShadow: "0 2px 10px rgba(0,0,0,0.3)", animationDelay: `${(sectionIdx * 0.4) % 3}s` }}
                             >
                               {isSectionBadgeUnlocked(section) && (

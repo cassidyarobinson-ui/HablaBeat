@@ -52,7 +52,42 @@ interface DDRGameProps {
   onNextSong?: () => void
   onGameEnd?: (songNumber: number, flow: number, bank: number, grade: string) => void
   onChallengeSent?: () => void
+  activeEffect?: string
+  activeTheme?: string
+  activePointer?: string
+  storeOwned?: string[]
+  onEquipEffect?: (id: string) => void
+  onEquipTheme?: (id: string) => void
+  onEquipPointer?: (id: string) => void
 }
+
+// Mini catalog for in-game loadout UI
+const GAME_CATALOG = [
+  { id: "effect-default",   name: "Classic Pop",      emoji: "💧", category: "effect"  },
+  { id: "effect-laser",     name: "Laser Beam",       emoji: "⚡", category: "effect"  },
+  { id: "effect-lightning", name: "Lightning",        emoji: "🌩️", category: "effect"  },
+  { id: "effect-fire",      name: "Fire Burst",       emoji: "🔥", category: "effect"  },
+  { id: "effect-crystal",   name: "Crystal",          emoji: "💎", category: "effect"  },
+  { id: "effect-galaxy",    name: "Galaxy",           emoji: "🌑", category: "effect"  },
+  { id: "effect-cyber",     name: "Cyber Slash",      emoji: "🔷", category: "effect"  },
+  { id: "effect-rainbow",   name: "Rainbow",          emoji: "🌈", category: "effect"  },
+  { id: "effect-minimal",   name: "Minimal Pro",      emoji: "⬜", category: "effect"  },
+  { id: "theme-default",    name: "Classic",          emoji: "🎨", category: "theme"   },
+  { id: "theme-galaxy",     name: "Galaxy",           emoji: "🌌", category: "theme"   },
+  { id: "theme-cyber",      name: "Cyber Grid",       emoji: "🟦", category: "theme"   },
+  { id: "theme-sunset",     name: "Sunset",           emoji: "🌅", category: "theme"   },
+  { id: "theme-aurora",     name: "Aurora",           emoji: "🌌", category: "theme"   },
+  { id: "theme-shadow",     name: "Shadow Realm",     emoji: "🌑", category: "theme"   },
+  { id: "theme-cloud",      name: "Cloud Dream",      emoji: "☁️", category: "theme"   },
+  { id: "theme-gold",       name: "Gold Elite",       emoji: "👑", category: "theme"   },
+  { id: "theme-anime",      name: "Anime Sky",        emoji: "✨", category: "theme"   },
+  { id: "pointer-carrot",   name: "Carrot",           emoji: "🥕", category: "pointer" },
+  { id: "pointer-wand",     name: "Magic Wand",       emoji: "🪄", category: "pointer" },
+  { id: "pointer-laser",    name: "Laser",            emoji: "🔫", category: "pointer" },
+  { id: "pointer-crystal",  name: "Crystal Staff",   emoji: "🔮", category: "pointer" },
+  { id: "pointer-scepter",  name: "Scepter",          emoji: "🏆", category: "pointer" },
+  { id: "pointer-sword",    name: "Fire Sword",       emoji: "🗡️", category: "pointer" },
+]
 
 // Constants
 const NOTE_TRAVEL_TIME = 3.0
@@ -101,7 +136,7 @@ const CARROT_SVGS: Record<string, string> = {
   </svg>`,
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeEffect = "effect-default", activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["effect-default","theme-default","pointer-carrot"], onEquipEffect, onEquipTheme, onEquipPointer }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
@@ -118,6 +153,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const [elapsedTime, setElapsedTime] = useState("0:00")
   const [totalTime, setTotalTime] = useState("0:00")
   const [isPaused, setIsPaused] = useState(false)
+  const [loadoutTab, setLoadoutTab] = useState<"effect" | "theme" | "pointer">("pointer")
+  const [showLoadout, setShowLoadout] = useState(false)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const notesRef = useRef<Note[]>([])
@@ -638,70 +675,222 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const noteText = hitNote ? hitNote.text : ""
     const noteEnglish = hitNote ? hitNote.english : ""
 
-    // === BUBBLE POP ANIMATION ===
     const laneLeft = lane * 25 + 1
     const laneWidth = 23
 
-    // Primary pop ring — fast expanding burst
-    const popRing1 = document.createElement("div")
-    popRing1.className = "absolute rounded-full pointer-events-none"
-    popRing1.style.cssText = `
-      left: ${laneLeft}%; width: ${laneWidth}%; bottom: 12%; aspect-ratio: 1;
-      border: 3px solid rgba(147,197,253,0.95);
-      animation: bubblePop 0.35s ease-out forwards; z-index: 90;
-    `
-    container.appendChild(popRing1)
-    setTimeout(() => popRing1.remove(), 350)
-
-    // Secondary pop ring — slightly delayed, thinner
-    const popRing2 = document.createElement("div")
-    popRing2.className = "absolute rounded-full pointer-events-none"
-    popRing2.style.cssText = `
-      left: ${laneLeft}%; width: ${laneWidth}%; bottom: 12%; aspect-ratio: 1;
-      border: 2px solid rgba(200,230,255,0.7);
-      animation: bubblePopSlow 0.5s ease-out 0.05s forwards; z-index: 89;
-    `
-    container.appendChild(popRing2)
-    setTimeout(() => popRing2.remove(), 550)
-
-    // Bubble "skin" flash — brief full circle that pops
-    const skinFlash = document.createElement("div")
-    skinFlash.className = "absolute rounded-full pointer-events-none"
-    skinFlash.style.cssText = `
-      left: ${laneLeft + 2}%; width: ${laneWidth - 4}%; bottom: 13%; aspect-ratio: 1;
-      background: radial-gradient(circle, rgba(173,216,255,0.5), rgba(59,130,246,0.2));
-      animation: bubbleSkinPop 0.25s ease-out forwards; z-index: 88;
-    `
-    container.appendChild(skinFlash)
-    setTimeout(() => skinFlash.remove(), 250)
-
-    // Water droplet splashes — small arcs flying outward like a real bubble pop
-    for (let i = 0; i < 14; i++) {
-      const droplet = document.createElement("div")
-      const size = 3 + Math.random() * 6
-      const isLarge = size > 6
-      droplet.className = "absolute rounded-full pointer-events-none"
-      droplet.style.cssText = `
-        left: ${laneLeft + laneWidth / 2}%; bottom: 15%;
-        width: ${size}px; height: ${size}px;
-        background: ${isLarge
-          ? "radial-gradient(circle at 30% 30%, rgba(200,230,255,0.95), rgba(100,180,255,0.7))"
-          : "radial-gradient(circle, rgba(147,197,253,0.9), rgba(59,130,246,0.5))"};
-        ${isLarge ? "box-shadow: inset 1px 1px 2px rgba(255,255,255,0.6);" : ""}
-        transition: all ${0.35 + Math.random() * 0.25}s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        opacity: 1; z-index: 91;
+    // ── HIT EFFECT: branches by activeEffect ──────────────────────────────
+    if (activeEffect === "effect-laser") {
+      // Laser Beam: horizontal slash across the lane
+      const slash = document.createElement("div")
+      slash.className = "absolute pointer-events-none"
+      slash.style.cssText = `
+        left: ${laneLeft - 2}%; width: ${laneWidth + 4}%; bottom: 15%; height: 4px;
+        background: linear-gradient(90deg, transparent, ${rainbowColor}, white, ${rainbowColor}, transparent);
+        box-shadow: 0 0 12px ${rainbowColor}, 0 0 24px ${rainbowColor};
+        animation: laserSlash 0.35s ease-out forwards; z-index: 90;
       `
-      container.appendChild(droplet)
-      const angle = (i / 14) * Math.PI * 2 + (Math.random() - 0.5) * 0.4
-      const dist = 35 + Math.random() * 55
-      const gravity = 15 + Math.random() * 25
-      setTimeout(() => {
-        droplet.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist + gravity}px)`
-        droplet.style.opacity = "0"
-        droplet.style.width = "1px"
-        droplet.style.height = "1px"
-      }, 10)
-      setTimeout(() => droplet.remove(), 600)
+      container.appendChild(slash)
+      setTimeout(() => slash.remove(), 350)
+      // Side sparks
+      for (let i = 0; i < 6; i++) {
+        const spark = document.createElement("div")
+        spark.className = "absolute pointer-events-none"
+        const side = i < 3 ? laneLeft - 1 : laneLeft + laneWidth
+        spark.style.cssText = `
+          left: ${side}%; bottom: ${12 + Math.random() * 8}%; width: 2px; height: ${4 + Math.random() * 10}px;
+          background: ${rainbowColor}; opacity: 1;
+          transition: all 0.3s ease-out; z-index: 91;
+        `
+        container.appendChild(spark)
+        setTimeout(() => { spark.style.opacity = "0"; spark.style.transform = `translateY(${-20 - Math.random() * 20}px) rotate(${(Math.random() - 0.5) * 60}deg)` }, 10)
+        setTimeout(() => spark.remove(), 350)
+      }
+    } else if (activeEffect === "effect-lightning") {
+      // Lightning Strike: zigzag bolt from top to hit zone
+      const bolt = document.createElement("div")
+      bolt.className = "absolute pointer-events-none"
+      bolt.style.cssText = `
+        left: ${laneLeft + laneWidth / 2 - 3}%; bottom: 15%; width: 6%; height: 70%;
+        background: linear-gradient(180deg, transparent 0%, ${rainbowColor} 30%, white 50%, ${rainbowColor} 70%, transparent 100%);
+        clip-path: polygon(40% 0%, 70% 0%, 30% 45%, 60% 45%, 0% 100%, 30% 55%, 0% 55%);
+        box-shadow: 0 0 20px ${rainbowColor}; filter: blur(1px);
+        animation: lightningBolt 0.4s ease-out forwards; z-index: 92;
+      `
+      container.appendChild(bolt)
+      setTimeout(() => bolt.remove(), 400)
+    } else if (activeEffect === "effect-fire") {
+      // Fire Burst: rising flame particles
+      for (let i = 0; i < 10; i++) {
+        const flame = document.createElement("div")
+        const size = 8 + Math.random() * 14
+        flame.className = "absolute rounded-full pointer-events-none"
+        flame.style.cssText = `
+          left: ${laneLeft + Math.random() * laneWidth}%; bottom: 12%;
+          width: ${size}px; height: ${size * 1.5}px; border-radius: 50% 50% 30% 30%;
+          background: radial-gradient(ellipse at bottom, #fbbf24, #f97316, #ef4444, transparent);
+          opacity: 0.9; transition: all ${0.4 + Math.random() * 0.4}s ease-out; z-index: 91;
+        `
+        container.appendChild(flame)
+        setTimeout(() => {
+          flame.style.transform = `translateY(-${40 + Math.random() * 60}px) scale(${0.3 + Math.random() * 0.4}) rotate(${(Math.random() - 0.5) * 30}deg)`
+          flame.style.opacity = "0"
+        }, 10)
+        setTimeout(() => flame.remove(), 800)
+      }
+    } else if (activeEffect === "effect-rainbow") {
+      // Rainbow Explosion: colored rings expanding outward
+      const colors = ["#ef4444","#f97316","#fbbf24","#22c55e","#3b82f6","#a855f7","#ec4899"]
+      colors.forEach((c, i) => {
+        const ring = document.createElement("div")
+        ring.className = "absolute rounded-full pointer-events-none"
+        ring.style.cssText = `
+          left: ${laneLeft + laneWidth / 2}%; bottom: 16%; width: 4px; height: 4px;
+          border: 3px solid ${c}; border-radius: 50%;
+          box-shadow: 0 0 8px ${c}; opacity: 1;
+          transition: all ${0.4 + i * 0.05}s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${i * 0.03}s;
+          z-index: 90; transform: translate(-50%, 50%);
+        `
+        container.appendChild(ring)
+        const r = 20 + i * 10
+        setTimeout(() => {
+          ring.style.width = `${r * 2}px`; ring.style.height = `${r * 2}px`
+          ring.style.opacity = "0"; ring.style.left = `${laneLeft + laneWidth / 2 - r / 4}%`
+        }, 10)
+        setTimeout(() => ring.remove(), 600)
+      })
+    } else if (activeEffect === "effect-crystal") {
+      // Crystal Shatter: geometric shard fragments
+      for (let i = 0; i < 8; i++) {
+        const shard = document.createElement("div")
+        const size = 5 + Math.random() * 10
+        shard.className = "absolute pointer-events-none"
+        shard.style.cssText = `
+          left: ${laneLeft + laneWidth / 2}%; bottom: 15%;
+          width: ${size}px; height: ${size * 1.5}px;
+          background: linear-gradient(135deg, rgba(167,243,208,0.9), rgba(103,232,249,0.8), rgba(196,181,253,0.7));
+          clip-path: polygon(50% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+          box-shadow: 0 0 6px rgba(167,243,208,0.8);
+          opacity: 1; transition: all ${0.5 + Math.random() * 0.3}s ease-out; z-index: 91;
+        `
+        container.appendChild(shard)
+        const angle = (i / 8) * Math.PI * 2
+        const dist = 30 + Math.random() * 40
+        setTimeout(() => {
+          shard.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist - 20}px) rotate(${Math.random() * 360}deg) scale(0.1)`
+          shard.style.opacity = "0"
+        }, 10)
+        setTimeout(() => shard.remove(), 800)
+      }
+    } else if (activeEffect === "effect-galaxy") {
+      // Galaxy Collapse: stars imploding inward then exploding
+      for (let i = 0; i < 12; i++) {
+        const star = document.createElement("div")
+        const angle = (i / 12) * Math.PI * 2
+        const startDist = 50 + Math.random() * 30
+        star.className = "absolute pointer-events-none"
+        star.style.cssText = `
+          left: ${laneLeft + laneWidth / 2 + Math.cos(angle) * startDist / 4}%; bottom: ${16 + Math.sin(angle) * startDist / 8}%;
+          width: 4px; height: 4px; border-radius: 50%;
+          background: ${["#818cf8","#a78bfa","#c084fc","#e879f9","#f0abfc"][i % 5]};
+          box-shadow: 0 0 6px currentColor; opacity: 1;
+          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 91;
+        `
+        container.appendChild(star)
+        setTimeout(() => {
+          star.style.transform = `translate(${Math.cos(angle) * -40}px, ${Math.sin(angle) * -20}px) scale(2)`
+          star.style.opacity = "0"
+        }, 10)
+        setTimeout(() => star.remove(), 520)
+      }
+    } else if (activeEffect === "effect-cyber") {
+      // Neon Cyber Slash: two diagonal cuts
+      ["-45deg", "45deg"].forEach((rot, i) => {
+        const slash = document.createElement("div")
+        slash.className = "absolute pointer-events-none"
+        slash.style.cssText = `
+          left: ${laneLeft}%; width: ${laneWidth}%; bottom: 10%; height: 3px;
+          background: linear-gradient(90deg, transparent, #00ffff, #fff, #00ffff, transparent);
+          box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+          transform: rotate(${rot}); transform-origin: center;
+          animation: cyberSlash 0.3s ease-out ${i * 0.05}s forwards; z-index: 90;
+        `
+        container.appendChild(slash)
+        setTimeout(() => slash.remove(), 350)
+      })
+    } else if (activeEffect === "effect-minimal") {
+      // Minimal Pro: clean single ring pulse
+      const ring = document.createElement("div")
+      ring.className = "absolute rounded-full pointer-events-none"
+      ring.style.cssText = `
+        left: ${laneLeft + 2}%; width: ${laneWidth - 4}%; bottom: 13%; aspect-ratio: 1;
+        border: 2px solid white; opacity: 0.9;
+        animation: bubblePop 0.4s ease-out forwards; z-index: 90;
+      `
+      container.appendChild(ring)
+      setTimeout(() => ring.remove(), 400)
+    } else {
+      // === DEFAULT: BUBBLE POP ANIMATION ===
+      // Primary pop ring — fast expanding burst
+      const popRing1 = document.createElement("div")
+      popRing1.className = "absolute rounded-full pointer-events-none"
+      popRing1.style.cssText = `
+        left: ${laneLeft}%; width: ${laneWidth}%; bottom: 12%; aspect-ratio: 1;
+        border: 3px solid rgba(147,197,253,0.95);
+        animation: bubblePop 0.35s ease-out forwards; z-index: 90;
+      `
+      container.appendChild(popRing1)
+      setTimeout(() => popRing1.remove(), 350)
+
+      // Secondary pop ring — slightly delayed, thinner
+      const popRing2 = document.createElement("div")
+      popRing2.className = "absolute rounded-full pointer-events-none"
+      popRing2.style.cssText = `
+        left: ${laneLeft}%; width: ${laneWidth}%; bottom: 12%; aspect-ratio: 1;
+        border: 2px solid rgba(200,230,255,0.7);
+        animation: bubblePopSlow 0.5s ease-out 0.05s forwards; z-index: 89;
+      `
+      container.appendChild(popRing2)
+      setTimeout(() => popRing2.remove(), 550)
+
+      // Bubble "skin" flash — brief full circle that pops
+      const skinFlash = document.createElement("div")
+      skinFlash.className = "absolute rounded-full pointer-events-none"
+      skinFlash.style.cssText = `
+        left: ${laneLeft + 2}%; width: ${laneWidth - 4}%; bottom: 13%; aspect-ratio: 1;
+        background: radial-gradient(circle, rgba(173,216,255,0.5), rgba(59,130,246,0.2));
+        animation: bubbleSkinPop 0.25s ease-out forwards; z-index: 88;
+      `
+      container.appendChild(skinFlash)
+      setTimeout(() => skinFlash.remove(), 250)
+
+      // Water droplet splashes — small arcs flying outward like a real bubble pop
+      for (let i = 0; i < 14; i++) {
+        const droplet = document.createElement("div")
+        const size = 3 + Math.random() * 6
+        const isLarge = size > 6
+        droplet.className = "absolute rounded-full pointer-events-none"
+        droplet.style.cssText = `
+          left: ${laneLeft + laneWidth / 2}%; bottom: 15%;
+          width: ${size}px; height: ${size}px;
+          background: ${isLarge
+            ? "radial-gradient(circle at 30% 30%, rgba(200,230,255,0.95), rgba(100,180,255,0.7))"
+            : "radial-gradient(circle, rgba(147,197,253,0.9), rgba(59,130,246,0.5))"};
+          ${isLarge ? "box-shadow: inset 1px 1px 2px rgba(255,255,255,0.6);" : ""}
+          transition: all ${0.35 + Math.random() * 0.25}s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          opacity: 1; z-index: 91;
+        `
+        container.appendChild(droplet)
+        const angle = (i / 14) * Math.PI * 2 + (Math.random() - 0.5) * 0.4
+        const dist = 35 + Math.random() * 55
+        const gravity = 15 + Math.random() * 25
+        setTimeout(() => {
+          droplet.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist + gravity}px)`
+          droplet.style.opacity = "0"
+          droplet.style.width = "1px"
+          droplet.style.height = "1px"
+        }, 10)
+        setTimeout(() => droplet.remove(), 600)
+      }
     }
 
     // Coin dropping out of the popped bubble
@@ -1404,16 +1593,142 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   }
 
   // PLAYING STATE
-  const bgImageUrl = `/images/backgrounds/song-${songNumber}.jpg`
+
+  // Theme backgrounds
+  const THEME_BG: Record<string, string> = {
+    "theme-default":  `url(/images/backgrounds/song-${songNumber}.jpg) center/cover no-repeat fixed`,
+    "theme-galaxy":   "linear-gradient(135deg, #0f0520 0%, #1e1b4b 50%, #312e81 100%)",
+    "theme-cyber":    "linear-gradient(135deg, #0a0a1a 0%, #001a33 50%, #003355 100%)",
+    "theme-sunset":   "linear-gradient(135deg, #ff6b35 0%, #f7c59f 40%, #ffe0cc 100%)",
+    "theme-aurora":   "linear-gradient(135deg, #001a00 0%, #004d1a 30%, #002244 60%, #1a0033 100%)",
+    "theme-shadow":   "linear-gradient(135deg, #0a0000 0%, #1a0000 40%, #2d0a0a 100%)",
+    "theme-cloud":    "linear-gradient(135deg, #c9e8ff 0%, #e8f4ff 40%, #fff3e8 100%)",
+    "theme-gold":     "linear-gradient(135deg, #1a1200 0%, #4a3800 40%, #c9a227 100%)",
+    "theme-anime":    "linear-gradient(135deg, #ffe0f0 0%, #e0d4ff 50%, #c8e8ff 100%)",
+  }
+
+  // Pointer arrow SVGs — each pointer skin has its own set of 4 directions
+  const POINTER_SVGS: Record<string, Record<string, string>> = {
+    "pointer-carrot": CARROT_SVGS,
+    "pointer-wand": {
+      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 44,6 40,20 44,34" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="52" cy="20" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="52" cy="20" r="3.5" fill="#fff" opacity="0.8"/><line x1="8" y1="16" x2="16" y2="19" stroke="#d8b4fe" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="24" x2="16" y2="21" stroke="#d8b4fe" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 16,6 20,20 16,34" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="8" cy="20" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="8" cy="20" r="3.5" fill="#fff" opacity="0.8"/></svg>`,
+      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 6,44 20,40 34,44" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="20" cy="52" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="20" cy="52" r="3.5" fill="#fff" opacity="0.8"/></svg>`,
+      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 6,16 20,20 34,16" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="20" cy="8" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="20" cy="8" r="3.5" fill="#fff" opacity="0.8"/></svg>`,
+    },
+    "pointer-laser": {
+      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 48,10 42,20 48,30" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="42" y="17" width="18" height="6" rx="3" fill="#7f1d1d"/><line x1="0" y1="20" x2="60" y2="20" stroke="#fca5a5" stroke-width="0.5" opacity="0.5"/></svg>`,
+      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 12,10 18,20 12,30" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="0" y="17" width="18" height="6" rx="3" fill="#7f1d1d"/></svg>`,
+      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 10,48 20,42 30,48" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="17" y="42" width="6" height="18" rx="3" fill="#7f1d1d"/></svg>`,
+      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 10,12 20,18 30,12" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="17" y="0" width="6" height="18" rx="3" fill="#7f1d1d"/></svg>`,
+    },
+    "pointer-crystal": {
+      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 44,4 38,20 44,36" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="44,8 54,20 44,32 52,20" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/><line x1="10" y1="14" x2="22" y2="18" stroke="white" stroke-width="1" opacity="0.6"/><line x1="10" y1="26" x2="22" y2="22" stroke="white" stroke-width="1" opacity="0.6"/></svg>`,
+      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 16,4 22,20 16,36" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="16,8 6,20 16,32 8,20" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/></svg>`,
+      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 4,44 20,38 36,44" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="8,44 20,54 32,44 20,52" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/></svg>`,
+      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 4,16 20,22 36,16" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="8,16 20,6 32,16 20,8" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/></svg>`,
+    },
+    "pointer-scepter": {
+      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 44,6 40,20 44,34" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="46,14 52,20 46,26 58,20" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="52" cy="20" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
+      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 16,6 20,20 16,34" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="14,14 8,20 14,26 2,20" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="8" cy="20" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
+      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 6,44 20,40 34,44" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="14,46 20,52 26,46 20,58" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="20" cy="52" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
+      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 6,16 20,20 34,16" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="14,14 20,8 26,14 20,2" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="20" cy="8" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
+    },
+    "pointer-sword": {
+      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 50,14 46,20 50,26" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="48" y="16" width="12" height="8" rx="1" fill="#92400e"/><line x1="4" y1="17" x2="40" y2="19" stroke="#fed7aa" stroke-width="0.8" opacity="0.7"/><line x1="4" y1="23" x2="40" y2="21" stroke="#fed7aa" stroke-width="0.8" opacity="0.7"/></svg>`,
+      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 10,14 14,20 10,26" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="0" y="16" width="12" height="8" rx="1" fill="#92400e"/></svg>`,
+      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 14,50 20,46 26,50" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="16" y="48" width="8" height="12" rx="1" fill="#92400e"/></svg>`,
+      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 14,10 20,14 26,10" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="16" y="0" width="8" height="12" rx="1" fill="#92400e"/></svg>`,
+    },
+  }
+
+  const activeSvgs = POINTER_SVGS[activePointer] ?? CARROT_SVGS
+  const gameBg = THEME_BG[activeTheme] ?? THEME_BG["theme-default"]
+
   return (
-    <div className="h-[100dvh] text-white relative overflow-hidden" style={{ background: `url(${bgImageUrl}) center/cover no-repeat fixed`, backgroundColor: "#1a0a2e" }}>
-      {/* Pause overlay */}
-      {isPaused && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={togglePause}>
+    <div className="h-[100dvh] text-white relative" style={{ background: gameBg, backgroundColor: "#1a0a2e" }}>
+      {/* Simple pause indicator (no loadout) */}
+      {isPaused && !showLoadout && (
+        <div className="absolute inset-0 z-[998] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.6)" }} onClick={togglePause}>
           <div className="text-center">
-            <div className="text-6xl mb-4">⏸️</div>
-            <p className="text-white text-2xl font-bold">PAUSED</p>
-            <p className="text-white/60 mt-2">Tap to resume</p>
+            <div className="text-6xl mb-3">⏸️</div>
+            <p className="text-white text-2xl font-black">Paused</p>
+            <p className="text-white/60 mt-1 text-sm">Tap to resume</p>
+          </div>
+        </div>
+      )}
+
+      {/* Loadout overlay — shown when gear button tapped */}
+      {showLoadout && (
+        <div className="absolute inset-0 z-[999] flex flex-col" style={{ background: "rgba(0,0,0,0.92)" }}>
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 pt-8 pb-4">
+            <div>
+              <p className="text-white text-2xl font-black">⚙️ Loadout</p>
+              <p className="text-white/50 text-sm mt-0.5">Tap an item to equip it</p>
+            </div>
+            <button
+              onClick={() => { setShowLoadout(false); togglePause() }}
+              className="px-5 py-2.5 rounded-full font-black text-white text-sm active:scale-90 transition-all"
+              style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)", boxShadow: "0 4px 14px rgba(34,197,94,0.5)" }}
+            >▶ Resume</button>
+          </div>
+
+          {/* Category tabs */}
+          <div className="flex gap-2 px-4 pb-3">
+            {([
+              { key: "pointer" as const, label: "🎯 Pointer" },
+              { key: "effect"  as const, label: "💥 Effect"  },
+              { key: "theme"   as const, label: "🌌 Theme"   },
+            ]).map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setLoadoutTab(tab.key)}
+                className="flex-1 py-2.5 rounded-full text-sm font-black transition-all active:scale-95"
+                style={loadoutTab === tab.key
+                  ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 2px 10px rgba(168,85,247,0.5)" }
+                  : { background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.6)" }}
+              >{tab.label}</button>
+            ))}
+          </div>
+
+          {/* Items grid */}
+          <div className="flex-1 overflow-y-auto px-4 pb-8">
+            <div className="grid grid-cols-3 gap-3">
+              {GAME_CATALOG.filter(i => i.category === loadoutTab).map(item => {
+                const owned = storeOwned.includes(item.id)
+                const isActive = (loadoutTab === "effect" ? activeEffect : loadoutTab === "theme" ? activeTheme : activePointer) === item.id
+                return (
+                  <button
+                    key={item.id}
+                    disabled={!owned}
+                    onClick={() => {
+                      if (!owned) return
+                      if (loadoutTab === "effect") onEquipEffect?.(item.id)
+                      else if (loadoutTab === "theme") onEquipTheme?.(item.id)
+                      else onEquipPointer?.(item.id)
+                    }}
+                    className="flex flex-col items-center gap-2 py-4 px-2 rounded-2xl transition-all active:scale-90"
+                    style={{
+                      background: isActive
+                        ? "linear-gradient(135deg, rgba(168,85,247,0.5), rgba(99,102,241,0.5))"
+                        : owned ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
+                      border: isActive ? "2px solid rgba(168,85,247,0.9)" : "2px solid rgba(255,255,255,0.08)",
+                      opacity: owned ? 1 : 0.35,
+                    }}
+                  >
+                    <span style={{ fontSize: "32px", filter: owned ? "none" : "grayscale(1)" }}>{item.emoji}</span>
+                    <span className="text-white text-xs font-bold text-center leading-tight">{item.name}</span>
+                    {isActive
+                      ? <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>
+                      : !owned
+                        ? <span className="text-white/40 text-[10px]">🔒 Locked</span>
+                        : <span className="text-white/40 text-[10px]">Tap to use</span>
+                    }
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       )}
@@ -1434,12 +1749,27 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       )}
 
       <div className="max-w-lg mx-auto h-full flex flex-col">
-        {/* Top bar: Just back arrow */}
-        <div className="flex items-center p-1 px-2 flex-shrink-0">
-          <button onClick={onBack} className="text-white hover:text-purple-300 transition-colors bg-black/40 rounded-full p-1.5">
+        {/* Top bar: back arrow + loadout button */}
+        <div className="flex items-center justify-between p-1 px-2 flex-shrink-0">
+          <button onClick={onBack} className="text-white bg-black/40 rounded-full p-1.5 active:scale-90 transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
+          </button>
+
+          {/* Gear button — tap to open loadout panel */}
+          <button
+            onClick={() => { setShowLoadout(true); if (!isPaused) togglePause() }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-white text-sm active:scale-90 transition-all"
+            style={{
+              background: "linear-gradient(135deg, rgba(168,85,247,0.85), rgba(99,102,241,0.85))",
+              border: "1.5px solid rgba(255,255,255,0.4)",
+              backdropFilter: "blur(8px)",
+              boxShadow: "0 2px 12px rgba(168,85,247,0.5)",
+            }}
+          >
+            <span style={{ fontSize: "16px" }}>{GAME_CATALOG.find(i => i.id === activePointer)?.emoji ?? "🥕"}</span>
+            <span style={{ fontSize: "13px" }}>Gear ⚙️</span>
           </button>
         </div>
 
@@ -1455,7 +1785,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
                 <div className="ddr-hit-zone absolute left-1 right-1 transition-all duration-150" style={{ bottom: "10%", aspectRatio: "1" }} />
-                <div className={`ddr-arrow absolute left-0 right-0 flex justify-center transition-all duration-100`} style={{ bottom: "4%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [CARROT_SVGS.left, CARROT_SVGS.down, CARROT_SVGS.up, CARROT_SVGS.right][lane] }} />
+                <div className={`ddr-arrow absolute left-0 right-0 flex justify-center transition-all duration-100`} style={{ bottom: "4%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
               </div>
             ))}
           </div>
@@ -1496,7 +1826,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <span className="font-bold text-yellow-300 text-xl md:text-2xl">{score}</span>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={togglePause} className="bg-white/10 rounded-full p-2 hover:bg-white/20 transition-colors">
+            <button onClick={togglePause} className="bg-white/10 rounded-full p-2 active:scale-90 transition-all">
               {isPaused ? <Play className="h-5 w-5 text-white" /> : <Pause className="h-5 w-5 text-white" />}
             </button>
             <div className="text-base text-white/70 font-mono">
@@ -1547,6 +1877,22 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           0% { transform: translateY(0) scale(1.2); opacity: 1; }
           30% { transform: translateY(20px) scale(1); opacity: 1; }
           100% { transform: translateY(80px) scale(0.6) rotate(15deg); opacity: 0; }
+        }
+        @keyframes laserSlash {
+          0% { transform: scaleX(0); opacity: 1; }
+          40% { transform: scaleX(1.1); opacity: 1; }
+          100% { transform: scaleX(1); opacity: 0; }
+        }
+        @keyframes lightningBolt {
+          0% { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
+          20% { opacity: 1; transform: scaleY(1); }
+          80% { opacity: 0.8; }
+          100% { opacity: 0; }
+        }
+        @keyframes cyberSlash {
+          0% { transform: rotate(var(--r, -45deg)) scaleX(0); opacity: 1; }
+          50% { transform: rotate(var(--r, -45deg)) scaleX(1); opacity: 1; }
+          100% { transform: rotate(var(--r, -45deg)) scaleX(1); opacity: 0; }
         }
       `}</style>
     </div>
