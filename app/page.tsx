@@ -1516,6 +1516,7 @@ export default function HablaBeat() {
   const [userPhoto, setUserPhoto] = useState("") // base64 thumbnail
   const [showProfileModal, setShowProfileModal] = useState(false)
   const profilePhotoInputRef = useRef<HTMLInputElement | null>(null)
+  const audioCtxRef = useRef<AudioContext | null>(null)
 
   // Streak + challenge stats
   const [totalChallengesSent, setTotalChallengesSent] = useState(0)
@@ -1910,21 +1911,26 @@ export default function HablaBeat() {
     return challengesWon > 0 && section.songs.some((song: any) => song.playCount >= 1)
   }
 
-  // Play a soft bloop sound on world hover using Web Audio API
+  // Play a bright bloop on world hover — reuse a single AudioContext so it never expires
   const playWorldHover = () => {
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+      }
+      const ctx = audioCtxRef.current
+      // Resume if browser suspended it (happens after inactivity)
+      if (ctx.state === "suspended") ctx.resume()
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.connect(gain)
       gain.connect(ctx.destination)
       osc.type = "sine"
-      osc.frequency.setValueAtTime(520, ctx.currentTime)
-      osc.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + 0.08)
-      gain.gain.setValueAtTime(0.08, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18)
+      osc.frequency.setValueAtTime(880, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.07)
+      gain.gain.setValueAtTime(0.09, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15)
       osc.start(ctx.currentTime)
-      osc.stop(ctx.currentTime + 0.18)
+      osc.stop(ctx.currentTime + 0.15)
     } catch { /* audio not available */ }
   }
 
