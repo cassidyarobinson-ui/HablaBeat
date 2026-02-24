@@ -7,6 +7,7 @@ import dynamic from "next/dynamic"
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
+const AlphabetFly = dynamic(() => import("@/components/alphabet-fly"), { ssr: false })
 import {
   Play,
   BookOpen,
@@ -33,7 +34,7 @@ declare global {
 }
 
 // ── STORE CATALOG ───────────────────────────────────────────────────────────
-type StoreItemCategory = "effect" | "theme" | "pointer"
+type StoreItemCategory = "pointer"
 interface StoreItem {
   id: string
   name: string
@@ -69,34 +70,46 @@ const SECTION_GRADIENTS: Record<string, string> = {
 }
 
 const STORE_CATALOG: StoreItem[] = [
-  // ── Hit Effects ──
-  { id: "effect-default",  name: "Classic Pop",       emoji: "💧", cost: 0,   category: "effect",  description: "The original bubble pop effect",            previewEmoji: "💧" },
-  { id: "effect-laser",    name: "Laser Beam",        emoji: "⚡", cost: 80,  category: "effect",  description: "Neon beam slices through each word",         previewEmoji: "⚡" },
-  { id: "effect-lightning",name: "Lightning Strike",  emoji: "🌩️", cost: 100, category: "effect",  description: "Dramatic electric crack and flash",           previewEmoji: "🌩️" },
-  { id: "effect-fire",     name: "Fire Burst",        emoji: "🔥", cost: 120, category: "effect",  description: "Word ignites and explodes into embers",       previewEmoji: "🔥" },
-  { id: "effect-crystal",  name: "Crystal Shatter",   emoji: "💎", cost: 140, category: "effect",  description: "Word turns to glass and shatters",            previewEmoji: "💎" },
-  { id: "effect-galaxy",   name: "Galaxy Collapse",   emoji: "🌑", cost: 175, category: "effect",  description: "Word collapses into a mini black hole",       previewEmoji: "🌑" },
-  { id: "effect-cyber",    name: "Neon Cyber Slash",  emoji: "🔷", cost: 150, category: "effect",  description: "Tron-style glowing diagonal cut",             previewEmoji: "🔷" },
-  { id: "effect-rainbow",  name: "Rainbow Explosion", emoji: "🌈", cost: 130, category: "effect",  description: "Colorful confetti blast on every hit",        previewEmoji: "🌈" },
-  { id: "effect-minimal",  name: "Minimal Pro",       emoji: "⬜", cost: 90,  category: "effect",  description: "Clean white pulse ring for sleek players",    previewEmoji: "⬜" },
-  // ── Background Themes ──
-  { id: "theme-default",   name: "HablaBeat Classic", emoji: "🎨", cost: 0,   category: "theme",   description: "Original teal-to-mint gradient",             previewBg: "linear-gradient(135deg, #e0f7ff 0%, #c7f0ff 50%, #d4f5e9 100%)" },
-  { id: "theme-galaxy",    name: "Galaxy Mode",       emoji: "🌌", cost: 160, category: "theme",   description: "Dark purple starfield",                       previewBg: "linear-gradient(135deg, #0f0520 0%, #1e1b4b 50%, #312e81 100%)" },
-  { id: "theme-cyber",     name: "Cyber Grid",        emoji: "🟦", cost: 130, category: "theme",   description: "Neon teal grid on dark background",           previewBg: "linear-gradient(135deg, #0a0a1a 0%, #001a33 50%, #003355 100%)" },
-  { id: "theme-sunset",    name: "Sunset Gradient",   emoji: "🌅", cost: 100, category: "theme",   description: "Warm orange and pink glow",                   previewBg: "linear-gradient(135deg, #ff6b35 0%, #f7c59f 40%, #ffe0cc 100%)" },
-  { id: "theme-aurora",    name: "Aurora Borealis",   emoji: "🌌", cost: 175, category: "theme",   description: "Dancing green and purple northern lights",    previewBg: "linear-gradient(135deg, #001a00 0%, #004d1a 30%, #002244 60%, #1a0033 100%)" },
-  { id: "theme-shadow",    name: "Dark Shadow Realm", emoji: "🌑", cost: 150, category: "theme",   description: "Deep black with crimson accents",             previewBg: "linear-gradient(135deg, #0a0000 0%, #1a0000 40%, #2d0a0a 100%)" },
-  { id: "theme-cloud",     name: "Cloud Dream",       emoji: "☁️", cost: 80,  category: "theme",   description: "Soft pastel clouds and sky blue",            previewBg: "linear-gradient(135deg, #e0f0ff 0%, #f0f8ff 40%, #fff8f0 100%)" },
-  { id: "theme-gold",      name: "Gold Elite",        emoji: "👑", cost: 200, category: "theme",   description: "Prestigious gold and black luxury look",      previewBg: "linear-gradient(135deg, #1a1200 0%, #4a3800 40%, #c9a227 100%)" },
-  { id: "theme-anime",     name: "Anime Sparkle Sky", emoji: "✨", cost: 140, category: "theme",   description: "Pastel sky with twinkling sparkles",          previewBg: "linear-gradient(135deg, #ffe0f0 0%, #e0d4ff 50%, #c8e8ff 100%)" },
-  // ── Pointer Skins ──
-  { id: "pointer-carrot",  name: "Carrot (Default)",  emoji: "🥕", cost: 0,   category: "pointer", description: "The original HablaBeat carrot arrows",        previewEmoji: "🥕" },
-  { id: "pointer-wand",    name: "Magic Wand",        emoji: "🪄", cost: 90,  category: "pointer", description: "Enchant your way through vocab",              previewEmoji: "🪄" },
-  { id: "pointer-laser",   name: "Laser Cannon",      emoji: "🔫", cost: 120, category: "pointer", description: "Fire lasers at every bubble",                 previewEmoji: "🔫" },
-  { id: "pointer-crystal", name: "Crystal Staff",     emoji: "🔮", cost: 150, category: "pointer", description: "Channel magical crystal power",               previewEmoji: "🔮" },
-  { id: "pointer-scepter", name: "Golden Scepter",    emoji: "🏆", cost: 175, category: "pointer", description: "Royalty-only vocab weapon",                   previewEmoji: "🏆" },
-  { id: "pointer-sword",   name: "Fire Sword",        emoji: "🗡️", cost: 200, category: "pointer", description: "Slice through Spanish with flames",           previewEmoji: "🗡️" },
+  // ── Hit Effects (shown alongside pointers in one tab) ──
+  { id: "effect-default",  name: "Classic Pop",       emoji: "💧", cost: 0,   category: "pointer", description: "The original bubble pop effect",            previewEmoji: "💧" },
+  { id: "effect-laser",    name: "Laser Beam",        emoji: "⚡", cost: 80,  category: "pointer", description: "Neon beam slices through each word",         previewEmoji: "⚡" },
+  { id: "effect-lightning",name: "Lightning Strike",  emoji: "🌩️", cost: 100, category: "pointer", description: "Dramatic electric crack and flash",           previewEmoji: "🌩️" },
+  { id: "effect-fire",     name: "Fire Burst",        emoji: "🔥", cost: 120, category: "pointer", description: "Word ignites and explodes into embers",       previewEmoji: "🔥" },
+  { id: "effect-crystal",  name: "Crystal Shatter",   emoji: "💎", cost: 140, category: "pointer", description: "Word turns to glass and shatters",            previewEmoji: "💎" },
+  { id: "effect-galaxy",   name: "Galaxy Collapse",   emoji: "🌑", cost: 175, category: "pointer", description: "Word collapses into a mini black hole",       previewEmoji: "🌑" },
+  { id: "effect-cyber",    name: "Neon Cyber Slash",  emoji: "🔷", cost: 150, category: "pointer", description: "Tron-style glowing diagonal cut",             previewEmoji: "🔷" },
+  { id: "effect-rainbow",  name: "Rainbow Explosion", emoji: "🌈", cost: 130, category: "pointer", description: "Colorful confetti blast on every hit",        previewEmoji: "🌈" },
+  { id: "effect-minimal",  name: "Minimal Pro",       emoji: "⬜", cost: 90,  category: "pointer", description: "Clean white pulse ring for sleek players",    previewEmoji: "⬜" },
+  // ── Pointer Arrows ──
+  // 🟢 Common
+  { id: "pointer-carrot",    name: "Carrot",          emoji: "🥕", cost: 0,    category: "pointer", description: "The original HablaBeat arrow",              previewEmoji: "🥕" },
+  { id: "pointer-red-laser", name: "Red Laser",       emoji: "🔴", cost: 150,  category: "pointer", description: "Precision beam. Feels sharp, not stronger", previewEmoji: "🔴" },
+  { id: "pointer-banana",    name: "Banana Blaster",  emoji: "🍌", cost: 200,  category: "pointer", description: "Visible spinning banana. Playful chaos",    previewEmoji: "🍌" },
+  { id: "pointer-water",     name: "Water Cannon",    emoji: "💧", cost: 250,  category: "pointer", description: "Splash burst. Micro slow on next bubble",   previewEmoji: "💧" },
+  // 🔵 Rare
+  { id: "pointer-lightning", name: "Lightning Bolt",  emoji: "⚡", cost: 400,  category: "pointer", description: "10% chance to chain to the next note",      previewEmoji: "⚡" },
+  { id: "pointer-ice",       name: "Ice Blaster",     emoji: "❄️", cost: 500,  category: "pointer", description: "Freeze & shatter. Slows next note for 1s",  previewEmoji: "❄️" },
+  // 🟣 Epic
+  { id: "pointer-rainbow",   name: "Rainbow Laser",   emoji: "🌈", cost: 900,  category: "pointer", description: "Combo meter fills slightly faster",         previewEmoji: "🌈" },
+  { id: "pointer-rocket",    name: "Rocket Launcher", emoji: "🚀", cost: 1000, category: "pointer", description: "Splash radius. High impact, play patient",  previewEmoji: "🚀" },
+  { id: "pointer-star",      name: "Star Shooter",    emoji: "⭐", cost: 1100, category: "pointer", description: "+10% coins per hit. Pure grind tool",       previewEmoji: "⭐" },
+  // 🟡 Legendary
+  { id: "pointer-dragon",    name: "Dragon Breath",   emoji: "🐉", cost: 2000, category: "pointer", description: "One miss per song won't break your combo",  previewEmoji: "🐉" },
 ]
+
+// Rarity metadata for pointer store cards
+const POINTER_RARITY: Record<string, { label: string; color: string; bg: string; glow: string }> = {
+  "pointer-carrot":    { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#f0fdf4,#e0f7ff)",   glow: "none" },
+  "pointer-red-laser": { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#1a0000,#330000)",   glow: "none" },
+  "pointer-banana":    { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#fffbeb,#fef3c7)",   glow: "none" },
+  "pointer-water":     { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#e0f7ff,#bae6fd)",   glow: "none" },
+  "pointer-lightning": { label: "Rare",      color: "#60a5fa", bg: "linear-gradient(135deg,#1a1a00,#3d3300)",   glow: "0 0 8px rgba(96,165,250,0.4)" },
+  "pointer-ice":       { label: "Rare",      color: "#60a5fa", bg: "linear-gradient(135deg,#e0f7ff,#dbeafe)",   glow: "0 0 8px rgba(96,165,250,0.4)" },
+  "pointer-rainbow":   { label: "Epic",      color: "#a855f7", bg: "linear-gradient(135deg,#ef4444,#f97316,#22c55e,#3b82f6,#a855f7)", glow: "0 0 12px rgba(168,85,247,0.5)" },
+  "pointer-rocket":    { label: "Epic",      color: "#a855f7", bg: "linear-gradient(135deg,#0f0c29,#302b63)",   glow: "0 0 12px rgba(168,85,247,0.5)" },
+  "pointer-star":      { label: "Epic",      color: "#a855f7", bg: "linear-gradient(135deg,#1a1200,#4a3800)",   glow: "0 0 12px rgba(168,85,247,0.5)" },
+  "pointer-dragon":    { label: "Legendary", color: "#f59e0b", bg: "linear-gradient(135deg,#1a0000,#4a0000,#7f1d1d)", glow: "0 0 16px rgba(245,158,11,0.6), 0 0 32px rgba(245,158,11,0.25)" },
+}
 
 const THEME_GRADIENTS: Record<string, string> = {
   "theme-default":  "linear-gradient(135deg, #e0f7ff 0%, #c7f0ff 50%, #d4f5e9 100%)",
@@ -1488,7 +1501,7 @@ export default function HablaBeat() {
     return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
   }, [])
 
-  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer">("songs")
+  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer" | "leaderboard">("songs")
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
@@ -1499,9 +1512,16 @@ export default function HablaBeat() {
   const [searchQuery, setSearchQuery] = useState("")
   const [bestFlow, setBestFlow] = useState(0)
   const [totalVocabBank, setTotalVocabBank] = useState(0)
+
+  // Leaderboard state
+  const [leaderboard, setLeaderboard] = useState<{ name: string; flow: number; bank: number; grade: string; song: string; date: string }[]>([])
+  const [leaderboardNameInput, setLeaderboardNameInput] = useState("")
+  const [pendingLeaderboardEntry, setPendingLeaderboardEntry] = useState<{ flow: number; bank: number; grade: string; song: string } | null>(null)
+  const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false)
   const [openSectionId, setOpenSectionId] = useState<string>("")
   const [worldClosing, setWorldClosing] = useState(false)
-  const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "theme" | "pointer" | null>(null)
+  const [worldZoomOrigin, setWorldZoomOrigin] = useState({ x: "50%", y: "50%" })
+  const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "pointer" | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
@@ -1527,23 +1547,15 @@ export default function HablaBeat() {
   // Bank tab toggle
   const [bankTab, setBankTab] = useState<"worlds" | "items">("worlds")
 
+  // Fly game state — which world's fly game is open (null = closed)
+  const [flyGameSection, setFlyGameSection] = useState<string | null>(null)
+
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
-  const [storeOwned, setStoreOwned] = useState<string[]>(["effect-default", "theme-default", "pointer-carrot"])
+  const [storeOwned, setStoreOwned] = useState<string[]>(["effect-default", "pointer-carrot"])
   const [activeEffect, setActiveEffect] = useState("effect-default")
   const [activeTheme, setActiveTheme] = useState("theme-default")
   const [activePointer, setActivePointer] = useState("pointer-carrot")
-  const [storeTab, setStoreTab] = useState<"effect" | "theme" | "pointer">("effect")
-  const [storeTabAnimating, setStoreTabAnimating] = useState(false)
-
-  const handleStoreTabChange = (tab: "effect" | "theme" | "pointer") => {
-    if (tab === storeTab) return
-    setStoreTabAnimating(true)
-    setTimeout(() => {
-      setStoreTab(tab)
-      setStoreTabAnimating(false)
-    }, 120)
-  }
 
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
@@ -1574,11 +1586,12 @@ export default function HablaBeat() {
     setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
     setChallengesWon(loadPersisted("hablabeat-challenges-won", 0))
     setChallengeCoins(loadPersisted("hablabeat-challenge-coins", 0))
-    setStoreOwned(loadPersisted("hablabeat-store-owned", ["effect-default", "theme-default", "pointer-carrot"]))
+    setStoreOwned(loadPersisted("hablabeat-store-owned", ["effect-default", "pointer-carrot"]))
     setActiveEffect(loadPersisted("hablabeat-active-effect", "effect-default"))
     setActiveTheme(loadPersisted("hablabeat-active-theme", "theme-default"))
     setActivePointer(loadPersisted("hablabeat-active-pointer", "pointer-carrot"))
     setLunasPurse(loadPersisted("hablabeat-lunas-purse", []))
+    setLeaderboard(loadPersisted("hablabeat-leaderboard", []))
     const savedStreak = loadPersisted("hablabeat-daily-streak", 0)
     const savedLastPlay = loadPersisted("hablabeat-last-play-date", "")
     // Update daily streak on app open
@@ -1615,9 +1628,9 @@ export default function HablaBeat() {
   useEffect(() => { localStorage.setItem("hablabeat-challenge-coins", JSON.stringify(challengeCoins)) }, [challengeCoins])
   useEffect(() => { localStorage.setItem("hablabeat-store-owned", JSON.stringify(storeOwned)) }, [storeOwned])
   useEffect(() => { localStorage.setItem("hablabeat-active-effect", JSON.stringify(activeEffect)) }, [activeEffect])
-  useEffect(() => { localStorage.setItem("hablabeat-active-theme", JSON.stringify(activeTheme)) }, [activeTheme])
   useEffect(() => { localStorage.setItem("hablabeat-active-pointer", JSON.stringify(activePointer)) }, [activePointer])
   useEffect(() => { localStorage.setItem("hablabeat-lunas-purse", JSON.stringify(lunasPurse)) }, [lunasPurse])
+  useEffect(() => { if (leaderboard.length > 0) localStorage.setItem("hablabeat-leaderboard", JSON.stringify(leaderboard)) }, [leaderboard])
 
   // Called when user sends a challenge
   const handleChallengeSent = (songNum?: number) => {
@@ -1634,15 +1647,36 @@ export default function HablaBeat() {
     if (totalVocabBank < item.cost || storeOwned.includes(item.id)) return
     setTotalVocabBank(prev => prev - item.cost)
     setStoreOwned(prev => [...prev, item.id])
-    if (item.category === "effect") setActiveEffect(item.id)
-    if (item.category === "theme") setActiveTheme(item.id)
-    if (item.category === "pointer") setActivePointer(item.id)
+    if (item.id.startsWith("effect-")) setActiveEffect(item.id)
+    else setActivePointer(item.id)
   }
   const handleStoreEquip = (item: StoreItem) => {
     if (!storeOwned.includes(item.id)) return
-    if (item.category === "effect") setActiveEffect(item.id)
-    if (item.category === "theme") setActiveTheme(item.id)
-    if (item.category === "pointer") setActivePointer(item.id)
+    if (item.id.startsWith("effect-")) setActiveEffect(item.id)
+    else setActivePointer(item.id)
+  }
+
+  // Submit leaderboard score
+  const submitLeaderboardScore = () => {
+    if (!pendingLeaderboardEntry) return
+    const name = leaderboardNameInput.trim() || "Anonymous"
+    const entry = {
+      name,
+      flow: pendingLeaderboardEntry.flow,
+      bank: pendingLeaderboardEntry.bank,
+      grade: pendingLeaderboardEntry.grade,
+      song: pendingLeaderboardEntry.song,
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    }
+    setLeaderboard(prev => {
+      const updated = [...prev, entry]
+      // Sort by flow (desc), then bank (desc)
+      updated.sort((a, b) => b.flow - a.flow || b.bank - a.bank)
+      // Keep top 100
+      return updated.slice(0, 100)
+    })
+    setPendingLeaderboardEntry(null)
+    setLeaderboardSubmitted(true)
   }
 
   // Singing detection: start/stop mic
@@ -1911,26 +1945,69 @@ export default function HablaBeat() {
     return challengesWon > 0 && section.songs.some((song: any) => song.playCount >= 1)
   }
 
-  // Play a bright bloop on world hover — reuse a single AudioContext so it never expires
+  // Play a soft bloop on world hover — original pitch (440→660 Hz)
   const playWorldHover = () => {
     try {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
       }
       const ctx = audioCtxRef.current
-      // Resume if browser suspended it (happens after inactivity)
       if (ctx.state === "suspended") ctx.resume()
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.connect(gain)
       gain.connect(ctx.destination)
       osc.type = "sine"
-      osc.frequency.setValueAtTime(880, ctx.currentTime)
-      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.07)
-      gain.gain.setValueAtTime(0.09, ctx.currentTime)
+      osc.frequency.setValueAtTime(440, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.07)
+      gain.gain.setValueAtTime(0.07, ctx.currentTime)
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15)
       osc.start(ctx.currentTime)
       osc.stop(ctx.currentTime + 0.15)
+    } catch { /* audio not available */ }
+  }
+
+  // Play a whoosh/zoom sound when tapping into a world
+  const playWorldClick = () => {
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+      }
+      const ctx = audioCtxRef.current
+      if (ctx.state === "suspended") ctx.resume()
+
+      // Layer 1: low whoosh — noise filtered upward
+      const bufferSize = ctx.sampleRate * 0.6
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+      const data = buffer.getChannelData(0)
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1
+      const noise = ctx.createBufferSource()
+      noise.buffer = buffer
+      const bpf = ctx.createBiquadFilter()
+      bpf.type = "bandpass"
+      bpf.frequency.setValueAtTime(120, ctx.currentTime)
+      bpf.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.5)
+      bpf.Q.value = 1.2
+      const noiseGain = ctx.createGain()
+      noiseGain.gain.setValueAtTime(0.18, ctx.currentTime)
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55)
+      noise.connect(bpf)
+      bpf.connect(noiseGain)
+      noiseGain.connect(ctx.destination)
+      noise.start(ctx.currentTime)
+
+      // Layer 2: rising tone for the "zoom" feel
+      const osc = ctx.createOscillator()
+      const oscGain = ctx.createGain()
+      osc.connect(oscGain)
+      oscGain.connect(ctx.destination)
+      osc.type = "sine"
+      osc.frequency.setValueAtTime(180, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.45)
+      oscGain.gain.setValueAtTime(0.12, ctx.currentTime)
+      oscGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5)
+      osc.start(ctx.currentTime)
+      osc.stop(ctx.currentTime + 0.5)
     } catch { /* audio not available */ }
   }
 
@@ -1960,10 +2037,7 @@ export default function HablaBeat() {
   // Callback when DDR game ends: update best flow, total vocab bank, best grade, play count
   const handleDDRGameEnd = (songNum: number, flow: number, bank: number, grade: string) => {
     // Best flow ever
-    setBestFlow(prev => {
-      const newVal = Math.max(prev, flow)
-      return newVal
-    })
+    setBestFlow(prev => Math.max(prev, flow))
     // Accumulate total vocab bank
     setTotalVocabBank(prev => prev + bank)
     // Best grade per song (compare letter grades)
@@ -1977,6 +2051,11 @@ export default function HablaBeat() {
     })
     // Track play count per song
     setSongPlayCounts(prev => ({ ...prev, [songNum]: (prev[songNum] || 0) + 1 }))
+    // Queue leaderboard entry — user will enter name on leaderboard page
+    const songTitle = curriculumData.flatMap(c => c.sections.flatMap(s => s.songs)).find((s: any) => s.number === songNum)?.title ?? `Song ${songNum}`
+    setPendingLeaderboardEntry({ flow, bank, grade, song: songTitle })
+    setLeaderboardSubmitted(false)
+    setLeaderboardNameInput(userName || "")
   }
 
   // Update allSongs calculation to use current language
@@ -2212,6 +2291,18 @@ export default function HablaBeat() {
     )
   }
 
+  // Fly Game View — currently only Alphabet World is implemented
+  if (flyGameSection === "alphabet-vowels") {
+    return (
+      <AlphabetFly
+        sectionTitle="Alphabet World"
+        coins={challengeCoins}
+        onCoinsChange={(delta) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
+
   // DDR Game View
   if (currentView === "ddr" && currentSong && selectedLanguage === "spanish") {
     return (
@@ -2428,32 +2519,248 @@ export default function HablaBeat() {
           {/* Bottom Navigation */}
           <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
-                style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
-                onClick={() => { stopMic(); setCurrentView("songs") }}
-              >
-                <Music className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => { stopMic(); setCurrentView("songs") }}>
+                <Music className="h-6 w-6" />
                 <span className="text-xs font-bold">Songs</span>
               </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => { stopMic(); setCurrentView("coins") }}
-              >
-                <Coins className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => { stopMic(); setCurrentView("coins") }}>
+                <Coins className="h-6 w-6" />
                 <span className="text-xs font-semibold">Bank</span>
               </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => { stopMic(); setCurrentView("visualizer") }}
-              >
-                <Sparkles className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => { stopMic(); setCurrentView("leaderboard") }}>
+                <span style={{ fontSize: 22 }}>🏆</span>
+                <span className="text-xs font-semibold">Ranks</span>
+              </Button>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => { stopMic(); setCurrentView("visualizer") }}>
+                <Sparkles className="h-6 w-6" />
                 <span className="text-xs font-semibold">Visualizer</span>
               </Button>
             </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (currentView === "leaderboard") {
+    const gradeColor: Record<string, string> = {
+      "A+": "#fbbf24", "A": "#fbbf24", "A-": "#fbbf24",
+      "B+": "#34d399", "B": "#34d399", "B-": "#34d399",
+      "C+": "#60a5fa", "C": "#60a5fa", "C-": "#60a5fa",
+      "D+": "#f97316", "D": "#f97316", "D-": "#f97316",
+      "F": "#f87171",
+    }
+    const rankEmoji = (i: number) => i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`
+
+    return (
+      <div className="min-h-screen swirl-bg">
+        <style>{`
+          @keyframes lbRowIn {
+            from { opacity: 0; transform: translateX(-16px); }
+            to   { opacity: 1; transform: translateX(0); }
+          }
+          @keyframes lbPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.4); }
+            50%       { box-shadow: 0 0 0 8px rgba(168,85,247,0); }
+          }
+          @keyframes bunnyTilt {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(1deg); }
+          }
+          .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
+        `}</style>
+        <div className="max-w-md mx-auto min-h-screen pb-24">
+
+          {/* Header */}
+          <div className="relative overflow-hidden pb-5 rounded-3xl mx-2 mt-2" style={{
+            background: "linear-gradient(180deg, #1e1b4b 0%, #312e81 40%, #4c1d95 80%, #6d28d9 100%)"
+          }}>
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              {[
+                { top:"8%",  left:"8%",  size:12, delay:"0s" },
+                { top:"15%", left:"50%", size:9,  delay:"0.4s" },
+                { top:"6%",  left:"75%", size:11, delay:"0.8s" },
+                { top:"22%", left:"88%", size:8,  delay:"0.2s" },
+                { top:"35%", left:"5%",  size:7,  delay:"1.1s" },
+                { top:"28%", left:"60%", size:10, delay:"0.6s" },
+              ].map((s, i) => (
+                <span key={i} className="star-twinkle absolute text-yellow-300" style={{ top: s.top, left: s.left, fontSize: s.size, animationDuration: "2s", animationDelay: s.delay }}>★</span>
+              ))}
+            </div>
+
+            <div className="flex items-end px-3 pt-4 gap-0">
+              <div className="w-24 h-24 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
+              </div>
+              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
+                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
+                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
+                  border: "3px solid rgba(255,255,255,0.7)",
+                }}>
+                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
+                    borderTop: "14px solid transparent",
+                    borderBottom: "14px solid transparent",
+                    borderRight: "12px solid #fbbf24"
+                  }} />
+                  <h1 className="text-2xl font-black text-white text-center tracking-wide drop-shadow-md">
+                    🏆 Leaderboard
+                  </h1>
+                </div>
+                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{ background: "linear-gradient(90deg, #34d399, #06b6d4)" }} />
+              </div>
+            </div>
+
+            {/* Stat pills */}
+            <div className="flex gap-2 px-4 pt-4">
+              <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
+                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Players</p>
+                <p className="text-white font-black text-xl">{leaderboard.length}</p>
+              </div>
+              <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
+                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Flow</p>
+                <p className="text-white font-black text-xl">{leaderboard[0]?.flow ?? "—"}</p>
+              </div>
+              <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
+                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Bank</p>
+                <p className="text-white font-black text-xl">{leaderboard[0]?.bank ?? "—"}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pending score entry — shown after a game ends */}
+          {pendingLeaderboardEntry && !leaderboardSubmitted && (
+            <div className="mx-2 mt-3 rounded-3xl overflow-hidden shadow-xl" style={{
+              background: "linear-gradient(135deg, #1e1b4b, #4c1d95)",
+              border: "2px solid rgba(168,85,247,0.6)",
+              animation: "lbPulse 2s ease-in-out infinite",
+            }}>
+              <div className="px-5 py-4">
+                <p className="text-white font-black text-lg text-center mb-1">🎉 New Score!</p>
+                <div className="flex justify-center gap-4 mb-3">
+                  <span className="text-white/80 text-sm">🔥 <span className="font-black text-white">{pendingLeaderboardEntry.flow}</span> Flow</span>
+                  <span className="text-white/80 text-sm">💰 <span className="font-black text-white">{pendingLeaderboardEntry.bank}</span> Bank</span>
+                  <span className="text-white/80 text-sm">🎓 <span className="font-black" style={{ color: gradeColor[pendingLeaderboardEntry.grade] ?? "#fff" }}>{pendingLeaderboardEntry.grade}</span></span>
+                </div>
+                <p className="text-white/60 text-xs text-center mb-3">{pendingLeaderboardEntry.song}</p>
+                <p className="text-white/80 text-sm font-bold text-center mb-2">Enter your name:</p>
+                <input
+                  type="text"
+                  value={leaderboardNameInput}
+                  onChange={e => setLeaderboardNameInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === "Enter") submitLeaderboardScore() }}
+                  placeholder="Your name..."
+                  maxLength={20}
+                  className="w-full rounded-2xl px-4 py-3 text-center font-black text-gray-900 text-base outline-none mb-3"
+                  style={{ background: "rgba(255,255,255,0.95)", border: "2px solid rgba(168,85,247,0.5)" }}
+                  autoFocus
+                />
+                <button
+                  onClick={submitLeaderboardScore}
+                  className="w-full py-3 rounded-2xl font-black text-white text-base active:scale-95 transition-all"
+                  style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 16px rgba(168,85,247,0.5)" }}
+                >
+                  📋 Post My Score
+                </button>
+              </div>
+            </div>
+          )}
+
+          {leaderboardSubmitted && (
+            <div className="mx-2 mt-3 rounded-2xl px-4 py-3 text-center" style={{ background: "rgba(52,211,153,0.15)", border: "1.5px solid rgba(52,211,153,0.4)" }}>
+              <p className="text-emerald-300 font-black">✓ Score posted!</p>
+            </div>
+          )}
+
+          {/* Leaderboard list */}
+          <div className="px-2 mt-4 space-y-2">
+            {leaderboard.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🏆</div>
+                <p className="text-white/60 font-bold text-lg">No scores yet!</p>
+                <p className="text-white/40 text-sm mt-1">Play a song to get on the board</p>
+              </div>
+            ) : (
+              leaderboard.map((entry, i) => {
+                const isTop3 = i < 3
+                const rowBg = i === 0
+                  ? "linear-gradient(135deg, rgba(251,191,36,0.25), rgba(245,158,11,0.15))"
+                  : i === 1
+                    ? "linear-gradient(135deg, rgba(148,163,184,0.2), rgba(100,116,139,0.1))"
+                    : i === 2
+                      ? "linear-gradient(135deg, rgba(251,146,60,0.2), rgba(234,88,12,0.1))"
+                      : "rgba(255,255,255,0.06)"
+                const rowBorder = i === 0 ? "1.5px solid rgba(251,191,36,0.5)"
+                  : i === 1 ? "1.5px solid rgba(148,163,184,0.35)"
+                  : i === 2 ? "1.5px solid rgba(251,146,60,0.35)"
+                  : "1px solid rgba(255,255,255,0.08)"
+                return (
+                  <div
+                    key={i}
+                    className="rounded-2xl px-4 py-3 flex items-center gap-3"
+                    style={{
+                      background: rowBg,
+                      border: rowBorder,
+                      animation: `lbRowIn 0.3s ease ${Math.min(i * 0.04, 0.6)}s both`,
+                    }}
+                  >
+                    {/* Rank */}
+                    <div className="w-9 text-center flex-shrink-0">
+                      {isTop3
+                        ? <span style={{ fontSize: 24 }}>{rankEmoji(i)}</span>
+                        : <span className="text-white/40 font-black text-sm">#{i + 1}</span>
+                      }
+                    </div>
+
+                    {/* Name + song */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-black text-sm leading-tight truncate">{entry.name}</p>
+                      <p className="text-white/45 text-[10px] truncate">{entry.song} · {entry.date}</p>
+                    </div>
+
+                    {/* Grade */}
+                    <div className="flex-shrink-0 text-center">
+                      <p className="font-black text-lg leading-none" style={{ color: gradeColor[entry.grade] ?? "#fff" }}>{entry.grade}</p>
+                      <p className="text-white/40 text-[9px]">Grade</p>
+                    </div>
+
+                    {/* Flow */}
+                    <div className="flex-shrink-0 text-center min-w-[42px]">
+                      <p className="text-orange-300 font-black text-base leading-none">🔥{entry.flow}</p>
+                      <p className="text-white/40 text-[9px]">Flow</p>
+                    </div>
+
+                    {/* Bank */}
+                    <div className="flex-shrink-0 text-center min-w-[42px]">
+                      <p className="text-yellow-300 font-black text-base leading-none">💰{entry.bank}</p>
+                      <p className="text-white/40 text-[9px]">Bank</p>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Bottom nav */}
+        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+          <div className="flex justify-around">
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
+              <Music className="h-6 w-6" />
+              <span className="text-xs font-semibold">Songs</span>
+            </Button>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
+              <Coins className="h-6 w-6" />
+              <span className="text-xs font-semibold">Bank</span>
+            </Button>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("leaderboard")}>
+              <span style={{ fontSize: 24 }}>🏆</span>
+              <span className="text-xs font-bold">Ranks</span>
+            </Button>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+              <Sparkles className="h-6 w-6" />
+              <span className="text-xs font-semibold">Visualizer</span>
+            </Button>
           </div>
         </div>
       </div>
@@ -2736,10 +3043,11 @@ export default function HablaBeat() {
               const StoreCard = ({ item, isActive, canAfford }: { item: StoreItem; isActive: boolean; canAfford: boolean }) => {
                 const isOwned = storeOwned.includes(item.id)
                 const isFree = item.cost === 0
+                const rarityInfo = item.category === "pointer" ? POINTER_RARITY[item.id] : null
                 return (
                   <div
                     className="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-1.5 transition-all active:scale-[0.97]"
-                    style={{ border: isActive ? "2px solid #34d399" : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : undefined }}
+                    style={{ border: isActive ? "2px solid #34d399" : rarityInfo && rarityInfo.label !== "Common" ? `1.5px solid ${rarityInfo.color}40` : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : rarityInfo ? rarityInfo.glow : undefined }}
                   >
                     {/* Preview area */}
                     {item.previewBg ? (
@@ -2776,8 +3084,9 @@ export default function HablaBeat() {
                       </div>
                     ) : item.previewEmoji ? (
                       <div className="w-full h-14 rounded-xl flex items-center justify-center relative overflow-hidden"
-                        style={{ background: item.category === "effect"
-                          ? item.id === "effect-laser"    ? "linear-gradient(135deg,#001533,#003366)"
+                        style={{ background: item.category === "pointer" && rarityInfo
+                          ? rarityInfo.bg
+                          : item.id === "effect-laser"    ? "linear-gradient(135deg,#001533,#003366)"
                           : item.id === "effect-lightning"? "linear-gradient(135deg,#1a1a00,#3d3300)"
                           : item.id === "effect-fire"     ? "linear-gradient(135deg,#1a0000,#330000)"
                           : item.id === "effect-crystal"  ? "linear-gradient(135deg,#001a33,#003355)"
@@ -2786,18 +3095,23 @@ export default function HablaBeat() {
                           : item.id === "effect-rainbow"  ? "linear-gradient(135deg,#fff0f5,#f0f5ff)"
                           : item.id === "effect-minimal"  ? "linear-gradient(135deg,#0a0a0a,#1a1a1a)"
                           : "linear-gradient(135deg,#e0f7ff,#c7f0ff)"
-                          : "linear-gradient(135deg,#f0fdf4,#e0f7ff)"
                         }}>
                         {/* Effect-specific backgrounds */}
                         {item.id === "effect-laser" && <div className="absolute inset-0 flex items-center"><div style={{ width:"100%", height:3, background:"linear-gradient(90deg, transparent, #00ffff, #0088ff, transparent)", boxShadow:"0 0 8px #00ffff, 0 0 16px #0088ff" }} /></div>}
                         {item.id === "effect-lightning" && <><div className="absolute" style={{ top:"10%", left:"40%", width:3, height:"30%", background:"#ffe066", boxShadow:"0 0 6px #ffe066", transform:"rotate(15deg)" }} /><div className="absolute" style={{ top:"40%", left:"52%", width:2, height:"25%", background:"#ffe066", boxShadow:"0 0 6px #ffe066", transform:"rotate(-10deg)" }} /></>}
                         {item.id === "effect-rainbow" && <div className="absolute inset-0" style={{ background:"linear-gradient(135deg, rgba(255,0,0,0.3), rgba(255,165,0,0.3), rgba(255,255,0,0.3), rgba(0,255,0,0.3), rgba(0,0,255,0.3), rgba(238,130,238,0.3))" }} />}
                         {item.id === "effect-minimal" && <div className="absolute rounded-full" style={{ width:40, height:40, border:"2px solid rgba(255,255,255,0.5)", left:"50%", top:"50%", transform:"translate(-50%,-50%)" }} />}
-                        <span style={{ fontSize:28, position:"relative", zIndex:1, filter: item.id !== "effect-default" && item.id !== "effect-rainbow" && item.id !== "effect-minimal" ? "drop-shadow(0 0 6px currentColor)" : "none" }}>{item.previewEmoji}</span>
+                        <span style={{ fontSize:28, position:"relative", zIndex:1, filter: "drop-shadow(0 0 6px rgba(255,255,255,0.8))" }}>{item.previewEmoji}</span>
                       </div>
                     ) : null}
 
                     <p className="font-bold text-gray-900 text-xs text-center leading-tight mt-0.5">{item.name}</p>
+                    {/* Rarity badge for pointers */}
+                    {rarityInfo && (
+                      <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ color: rarityInfo.color, background: `${rarityInfo.color}18`, border: `1px solid ${rarityInfo.color}40`, fontSize: 9 }}>
+                        {rarityInfo.label === "Legendary" ? "✦ " : ""}{rarityInfo.label}
+                      </span>
+                    )}
                     <p className="text-xs text-gray-400 text-center leading-tight" style={{ fontSize:10 }}>{item.description}</p>
 
                     {/* Action button */}
@@ -2829,64 +3143,20 @@ export default function HablaBeat() {
                     </div>
                   </div>
 
-                  {/* Category tabs */}
-                  <div className="flex gap-2">
-                    {([
-                      { key: "effect",  label: "💥 Effects" },
-                      { key: "theme",   label: "🌌 Themes" },
-                      { key: "pointer", label: "🪄 Pointers" },
-                    ] as const).map(tab => (
-                      <button
-                        key={tab.key}
-                        onClick={() => handleStoreTabChange(tab.key)}
-                        className="flex-1 py-2 rounded-full text-xs font-black"
-                        style={{
-                          ...(storeTab === tab.key
-                            ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 3px 10px rgba(168,85,247,0.4)" }
-                            : { background: "#f3f4f6", color: "#6b7280" }),
-                          transition: "transform 0.08s cubic-bezier(0.34,1.56,0.64,1), background 0.15s, box-shadow 0.15s",
-                          transform: storeTab === tab.key ? "scale(1.06) translateY(-1px)" : "scale(1) translateY(0px)",
-                        }}
-                      >
-                        <span style={{
-                          display: "inline-block",
-                          transition: "transform 0.12s cubic-bezier(0.34,1.56,0.64,1)",
-                          transform: storeTab === tab.key ? "rotate(0deg) scale(1.15)" : "rotate(0deg) scale(1)",
-                        }}>
-                          {tab.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Item grid — animates in when tab changes */}
-                  <div style={{
-                    animation: storeTabAnimating ? "none" : "storeTabIn 0.18s cubic-bezier(0.34,1.56,0.64,1) both",
-                    opacity: storeTabAnimating ? 0 : 1,
-                    transform: storeTabAnimating ? "scale(0.97) translateY(4px)" : "scale(1) translateY(0)",
-                    transition: storeTabAnimating ? "opacity 0.08s, transform 0.08s" : "none",
-                  }}>
-                    {storeTab === "effect" && (
-                      <div className="grid grid-cols-2 gap-3">
-                        {STORE_CATALOG.filter(item => item.category === "effect").map(item => (
-                          <StoreCard key={item.id} item={item} isActive={activeEffect === item.id} canAfford={totalVocabBank >= item.cost} />
-                        ))}
-                      </div>
-                    )}
-                    {storeTab === "theme" && (
-                      <div className="grid grid-cols-2 gap-3">
-                        {STORE_CATALOG.filter(item => item.category === "theme").map(item => (
-                          <StoreCard key={item.id} item={item} isActive={activeTheme === item.id} canAfford={totalVocabBank >= item.cost} />
-                        ))}
-                      </div>
-                    )}
-                    {storeTab === "pointer" && (
-                      <div className="grid grid-cols-2 gap-3">
-                        {STORE_CATALOG.filter(item => item.category === "pointer").map(item => (
-                          <StoreCard key={item.id} item={item} isActive={activePointer === item.id} canAfford={totalVocabBank >= item.cost} />
-                        ))}
-                      </div>
-                    )}
+                  {/* Single unified grid — effects + pointer arrows together */}
+                  <div>
+                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">💥 Hit Effects</p>
+                    <div className="grid grid-cols-2 gap-3 mb-5">
+                      {STORE_CATALOG.filter(item => item.id.startsWith("effect-")).map(item => (
+                        <StoreCard key={item.id} item={item} isActive={activeEffect === item.id} canAfford={totalVocabBank >= item.cost} />
+                      ))}
+                    </div>
+                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">🪄 Pointer Arrows</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {STORE_CATALOG.filter(item => item.id.startsWith("pointer-")).map(item => (
+                        <StoreCard key={item.id} item={item} isActive={activePointer === item.id} canAfford={totalVocabBank >= item.cost} />
+                      ))}
+                    </div>
                   </div>
                 </div>
               )
@@ -2896,29 +3166,20 @@ export default function HablaBeat() {
           {/* Bottom Navigation */}
           <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("songs")}
-              >
-                <Music className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
+                <Music className="h-6 w-6" />
                 <span className="text-xs font-semibold">Songs</span>
               </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
-                style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
-                onClick={() => setCurrentView("coins")}
-              >
-                <Coins className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("coins")}>
+                <Coins className="h-6 w-6" />
                 <span className="text-xs font-bold">Bank</span>
               </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("visualizer")}
-              >
-                <Sparkles className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("leaderboard")}>
+                <span style={{ fontSize: 22 }}>🏆</span>
+                <span className="text-xs font-semibold">Ranks</span>
+              </Button>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+                <Sparkles className="h-6 w-6" />
                 <span className="text-xs font-semibold">Visualizer</span>
               </Button>
             </div>
@@ -2998,6 +3259,11 @@ export default function HablaBeat() {
           }
           .world-zoom-in  { animation: worldZoomIn  0.9s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
           .world-zoom-out { animation: worldZoomOut 0.4s cubic-bezier(0.4,0,0.2,1) forwards; }
+          @keyframes worldStarBurst {
+            0%   { transform: translate(-50%, -50%) rotate(var(--sa)) translateX(0) scale(1); opacity: 1; }
+            60%  { opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) rotate(var(--sa)) translateX(var(--sd)) scale(0.1); opacity: 0; }
+          }
           @keyframes worldContentFadeIn {
             0%   { opacity: 0; transform: scale(0.92); }
             100% { opacity: 1; transform: scale(1); }
@@ -3259,9 +3525,44 @@ export default function HablaBeat() {
                 style={{
                   position: "fixed", inset: 0, zIndex: 60,
                   background: sectionGradient,
-                  "--ox": "50%", "--oy": "50%",
+                  "--ox": worldZoomOrigin.x, "--oy": worldZoomOrigin.y,
                 } as React.CSSProperties}
               >
+                {/* Star burst particles — shoot outward at the start of zoom */}
+                {!worldClosing && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {Array.from({ length: 18 }).map((_, i) => {
+                      const angle = (i / 18) * 360
+                      const dist = 35 + (i % 3) * 20
+                      const size = 3 + (i % 4) * 2
+                      const colors = ["#fff","#fde68a","#f0abfc","#7dd3fc","#bbf7d0","#fca5a5"]
+                      const col = colors[i % colors.length]
+                      const delay = (i % 4) * 0.03
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            position: "absolute",
+                            left: worldZoomOrigin.x,
+                            top: worldZoomOrigin.y,
+                            width: `${size}px`,
+                            height: `${size}px`,
+                            borderRadius: i % 3 === 0 ? "0" : "50%",
+                            background: col,
+                            boxShadow: `0 0 6px ${col}`,
+                            clipPath: i % 3 === 0
+                              ? "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"
+                              : "none",
+                            transform: "translate(-50%, -50%)",
+                            animation: `worldStarBurst 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}s forwards`,
+                            "--sa": `${angle}deg`,
+                            "--sd": `${dist}vw`,
+                          } as React.CSSProperties}
+                        />
+                      )
+                    })}
+                  </div>
+                )}
                 {/* Emoji background — fills the phone screen like a soft watermark */}
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
                   <div style={{
@@ -3313,37 +3614,41 @@ export default function HablaBeat() {
                       </div>
                     </div>
                   </div>
-                  {/* Loadout bar — shows active gear, tap to swap */}
+                  {/* Loadout bar — shows active effect + pointer, tap to open drawer */}
                   {(() => {
-                    const activeEffectItem = STORE_CATALOG.find(i => i.id === activeEffect)
-                    const activeThemeItem  = STORE_CATALOG.find(i => i.id === activeTheme)
-                    const activePointerItem= STORE_CATALOG.find(i => i.id === activePointer)
-                    const chips = [
-                      { key: "effect" as const,  label: "Effect",  item: activeEffectItem },
-                      { key: "theme" as const,   label: "Theme",   item: activeThemeItem },
-                      { key: "pointer" as const, label: "Pointer", item: activePointerItem },
-                    ]
+                    const activeEffectItem  = STORE_CATALOG.find(i => i.id === activeEffect)
+                    const activePointerItem = STORE_CATALOG.find(i => i.id === activePointer)
                     return (
                       <div className="px-3 pb-2">
                         <div className="flex gap-2 items-center">
                           <span className="text-white/60 text-xs font-bold tracking-wide uppercase shrink-0">Loadout</span>
                           <div className="flex gap-1.5 flex-1">
-                            {chips.map(chip => (
-                              <button
-                                key={chip.key}
-                                onClick={() => setLoadoutOpen(loadoutOpen === chip.key ? null : chip.key)}
-                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-black transition-all active:scale-90"
-                                style={{
-                                  background: loadoutOpen === chip.key ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.18)",
-                                  border: loadoutOpen === chip.key ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid rgba(255,255,255,0.3)",
-                                  color: "white",
-                                  backdropFilter: "blur(8px)",
-                                }}
-                              >
-                                <span>{chip.item?.emoji ?? "?"}</span>
-                                <span className="opacity-80">{chip.label}</span>
-                              </button>
-                            ))}
+                            {/* Effect chip */}
+                            <button
+                              onClick={() => setLoadoutOpen(loadoutOpen === "effect" ? null : "effect")}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-black transition-all active:scale-90"
+                              style={{
+                                background: loadoutOpen === "effect" ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.18)",
+                                border: loadoutOpen === "effect" ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid rgba(255,255,255,0.3)",
+                                color: "white", backdropFilter: "blur(8px)",
+                              }}
+                            >
+                              <span>{activeEffectItem?.emoji ?? "💧"}</span>
+                              <span className="opacity-80">Effect</span>
+                            </button>
+                            {/* Pointer chip */}
+                            <button
+                              onClick={() => setLoadoutOpen(loadoutOpen === "pointer" ? null : "pointer")}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-black transition-all active:scale-90"
+                              style={{
+                                background: loadoutOpen === "pointer" ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.18)",
+                                border: loadoutOpen === "pointer" ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid rgba(255,255,255,0.3)",
+                                color: "white", backdropFilter: "blur(8px)",
+                              }}
+                            >
+                              <span>{activePointerItem?.emoji ?? "🥕"}</span>
+                              <span className="opacity-80">Arrow</span>
+                            </button>
                           </div>
                         </div>
 
@@ -3351,14 +3656,13 @@ export default function HablaBeat() {
                         {loadoutOpen && (
                           <div className="mt-2 rounded-2xl overflow-hidden" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.15)" }}>
                             <div className="flex gap-2 overflow-x-auto px-3 py-2.5" style={{ scrollbarWidth: "none" }}>
-                              {STORE_CATALOG.filter(i => i.category === loadoutOpen && storeOwned.includes(i.id)).map(item => {
-                                const isActive = (loadoutOpen === "effect" ? activeEffect : loadoutOpen === "theme" ? activeTheme : activePointer) === item.id
+                              {STORE_CATALOG.filter(i => i.id.startsWith(loadoutOpen === "effect" ? "effect-" : "pointer-") && storeOwned.includes(i.id)).map(item => {
+                                const isActive = (loadoutOpen === "effect" ? activeEffect : activePointer) === item.id
                                 return (
                                   <button
                                     key={item.id}
                                     onClick={() => {
                                       if (loadoutOpen === "effect") setActiveEffect(item.id)
-                                      else if (loadoutOpen === "theme") setActiveTheme(item.id)
                                       else setActivePointer(item.id)
                                       setLoadoutOpen(null)
                                     }}
@@ -3375,13 +3679,8 @@ export default function HablaBeat() {
                                   </button>
                                 )
                               })}
-                              {STORE_CATALOG.filter(i => i.category === loadoutOpen && !storeOwned.includes(i.id)).map(item => (
-                                <button
-                                  key={item.id}
-                                  onClick={() => setLoadoutOpen(null)}
-                                  className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl opacity-40"
-                                  style={{ minWidth: "56px", cursor: "default" }}
-                                >
+                              {STORE_CATALOG.filter(i => i.id.startsWith(loadoutOpen === "effect" ? "effect-" : "pointer-") && !storeOwned.includes(i.id)).map(item => (
+                                <button key={item.id} className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl opacity-40" style={{ minWidth: "56px", cursor: "default" }}>
                                   <span style={{ fontSize: "22px", filter: "grayscale(1)" }}>{item.emoji}</span>
                                   <span className="text-white text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px" }}>{item.name.split(" ")[0]}</span>
                                   <span className="text-white/60 text-[9px]">🔒</span>
@@ -3396,7 +3695,7 @@ export default function HablaBeat() {
                   })()}
 
                   {/* Song list */}
-                  <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: "100px" }}>
+                  <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: "120px" }}>
                     <div className="bg-white/15 backdrop-blur-sm rounded-3xl overflow-hidden">
                       {openSection.songs.map((song, idx) => {
                         const isClickable = song.youtubeId && song.youtubeId !== ""
@@ -3465,6 +3764,33 @@ export default function HablaBeat() {
                           </div>
                         )
                       })}
+                    </div>
+
+                    {/* ✈️ Fly Game Button — sits below songs, inside scroll area */}
+                    <div className="pt-3 flex justify-center">
+                      <button
+                        onClick={() => setFlyGameSection(openSection!.id)}
+                        className="flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-white text-base transition-all active:scale-95 w-full"
+                        style={{
+                          background: openSection!.id === "alphabet-vowels"
+                            ? "linear-gradient(135deg, rgba(99,102,241,0.55), rgba(139,92,246,0.55))"
+                            : "rgba(255,255,255,0.10)",
+                          border: openSection!.id === "alphabet-vowels"
+                            ? "1.5px solid rgba(167,139,250,0.65)"
+                            : "1.5px solid rgba(255,255,255,0.28)",
+                          backdropFilter: "blur(10px)",
+                          boxShadow: openSection!.id === "alphabet-vowels"
+                            ? "0 4px 16px rgba(99,102,241,0.35)"
+                            : "0 2px 10px rgba(0,0,0,0.15)",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <span style={{ fontSize: "22px", animation: "btnBounce 1.1s ease-in-out infinite" }}>🐰</span>
+                        {openSection!.title.replace(" World", "")} Fly
+                        {openSection!.id === "alphabet-vowels" && (
+                          <span className="text-xs font-bold px-1.5 py-0.5 rounded-full ml-1" style={{ background: "rgba(255,255,255,0.25)", color: "white" }}>NEW</span>
+                        )}
+                      </button>
                     </div>
                   </div>
 
@@ -3629,7 +3955,14 @@ export default function HablaBeat() {
                           return (
                             <div key={section.id} className="world-float aspect-square" style={{ animationDelay: `${(sectionIdx * 0.4) % 3}s` }}>
                             <button
-                              onClick={() => setOpenSectionId(section.id)}
+                              onClick={(e) => {
+                                playWorldClick()
+                                const rect = e.currentTarget.getBoundingClientRect()
+                                const cx = ((rect.left + rect.width / 2) / window.innerWidth * 100).toFixed(1) + "%"
+                                const cy = ((rect.top + rect.height / 2) / window.innerHeight * 100).toFixed(1) + "%"
+                                setWorldZoomOrigin({ x: cx, y: cy })
+                                setOpenSectionId(section.id)
+                              }}
                               onMouseEnter={playWorldHover}
                               onTouchStart={playWorldHover}
                               className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
@@ -3693,29 +4026,20 @@ export default function HablaBeat() {
             {/* Bottom Navigation */}
             <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
               <div className="flex justify-around">
-                <Button
-                  variant="ghost"
-                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
-                  style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
-                  onClick={() => setCurrentView("songs")}
-                >
-                  <Music className="h-7 w-7" />
+                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("songs")}>
+                  <Music className="h-6 w-6" />
                   <span className="text-xs font-bold">Songs</span>
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                  onClick={() => setCurrentView("coins")}
-                >
-                  <Coins className="h-7 w-7" />
+                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
+                  <Coins className="h-6 w-6" />
                   <span className="text-xs font-semibold">Bank</span>
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                  onClick={() => setCurrentView("visualizer")}
-                >
-                  <Sparkles className="h-7 w-7" />
+                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("leaderboard")}>
+                  <span style={{ fontSize: 22 }}>🏆</span>
+                  <span className="text-xs font-semibold">Ranks</span>
+                </Button>
+                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+                  <Sparkles className="h-6 w-6" />
                   <span className="text-xs font-semibold">Visualizer</span>
                 </Button>
               </div>
@@ -3733,29 +4057,20 @@ export default function HablaBeat() {
           {/* Bottom Navigation */}
           <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("songs")}
-              >
-                <Music className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
+                <Music className="h-6 w-6" />
                 <span className="text-xs font-semibold">Songs</span>
               </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl text-gray-400"
-                onClick={() => setCurrentView("coins")}
-              >
-                <Coins className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
+                <Coins className="h-6 w-6" />
                 <span className="text-xs font-semibold">Bank</span>
               </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 pt-2 px-5 rounded-2xl"
-                style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }}
-                onClick={() => setCurrentView("visualizer")}
-              >
-                <Sparkles className="h-7 w-7" />
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("leaderboard")}>
+                <span style={{ fontSize: 22 }}>🏆</span>
+                <span className="text-xs font-semibold">Ranks</span>
+              </Button>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("visualizer")}>
+                <Sparkles className="h-6 w-6" />
                 <span className="text-xs font-bold">Visualizer</span>
               </Button>
             </div>
