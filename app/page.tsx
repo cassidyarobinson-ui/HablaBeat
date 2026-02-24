@@ -3575,8 +3575,8 @@ export default function HablaBeat() {
                 : ["#a78bfa","#c084fc","#e879f9"]
 
               return (
-                <div key={category.id} className="rounded-3xl overflow-hidden transition-all duration-300"
-                  style={{ background: catGradient, boxShadow: catGlow, border: `2px solid ${isOpen ? catAccent[0] + "66" : "rgba(255,255,255,0.08)"}` }}>
+                <div key={category.id} className="rounded-3xl transition-all duration-300"
+                  style={{ background: catGradient, boxShadow: catGlow, border: `2px solid ${isOpen ? catAccent[0] + "66" : "rgba(255,255,255,0.08)"}`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
 
                   {/* ── Header row — always visible ── */}
                   <button
@@ -3616,8 +3616,8 @@ export default function HablaBeat() {
 
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
-                    <div className="galaxy-worlds-in px-2 pt-1 pb-2">
-                      <div className="grid grid-cols-3 gap-3">
+                    <div className="galaxy-worlds-in px-2 pt-1 pb-4" style={{ overflow: "visible" }}>
+                      <div className="grid grid-cols-3 gap-3" style={{ overflow: "visible" }}>
                         {category.sections.map((section, sectionIdx) => {
                           const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
                           return (
