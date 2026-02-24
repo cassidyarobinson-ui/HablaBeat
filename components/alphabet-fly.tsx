@@ -97,15 +97,16 @@ interface Props {
 // CONSTANTS
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BUNNY_W = 72   // px
-const BUNNY_H = 72   // px
-const BUNNY_Y_PCT = 72   // fixed vertical position (% from top)
+const BUNNY_W = 100  // px
+const BUNNY_H = 100  // px
 const LETTER_SIZE = 58   // px
 const COIN_SIZE = 32
-const STEER_IMPULSE = 0.55  // % per frame applied while held (continuous)
-const MAX_SPEED = 6
+const STEER_IMPULSE = 0.55  // % per frame applied while held
+const MAX_SPEED_X = 6
+const MAX_SPEED_Y = 5
 const FRICTION = 0.85
 const HIT_RADIUS = 56   // px
+const BUNNY_Y_INIT = 65  // starting Y (% from top)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -156,13 +157,15 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   // Fixed sky emojis (generate once)
   const [skyEmojis] = useState<SkyEmoji[]>(makeSkyEmojis)
 
-  // Bunny position — only X moves, Y is fixed
-  const bunnyX = useRef(50)    // center horizontally
+  // Bunny position — X and Y both move
+  const bunnyX = useRef(50)
+  const bunnyY = useRef(BUNNY_Y_INIT)
   const velX = useRef(0)
+  const velY = useRef(0)
 
   // Hold-to-steer state
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const holdDirRef = useRef<"left" | "right" | null>(null)
+  const holdDirRef = useRef<"left" | "right" | "up" | "down" | null>(null)
 
   // DOM ref for game area
   const areaRef = useRef<HTMLDivElement>(null)
@@ -190,18 +193,18 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const currentEntry = ALPHABET_QUEUE[alphabetIdx % ALPHABET_QUEUE.length]
 
   // ── Hold steering ─────────────────────────────────────────────────────────
-  const startHold = useCallback((dir: "left" | "right") => {
+  const startHold = useCallback((dir: "left" | "right" | "up" | "down") => {
     if (holdDirRef.current === dir) return
-    // Clear any existing interval
     if (holdIntervalRef.current) {
       clearInterval(holdIntervalRef.current)
       holdIntervalRef.current = null
     }
     holdDirRef.current = dir
-    // Apply impulse immediately, then continuously
     const applyImpulse = () => {
-      if (dir === "left")  velX.current = Math.max(-MAX_SPEED, velX.current - STEER_IMPULSE)
-      if (dir === "right") velX.current = Math.min(MAX_SPEED,  velX.current + STEER_IMPULSE)
+      if (dir === "left")  velX.current = Math.max(-MAX_SPEED_X, velX.current - STEER_IMPULSE)
+      if (dir === "right") velX.current = Math.min(MAX_SPEED_X,  velX.current + STEER_IMPULSE)
+      if (dir === "up")    velY.current = Math.max(-MAX_SPEED_Y, velY.current - STEER_IMPULSE)
+      if (dir === "down")  velY.current = Math.min(MAX_SPEED_Y,  velY.current + STEER_IMPULSE)
     }
     applyImpulse()
     holdIntervalRef.current = setInterval(applyImpulse, 16)
@@ -220,15 +223,17 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     return () => { if (holdIntervalRef.current) clearInterval(holdIntervalRef.current) }
   }, [])
 
-  // ── Keyboard arrow key support ────────────────────────────────────────────
+  // ── Keyboard arrow key support (all 4 directions) ────────────────────────
   useEffect(() => {
     if (gamePhase !== "playing") return
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft")  { e.preventDefault(); startHold("left") }
       if (e.key === "ArrowRight") { e.preventDefault(); startHold("right") }
+      if (e.key === "ArrowUp")    { e.preventDefault(); startHold("up") }
+      if (e.key === "ArrowDown")  { e.preventDefault(); startHold("down") }
     }
     const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft" || e.key === "ArrowRight") stopHold()
+      if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)) stopHold()
     }
     window.addEventListener("keydown", onKeyDown)
     window.addEventListener("keyup",   onKeyUp)
@@ -253,7 +258,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       category: item.category,
       x: startX + i * spacing,
       y: -10,
-      speed: 0.09 + Math.random() * 0.05,
+      speed: 0.20 + Math.random() * 0.10,   // faster — was 0.09
       isTarget: item.label === targetLabel,
       collected: false,
       flashState: "none",
@@ -261,15 +266,17 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     setLetters(newLetters)
   }, [])
 
-  // ── Spawn a coin ──────────────────────────────────────────────────────────
+  // ── Spawn coins (2 at a time, spread apart) ───────────────────────────────
   const spawnCoin = useCallback(() => {
-    setCoinItems(prev => [...prev, {
+    const count = Math.random() < 0.4 ? 3 : 2  // 40% chance of 3 coins
+    const newCoins: Coin[] = Array.from({ length: count }, () => ({
       id: coinIdRef.current++,
-      x: 12 + Math.random() * 76,
-      y: -8,
-      speed: 0.06 + Math.random() * 0.05,
+      x: 8 + Math.random() * 84,
+      y: -8 - Math.random() * 6,
+      speed: 0.12 + Math.random() * 0.08,
       collected: false,
-    }])
+    }))
+    setCoinItems(prev => [...prev, ...newCoins])
   }, [])
 
   // ── Handle correct collection ─────────────────────────────────────────────
@@ -310,9 +317,11 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     const areaW = area.width
     const areaH = area.height
 
-    // ── Bunny physics — X only, Y is fixed ──
+    // ── Bunny physics — X and Y both move ──
     velX.current = velX.current * FRICTION
-    bunnyX.current = Math.max(3, Math.min(93, bunnyX.current + velX.current * 0.35))
+    velY.current = velY.current * FRICTION
+    bunnyX.current = Math.max(3,  Math.min(94, bunnyX.current + velX.current * 0.35))
+    bunnyY.current = Math.max(5,  Math.min(88, bunnyY.current + velY.current * 0.35))
 
     // ── Move letters downward ──
     collectedThisFrameRef.current = false
@@ -322,7 +331,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       const lxPx = (l.x / 100) * areaW
       const lyPx = (newY / 100) * areaH
       const bxPx = (bunnyX.current / 100) * areaW
-      const byPx = (BUNNY_Y_PCT / 100) * areaH
+      const byPx = (bunnyY.current / 100) * areaH
       const dist = Math.hypot(lxPx - bxPx, lyPx - byPx)
       if (dist < HIT_RADIUS && !collectedThisFrameRef.current) {
         collectedThisFrameRef.current = true
@@ -344,9 +353,9 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       const cxPx = (c.x / 100) * areaW
       const cyPx = (newY / 100) * areaH
       const bxPx = (bunnyX.current / 100) * areaW
-      const byPx = (BUNNY_Y_PCT / 100) * areaH
+      const byPx = (bunnyY.current / 100) * areaH
       const dist = Math.hypot(cxPx - bxPx, cyPx - byPx)
-      if (dist < HIT_RADIUS * 0.7) {
+      if (dist < HIT_RADIUS * 0.75) {
         setLocalCoins(lc => { onCoinsChange(1); return lc + 1 })
         return { ...c, collected: true }
       }
@@ -354,9 +363,9 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       return { ...c, y: newY }
     }))
 
-    // ── Coin spawn timer ──
+    // ── Coin spawn timer — much more frequent ──
     coinTimerRef.current += dt
-    if (coinTimerRef.current > 4500 + Math.random() * 2500) {
+    if (coinTimerRef.current > 1400 + Math.random() * 800) {
       coinTimerRef.current = 0
       spawnCoin()
     }
@@ -387,15 +396,14 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [gamePhase, gameLoop])
 
-  // ── Bunny DOM position (X only, Y fixed) ────────────────────────────────
+  // ── Bunny DOM position (X + Y both dynamic) ─────────────────────────────
   useEffect(() => {
     if (gamePhase !== "playing") return
     let raf: number
     const update = () => {
       if (bunnyElRef.current) {
         bunnyElRef.current.style.left = `calc(${bunnyX.current}% - ${BUNNY_W / 2}px)`
-        // Y is fixed — set once here and never again via JS
-        bunnyElRef.current.style.top  = `calc(${BUNNY_Y_PCT}% - ${BUNNY_H / 2}px)`
+        bunnyElRef.current.style.top  = `calc(${bunnyY.current}% - ${BUNNY_H / 2}px)`
       }
       raf = requestAnimationFrame(update)
     }
@@ -560,7 +568,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           </div>
         ))}
 
-        {/* ── Bunny — transparent-bg GIF, no box, just a soft glow ── */}
+        {/* ── Bunny — bigger, blue-tinted via CSS filter, transparent background ── */}
         {gamePhase === "playing" && (
           <div
             ref={bunnyElRef}
@@ -569,7 +577,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               width: `${BUNNY_W}px`,
               height: `${BUNNY_H}px`,
               zIndex: 10,
-              filter: "drop-shadow(0 0 10px rgba(167,139,250,0.8)) drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
+              // Blue tint: sepia converts to warm tones, hue-rotate pushes to blue, brightness lightens
+              filter: "sepia(1) hue-rotate(180deg) saturate(3) brightness(1.6) drop-shadow(0 0 10px rgba(99,179,237,0.9)) drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
             }}
           >
             <Image
@@ -624,7 +633,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
             </div>
             <div className="px-6 py-3 rounded-2xl text-white/70 text-sm text-center max-w-xs"
               style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
-              <strong className="text-white">Hold LEFT or RIGHT</strong> to steer<br />
+              <strong className="text-white">Hold any arrow</strong> to steer 🐰<br />
               Fly into the <span className="text-yellow-300 font-bold">★ starred letter</span>!<br />
               <span className="text-xs opacity-60 mt-1 block">Letters are in order: A → B → C…</span>
             </div>
@@ -646,49 +655,63 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           </div>
         </div>
 
-        {/* Steering buttons — HOLD for continuous movement */}
-        <div className="flex items-center gap-3 px-4 pb-4">
-          {/* Left — hold */}
+        {/* D-pad — 4 directional hold buttons */}
+        <div className="flex items-center justify-center gap-2 px-4 pb-4">
+          {/* Left */}
           <button
-            className="flex-1 flex flex-col items-center justify-center py-4 rounded-2xl font-black text-white text-3xl transition-transform active:scale-95"
+            className="flex flex-col items-center justify-center rounded-2xl font-black text-white text-2xl transition-transform active:scale-90"
             style={{
+              width: "80px", height: "64px",
               background: "rgba(99,102,241,0.55)",
               border: "1.5px solid rgba(255,255,255,0.3)",
               boxShadow: "0 4px 16px rgba(99,102,241,0.4)",
-              minHeight: "72px",
-              WebkitUserSelect: "none",
-              userSelect: "none",
-              touchAction: "none",
+              WebkitUserSelect: "none", userSelect: "none", touchAction: "none",
             }}
             onPointerDown={(e) => { e.preventDefault(); if (gamePhase === "playing") startHold("left") }}
-            onPointerUp={stopHold}
-            onPointerLeave={stopHold}
-            onPointerCancel={stopHold}
-          >
-            ◀
-            <span className="text-xs font-bold mt-1 opacity-70">HOLD</span>
-          </button>
+            onPointerUp={stopHold} onPointerLeave={stopHold} onPointerCancel={stopHold}
+          >◀</button>
 
-          {/* Right — hold */}
+          {/* Up + Down stacked in center */}
+          <div className="flex flex-col gap-1.5">
+            <button
+              className="flex items-center justify-center rounded-2xl font-black text-white text-2xl transition-transform active:scale-90"
+              style={{
+                width: "64px", height: "44px",
+                background: "rgba(139,92,246,0.55)",
+                border: "1.5px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 4px 16px rgba(139,92,246,0.4)",
+                WebkitUserSelect: "none", userSelect: "none", touchAction: "none",
+              }}
+              onPointerDown={(e) => { e.preventDefault(); if (gamePhase === "playing") startHold("up") }}
+              onPointerUp={stopHold} onPointerLeave={stopHold} onPointerCancel={stopHold}
+            >▲</button>
+            <button
+              className="flex items-center justify-center rounded-2xl font-black text-white text-2xl transition-transform active:scale-90"
+              style={{
+                width: "64px", height: "44px",
+                background: "rgba(139,92,246,0.55)",
+                border: "1.5px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 4px 16px rgba(139,92,246,0.4)",
+                WebkitUserSelect: "none", userSelect: "none", touchAction: "none",
+              }}
+              onPointerDown={(e) => { e.preventDefault(); if (gamePhase === "playing") startHold("down") }}
+              onPointerUp={stopHold} onPointerLeave={stopHold} onPointerCancel={stopHold}
+            >▼</button>
+          </div>
+
+          {/* Right */}
           <button
-            className="flex-1 flex flex-col items-center justify-center py-4 rounded-2xl font-black text-white text-3xl transition-transform active:scale-95"
+            className="flex flex-col items-center justify-center rounded-2xl font-black text-white text-2xl transition-transform active:scale-90"
             style={{
+              width: "80px", height: "64px",
               background: "rgba(99,102,241,0.55)",
               border: "1.5px solid rgba(255,255,255,0.3)",
               boxShadow: "0 4px 16px rgba(99,102,241,0.4)",
-              minHeight: "72px",
-              WebkitUserSelect: "none",
-              userSelect: "none",
-              touchAction: "none",
+              WebkitUserSelect: "none", userSelect: "none", touchAction: "none",
             }}
             onPointerDown={(e) => { e.preventDefault(); if (gamePhase === "playing") startHold("right") }}
-            onPointerUp={stopHold}
-            onPointerLeave={stopHold}
-            onPointerCancel={stopHold}
-          >
-            ▶
-            <span className="text-xs font-bold mt-1 opacity-70">HOLD</span>
-          </button>
+            onPointerUp={stopHold} onPointerLeave={stopHold} onPointerCancel={stopHold}
+          >▶</button>
         </div>
       </div>
 
