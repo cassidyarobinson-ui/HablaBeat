@@ -220,6 +220,24 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     return () => { if (holdIntervalRef.current) clearInterval(holdIntervalRef.current) }
   }, [])
 
+  // ── Keyboard arrow key support ────────────────────────────────────────────
+  useEffect(() => {
+    if (gamePhase !== "playing") return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft")  { e.preventDefault(); startHold("left") }
+      if (e.key === "ArrowRight") { e.preventDefault(); startHold("right") }
+    }
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") stopHold()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    window.addEventListener("keyup",   onKeyUp)
+    return () => {
+      window.removeEventListener("keydown", onKeyDown)
+      window.removeEventListener("keyup",   onKeyUp)
+    }
+  }, [gamePhase, startHold, stopHold])
+
   // ── Spawn a round of letters ──────────────────────────────────────────────
   const spawnLetters = useCallback((targetLabel: string) => {
     const pool = ALL_ITEMS.filter(a => a.label !== targetLabel)
@@ -542,7 +560,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           </div>
         ))}
 
-        {/* ── Bunny — glowing bubble so the white-bg gif looks cute on dark sky ── */}
+        {/* ── Bunny — transparent-bg GIF, no box, just a soft glow ── */}
         {gamePhase === "playing" && (
           <div
             ref={bunnyElRef}
@@ -551,21 +569,14 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               width: `${BUNNY_W}px`,
               height: `${BUNNY_H}px`,
               zIndex: 10,
-              borderRadius: "50%",
-              background: "radial-gradient(circle at 40% 35%, #e0d7ff 0%, #c4b5fd 40%, #7c3aed 100%)",
-              boxShadow: "0 0 18px rgba(139,92,246,0.8), 0 0 36px rgba(139,92,246,0.4), inset 0 1px 0 rgba(255,255,255,0.4)",
-              overflow: "hidden",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "4px",
+              filter: "drop-shadow(0 0 10px rgba(167,139,250,0.8)) drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
             }}
           >
             <Image
-              src="/images/super-bunny.gif"
+              src="/images/super-bunny-nobg.gif"
               alt="Bunny"
-              width={BUNNY_W - 8}
-              height={BUNNY_H - 8}
+              width={BUNNY_W}
+              height={BUNNY_H}
               className="w-full h-full object-contain"
               unoptimized
               priority
