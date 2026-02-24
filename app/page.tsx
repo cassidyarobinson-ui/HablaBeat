@@ -3542,14 +3542,15 @@ export default function HablaBeat() {
               .galaxy-worlds-in { animation: galaxyOpen 0.28s ease forwards; transform-origin: top; }
               .world-btn {
                 transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+                transform: scale(1);
               }
               .world-btn:hover {
-                transform: scale(1.13) translateY(-2px);
-                box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 3px rgba(255,255,255,0.3);
-                z-index: 10;
+                transform: scale(1.15);
+                box-shadow: 0 8px 28px rgba(0,0,0,0.45), 0 0 0 3px rgba(255,255,255,0.35);
               }
               .world-btn:active {
-                transform: scale(0.9);
+                transform: scale(0.88) !important;
+                transition-duration: 0.08s;
               }
               @keyframes storeTabIn {
                 0%   { opacity: 0; transform: scale(0.95) translateY(6px); }
@@ -3620,13 +3621,13 @@ export default function HablaBeat() {
                         {category.sections.map((section, sectionIdx) => {
                           const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
                           return (
+                            <div key={section.id} className="world-float aspect-square" style={{ animationDelay: `${(sectionIdx * 0.4) % 3}s` }}>
                             <button
-                              key={section.id}
                               onClick={() => setOpenSectionId(section.id)}
                               onMouseEnter={playWorldHover}
                               onTouchStart={playWorldHover}
-                              className="world-btn relative flex items-center justify-center rounded-full aspect-square world-float overflow-hidden"
-                              style={{ background: sectionGradient, border: "2px solid rgba(255,255,255,0.5)", boxShadow: "0 2px 10px rgba(0,0,0,0.3)", animationDelay: `${(sectionIdx * 0.4) % 3}s` }}
+                              className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
+                              style={{ background: sectionGradient, border: "2px solid rgba(255,255,255,0.5)", boxShadow: "0 2px 10px rgba(0,0,0,0.3)" }}
                             >
                               {isSectionBadgeUnlocked(section) && (
                                 <div className="absolute top-1 right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
@@ -3669,6 +3670,7 @@ export default function HablaBeat() {
                                 )
                               })()}
                             </button>
+                            </div>
                           )
                         })}
                       </div>
