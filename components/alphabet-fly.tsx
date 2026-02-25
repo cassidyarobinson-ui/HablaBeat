@@ -199,7 +199,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   // Game state
   const [score, setScore] = useState(0)
   const [localCoins, setLocalCoins] = useState(initialCoins)
-  const [gamePhase, setGamePhase] = useState<"countdown" | "playing" | "gameover">("countdown")
+  const [gamePhase, setGamePhase] = useState<"countdown" | "playing" | "gameover" | "complete">("countdown")
   const [countdown, setCountdown] = useState(3)
   const [alphabetIdx, setAlphabetIdx] = useState(0)   // which letter in ALPHABET_QUEUE we want next
   const [flashScreen, setFlashScreen] = useState<"correct" | "wrong" | null>(null)
@@ -357,6 +357,18 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       setTimeout(() => setFlashScreen(null), 400)
     }
     const nextIdx = idx + 1
+    // ── Check for completion — all letters done! ──
+    if (nextIdx >= ALPHABET_QUEUE.length) {
+      alphabetIdxRef.current = nextIdx
+      setAlphabetIdx(nextIdx)
+      // Short delay so the last flash plays, then show win screen
+      setTimeout(() => {
+        setFlashScreen(null)
+        setShowHint(false)
+        setGamePhase("complete")
+      }, 1000)
+      return
+    }
     setAlphabetIdx(nextIdx)
     alphabetIdxRef.current = nextIdx
     // Reset wave timer so a new wave spawns very soon
@@ -489,6 +501,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   useEffect(() => {
     if (gamePhase !== "playing") {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      if (holdIntervalRef.current) { clearInterval(holdIntervalRef.current); holdIntervalRef.current = null }
       return
     }
     lastTimeRef.current = performance.now()
@@ -820,6 +833,104 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               <strong className="text-white">Hold any arrow</strong> to steer 🐰<br />
               Fly into the <span className="text-yellow-300 font-bold">★ starred letter</span>!<br />
               <span className="text-xs opacity-60 mt-1 block">Letters are in order: A → B → C…</span>
+            </div>
+          </div>
+        )}
+
+        {/* ── Complete / Win screen ── */}
+        {gamePhase === "complete" && (
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center px-6"
+            style={{ zIndex: 40, background: "linear-gradient(160deg,rgba(15,5,40,0.96),rgba(30,27,75,0.98))", backdropFilter: "blur(10px)" }}
+          >
+            {/* Confetti stars */}
+            {[...Array(18)].map((_, i) => (
+              <div key={i} className="absolute pointer-events-none"
+                style={{
+                  left: `${(i * 37 + 11) % 94}%`,
+                  top:  `${(i * 53 + 7) % 88}%`,
+                  fontSize: `${16 + (i % 4) * 8}px`,
+                  animation: `twinkle ${1.2 + (i % 4) * 0.4}s ease-in-out ${(i * 0.3) % 2}s infinite alternate`,
+                }}
+              >
+                {["🌟","⭐","✨","🎉","🎊","💫"][i % 6]}
+              </div>
+            ))}
+
+            {/* Trophy + title */}
+            <div className="text-8xl mb-3" style={{ animation: "countdownPop 0.6s ease-out forwards" }}>🏆</div>
+            <div className="text-white font-black text-3xl text-center mb-1">¡Lo lograste!</div>
+            <div className="text-white/70 font-bold text-base text-center mb-6">You finished the whole alphabet!</div>
+
+            {/* Stats */}
+            <div className="flex gap-4 mb-8">
+              <div className="flex flex-col items-center px-5 py-3 rounded-2xl"
+                style={{ background: "rgba(251,191,36,0.18)", border: "1px solid rgba(251,191,36,0.4)" }}>
+                <span className="text-yellow-300 font-black text-2xl">{score}</span>
+                <span className="text-white/60 text-xs font-bold mt-0.5">Score</span>
+              </div>
+              <div className="flex flex-col items-center px-5 py-3 rounded-2xl"
+                style={{ background: "rgba(251,191,36,0.18)", border: "1px solid rgba(251,191,36,0.4)" }}>
+                <span className="text-yellow-300 font-black text-2xl">{localCoins}</span>
+                <span className="text-white/60 text-xs font-bold mt-0.5">Coins</span>
+              </div>
+              <div className="flex flex-col items-center px-5 py-3 rounded-2xl"
+                style={{ background: "rgba(251,191,36,0.18)", border: "1px solid rgba(251,191,36,0.4)" }}>
+                <span className="text-yellow-300 font-black text-2xl">{ALPHABET_QUEUE.length}</span>
+                <span className="text-white/60 text-xs font-bold mt-0.5">Letters</span>
+              </div>
+            </div>
+
+            {/* Alphabet recap — show all letters in order */}
+            <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-xs">
+              {ALPHABET_QUEUE.map(entry => (
+                <div key={entry.label}
+                  className="flex flex-col items-center justify-center rounded-xl font-black"
+                  style={{
+                    width: "38px", height: "38px",
+                    fontSize: entry.label.length > 1 ? "11px" : "18px",
+                    background: entry.category === "vowel" ? "#fef08a"
+                      : entry.category === "special" ? "#fbcfe8" : "#bfdbfe",
+                    color: entry.category === "vowel" ? "#92400e"
+                      : entry.category === "special" ? "#831843" : "#1e3a8a",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+                  }}
+                >
+                  {entry.label}
+                </div>
+              ))}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  // Reset and play again
+                  setScore(0)
+                  setAlphabetIdx(0)
+                  alphabetIdxRef.current = 0
+                  setLetters([])
+                  setCoinItems([])
+                  setPopItems([])
+                  setCountdown(3)
+                  setFlashScreen(null)
+                  setShowHint(false)
+                  waveTimerRef.current = 0
+                  coinTimerRef.current = 0
+                  setGamePhase("countdown")
+                }}
+                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
+                style={{ background: "linear-gradient(135deg,#6366f1,#8b5cf6)", boxShadow: "0 4px 20px rgba(99,102,241,0.5)" }}
+              >
+                Play Again 🔄
+              </button>
+              <button
+                onClick={onClose}
+                className="px-6 py-3 rounded-2xl font-black text-white/80 text-base transition-transform active:scale-95"
+                style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)" }}
+              >
+                Back 🏠
+              </button>
             </div>
           </div>
         )}
