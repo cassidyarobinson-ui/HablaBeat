@@ -70,16 +70,6 @@ const SECTION_GRADIENTS: Record<string, string> = {
 }
 
 const STORE_CATALOG: StoreItem[] = [
-  // ── Hit Effects (shown alongside pointers in one tab) ──
-  { id: "effect-default",  name: "Classic Pop",       emoji: "💧", cost: 0,   category: "pointer", description: "The original bubble pop effect",            previewEmoji: "💧" },
-  { id: "effect-laser",    name: "Laser Beam",        emoji: "⚡", cost: 80,  category: "pointer", description: "Neon beam slices through each word",         previewEmoji: "⚡" },
-  { id: "effect-lightning",name: "Lightning Strike",  emoji: "🌩️", cost: 100, category: "pointer", description: "Dramatic electric crack and flash",           previewEmoji: "🌩️" },
-  { id: "effect-fire",     name: "Fire Burst",        emoji: "🔥", cost: 120, category: "pointer", description: "Word ignites and explodes into embers",       previewEmoji: "🔥" },
-  { id: "effect-crystal",  name: "Crystal Shatter",   emoji: "💎", cost: 140, category: "pointer", description: "Word turns to glass and shatters",            previewEmoji: "💎" },
-  { id: "effect-galaxy",   name: "Galaxy Collapse",   emoji: "🌑", cost: 175, category: "pointer", description: "Word collapses into a mini black hole",       previewEmoji: "🌑" },
-  { id: "effect-cyber",    name: "Neon Cyber Slash",  emoji: "🔷", cost: 150, category: "pointer", description: "Tron-style glowing diagonal cut",             previewEmoji: "🔷" },
-  { id: "effect-rainbow",  name: "Rainbow Explosion", emoji: "🌈", cost: 130, category: "pointer", description: "Colorful confetti blast on every hit",        previewEmoji: "🌈" },
-  { id: "effect-minimal",  name: "Minimal Pro",       emoji: "⬜", cost: 90,  category: "pointer", description: "Clean white pulse ring for sleek players",    previewEmoji: "⬜" },
   // ── Pointer Arrows ──
   // 🟢 Common
   { id: "pointer-carrot",    name: "Carrot",          emoji: "🥕", cost: 0,    category: "pointer", description: "The original HablaBeat arrow",              previewEmoji: "🥕" },
