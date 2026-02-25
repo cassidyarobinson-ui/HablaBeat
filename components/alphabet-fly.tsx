@@ -17,37 +17,37 @@ import Image from "next/image"
 // Player must collect A → B → C → D … Z → Ñ → CH → RR → LL in order
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ALPHABET_QUEUE: { label: string; english: string; category: "vowel" | "consonant" | "special"; hint: string }[] = [
-  { label: "A",  english: "Tree",      category: "vowel",     hint: "A de Arbol 🌳" },
-  { label: "B",  english: "Donkey",    category: "consonant", hint: "B de Burro 🫏" },
-  { label: "C",  english: "House",     category: "consonant", hint: "C de Casa 🏠" },
-  { label: "D",  english: "Dolphin",   category: "consonant", hint: "D de Delfín 🐬" },
-  { label: "E",  english: "Elephant",  category: "vowel",     hint: "E de Elefante 🐘" },
-  { label: "F",  english: "Flower",    category: "consonant", hint: "F de Flor 🌸" },
-  { label: "G",  english: "Cat",       category: "consonant", hint: "G de Gato 🐱" },
-  { label: "H",  english: "Ant",       category: "consonant", hint: "H de Hormiga 🐜" },
-  { label: "I",  english: "Iguana",    category: "vowel",     hint: "I de Iguana 🦎" },
-  { label: "J",  english: "Jaguar",    category: "consonant", hint: "J de Jaguar 🐆" },
-  { label: "L",  english: "Lion",      category: "consonant", hint: "L de León 🦁" },
-  { label: "M",  english: "Monkey",    category: "consonant", hint: "M de Mono 🐒" },
-  { label: "N",  english: "Orange",    category: "consonant", hint: "N de Naranja 🍊" },
-  { label: "Ñ",  english: "Child",     category: "special",   hint: "Ñ de Niño 👦" },
-  { label: "O",  english: "Bear",      category: "vowel",     hint: "O de Oso 🐻" },
-  { label: "P",  english: "Dove",      category: "consonant", hint: "P de Paloma 🕊️" },
-  { label: "R",  english: "Frog",      category: "consonant", hint: "R de Rana 🐸" },
-  { label: "RR", english: "Dog",       category: "special",   hint: "RR de Perro 🐶" },
-  { label: "S",  english: "Sun",       category: "consonant", hint: "S de Sol ☀️" },
-  { label: "T",  english: "Tiger",     category: "consonant", hint: "T de Tigre 🐯" },
-  { label: "U",  english: "Grape",     category: "vowel",     hint: "U de Uva 🍇" },
-  { label: "V",  english: "Cow",       category: "consonant", hint: "V de Vaca 🐄" },
-  { label: "Y",  english: "Yoyo",      category: "consonant", hint: "Y de Yoyo 🪀" },
-  { label: "Z",  english: "Shoe",      category: "consonant", hint: "Z de Zapato 👟" },
-  { label: "CH", english: "Chocolate", category: "special",   hint: "CH de Chocolate 🍫" },
-  { label: "LL", english: "Llama",     category: "special",   hint: "LL de Llama 🦙" },
+const ALPHABET_QUEUE: { label: string; spanish: string; english: string; category: "vowel" | "consonant" | "special"; hint: string }[] = [
+  { label: "A",  spanish: "Árbol",     english: "Tree",      category: "vowel",     hint: "A de Arbol 🌳" },
+  { label: "B",  spanish: "Burro",     english: "Donkey",    category: "consonant", hint: "B de Burro 🫏" },
+  { label: "C",  spanish: "Casa",      english: "House",     category: "consonant", hint: "C de Casa 🏠" },
+  { label: "D",  spanish: "Delfín",    english: "Dolphin",   category: "consonant", hint: "D de Delfín 🐬" },
+  { label: "E",  spanish: "Elefante",  english: "Elephant",  category: "vowel",     hint: "E de Elefante 🐘" },
+  { label: "F",  spanish: "Flor",      english: "Flower",    category: "consonant", hint: "F de Flor 🌸" },
+  { label: "G",  spanish: "Gato",      english: "Cat",       category: "consonant", hint: "G de Gato 🐱" },
+  { label: "H",  spanish: "Hormiga",   english: "Ant",       category: "consonant", hint: "H de Hormiga 🐜" },
+  { label: "I",  spanish: "Iguana",    english: "Iguana",    category: "vowel",     hint: "I de Iguana 🦎" },
+  { label: "J",  spanish: "Jaguar",    english: "Jaguar",    category: "consonant", hint: "J de Jaguar 🐆" },
+  { label: "L",  spanish: "León",      english: "Lion",      category: "consonant", hint: "L de León 🦁" },
+  { label: "M",  spanish: "Mono",      english: "Monkey",    category: "consonant", hint: "M de Mono 🐒" },
+  { label: "N",  spanish: "Naranja",   english: "Orange",    category: "consonant", hint: "N de Naranja 🍊" },
+  { label: "Ñ",  spanish: "Niño",      english: "Child",     category: "special",   hint: "Ñ de Niño 👦" },
+  { label: "O",  spanish: "Oso",       english: "Bear",      category: "vowel",     hint: "O de Oso 🐻" },
+  { label: "P",  spanish: "Paloma",    english: "Dove",      category: "consonant", hint: "P de Paloma 🕊️" },
+  { label: "R",  spanish: "Rana",      english: "Frog",      category: "consonant", hint: "R de Rana 🐸" },
+  { label: "RR", spanish: "Perro",     english: "Dog",       category: "special",   hint: "RR de Perro 🐶" },
+  { label: "S",  spanish: "Sol",       english: "Sun",       category: "consonant", hint: "S de Sol ☀️" },
+  { label: "T",  spanish: "Tigre",     english: "Tiger",     category: "consonant", hint: "T de Tigre 🐯" },
+  { label: "U",  spanish: "Uva",       english: "Grape",     category: "vowel",     hint: "U de Uva 🍇" },
+  { label: "V",  spanish: "Vaca",      english: "Cow",       category: "consonant", hint: "V de Vaca 🐄" },
+  { label: "Y",  spanish: "Yoyo",      english: "Yoyo",      category: "consonant", hint: "Y de Yoyo 🪀" },
+  { label: "Z",  spanish: "Zapato",    english: "Shoe",      category: "consonant", hint: "Z de Zapato 👟" },
+  { label: "CH", spanish: "Chocolate", english: "Chocolate", category: "special",   hint: "CH de Chocolate 🍫" },
+  { label: "LL", spanish: "Llama",     english: "Llama",     category: "special",   hint: "LL de Llama 🦙" },
 ]
 
 // All items used as distractor pool
-const ALL_ITEMS = ALPHABET_QUEUE.map(q => ({ label: q.label, english: q.english, category: q.category }))
+const ALL_ITEMS = ALPHABET_QUEUE.map(q => ({ label: q.label, spanish: q.spanish, english: q.english, category: q.category }))
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SPANISH LETTER NAMES — phonetic text fed to TTS in Spanish
@@ -110,6 +110,7 @@ const SKY_EMOJIS = ["🌟", "⭐", "✨", "🎈", "🌈", "🦋", "🌸", "🎵"
 interface FloatingLetter {
   id: number
   label: string
+  spanish: string
   english: string
   category: "vowel" | "consonant" | "special"
   x: number        // % from left
@@ -230,7 +231,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const coinIdRef = useRef(0)
 
   // Pop particles — letters that just got collected, shown briefly then fade
-  const [popItems, setPopItems] = useState<{ id: number; label: string; english: string; x: number; y: number; correct: boolean }[]>([])
+  const [popItems, setPopItems] = useState<{ id: number; label: string; spanish: string; english: string; x: number; y: number; correct: boolean }[]>([])
   const popIdRef = useRef(0)
 
   // Animation
@@ -315,6 +316,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     const newLetters: FloatingLetter[] = all.map((item, i) => ({
       id: letterIdRef.current++,
       label: item.label,
+      spanish: item.spanish,
       english: item.english,
       category: item.category,
       x: positions[i],
@@ -424,6 +426,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           setPopItems(prev => [...prev, {
             id: popIdRef.current++,
             label: l.label,
+            spanish: l.spanish,
             english: l.english,
             x: l.x,
             y: newY,
@@ -679,19 +682,21 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
                   >★</div>
                 )}
               </div>
-              {/* English word below bubble */}
+              {/* Spanish + English words below bubble */}
               <div
-                className="mt-1 px-2 py-0.5 rounded-lg font-bold text-white text-center"
+                className="mt-1 px-2 py-0.5 rounded-lg font-bold text-center"
                 style={{
                   fontSize: "10px",
-                  background: "rgba(0,0,0,0.55)",
+                  background: "rgba(0,0,0,0.60)",
                   backdropFilter: "blur(4px)",
                   border: "1px solid rgba(255,255,255,0.2)",
                   whiteSpace: "nowrap",
                   letterSpacing: "0.02em",
+                  lineHeight: 1.4,
                 }}
               >
-                {l.english}
+                <span className="text-yellow-200 block">{l.spanish}</span>
+                <span className="text-white/70 block" style={{ fontSize: "9px" }}>{l.english}</span>
               </div>
             </div>
           )
@@ -945,7 +950,6 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
             <div className="text-white/60 text-xs font-bold uppercase tracking-wider mb-0.5">Find it!</div>
             <div className="text-white font-black text-2xl leading-tight tracking-wide">
               {currentEntry.label}
-              <span className="text-white/50 font-bold text-sm ml-2">— {currentEntry.hint}</span>
             </div>
           </div>
         </div>
