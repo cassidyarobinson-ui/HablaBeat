@@ -49,6 +49,57 @@ const ALPHABET_QUEUE: { label: string; english: string; category: "vowel" | "con
 // All items used as distractor pool
 const ALL_ITEMS = ALPHABET_QUEUE.map(q => ({ label: q.label, english: q.english, category: q.category }))
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SPANISH LETTER NAMES — phonetic text fed to TTS in Spanish
+// Web Speech API with lang="es-MX" or "es-ES" will pronounce these correctly.
+// Special chars: ñ → "eñe", ch → "che", rr → "erre doble", ll → "elle"
+// ─────────────────────────────────────────────────────────────────────────────
+const SPANISH_LETTER_NAME: Record<string, string> = {
+  "A":  "a",
+  "B":  "be",
+  "C":  "ce",
+  "CH": "che",
+  "D":  "de",
+  "E":  "e",
+  "F":  "efe",
+  "G":  "ge",
+  "H":  "hache",
+  "I":  "i",
+  "J":  "jota",
+  "L":  "ele",
+  "LL": "elle",
+  "M":  "eme",
+  "N":  "ene",
+  "Ñ":  "eñe",
+  "O":  "o",
+  "P":  "pe",
+  "R":  "erre",
+  "RR": "erre doble",
+  "S":  "ese",
+  "T":  "te",
+  "U":  "u",
+  "V":  "uve",
+  "Y":  "ye",
+  "Z":  "zeta",
+}
+
+// Speak a letter name in Spanish using Web Speech API
+function speakSpanish(label: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return
+  window.speechSynthesis.cancel()
+  const text = SPANISH_LETTER_NAME[label] ?? label.toLowerCase()
+  const utt = new SpeechSynthesisUtterance(text)
+  utt.lang = "es-MX"
+  utt.rate = 0.85
+  utt.pitch = 1.1
+  utt.volume = 1
+  // Prefer a Spanish voice if available
+  const voices = window.speechSynthesis.getVoices()
+  const esVoice = voices.find(v => v.lang.startsWith("es")) ?? null
+  if (esVoice) utt.voice = esVoice
+  window.speechSynthesis.speak(utt)
+}
+
 // Decorative emojis floating in the sky
 const SKY_EMOJIS = ["🌟", "⭐", "✨", "🎈", "🌈", "🦋", "🌸", "🎵", "🎶", "💫", "🌺", "🍀", "🎀", "🌙", "🌠"]
 
@@ -355,6 +406,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           } else {
             handleWrong()
           }
+          // Say the letter name in Spanish
+          speakSpanish(l.label)
           // Spawn a pop particle at the letter's current position
           setPopItems(prev => [...prev, {
             id: popIdRef.current++,
@@ -424,6 +477,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       // Kick off with the first wave immediately; wave timer will add more continuously
       spawnWave(ALPHABET_QUEUE[0].label)
       waveTimerRef.current = 0
+      // Announce first letter
+      setTimeout(() => speakSpanish(ALPHABET_QUEUE[0].label), 400)
       return
     }
     const t = setTimeout(() => setCountdown(c => c - 1), 1000)
@@ -440,6 +495,15 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     rafRef.current = requestAnimationFrame(gameLoop)
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [gamePhase, gameLoop])
+
+  // ── Announce current target letter in Spanish when it changes ─────────────
+  useEffect(() => {
+    if (gamePhase !== "playing") return
+    const entry = ALPHABET_QUEUE[alphabetIdx % ALPHABET_QUEUE.length]
+    // Small delay so the hit-sound (if any) finishes first
+    const t = setTimeout(() => speakSpanish(entry.label), 350)
+    return () => clearTimeout(t)
+  }, [alphabetIdx, gamePhase])
 
   // ── Auto-remove pop particles after animation ─────────────────────────────
   useEffect(() => {
