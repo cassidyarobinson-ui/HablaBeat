@@ -17,37 +17,37 @@ import Image from "next/image"
 // Player must collect A → B → C → D … Z → Ñ → CH → RR → LL in order
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ALPHABET_QUEUE: { label: string; category: "vowel" | "consonant" | "special"; hint: string }[] = [
-  { label: "A",  category: "vowel",     hint: "A de Arbol 🌳" },
-  { label: "B",  category: "consonant", hint: "B de Burro 🫏" },
-  { label: "C",  category: "consonant", hint: "C de Casa 🏠" },
-  { label: "D",  category: "consonant", hint: "D de Delfín 🐬" },
-  { label: "E",  category: "vowel",     hint: "E de Elefante 🐘" },
-  { label: "F",  category: "consonant", hint: "F de Flor 🌸" },
-  { label: "G",  category: "consonant", hint: "G de Gato 🐱" },
-  { label: "H",  category: "consonant", hint: "H de Hormiga 🐜" },
-  { label: "I",  category: "vowel",     hint: "I de Iguana 🦎" },
-  { label: "J",  category: "consonant", hint: "J de Jaguar 🐆" },
-  { label: "L",  category: "consonant", hint: "L de León 🦁" },
-  { label: "M",  category: "consonant", hint: "M de Mono 🐒" },
-  { label: "N",  category: "consonant", hint: "N de Naranja 🍊" },
-  { label: "Ñ",  category: "special",   hint: "Ñ de Niño 👦" },
-  { label: "O",  category: "vowel",     hint: "O de Oso 🐻" },
-  { label: "P",  category: "consonant", hint: "P de Paloma 🕊️" },
-  { label: "R",  category: "consonant", hint: "R de Rana 🐸" },
-  { label: "RR", category: "special",   hint: "RR de Perro 🐶" },
-  { label: "S",  category: "consonant", hint: "S de Sol ☀️" },
-  { label: "T",  category: "consonant", hint: "T de Tigre 🐯" },
-  { label: "U",  category: "vowel",     hint: "U de Uva 🍇" },
-  { label: "V",  category: "consonant", hint: "V de Vaca 🐄" },
-  { label: "Y",  category: "consonant", hint: "Y de Yoyo 🪀" },
-  { label: "Z",  category: "consonant", hint: "Z de Zapato 👟" },
-  { label: "CH", category: "special",   hint: "CH de Chocolate 🍫" },
-  { label: "LL", category: "special",   hint: "LL de Llama 🦙" },
+const ALPHABET_QUEUE: { label: string; english: string; category: "vowel" | "consonant" | "special"; hint: string }[] = [
+  { label: "A",  english: "Tree",      category: "vowel",     hint: "A de Arbol 🌳" },
+  { label: "B",  english: "Donkey",    category: "consonant", hint: "B de Burro 🫏" },
+  { label: "C",  english: "House",     category: "consonant", hint: "C de Casa 🏠" },
+  { label: "D",  english: "Dolphin",   category: "consonant", hint: "D de Delfín 🐬" },
+  { label: "E",  english: "Elephant",  category: "vowel",     hint: "E de Elefante 🐘" },
+  { label: "F",  english: "Flower",    category: "consonant", hint: "F de Flor 🌸" },
+  { label: "G",  english: "Cat",       category: "consonant", hint: "G de Gato 🐱" },
+  { label: "H",  english: "Ant",       category: "consonant", hint: "H de Hormiga 🐜" },
+  { label: "I",  english: "Iguana",    category: "vowel",     hint: "I de Iguana 🦎" },
+  { label: "J",  english: "Jaguar",    category: "consonant", hint: "J de Jaguar 🐆" },
+  { label: "L",  english: "Lion",      category: "consonant", hint: "L de León 🦁" },
+  { label: "M",  english: "Monkey",    category: "consonant", hint: "M de Mono 🐒" },
+  { label: "N",  english: "Orange",    category: "consonant", hint: "N de Naranja 🍊" },
+  { label: "Ñ",  english: "Child",     category: "special",   hint: "Ñ de Niño 👦" },
+  { label: "O",  english: "Bear",      category: "vowel",     hint: "O de Oso 🐻" },
+  { label: "P",  english: "Dove",      category: "consonant", hint: "P de Paloma 🕊️" },
+  { label: "R",  english: "Frog",      category: "consonant", hint: "R de Rana 🐸" },
+  { label: "RR", english: "Dog",       category: "special",   hint: "RR de Perro 🐶" },
+  { label: "S",  english: "Sun",       category: "consonant", hint: "S de Sol ☀️" },
+  { label: "T",  english: "Tiger",     category: "consonant", hint: "T de Tigre 🐯" },
+  { label: "U",  english: "Grape",     category: "vowel",     hint: "U de Uva 🍇" },
+  { label: "V",  english: "Cow",       category: "consonant", hint: "V de Vaca 🐄" },
+  { label: "Y",  english: "Yoyo",      category: "consonant", hint: "Y de Yoyo 🪀" },
+  { label: "Z",  english: "Shoe",      category: "consonant", hint: "Z de Zapato 👟" },
+  { label: "CH", english: "Chocolate", category: "special",   hint: "CH de Chocolate 🍫" },
+  { label: "LL", english: "Llama",     category: "special",   hint: "LL de Llama 🦙" },
 ]
 
 // All items used as distractor pool
-const ALL_ITEMS = ALPHABET_QUEUE.map(q => ({ label: q.label, category: q.category }))
+const ALL_ITEMS = ALPHABET_QUEUE.map(q => ({ label: q.label, english: q.english, category: q.category }))
 
 // Decorative emojis floating in the sky
 const SKY_EMOJIS = ["🌟", "⭐", "✨", "🎈", "🌈", "🦋", "🌸", "🎵", "🎶", "💫", "🌺", "🍀", "🎀", "🌙", "🌠"]
@@ -59,6 +59,7 @@ const SKY_EMOJIS = ["🌟", "⭐", "✨", "🎈", "🌈", "🦋", "🌸", "🎵"
 interface FloatingLetter {
   id: number
   label: string
+  english: string
   category: "vowel" | "consonant" | "special"
   x: number        // % from left
   y: number        // % from top
@@ -177,6 +178,10 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const letterIdRef = useRef(0)
   const coinIdRef = useRef(0)
 
+  // Pop particles — letters that just got collected, shown briefly then fade
+  const [popItems, setPopItems] = useState<{ id: number; label: string; english: string; x: number; y: number; correct: boolean }[]>([])
+  const popIdRef = useRef(0)
+
   // Animation
   const rafRef = useRef<number | null>(null)
   const lastTimeRef = useRef(0)
@@ -259,6 +264,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     const newLetters: FloatingLetter[] = all.map((item, i) => ({
       id: letterIdRef.current++,
       label: item.label,
+      english: item.english,
       category: item.category,
       x: positions[i],
       y: -8 - Math.random() * 6,    // stagger entry slightly
@@ -349,6 +355,15 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           } else {
             handleWrong()
           }
+          // Spawn a pop particle at the letter's current position
+          setPopItems(prev => [...prev, {
+            id: popIdRef.current++,
+            label: l.label,
+            english: l.english,
+            x: l.x,
+            y: newY,
+            correct: l.isTarget,
+          }])
           return { ...l, collected: true, flashState: (l.isTarget ? "correct" : "wrong") as FloatingLetter["flashState"] }
         }
         // Target fell off screen without being hit → auto-advance
@@ -425,6 +440,15 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     rafRef.current = requestAnimationFrame(gameLoop)
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [gamePhase, gameLoop])
+
+  // ── Auto-remove pop particles after animation ─────────────────────────────
+  useEffect(() => {
+    if (popItems.length === 0) return
+    const t = setTimeout(() => {
+      setPopItems(prev => prev.slice(Math.max(0, prev.length - 20)))
+    }, 1200)
+    return () => clearTimeout(t)
+  }, [popItems])
 
   // ── Bunny DOM position (X + Y both dynamic) ─────────────────────────────
   useEffect(() => {
@@ -548,31 +572,97 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           return (
             <div
               key={l.id}
-              className="absolute flex items-center justify-center font-black rounded-2xl select-none pointer-events-none"
+              className="absolute flex flex-col items-center select-none pointer-events-none"
               style={{
                 left: `${l.x}%`,
                 top:  `${l.y}%`,
-                width: `${LETTER_SIZE}px`,
-                height: `${LETTER_SIZE}px`,
-                fontSize: l.label.length > 1 ? "20px" : "30px",
-                background: colors.bg,
-                color: colors.text,
-                boxShadow: `0 0 16px ${colors.glow}, 0 4px 12px rgba(0,0,0,0.3)`,
-                border: l.isTarget ? "3px solid white" : "2px solid rgba(255,255,255,0.35)",
                 transform: "translateX(-50%)",
                 animation: l.isTarget ? "targetPulse 1.4s ease-in-out infinite" : undefined,
               }}
             >
-              {l.label}
-              {l.isTarget && (
-                <div
-                  className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center"
-                  style={{ fontSize: "9px", fontWeight: 900, color: "#92400e" }}
-                >★</div>
-              )}
+              {/* Letter bubble */}
+              <div
+                className="flex items-center justify-center font-black rounded-2xl"
+                style={{
+                  width: `${LETTER_SIZE}px`,
+                  height: `${LETTER_SIZE}px`,
+                  fontSize: l.label.length > 1 ? "20px" : "30px",
+                  background: colors.bg,
+                  color: colors.text,
+                  boxShadow: `0 0 16px ${colors.glow}, 0 4px 12px rgba(0,0,0,0.3)`,
+                  border: l.isTarget ? "3px solid white" : "2px solid rgba(255,255,255,0.35)",
+                  position: "relative",
+                }}
+              >
+                {l.label}
+                {l.isTarget && (
+                  <div
+                    className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center"
+                    style={{ fontSize: "9px", fontWeight: 900, color: "#92400e" }}
+                  >★</div>
+                )}
+              </div>
+              {/* English word below bubble */}
+              <div
+                className="mt-1 px-2 py-0.5 rounded-lg font-bold text-white text-center"
+                style={{
+                  fontSize: "10px",
+                  background: "rgba(0,0,0,0.55)",
+                  backdropFilter: "blur(4px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  whiteSpace: "nowrap",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {l.english}
+              </div>
             </div>
           )
         })}
+
+        {/* ── Pop Particles (collected letter + english word, floats up and fades) ── */}
+        {popItems.map(p => (
+          <div
+            key={p.id}
+            className="absolute flex flex-col items-center pointer-events-none select-none"
+            style={{
+              left: `${p.x}%`,
+              top:  `${p.y}%`,
+              transform: "translateX(-50%)",
+              animation: "popFloat 1.1s ease-out forwards",
+              zIndex: 15,
+            }}
+          >
+            <div
+              className="font-black rounded-2xl flex items-center justify-center"
+              style={{
+                width: `${LETTER_SIZE}px`,
+                height: `${LETTER_SIZE}px`,
+                fontSize: p.label.length > 1 ? "20px" : "30px",
+                background: p.correct ? "#4ade80" : "#f87171",
+                color: p.correct ? "#14532d" : "#7f1d1d",
+                boxShadow: p.correct
+                  ? "0 0 20px rgba(74,222,128,0.8), 0 4px 12px rgba(0,0,0,0.3)"
+                  : "0 0 20px rgba(248,113,113,0.8), 0 4px 12px rgba(0,0,0,0.3)",
+                border: "3px solid white",
+              }}
+            >
+              {p.label}
+            </div>
+            <div
+              className="mt-1 px-2 py-0.5 rounded-lg font-bold text-white text-center"
+              style={{
+                fontSize: "11px",
+                background: p.correct ? "rgba(74,222,128,0.35)" : "rgba(248,113,113,0.35)",
+                backdropFilter: "blur(4px)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {p.english}
+            </div>
+          </div>
+        ))}
 
         {/* ── Gold Coins ── */}
         {coinItems.filter(c => !c.collected).map(c => (
@@ -781,6 +871,11 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           0%   { transform: scale(0.5); opacity: 0; }
           50%  { transform: scale(1.2); opacity: 1; }
           100% { transform: scale(1);   opacity: 1; }
+        }
+        @keyframes popFloat {
+          0%   { opacity: 1;   transform: translateX(-50%) translateY(0px) scale(1.15); }
+          40%  { opacity: 1;   transform: translateX(-50%) translateY(-28px) scale(1); }
+          100% { opacity: 0;   transform: translateX(-50%) translateY(-60px) scale(0.8); }
         }
       `}</style>
     </div>
