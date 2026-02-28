@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, Play, Pause } from "lucide-react"
 import { translateWord } from "@/lib/spanish-dictionary"
 import Image from "next/image"
+import { getPointer, firePointerEffect, POINTER_KEYFRAMES } from "@/lib/pointers"
 
 // Types
 interface KaraokeWord {
@@ -61,7 +62,7 @@ interface DDRGameProps {
   onEquipPointer?: (id: string) => void
 }
 
-// Mini catalog for in-game loadout UI
+// Mini catalog for in-game loadout UI (themes removed)
 const GAME_CATALOG = [
   { id: "effect-default",   name: "Classic Pop",      emoji: "💧", category: "effect"  },
   { id: "effect-laser",     name: "Laser Beam",       emoji: "⚡", category: "effect"  },
@@ -72,21 +73,17 @@ const GAME_CATALOG = [
   { id: "effect-cyber",     name: "Cyber Slash",      emoji: "🔷", category: "effect"  },
   { id: "effect-rainbow",   name: "Rainbow",          emoji: "🌈", category: "effect"  },
   { id: "effect-minimal",   name: "Minimal Pro",      emoji: "⬜", category: "effect"  },
-  { id: "theme-default",    name: "Classic",          emoji: "🎨", category: "theme"   },
-  { id: "theme-galaxy",     name: "Galaxy",           emoji: "🌌", category: "theme"   },
-  { id: "theme-cyber",      name: "Cyber Grid",       emoji: "🟦", category: "theme"   },
-  { id: "theme-sunset",     name: "Sunset",           emoji: "🌅", category: "theme"   },
-  { id: "theme-aurora",     name: "Aurora",           emoji: "🌌", category: "theme"   },
-  { id: "theme-shadow",     name: "Shadow Realm",     emoji: "🌑", category: "theme"   },
-  { id: "theme-cloud",      name: "Cloud Dream",      emoji: "☁️", category: "theme"   },
-  { id: "theme-gold",       name: "Gold Elite",       emoji: "👑", category: "theme"   },
-  { id: "theme-anime",      name: "Anime Sky",        emoji: "✨", category: "theme"   },
-  { id: "pointer-carrot",   name: "Carrot",           emoji: "🥕", category: "pointer" },
-  { id: "pointer-wand",     name: "Magic Wand",       emoji: "🪄", category: "pointer" },
-  { id: "pointer-laser",    name: "Laser",            emoji: "🔫", category: "pointer" },
-  { id: "pointer-crystal",  name: "Crystal Staff",   emoji: "🔮", category: "pointer" },
-  { id: "pointer-scepter",  name: "Scepter",          emoji: "🏆", category: "pointer" },
-  { id: "pointer-sword",    name: "Fire Sword",       emoji: "🗡️", category: "pointer" },
+  // ── Pointer Skins (11 total) ──
+  { id: "pointer-carrot",    name: "Carrot",           emoji: "🥕", category: "pointer" },
+  { id: "pointer-red-laser", name: "Red Laser",        emoji: "🔴", category: "pointer" },
+  { id: "pointer-banana",    name: "Banana Blaster",   emoji: "🍌", category: "pointer" },
+  { id: "pointer-water",     name: "Water Cannon",     emoji: "💧", category: "pointer" },
+  { id: "pointer-lightning", name: "Lightning Bolt",   emoji: "⚡", category: "pointer" },
+  { id: "pointer-ice",       name: "Ice Blaster",      emoji: "❄️", category: "pointer" },
+  { id: "pointer-rainbow",   name: "Rainbow Laser",    emoji: "🌈", category: "pointer" },
+  { id: "pointer-rocket",    name: "Rocket Launcher",  emoji: "🚀", category: "pointer" },
+  { id: "pointer-star",      name: "Star Shooter",     emoji: "⭐", category: "pointer" },
+  { id: "pointer-dragon",    name: "Dragon Breath",    emoji: "🐉", category: "pointer" },
 ]
 
 // Constants
@@ -96,54 +93,20 @@ const HIT_WINDOWS = { PERFECT: 0.08, GOOD: 0.15, MISS: 0.25 }
 const LANE_COLORS = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"]
 const LANE_TEXT_COLORS = ["text-red-500", "text-blue-500", "text-green-500", "text-yellow-500"]
 
-// Carrot SVG for each direction (the pointed tip faces the arrow direction) - black outline
-const CARROT_SVGS: Record<string, string> = {
-  left: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="0,20 40,4 36,20 40,36" fill="#F97316" stroke="#000" stroke-width="2"/>
-    <line x1="14" y1="14" x2="20" y2="17" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="18" y1="12" x2="24" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="22" y1="24" x2="28" y2="21" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="46" cy="14" rx="7" ry="5" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-20,46,14)"/>
-    <ellipse cx="50" cy="20" rx="7" ry="5" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(10,50,20)"/>
-    <ellipse cx="44" cy="24" rx="6" ry="4" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(25,44,24)"/>
-  </svg>`,
-  down: `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="20,60 4,20 20,24 36,20" fill="#F97316" stroke="#000" stroke-width="2"/>
-    <line x1="14" y1="34" x2="17" y2="40" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="12" y1="38" x2="16" y2="44" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="24" y1="34" x2="21" y2="40" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="14" cy="12" rx="5" ry="7" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-15,14,12)"/>
-    <ellipse cx="20" cy="8" rx="5" ry="7" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(5,20,8)"/>
-    <ellipse cx="26" cy="13" rx="4" ry="6" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(20,26,13)"/>
-  </svg>`,
-  up: `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="20,0 36,40 20,36 4,40" fill="#F97316" stroke="#000" stroke-width="2"/>
-    <line x1="14" y1="26" x2="17" y2="20" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="12" y1="22" x2="16" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="24" y1="26" x2="21" y2="20" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="14" cy="48" rx="5" ry="7" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(15,14,48)"/>
-    <ellipse cx="20" cy="52" rx="5" ry="7" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(-5,20,52)"/>
-    <ellipse cx="26" cy="47" rx="4" ry="6" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-20,26,47)"/>
-  </svg>`,
-  right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="60,20 20,4 24,20 20,36" fill="#F97316" stroke="#000" stroke-width="2"/>
-    <line x1="40" y1="14" x2="34" y2="17" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="36" y1="12" x2="30" y2="16" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="36" y1="24" x2="30" y2="21" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
-    <ellipse cx="14" cy="14" rx="7" ry="5" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(20,14,14)"/>
-    <ellipse cx="10" cy="20" rx="7" ry="5" fill="#16A34A" stroke="#000" stroke-width="1" transform="rotate(-10,10,20)"/>
-    <ellipse cx="16" cy="24" rx="6" ry="4" fill="#22C55E" stroke="#000" stroke-width="1" transform="rotate(-25,16,24)"/>
-  </svg>`,
+// Keywords per song for "Key Words" mode — words as they appear in the lyrics (lowercase, no punctuation)
+const SONG_KEYWORDS: Record<number, Set<string>> = {
+  4: new Set(["partes","del","de","la","cuerpo","cara","cabeza","pelo","cuello","garganta","hombros","brazos","codos","dedos","muñecas","manos","espalda","barriga","pierna","rodilla","pies","ojos","nariz","labios","dientes","oreja","boca","lengua","frente","bailar","baila"]),
+  5: new Set(["ropa","camisa","pantalón","zapatos","cinturón","gorra","guantes","calcetín","falda","suéter","chaqueta","bufanda","traje","vestido","pijama","botas","sandalias"]),
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeEffect = "effect-default", activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["effect-default","theme-default","pointer-carrot"], onEquipEffect, onEquipTheme, onEquipPointer }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeEffect = "effect-default", activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["effect-default","pointer-carrot"], onEquipEffect, onEquipTheme, onEquipPointer }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
   const [maxCombo, setMaxCombo] = useState(0)
   const [totalHits, setTotalHits] = useState(0)
-  const [speed, setSpeed] = useState<"slower" | "normal">("normal")
+  const [speed, setSpeed] = useState<"slower" | "normal" | "keywords">("normal")
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
@@ -153,7 +116,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const [elapsedTime, setElapsedTime] = useState("0:00")
   const [totalTime, setTotalTime] = useState("0:00")
   const [isPaused, setIsPaused] = useState(false)
-  const [loadoutTab, setLoadoutTab] = useState<"effect" | "theme" | "pointer">("pointer")
+  const [loadoutTab, setLoadoutTab] = useState<"effect" | "pointer">("pointer")
   const [showLoadout, setShowLoadout] = useState(false)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -166,6 +129,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const animationRef = useRef<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const fallingRef = useRef<HTMLDivElement>(null)
+  /** Tracks if the Dragon Breath combo-shield has been used this song */
+  const comboShieldUsedRef = useRef(false)
 
   // Rainbow colors that cycle on each hit
   const RAINBOW_COLORS = [
@@ -196,13 +161,17 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     return 1.0                           // normal / fast
   }, [speed])
 
-  // Create notes from timing data — all bubbles always shown (no difficulty filter)
+  // Create notes from timing data — filters to keywords only when in keywords mode
   const createNotes = useCallback((): Note[] => {
     if (!timingData) return []
+
+    const keywordSet = speed === "keywords" ? (SONG_KEYWORDS[songNumber] ?? null) : null
+    const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
 
     const allNotes: Note[] = []
     timingData.lyrics.forEach((line, lineIndex) => {
       line.words.forEach((word, wordIndex) => {
+        if (keywordSet && !keywordSet.has(stripPunct(word.text))) return
         allNotes.push({
           text: word.text,
           english: translateWord(word.text),
@@ -217,7 +186,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     })
 
     return allNotes
-  }, [timingData])
+  }, [timingData, speed, songNumber])
 
   // Start game — create audio directly in click handler (required for autoplay)
   const startGame = useCallback(() => {
@@ -236,6 +205,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     comboRef.current = 0
     maxComboRef.current = 0
     totalHitsRef.current = 0
+    comboShieldUsedRef.current = false
     setScore(0)
     setCombo(0)
     setMaxCombo(0)
@@ -361,8 +331,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 opacity: ${opacity};
               `
 
-              // Coin inside the bubble — only Spanish word (English shown on hit)
-              const coinContent = `<div style="font-size:16px;font-weight:900;color:#451A03;line-height:1.1;max-width:90%;text-align:center">${note.text}</div>`
+              // Coin inside the bubble — English (small) above Spanish
+              const englishLabel = note.english && note.english.toLowerCase() !== note.text.toLowerCase()
+                ? `<div style="font-size:9px;font-weight:700;color:#7A3800;opacity:0.75;line-height:1;margin-bottom:2px;text-align:center;max-width:90%">${note.english}</div>`
+                : ""
+              const coinContent = `${englishLabel}<div style="font-size:16px;font-weight:900;color:#451A03;line-height:1.1;max-width:90%;text-align:center">${note.text}</div>`
 
               noteEl.innerHTML = `
                 <div style="position:absolute;top:5%;left:12%;width:30%;height:18%;background:radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-20deg);pointer-events:none;z-index:2"></div>
@@ -381,8 +354,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           // Auto-miss: mark as missed when past the hit window, but keep rendering
           if (!note.missed && currentTime > note.timestamp + HIT_WINDOWS.MISS) {
             note.missed = true
-            comboRef.current = 0
-            setCombo(0)
+            // Dragon Breath: first miss per song doesn't break combo (once only)
+            const mod = getPointer(activePointer).gameplayModifier
+            if (mod.comboShield && !comboShieldUsedRef.current) {
+              comboShieldUsedRef.current = true
+            } else {
+              comboRef.current = 0
+              setCombo(0)
+            }
           }
 
           // Remove from rendering once fully off screen
@@ -478,8 +457,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       const currentTime = audio.currentTime
 
       // Find closest unhit note in this lane
+      const mod = getPointer(activePointer).gameplayModifier
+      const effectiveMissWindow = HIT_WINDOWS.MISS * mod.hitRadiusMultiplier
       const candidates = notesRef.current.filter(
-        (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= HIT_WINDOWS.MISS
+        (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= effectiveMissWindow
       )
 
       if (candidates.length === 0) return
@@ -492,9 +473,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       let judgment: string
       let points: number
       let judgmentColor: string
+      let isPerfect = false
 
       if (timeDelta <= HIT_WINDOWS.PERFECT) {
-        points = 1
+        isPerfect = true
+        points = Math.round(mod.coinMultiplier)   // coinMultiplier on perfect
         judgmentColor = "text-yellow-300"
       } else if (timeDelta <= HIT_WINDOWS.GOOD) {
         points = 1
@@ -513,6 +496,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       closest.hit = true
       scoreRef.current += points
       comboRef.current += 1
+      if (comboRef.current % 10 === 0) triggerStreakPulse(comboRef.current)
       totalHitsRef.current += 1
       maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
       setScore(scoreRef.current)
@@ -520,7 +504,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       setMaxCombo(maxComboRef.current)
       setTotalHits(totalHitsRef.current)
 
-      showHitEffect(lane, judgment, judgmentColor)
+      showHitEffect(lane, judgment, judgmentColor, isPerfect)
       checkEncouragement(comboRef.current)
     }
 
@@ -551,8 +535,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         if (!audio) return
         const currentTime = audio.currentTime
 
+        const mod = getPointer(activePointer).gameplayModifier
+        const effectiveMissWindow = HIT_WINDOWS.MISS * mod.hitRadiusMultiplier
         const candidates = notesRef.current.filter(
-          (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= HIT_WINDOWS.MISS
+          (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= effectiveMissWindow
         )
 
         if (candidates.length === 0) continue
@@ -565,9 +551,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         let judgment: string
         let points: number
         let judgmentColor: string
+        let isPerfect = false
 
         if (timeDelta <= HIT_WINDOWS.PERFECT) {
-          points = 1
+          isPerfect = true
+          points = Math.round(mod.coinMultiplier)   // coinMultiplier on perfect
           judgmentColor = "text-yellow-300"
         } else if (timeDelta <= HIT_WINDOWS.GOOD) {
           points = 1
@@ -586,6 +574,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         closest.hit = true
         scoreRef.current += points
         comboRef.current += 1
+        if (comboRef.current % 10 === 0) triggerStreakPulse(comboRef.current)
         totalHitsRef.current += 1
         maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
         setScore(scoreRef.current)
@@ -593,7 +582,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         setMaxCombo(maxComboRef.current)
         setTotalHits(totalHitsRef.current)
 
-        showHitEffect(lane, judgment, judgmentColor)
+        showHitEffect(lane, judgment, judgmentColor, isPerfect)
         checkEncouragement(comboRef.current)
       }
     }
@@ -622,7 +611,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const arrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
     const flash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
 
-    // Carrot pushes up a smidge then snaps back
+    // Arrow pushes up a smidge then snaps back
     if (arrow) {
       arrow.style.transform = "translateY(-12px) scale(1.15)"
       setTimeout(() => {
@@ -635,9 +624,65 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         flash.style.opacity = "0"
       }, 150)
     }
+
+    // Press-burst: fires on every tap (hit OR miss) for pointer-specific emojis
+    const gameContainer = containerRef.current
+    if (gameContainer) {
+      const laneLeft = lane * 25
+      const cx = laneLeft + 12.5
+      const pressEmojis: Record<string, string[]> = {
+        "pointer-carrot":    ["🥕","🥕","🌿"],
+        "pointer-banana":    ["🍌","🍌","✨"],
+        "pointer-water":     ["💧","💦","🌊"],
+        "pointer-lightning": ["⚡","⚡","💥"],
+        "pointer-ice":       ["❄️","❄️","🌨️"],
+        "pointer-rainbow":   ["🌈","✨","💫"],
+        "pointer-star":      ["⭐","🌟","💫"],
+        "pointer-dragon":    ["🔥","🐉","💨"],
+      }
+      const emojis = pressEmojis[activePointer]
+      if (emojis) {
+        for (let i = 0; i < 3; i++) {
+          const emoji = emojis[Math.floor(Math.random() * emojis.length)]
+          const e = document.createElement("div")
+          e.className = "absolute pointer-events-none"
+          const tx = (Math.random() - 0.5) * 40
+          const ty = -(24 + Math.random() * 44)
+          // Vary sizes noticeably: small (10px), medium (18px), large (28px), xl (36px)
+          const sizePick = [10, 14, 18, 22, 28, 34, 36][Math.floor(Math.random() * 7)]
+          const dur = 0.38 + Math.random() * 0.28
+          e.style.cssText = `left:calc(${cx}% - ${sizePick/2}px);bottom:18%;font-size:${sizePick}px;line-height:1;--tx:${tx}px;--ty:${ty}px;animation:emojiFloat ${dur}s ease-out forwards;z-index:95;`
+          e.textContent = emoji
+          gameContainer.appendChild(e)
+          setTimeout(() => e.remove(), Math.round(dur * 1000) + 30)
+        }
+      }
+    }
   }
 
-  const showHitEffect = (lane: number, judgment: string, color: string) => {
+  const triggerStreakPulse = (currentCombo: number) => {
+    const gameContainer = containerRef.current
+    if (!gameContainer) return
+    const cfg = getPointer(activePointer)
+    const color = cfg.palette[0] ?? "#ffffff"
+
+    // Full-area color wash
+    const wash = document.createElement("div")
+    wash.className = "absolute inset-0 pointer-events-none rounded-2xl"
+    wash.style.cssText = `background:radial-gradient(circle at center,${color}55 0%,${color}22 55%,transparent 100%);animation:streakPulse 0.72s ease-out forwards;z-index:50;`
+    gameContainer.appendChild(wash)
+    setTimeout(() => wash.remove(), 740)
+
+    // Big combo number overlay
+    const overlay = document.createElement("div")
+    overlay.className = "absolute inset-0 flex items-center justify-center pointer-events-none"
+    overlay.style.cssText = "z-index:51;"
+    overlay.innerHTML = `<div style="text-align:center;animation:streakPulse 0.72s ease-out forwards"><div style="font-size:clamp(4rem,12vw,6.5rem);font-weight:900;color:${color};text-shadow:0 0 28px ${color},0 0 56px ${color}88;font-family:'Impact','Arial Black',sans-serif;letter-spacing:-2px;line-height:1">${currentCombo}</div><div style="font-size:1.1rem;font-weight:900;color:white;opacity:.9;letter-spacing:.3em;text-transform:uppercase;margin-top:-.2rem;font-family:'Impact','Arial Black',sans-serif">🔥 streak 🔥</div></div>`
+    gameContainer.appendChild(overlay)
+    setTimeout(() => overlay.remove(), 740)
+  }
+
+  const showHitEffect = (lane: number, judgment: string, color: string, isJustPerfect = false) => {
     const container = containerRef.current
     if (!container) return
 
@@ -677,6 +722,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
     const laneLeft = lane * 25 + 1
     const laneWidth = 23
+
+    // ── POINTER ANIMATIONS: delegated to effect engine ────────────────────
+    firePointerEffect(activePointerConfig, {
+      container,
+      lane,
+      laneLeft,
+      laneWidth,
+      rainbowColor,
+      isJustPerfect,
+    })
 
     // ── HIT EFFECT: branches by activeEffect ──────────────────────────────
     if (activeEffect === "effect-laser") {
@@ -915,7 +970,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
     // English word judgment text - stays visible longer
     const el = document.createElement("div")
-    el.className = `absolute ${color} font-bold text-base pointer-events-none`
+    el.className = `absolute ${color} font-black text-2xl pointer-events-none`
     el.style.cssText = `
       left: ${lane * 25 + 1}%; width: 23%; bottom: 22%; text-align: center;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px currentColor;
@@ -1007,9 +1062,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     return { grade: "F", color: "text-red-400" }
   }
 
-  const totalNotes = timingData
-    ? timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
-    : 0
+  const totalNotes = (() => {
+    if (!timingData) return 0
+    if (speed !== "keywords") return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
+    const keywordSet = SONG_KEYWORDS[songNumber] ?? null
+    if (!keywordSet) return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
+    const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
+    return timingData.lyrics.reduce((sum, line) => sum + line.words.filter(w => keywordSet.has(stripPunct(w.text))).length, 0)
+  })()
 
   // LOADING STATE
   if (gameState === "loading") {
@@ -1196,37 +1256,50 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             backdropFilter: "blur(20px)",
             border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
-            <p className="font-black text-gray-800 mb-3">Song Speed</p>
+            <p className="font-black text-gray-800 mb-3">Play Mode</p>
             <style>{`
               @keyframes btnBounce {
                 0%, 100% { transform: translateY(0px); }
                 50% { transform: translateY(-3px); }
               }
             `}</style>
-            <div className="flex gap-3">
-              {(["slower", "normal"] as const).map((s, i) => (
-                <button
-                  key={s}
-                  onClick={() => setSpeed(s)}
-                  className="flex-1 py-3.5 rounded-full font-black text-lg transition-all active:scale-95 flex items-center justify-center gap-2"
-                  style={speed === s ? {
-                    background: s === "slower"
-                      ? "linear-gradient(135deg, #0ea5e9, #6366f1)"
-                      : "linear-gradient(135deg, #f97316, #ef4444)",
-                    color: "#fff",
-                    boxShadow: `0 3px 12px ${s === "slower" ? "rgba(14,165,233,0.45)" : "rgba(249,115,22,0.45)"}`,
-                    border: "2px solid rgba(255,255,255,0.3)",
-                  } : {
-                    background: "#fff",
-                    color: "#000",
-                    border: "2px solid #e5e7eb",
-                  }}
-                >
-                  {s === "slower"
-                    ? <><span style={{ display: "inline-block", animation: speed === s ? "btnBounce 1.1s ease-in-out infinite" : "none" }}>🐢</span> Slower</>
-                    : <><span style={{ display: "inline-block", animation: speed === s ? "btnBounce 0.8s ease-in-out infinite" : "none" }}>⚡</span> Normal</>}
-                </button>
-              ))}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSpeed("slower")}
+                className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                style={speed === "slower" ? {
+                  background: "linear-gradient(135deg, #0ea5e9, #6366f1)",
+                  color: "#fff",
+                  boxShadow: "0 3px 12px rgba(14,165,233,0.45)",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
+              >
+                Slower
+              </button>
+              <button
+                onClick={() => setSpeed("normal")}
+                className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                style={speed === "normal" ? {
+                  background: "linear-gradient(135deg, #f97316, #ef4444)",
+                  color: "#fff",
+                  boxShadow: "0 3px 12px rgba(249,115,22,0.45)",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
+              >
+                Normal
+              </button>
+              <button
+                onClick={() => setSpeed("keywords")}
+                className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                style={speed === "keywords" ? {
+                  background: "linear-gradient(135deg, #10b981, #059669)",
+                  color: "#fff",
+                  boxShadow: "0 3px 12px rgba(16,185,129,0.45)",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
+              >
+                Key Words
+              </button>
             </div>
             <p className="text-center text-sm text-gray-500 mt-3">{totalNotes} vocab words</p>
           </div>
@@ -1607,42 +1680,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     "theme-anime":    "linear-gradient(135deg, #ffe0f0 0%, #e0d4ff 50%, #c8e8ff 100%)",
   }
 
-  // Pointer arrow SVGs — each pointer skin has its own set of 4 directions
-  const POINTER_SVGS: Record<string, Record<string, string>> = {
-    "pointer-carrot": CARROT_SVGS,
-    "pointer-wand": {
-      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 44,6 40,20 44,34" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="52" cy="20" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="52" cy="20" r="3.5" fill="#fff" opacity="0.8"/><line x1="8" y1="16" x2="16" y2="19" stroke="#d8b4fe" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="24" x2="16" y2="21" stroke="#d8b4fe" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 16,6 20,20 16,34" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="8" cy="20" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="8" cy="20" r="3.5" fill="#fff" opacity="0.8"/></svg>`,
-      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 6,44 20,40 34,44" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="20" cy="52" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="20" cy="52" r="3.5" fill="#fff" opacity="0.8"/></svg>`,
-      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 6,16 20,20 34,16" fill="#a855f7" stroke="#fff" stroke-width="1.5"/><circle cx="20" cy="8" r="7" fill="#f0abfc" stroke="#e879f9" stroke-width="1.5"/><circle cx="20" cy="8" r="3.5" fill="#fff" opacity="0.8"/></svg>`,
-    },
-    "pointer-laser": {
-      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 48,10 42,20 48,30" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="42" y="17" width="18" height="6" rx="3" fill="#7f1d1d"/><line x1="0" y1="20" x2="60" y2="20" stroke="#fca5a5" stroke-width="0.5" opacity="0.5"/></svg>`,
-      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 12,10 18,20 12,30" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="0" y="17" width="18" height="6" rx="3" fill="#7f1d1d"/></svg>`,
-      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 10,48 20,42 30,48" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="17" y="42" width="6" height="18" rx="3" fill="#7f1d1d"/></svg>`,
-      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 10,12 20,18 30,12" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/><rect x="17" y="0" width="6" height="18" rx="3" fill="#7f1d1d"/></svg>`,
-    },
-    "pointer-crystal": {
-      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 44,4 38,20 44,36" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="44,8 54,20 44,32 52,20" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/><line x1="10" y1="14" x2="22" y2="18" stroke="white" stroke-width="1" opacity="0.6"/><line x1="10" y1="26" x2="22" y2="22" stroke="white" stroke-width="1" opacity="0.6"/></svg>`,
-      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 16,4 22,20 16,36" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="16,8 6,20 16,32 8,20" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/></svg>`,
-      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 4,44 20,38 36,44" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="8,44 20,54 32,44 20,52" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/></svg>`,
-      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 4,16 20,22 36,16" fill="#67e8f9" stroke="#a5f3fc" stroke-width="1.5" opacity="0.9"/><polygon points="8,16 20,6 32,16 20,8" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/></svg>`,
-    },
-    "pointer-scepter": {
-      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 44,6 40,20 44,34" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="46,14 52,20 46,26 58,20" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="52" cy="20" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
-      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 16,6 20,20 16,34" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="14,14 8,20 14,26 2,20" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="8" cy="20" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
-      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 6,44 20,40 34,44" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="14,46 20,52 26,46 20,58" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="20" cy="52" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
-      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 6,16 20,20 34,16" fill="#fbbf24" stroke="#fde68a" stroke-width="1.5"/><polygon points="14,14 20,8 26,14 20,2" fill="#f59e0b" stroke="#fde68a" stroke-width="1"/><circle cx="20" cy="8" r="4" fill="#fde68a" opacity="0.8"/></svg>`,
-    },
-    "pointer-sword": {
-      left:  `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="0,20 50,14 46,20 50,26" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="48" y="16" width="12" height="8" rx="1" fill="#92400e"/><line x1="4" y1="17" x2="40" y2="19" stroke="#fed7aa" stroke-width="0.8" opacity="0.7"/><line x1="4" y1="23" x2="40" y2="21" stroke="#fed7aa" stroke-width="0.8" opacity="0.7"/></svg>`,
-      right: `<svg viewBox="0 0 60 40" width="48" height="32" xmlns="http://www.w3.org/2000/svg"><polygon points="60,20 10,14 14,20 10,26" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="0" y="16" width="12" height="8" rx="1" fill="#92400e"/></svg>`,
-      up:    `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,0 14,50 20,46 26,50" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="16" y="48" width="8" height="12" rx="1" fill="#92400e"/></svg>`,
-      down:  `<svg viewBox="0 0 40 60" width="32" height="48" xmlns="http://www.w3.org/2000/svg"><polygon points="20,60 14,10 20,14 26,10" fill="#f97316" stroke="#fed7aa" stroke-width="1"/><rect x="16" y="0" width="8" height="12" rx="1" fill="#92400e"/></svg>`,
-    },
-  }
-
-  const activeSvgs = POINTER_SVGS[activePointer] ?? CARROT_SVGS
+  // Pointer arrow SVGs — driven by registry (getPointer falls back to carrot)
+  const activePointerConfig = getPointer(activePointer)
+  const activeSvgs = activePointerConfig.svgs
   const gameBg = THEME_BG[activeTheme] ?? THEME_BG["theme-default"]
 
   return (
@@ -1660,74 +1700,90 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
       {/* Loadout overlay — shown when gear button tapped */}
       {showLoadout && (
-        <div className="absolute inset-0 z-[999] flex flex-col" style={{ background: "rgba(0,0,0,0.92)" }}>
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 pt-8 pb-4">
-            <div>
-              <p className="text-white text-2xl font-black">⚙️ Loadout</p>
-              <p className="text-white/50 text-sm mt-0.5">Tap an item to equip it</p>
+        <div className="absolute inset-0 z-[999] flex flex-col items-center justify-end" style={{ background: "rgba(0,0,0,0.75)" }} onClick={() => { setShowLoadout(false); togglePause() }}>
+          {/* Bottom sheet panel */}
+          <div
+            className="w-full max-w-md flex flex-col rounded-t-3xl overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, #1a0d2e 0%, #0f0520 100%)",
+              border: "1.5px solid rgba(168,85,247,0.35)",
+              borderBottom: "none",
+              boxShadow: "0 -8px 40px rgba(0,0,0,0.7)",
+              maxHeight: "80dvh",
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Drag handle */}
+            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+              <div className="w-10 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.25)" }} />
             </div>
-            <button
-              onClick={() => { setShowLoadout(false); togglePause() }}
-              className="px-5 py-2.5 rounded-full font-black text-white text-sm active:scale-90 transition-all"
-              style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)", boxShadow: "0 4px 14px rgba(34,197,94,0.5)" }}
-            >▶ Resume</button>
-          </div>
 
-          {/* Category tabs */}
-          <div className="flex gap-2 px-4 pb-3">
-            {([
-              { key: "pointer" as const, label: "🎯 Pointer" },
-              { key: "effect"  as const, label: "💥 Effect"  },
-              { key: "theme"   as const, label: "🌌 Theme"   },
-            ]).map(tab => (
+            {/* Header row */}
+            <div className="flex items-center justify-between px-5 pt-1 pb-3 flex-shrink-0">
+              <div>
+                <p className="text-white text-xl font-black">⚙️ Loadout</p>
+                <p className="text-white/50 text-xs mt-0.5">Tap an item to equip it</p>
+              </div>
               <button
-                key={tab.key}
-                onClick={() => setLoadoutTab(tab.key)}
-                className="flex-1 py-2.5 rounded-full text-sm font-black transition-all active:scale-95"
-                style={loadoutTab === tab.key
-                  ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 2px 10px rgba(168,85,247,0.5)" }
-                  : { background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.6)" }}
-              >{tab.label}</button>
-            ))}
-          </div>
+                onClick={() => { setShowLoadout(false); togglePause() }}
+                className="px-4 py-2 rounded-full font-black text-white text-sm active:scale-90 transition-all"
+                style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)", boxShadow: "0 4px 14px rgba(34,197,94,0.4)" }}
+              >▶ Resume</button>
+            </div>
 
-          {/* Items grid */}
-          <div className="flex-1 overflow-y-auto px-4 pb-8">
-            <div className="grid grid-cols-3 gap-3">
-              {GAME_CATALOG.filter(i => i.category === loadoutTab).map(item => {
-                const owned = storeOwned.includes(item.id)
-                const isActive = (loadoutTab === "effect" ? activeEffect : loadoutTab === "theme" ? activeTheme : activePointer) === item.id
-                return (
-                  <button
-                    key={item.id}
-                    disabled={!owned}
-                    onClick={() => {
-                      if (!owned) return
-                      if (loadoutTab === "effect") onEquipEffect?.(item.id)
-                      else if (loadoutTab === "theme") onEquipTheme?.(item.id)
-                      else onEquipPointer?.(item.id)
-                    }}
-                    className="flex flex-col items-center gap-2 py-4 px-2 rounded-2xl transition-all active:scale-90"
-                    style={{
-                      background: isActive
-                        ? "linear-gradient(135deg, rgba(168,85,247,0.5), rgba(99,102,241,0.5))"
-                        : owned ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
-                      border: isActive ? "2px solid rgba(168,85,247,0.9)" : "2px solid rgba(255,255,255,0.08)",
-                      opacity: owned ? 1 : 0.35,
-                    }}
-                  >
-                    <span style={{ fontSize: "32px", filter: owned ? "none" : "grayscale(1)" }}>{item.emoji}</span>
-                    <span className="text-white text-xs font-bold text-center leading-tight">{item.name}</span>
-                    {isActive
-                      ? <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>
-                      : !owned
-                        ? <span className="text-white/40 text-[10px]">🔒 Locked</span>
-                        : <span className="text-white/40 text-[10px]">Tap to use</span>
-                    }
-                  </button>
-                )
-              })}
+            {/* Category tabs */}
+            <div className="flex gap-2 px-4 pb-3 flex-shrink-0">
+              {([
+                { key: "pointer" as const, label: "🎯 Pointer" },
+                { key: "effect"  as const, label: "💥 Effect"  },
+              ]).map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setLoadoutTab(tab.key)}
+                  className="flex-1 py-2 rounded-full text-xs font-black transition-all active:scale-95"
+                  style={loadoutTab === tab.key
+                    ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 2px 10px rgba(168,85,247,0.5)" }
+                    : { background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.55)" }}
+                >{tab.label}</button>
+              ))}
+            </div>
+
+            {/* Items grid — scrollable */}
+            <div className="overflow-y-auto px-4 pb-6" style={{ WebkitOverflowScrolling: "touch" }}>
+              <div className="grid grid-cols-3 gap-2.5">
+                {GAME_CATALOG.filter(i => i.category === loadoutTab).map(item => {
+                  const owned = storeOwned.includes(item.id)
+                  const isActive = (loadoutTab === "effect" ? activeEffect : activePointer) === item.id
+                  return (
+                    <button
+                      key={item.id}
+                      disabled={!owned}
+                      onClick={() => {
+                        if (!owned) return
+                        if (loadoutTab === "effect") onEquipEffect?.(item.id)
+                        else onEquipPointer?.(item.id)
+                      }}
+                      className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl transition-all active:scale-90"
+                      style={{
+                        background: isActive
+                          ? "linear-gradient(135deg, rgba(168,85,247,0.45), rgba(99,102,241,0.45))"
+                          : owned ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)",
+                        border: isActive ? "2px solid rgba(168,85,247,0.9)" : "1.5px solid rgba(255,255,255,0.08)",
+                        opacity: owned ? 1 : 0.35,
+                      }}
+                    >
+                      <span style={{ fontSize: "28px", filter: owned ? "none" : "grayscale(1)" }}>{item.emoji}</span>
+                      <span className="text-white text-[11px] font-bold text-center leading-tight">{item.name}</span>
+                      {isActive
+                        ? <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>
+                        : !owned
+                          ? <span className="text-white/40 text-[9px]">🔒 Locked</span>
+                          : <span className="text-white/40 text-[9px]">Tap to use</span>
+                      }
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -1894,6 +1950,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           50% { transform: rotate(var(--r, -45deg)) scaleX(1); opacity: 1; }
           100% { transform: rotate(var(--r, -45deg)) scaleX(1); opacity: 0; }
         }
+        ${POINTER_KEYFRAMES}
       `}</style>
     </div>
   )

@@ -8,6 +8,7 @@ const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 const AlphabetFly = dynamic(() => import("@/components/alphabet-fly"), { ssr: false })
+const BodyFly = dynamic(() => import("@/components/body-fly"), { ssr: false })
 import {
   Play,
   BookOpen,
@@ -2281,13 +2282,22 @@ export default function HablaBeat() {
     )
   }
 
-  // Fly Game View — currently only Alphabet World is implemented
+  // Fly Game View
   if (flyGameSection === "alphabet-vowels") {
     return (
       <AlphabetFly
         sectionTitle="Alphabet World"
         coins={challengeCoins}
         onCoinsChange={(delta) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
+  if (flyGameSection === "body-world") {
+    return (
+      <BodyFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
         onClose={() => setFlyGameSection(null)}
       />
     )
@@ -3718,36 +3728,24 @@ export default function HablaBeat() {
                                 </span>
                               )}
                             </div>
-                            {/* Play · Challenge · Sing — pill buttons */}
+                            {/* Sing · Pop — pill buttons */}
                             <div className="flex flex-wrap gap-2 mt-2.5 ml-7">
-                              {selectedLanguage === "spanish" && (
-                                <button
-                                  onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 12px rgba(249,115,22,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
-                                >
-                                  <span style={{ display: "inline-block", fontSize: "18px", animation: "btnBounce 0.9s ease-in-out infinite" }}>{STORE_CATALOG.find(i => i.id === activePointer)?.emoji ?? "🥕"}</span>
-                                  Play
-                                </button>
-                              )}
-                              {selectedLanguage === "spanish" && (
-                                <button
-                                  onClick={() => handleChallengeSong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 4px 12px rgba(14,165,233,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
-                                >
-                                  <span style={{ display: "inline-block", fontSize: "18px", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>⚔️</span>
-                                  Challenge
-                                </button>
-                              )}
                               {isClickable && (
                                 <button
                                   onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex items-center gap-1.5 px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                  className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
                                   style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 12px rgba(168,85,247,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
                                 >
-                                  <span style={{ display: "inline-block", fontSize: "18px", animation: "btnBounce 0.9s ease-in-out infinite 0.15s" }}>🎤</span>
                                   Sing
+                                </button>
+                              )}
+                              {selectedLanguage === "spanish" && (
+                                <button
+                                  onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
+                                  className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 12px rgba(249,115,22,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                >
+                                  Pop
                                 </button>
                               )}
                             </div>
@@ -3757,31 +3755,39 @@ export default function HablaBeat() {
                     </div>
 
                     {/* ✈️ Fly Game Button — sits below songs, inside scroll area */}
-                    <div className="pt-3 flex justify-center">
-                      <button
-                        onClick={() => setFlyGameSection(openSection!.id)}
-                        className="flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-white text-base transition-all active:scale-95 w-full"
-                        style={{
-                          background: openSection!.id === "alphabet-vowels"
-                            ? "linear-gradient(135deg, rgba(99,102,241,0.55), rgba(139,92,246,0.55))"
-                            : "rgba(255,255,255,0.10)",
-                          border: openSection!.id === "alphabet-vowels"
-                            ? "1.5px solid rgba(167,139,250,0.65)"
-                            : "1.5px solid rgba(255,255,255,0.28)",
-                          backdropFilter: "blur(10px)",
-                          boxShadow: openSection!.id === "alphabet-vowels"
-                            ? "0 4px 16px rgba(99,102,241,0.35)"
-                            : "0 2px 10px rgba(0,0,0,0.15)",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <span style={{ fontSize: "22px", animation: "btnBounce 1.1s ease-in-out infinite" }}>🐰</span>
-                        {openSection!.title.replace(" World", "")} Fly
-                        {openSection!.id === "alphabet-vowels" && (
-                          <span className="text-xs font-bold px-1.5 py-0.5 rounded-full ml-1" style={{ background: "rgba(255,255,255,0.25)", color: "white" }}>NEW</span>
-                        )}
-                      </button>
-                    </div>
+                    {(() => {
+                      const isActive = openSection!.id === "alphabet-vowels" || openSection!.id === "body-world"
+                      const isBody = openSection!.id === "body-world"
+                      return (
+                        <div className="pt-3 flex justify-center">
+                          <button
+                            onClick={() => setFlyGameSection(openSection!.id)}
+                            className="flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-white text-base transition-all active:scale-95 w-full"
+                            style={{
+                              background: isBody
+                                ? "linear-gradient(135deg, rgba(236,72,153,0.55), rgba(168,85,247,0.55))"
+                                : isActive
+                                  ? "linear-gradient(135deg, rgba(99,102,241,0.55), rgba(139,92,246,0.55))"
+                                  : "rgba(255,255,255,0.10)",
+                              border: isActive
+                                ? "1.5px solid rgba(255,255,255,0.45)"
+                                : "1.5px solid rgba(255,255,255,0.28)",
+                              backdropFilter: "blur(10px)",
+                              boxShadow: isActive
+                                ? "0 4px 16px rgba(168,85,247,0.35)"
+                                : "0 2px 10px rgba(0,0,0,0.15)",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <span style={{ fontSize: "22px", animation: "btnBounce 1.1s ease-in-out infinite" }}>🐰</span>
+                            {openSection!.title.replace(" World", "")} Fly
+                            {isActive && (
+                              <span className="text-xs font-bold px-1.5 py-0.5 rounded-full ml-1" style={{ background: "rgba(255,255,255,0.25)", color: "white" }}>NEW</span>
+                            )}
+                          </button>
+                        </div>
+                      )
+                    })()}
                   </div>
 
                   {/* Bottom bar — next world + vocab bank */}

@@ -1,79 +1,74 @@
 "use client"
 // ─────────────────────────────────────────────────────────────────────────────
-// AlphabetFly — Bunny Fly game for Alphabet World
+// BodyFly — Bunny Fly game for Body World (songs 4 + 5)
+// Phase 1: body-part keywords  →  Phase 2: clothing keywords (slightly faster)
+// English word shown at bottom as prompt; bunny catches the Spanish word.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import Image from "next/image"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DATA
+// WORD DATA
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ALPHABET_QUEUE: { label: string; spanish: string; english: string; category: "vowel" | "consonant" | "special" }[] = [
-  { label: "A",  spanish: "Árbol",     english: "Tree",      category: "vowel"     },
-  { label: "B",  spanish: "Burro",     english: "Donkey",    category: "consonant" },
-  { label: "C",  spanish: "Casa",      english: "House",     category: "consonant" },
-  { label: "CH", spanish: "Chocolate", english: "Chocolate", category: "special"   },
-  { label: "D",  spanish: "Delfín",    english: "Dolphin",   category: "consonant" },
-  { label: "E",  spanish: "Elefante",  english: "Elephant",  category: "vowel"     },
-  { label: "F",  spanish: "Flor",      english: "Flower",    category: "consonant" },
-  { label: "G",  spanish: "Gato",      english: "Cat",       category: "consonant" },
-  { label: "H",  spanish: "Hormiga",   english: "Ant",       category: "consonant" },
-  { label: "I",  spanish: "Iguana",    english: "Iguana",    category: "vowel"     },
-  { label: "J",  spanish: "Jaguar",    english: "Jaguar",    category: "consonant" },
-  { label: "L",  spanish: "León",      english: "Lion",      category: "consonant" },
-  { label: "LL", spanish: "Llama",     english: "Llama",     category: "special"   },
-  { label: "M",  spanish: "Mono",      english: "Monkey",    category: "consonant" },
-  { label: "N",  spanish: "Naranja",   english: "Orange",    category: "consonant" },
-  { label: "Ñ",  spanish: "Niño",      english: "Child",     category: "special"   },
-  { label: "O",  spanish: "Oso",       english: "Bear",      category: "vowel"     },
-  { label: "P",  spanish: "Paloma",    english: "Dove",      category: "consonant" },
-  { label: "R",  spanish: "Rana",      english: "Frog",      category: "consonant" },
-  { label: "RR", spanish: "Perro",     english: "Dog",       category: "special"   },
-  { label: "S",  spanish: "Sol",       english: "Sun",       category: "consonant" },
-  { label: "T",  spanish: "Tigre",     english: "Tiger",     category: "consonant" },
-  { label: "U",  spanish: "Uva",       english: "Grape",     category: "vowel"     },
-  { label: "V",  spanish: "Vaca",      english: "Cow",       category: "consonant" },
-  { label: "Y",  spanish: "Yoyo",      english: "Yoyo",      category: "consonant" },
-  { label: "Z",  spanish: "Zapato",    english: "Shoe",      category: "consonant" },
+interface Word { spanish: string; english: string }
+
+const PHASE1: Word[] = [
+  { spanish: "cabeza",   english: "head"      },
+  { spanish: "pelo",     english: "hair"      },
+  { spanish: "cuello",   english: "neck"      },
+  { spanish: "garganta", english: "throat"    },
+  { spanish: "hombros",  english: "shoulders" },
+  { spanish: "brazos",   english: "arms"      },
+  { spanish: "codos",    english: "elbows"    },
+  { spanish: "manos",    english: "hands"     },
+  { spanish: "espalda",  english: "back"      },
+  { spanish: "barriga",  english: "belly"     },
+  { spanish: "pierna",   english: "leg"       },
+  { spanish: "rodilla",  english: "knee"      },
+  { spanish: "pies",     english: "feet"      },
+  { spanish: "ojos",     english: "eyes"      },
+  { spanish: "nariz",    english: "nose"      },
+  { spanish: "labios",   english: "lips"      },
+  { spanish: "dientes",  english: "teeth"     },
+  { spanish: "oreja",    english: "ear"       },
+  { spanish: "boca",     english: "mouth"     },
+  { spanish: "lengua",   english: "tongue"    },
+  { spanish: "frente",   english: "forehead"  },
 ]
 
-const SPANISH_LETTER_NAME: Record<string, string> = {
-  "A": "a", "B": "be", "C": "ce", "CH": "che", "D": "de", "E": "e",
-  "F": "efe", "G": "ge", "H": "hache", "I": "i", "J": "jota",
-  "L": "ele", "LL": "elle", "M": "eme", "N": "ene", "Ñ": "eñe",
-  "O": "o", "P": "pe", "R": "erre", "RR": "erre doble",
-  "S": "ese", "T": "te", "U": "u", "V": "uve", "Y": "ye", "Z": "zeta",
-}
+const PHASE2: Word[] = [
+  { spanish: "ropa",      english: "clothes"  },
+  { spanish: "camisa",    english: "shirt"    },
+  { spanish: "pantalón",  english: "pants"    },
+  { spanish: "zapatos",   english: "shoes"    },
+  { spanish: "cinturón",  english: "belt"     },
+  { spanish: "gorra",     english: "cap"      },
+  { spanish: "guantes",   english: "gloves"   },
+  { spanish: "calcetín",  english: "sock"     },
+  { spanish: "falda",     english: "skirt"    },
+  { spanish: "suéter",    english: "sweater"  },
+  { spanish: "chaqueta",  english: "jacket"   },
+  { spanish: "bufanda",   english: "scarf"    },
+  { spanish: "traje",     english: "suit"     },
+  { spanish: "vestido",   english: "dress"    },
+  { spanish: "pijama",    english: "pajamas"  },
+  { spanish: "botas",     english: "boots"    },
+  { spanish: "sandalias", english: "sandals"  },
+]
 
-function speakSpanish(label: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return
-  window.speechSynthesis.cancel()
-  const text = SPANISH_LETTER_NAME[label] ?? label.toLowerCase()
-  const utt = new SpeechSynthesisUtterance(text)
-  utt.lang = "es-MX"
-  utt.rate = 0.85
-  utt.pitch = 1.1
-  utt.volume = 1
-  const voices = window.speechSynthesis.getVoices()
-  const esVoice = voices.find(v => v.lang.startsWith("es")) ?? null
-  if (esVoice) utt.voice = esVoice
-  window.speechSynthesis.speak(utt)
-}
-
-const SKY_EMOJIS = ["🌟","⭐","✨","🎈","🌈","🦋","🌸","🎵","🎶","💫","🌺","🍀","🎀","🌙","🌠"]
+const FULL_QUEUE = [...PHASE1, ...PHASE2]
+const PHASE1_LEN = PHASE1.length
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface FloatingLetter {
+interface FloatingWord {
   id: number
-  label: string
   spanish: string
   english: string
-  category: "vowel" | "consonant" | "special"
   x: number
   y: number
   speed: number
@@ -81,39 +76,11 @@ interface FloatingLetter {
   collected: boolean
 }
 
-interface Coin {
-  id: number
-  x: number
-  y: number
-  speed: number
-  collected: boolean
-}
+interface Coin { id: number; x: number; y: number; speed: number; collected: boolean }
+interface PopParticle { id: number; spanish: string; english: string; x: number; y: number; correct: boolean }
+interface SkyEmoji { id: number; emoji: string; x: number; y: number; size: number; driftDur: number; driftDelay: number }
 
-interface PopParticle {
-  id: number
-  label: string
-  english: string
-  x: number
-  y: number
-  correct: boolean
-}
-
-interface SkyEmoji {
-  id: number
-  emoji: string
-  x: number
-  y: number
-  size: number
-  driftDur: number
-  driftDelay: number
-}
-
-interface Props {
-  sectionTitle: string
-  coins: number
-  onCoinsChange: (delta: number) => void
-  onClose: () => void
-}
+interface Props { coins: number; onCoinsChange: (delta: number) => void; onClose: () => void }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -121,14 +88,16 @@ interface Props {
 
 const BUNNY_W      = 100
 const BUNNY_H      = 100
-const LETTER_SIZE  = 58
+const WORD_H       = 46
 const COIN_SIZE    = 32
 const STEER_IMPULSE = 0.55
 const MAX_SPEED_X  = 6
 const MAX_SPEED_Y  = 5
 const FRICTION     = 0.85
-const HIT_RADIUS   = 56
+const HIT_RADIUS   = 60
 const BUNNY_Y_INIT = 65
+
+const SKY_EMOJIS = ["🌟","⭐","✨","🎈","🌈","🦋","🌸","🎵","💫","🌺","🍀","🎀","🌙","🌠","🫀"]
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -143,12 +112,6 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function categoryColor(cat: "vowel" | "consonant" | "special"): { bg: string; text: string; glow: string } {
-  if (cat === "vowel")   return { bg: "#fef08a", text: "#92400e", glow: "#fde047" }
-  if (cat === "special") return { bg: "#fbcfe8", text: "#831843", glow: "#f9a8d4" }
-  return { bg: "#bfdbfe", text: "#1e3a8a", glow: "#93c5fd" }
-}
-
 function makeSkyEmojis(): SkyEmoji[] {
   return Array.from({ length: 14 }, (_, i) => ({
     id: i,
@@ -161,58 +124,68 @@ function makeSkyEmojis(): SkyEmoji[] {
   }))
 }
 
+function speakSpanish(word: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return
+  window.speechSynthesis.cancel()
+  const utt = new SpeechSynthesisUtterance(word)
+  utt.lang = "es-MX"
+  utt.rate = 0.85
+  utt.pitch = 1.1
+  utt.volume = 1
+  const voices = window.speechSynthesis.getVoices()
+  const esVoice = voices.find(v => v.lang.startsWith("es")) ?? null
+  if (esVoice) utt.voice = esVoice
+  window.speechSynthesis.speak(utt)
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoinsChange, onClose }: Props) {
+export default function BodyFly({ coins: initialCoins, onCoinsChange, onClose }: Props) {
 
-  // ── Render state (drives UI) ─────────────────────────────────────────────
-  const [gamePhase,   setGamePhase]   = useState<"instructions" | "countdown" | "playing" | "complete">("instructions")
-  const [countdown,   setCountdown]   = useState(3)
-  const [score,       setScore]       = useState(0)
-  const [localCoins,  setLocalCoins]  = useState(initialCoins)
-  const [alphabetIdx, setAlphabetIdx] = useState(0)
-  const [flashScreen, setFlashScreen] = useState<"correct" | "wrong" | null>(null)
-  const [showHint,    setShowHint]    = useState(false)
-  const [hintEntry,   setHintEntry]   = useState<typeof ALPHABET_QUEUE[0] | null>(null)
+  const [gamePhase,    setGamePhase]    = useState<"instructions" | "countdown" | "playing" | "phase_transition" | "complete">("instructions")
+  const [countdown,    setCountdown]    = useState(3)
+  const [score,        setScore]        = useState(0)
+  const [localCoins,   setLocalCoins]   = useState(initialCoins)
+  const [wordIdx,      setWordIdx]      = useState(0)
+  const [flashScreen,  setFlashScreen]  = useState<"correct" | "wrong" | null>(null)
+  const [showHint,     setShowHint]     = useState(false)
+  const [hintEntry,    setHintEntry]    = useState<Word | null>(null)
+  const [transitionMsg, setTransitionMsg] = useState("")
 
-  const [letters,   setLetters]   = useState<FloatingLetter[]>([])
+  const [words,     setWords]     = useState<FloatingWord[]>([])
   const [coinItems, setCoinItems] = useState<Coin[]>([])
   const [popItems,  setPopItems]  = useState<PopParticle[]>([])
   const [skyEmojis] = useState<SkyEmoji[]>(makeSkyEmojis)
 
-  // ── Refs (game-loop readable without stale closures) ─────────────────────
-  const bunnyX    = useRef(50)
-  const bunnyY    = useRef(BUNNY_Y_INIT)
-  const velX      = useRef(0)
-  const velY      = useRef(0)
+  const bunnyX  = useRef(50)
+  const bunnyY  = useRef(BUNNY_Y_INIT)
+  const velX    = useRef(0)
+  const velY    = useRef(0)
 
-  const alphabetIdxRef       = useRef(0)   // mirrors alphabetIdx for the RAF
-  const gamePhaseRef         = useRef<"instructions" | "countdown" | "playing" | "complete">("instructions")
-  const collectedThisFrame   = useRef(false)
-  const letterIdRef          = useRef(0)
-  const coinIdRef            = useRef(0)
-  const popIdRef             = useRef(0)
-  const waveTimerRef         = useRef(0)
-  const coinTimerRef         = useRef(0)
-  const lastTimeRef          = useRef(0)
-  const rafRef               = useRef<number | null>(null)
-  const onCoinsChangeRef     = useRef(onCoinsChange)
-  const scoreRef             = useRef(0)
+  const wordIdxRef             = useRef(0)
+  const gamePhaseRef           = useRef<"instructions" | "countdown" | "playing" | "phase_transition" | "complete">("instructions")
+  const collectedThisFrame     = useRef(false)
+  const wordItemIdRef          = useRef(0)
+  const coinIdRef              = useRef(0)
+  const popIdRef               = useRef(0)
+  const waveTimerRef           = useRef(0)
+  const coinTimerRef           = useRef(0)
+  const lastTimeRef            = useRef(0)
+  const rafRef                 = useRef<number | null>(null)
+  const onCoinsChangeRef       = useRef(onCoinsChange)
+  const scoreRef               = useRef(0)
 
-  // keep refs in sync
   useEffect(() => { onCoinsChangeRef.current = onCoinsChange }, [onCoinsChange])
-  useEffect(() => { alphabetIdxRef.current = alphabetIdx }, [alphabetIdx])
+  useEffect(() => { wordIdxRef.current = wordIdx }, [wordIdx])
   useEffect(() => { gamePhaseRef.current = gamePhase }, [gamePhase])
 
-  // ── DOM refs ─────────────────────────────────────────────────────────────
   const areaRef    = useRef<HTMLDivElement>(null)
   const bunnyElRef = useRef<HTMLDivElement>(null)
 
-  // ── Hold-to-steer ────────────────────────────────────────────────────────
-  const holdIntervalRef      = useRef<ReturnType<typeof setInterval> | null>(null)
-  const activeDirectionsRef  = useRef(new Set<"left" | "right" | "up" | "down">())
+  const holdIntervalRef     = useRef<ReturnType<typeof setInterval> | null>(null)
+  const activeDirectionsRef = useRef(new Set<"left" | "right" | "up" | "down">())
 
   const startHold = useCallback((dir: "left" | "right" | "up" | "down") => {
     activeDirectionsRef.current.add(dir)
@@ -224,17 +197,12 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       if (dirs.has("down"))  velY.current = Math.min(MAX_SPEED_Y,  velY.current + STEER_IMPULSE)
     }
     apply()
-    if (!holdIntervalRef.current) {
-      holdIntervalRef.current = setInterval(apply, 16)
-    }
+    if (!holdIntervalRef.current) holdIntervalRef.current = setInterval(apply, 16)
   }, [])
 
   const stopHold = useCallback((dir?: "left" | "right" | "up" | "down") => {
-    if (dir) {
-      activeDirectionsRef.current.delete(dir)
-    } else {
-      activeDirectionsRef.current.clear()
-    }
+    if (dir) activeDirectionsRef.current.delete(dir)
+    else     activeDirectionsRef.current.clear()
     if (activeDirectionsRef.current.size === 0) {
       if (holdIntervalRef.current) { clearInterval(holdIntervalRef.current); holdIntervalRef.current = null }
     }
@@ -242,7 +210,6 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
   useEffect(() => () => { if (holdIntervalRef.current) clearInterval(holdIntervalRef.current) }, [])
 
-  // ── Keyboard support ─────────────────────────────────────────────────────
   useEffect(() => {
     if (gamePhase !== "playing") return
     const dn = (e: KeyboardEvent) => {
@@ -262,26 +229,23 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     return () => { window.removeEventListener("keydown", dn); window.removeEventListener("keyup", up) }
   }, [gamePhase, startHold, stopHold])
 
-  // ── Spawn helpers (stable — no deps that change) ─────────────────────────
-  const spawnWave = useCallback((targetLabel: string) => {
-    const pool = ALPHABET_QUEUE.filter(a => a.label !== targetLabel)
-    const distractors = shuffle(pool).slice(0, 2)
-    const targetItem  = ALPHABET_QUEUE.find(a => a.label === targetLabel)!
-    const all         = shuffle([targetItem, ...distractors])
-    const positions   = shuffle([15, 35, 55, 72, 88]).slice(0, 3)
-    const newLetters: FloatingLetter[] = all.map((item, i) => ({
-      id: letterIdRef.current++,
-      label: item.label,
+  // ── Spawn helpers ────────────────────────────────────────────────────────
+  const spawnWave = useCallback((targetSpanish: string, pool: Word[], speedBase: number, speedVariance: number) => {
+    const distractors = shuffle(pool.filter(w => w.spanish !== targetSpanish)).slice(0, 2)
+    const target = pool.find(w => w.spanish === targetSpanish)!
+    const all = shuffle([target, ...distractors])
+    const positions = shuffle([12, 30, 50, 68, 85]).slice(0, 3)
+    const newWords: FloatingWord[] = all.map((item, i) => ({
+      id: wordItemIdRef.current++,
       spanish: item.spanish,
       english: item.english,
-      category: item.category,
       x: positions[i],
       y: -8 - Math.random() * 6,
-      speed: 0.20 + Math.random() * 0.10,
-      isTarget: item.label === targetLabel,
+      speed: speedBase + Math.random() * speedVariance,
+      isTarget: item.spanish === targetSpanish,
       collected: false,
     }))
-    setLetters(newLetters)
+    setWords(newWords)
   }, [])
 
   const spawnCoins = useCallback(() => {
@@ -296,11 +260,11 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     setCoinItems(prev => [...prev, ...coins])
   }, [])
 
-  // ── Advance alphabet (called from game loop via ref) ─────────────────────
+  // ── Advance word (called from game loop) ─────────────────────────────────
   const advanceRef = useRef<(wasCorrect: boolean) => void>(() => {})
   advanceRef.current = (wasCorrect: boolean) => {
-    const idx   = alphabetIdxRef.current
-    const entry = ALPHABET_QUEUE[idx]
+    const idx   = wordIdxRef.current
+    const entry = FULL_QUEUE[idx]
     if (wasCorrect) {
       setFlashScreen("correct")
       setScore(s => { scoreRef.current = s + 10; return s + 10 })
@@ -312,25 +276,42 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       setTimeout(() => setFlashScreen(null), 400)
     }
     const nextIdx = idx + 1
-    if (nextIdx >= ALPHABET_QUEUE.length) {
-      alphabetIdxRef.current = nextIdx
-      setAlphabetIdx(nextIdx)
+
+    // Phase transition: finished phase 1, starting phase 2
+    if (nextIdx === PHASE1_LEN) {
+      wordIdxRef.current = nextIdx
+      setWordIdx(nextIdx)
+      setTransitionMsg("Now: Clothes! 👗")
+      setGamePhase("phase_transition")
+      gamePhaseRef.current = "phase_transition"
       setTimeout(() => {
-        setFlashScreen(null)
-        setShowHint(false)
-        setGamePhase("complete")
-        gamePhaseRef.current = "complete"
+        setFlashScreen(null); setShowHint(false)
+        setGamePhase("playing"); gamePhaseRef.current = "playing"
+        waveTimerRef.current = 99999
+        lastTimeRef.current = performance.now()
+        rafRef.current = requestAnimationFrame(gameLoop)
+      }, 2200)
+      return
+    }
+
+    // Completed all words
+    if (nextIdx >= FULL_QUEUE.length) {
+      wordIdxRef.current = nextIdx
+      setWordIdx(nextIdx)
+      setTimeout(() => {
+        setFlashScreen(null); setShowHint(false)
+        setGamePhase("complete"); gamePhaseRef.current = "complete"
       }, 1000)
       return
     }
-    alphabetIdxRef.current = nextIdx
-    setAlphabetIdx(nextIdx)
-    // say the new target letter
-    setTimeout(() => speakSpanish(ALPHABET_QUEUE[nextIdx].label), 400)
-    waveTimerRef.current = 99999  // trigger immediate new wave
+
+    wordIdxRef.current = nextIdx
+    setWordIdx(nextIdx)
+    setTimeout(() => speakSpanish(FULL_QUEUE[nextIdx].spanish), 400)
+    waveTimerRef.current = 99999
   }
 
-  // ── Main game loop (stable ref — never recreated) ─────────────────────────
+  // ── Main game loop ────────────────────────────────────────────────────────
   const gameLoop = useCallback((ts: number) => {
     if (gamePhaseRef.current !== "playing") return
     const dt = Math.min(ts - lastTimeRef.current, 50)
@@ -341,119 +322,118 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     const areaW = area.width
     const areaH = area.height
 
-    // bunny physics
     velX.current = velX.current * FRICTION
     velY.current = velY.current * FRICTION
     bunnyX.current = Math.max(3,  Math.min(94, bunnyX.current + velX.current * 0.35))
     bunnyY.current = Math.max(5,  Math.min(88, bunnyY.current + velY.current * 0.35))
 
-    // letters
     collectedThisFrame.current = false
     let targetMissed = false
+    const idx = wordIdxRef.current
+    const isPhase2 = idx >= PHASE1_LEN
+    const currentPool = isPhase2 ? PHASE2 : PHASE1
+    const speedBase = isPhase2 ? 0.38 : 0.28
+    const speedVar  = isPhase2 ? 0.12 : 0.10
 
-    setLetters(prev => prev.map(l => {
-      if (l.collected) return l
-      const newY  = l.y + l.speed * (dt / 16)
-      const lxPx  = (l.x / 100) * areaW
-      const lyPx  = (newY / 100) * areaH
+    setWords(prev => prev.map(w => {
+      if (w.collected) return w
+      const newY  = w.y + w.speed * (dt / 16)
+      const wxPx  = (w.x / 100) * areaW
+      const wyPx  = (newY / 100) * areaH
       const bxPx  = (bunnyX.current / 100) * areaW
       const byPx  = (bunnyY.current / 100) * areaH
-      const dist  = Math.hypot(lxPx - bxPx, lyPx - byPx)
+      const dist  = Math.hypot(wxPx - bxPx, wyPx - byPx)
 
       if (dist < HIT_RADIUS && !collectedThisFrame.current) {
         collectedThisFrame.current = true
-        speakSpanish(l.label)
+        speakSpanish(w.spanish)
         setPopItems(pp => [...pp, {
           id: popIdRef.current++,
-          label: l.label,
-          english: l.english,
-          x: l.x,
-          y: newY,
-          correct: l.isTarget,
+          spanish: w.spanish,
+          english: w.english,
+          x: w.x, y: newY,
+          correct: w.isTarget,
         }])
-        if (l.isTarget) {
-          advanceRef.current(true)
-        } else {
-          setFlashScreen("wrong")
-          setScore(s => { scoreRef.current = Math.max(0, s - 5); return Math.max(0, s - 5) })
-          setTimeout(() => setFlashScreen(null), 400)
+        if (w.isTarget) {
+          const coin = Math.random() < 0.6 ? 1 : 0
+          if (coin > 0) {
+            onCoinsChangeRef.current(coin)
+            setLocalCoins(c => c + coin)
+          }
         }
-        return { ...l, collected: true }
+        advanceRef.current(w.isTarget)
+        return { ...w, collected: true }
       }
 
-      if (newY > 108 && l.isTarget && !l.collected) {
+      if (newY > 108 && w.isTarget && !targetMissed) {
         targetMissed = true
-        return { ...l, collected: true }
+        advanceRef.current(false)
+        return { ...w, y: newY, collected: true }
       }
-      if (newY > 115) return { ...l, collected: true }
-      return { ...l, y: newY }
+
+      return { ...w, y: newY }
     }))
 
-    if (targetMissed && !collectedThisFrame.current) {
-      collectedThisFrame.current = true
-      advanceRef.current(false)
-    }
-
-    // wave spawner
+    // Wave timer
     waveTimerRef.current += dt
-    if (waveTimerRef.current > 2200 + Math.random() * 600) {
+    const waveInterval = isPhase2 ? 3600 : 4200
+    if (waveTimerRef.current >= waveInterval) {
       waveTimerRef.current = 0
-      const cur = ALPHABET_QUEUE[alphabetIdxRef.current % ALPHABET_QUEUE.length]
-      spawnWave(cur.label)
+      const currentIdx = wordIdxRef.current
+      if (currentIdx < FULL_QUEUE.length) {
+        const pool = currentIdx >= PHASE1_LEN ? PHASE2 : PHASE1
+        const wb   = currentIdx >= PHASE1_LEN ? 0.38 : 0.28
+        const wv   = currentIdx >= PHASE1_LEN ? 0.12 : 0.10
+        spawnWave(FULL_QUEUE[currentIdx].spanish, pool, wb, wv)
+      }
     }
 
-    // coins
-    setCoinItems(prev => prev.map(c => {
-      if (c.collected) return c
-      const newY = c.y + c.speed * (dt / 16)
-      const dist = Math.hypot((c.x / 100) * areaW - (bunnyX.current / 100) * areaW,
-                              (newY / 100) * areaH - (bunnyY.current / 100) * areaH)
-      if (dist < HIT_RADIUS * 0.75) {
-        setLocalCoins(lc => { onCoinsChangeRef.current(1); return lc + 1 })
-        return { ...c, collected: true }
-      }
-      if (newY > 110) return { ...c, collected: true }
-      return { ...c, y: newY }
-    }))
-
+    // Coin timer
     coinTimerRef.current += dt
-    if (coinTimerRef.current > 1400 + Math.random() * 800) {
+    if (coinTimerRef.current >= 5000) {
       coinTimerRef.current = 0
       spawnCoins()
     }
 
-    rafRef.current = requestAnimationFrame(gameLoop)
-  }, [spawnWave, spawnCoins])   // spawnWave/spawnCoins are stable (useCallback with no deps)
+    setCoinItems(prev => prev.map(c => {
+      if (c.collected) return c
+      const newY = c.y + c.speed * (dt / 16)
+      const cxPx = (c.x / 100) * areaW
+      const cyPx = (newY / 100) * areaH
+      const bxPx = (bunnyX.current / 100) * areaW
+      const byPx = (bunnyY.current / 100) * areaH
+      if (Math.hypot(cxPx - bxPx, cyPx - byPx) < HIT_RADIUS * 0.85) {
+        onCoinsChangeRef.current(1)
+        setLocalCoins(lc => lc + 1)
+        return { ...c, collected: true }
+      }
+      return { ...c, y: newY }
+    }))
 
-  // ── Countdown ────────────────────────────────────────────────────────────
+    rafRef.current = requestAnimationFrame(gameLoop)
+  }, [spawnWave, spawnCoins])
+
+  // ── Countdown ───────────────────────────────────────────────────────────
   useEffect(() => {
     if (gamePhase !== "countdown") return
-    if (countdown <= 0) {
+    if (countdown > 0) {
+      const t = setTimeout(() => setCountdown(c => c - 1), 1000)
+      return () => clearTimeout(t)
+    }
+    setCountdown(0)
+    const t = setTimeout(() => {
       setGamePhase("playing")
       gamePhaseRef.current = "playing"
-      alphabetIdxRef.current = 0
-      spawnWave(ALPHABET_QUEUE[0].label)
-      waveTimerRef.current = 0
-      setTimeout(() => speakSpanish(ALPHABET_QUEUE[0].label), 400)
-      return
-    }
-    const t = setTimeout(() => setCountdown(c => c - 1), 1000)
+      lastTimeRef.current = performance.now()
+      waveTimerRef.current = 99999
+      speakSpanish(FULL_QUEUE[0].spanish)
+      rafRef.current = requestAnimationFrame(gameLoop)
+    }, 600)
     return () => clearTimeout(t)
-  }, [gamePhase, countdown, spawnWave])
+  }, [gamePhase, countdown, gameLoop])
 
-  // ── Start / stop RAF ─────────────────────────────────────────────────────
-  useEffect(() => {
-    if (gamePhase !== "playing") {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      stopHold()
-      return
-    }
-    lastTimeRef.current = performance.now()
-    rafRef.current = requestAnimationFrame(gameLoop)
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
-  }, [gamePhase, gameLoop, stopHold])
+  useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }, [])
 
-  // ── Bunny DOM position ───────────────────────────────────────────────────
   useEffect(() => {
     if (gamePhase !== "playing") return
     let raf: number
@@ -468,7 +448,6 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     return () => cancelAnimationFrame(raf)
   }, [gamePhase])
 
-  // ── Auto-clear pop particles ─────────────────────────────────────────────
   useEffect(() => {
     if (popItems.length === 0) return
     const t = setTimeout(() => setPopItems(pp => pp.slice(Math.max(0, pp.length - 20))), 1200)
@@ -479,13 +458,15 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   // RENDER
   // ─────────────────────────────────────────────────────────────────────────
 
-  const worldName   = sectionTitle.replace(" World", "")
-  const progressPct = Math.round((alphabetIdx / ALPHABET_QUEUE.length) * 100)
-  const currentEntry = ALPHABET_QUEUE[Math.min(alphabetIdx, ALPHABET_QUEUE.length - 1)]
+  const progressPct  = Math.round((wordIdx / FULL_QUEUE.length) * 100)
+  const currentEntry = FULL_QUEUE[Math.min(wordIdx, FULL_QUEUE.length - 1)]
+  const isPhase2     = wordIdx >= PHASE1_LEN
 
   return (
     <div className="fixed inset-0 z-[200] flex flex-col"
-      style={{ background: "linear-gradient(180deg,#0f0c29 0%,#1e1b4b 25%,#312e81 55%,#4338ca 80%,#6366f1 100%)" }}>
+      style={{ background: isPhase2
+        ? "linear-gradient(180deg,#1a0533 0%,#4a1272 30%,#7e22ce 65%,#a855f7 100%)"
+        : "linear-gradient(180deg,#1a0c2e 0%,#3b1a6b 25%,#5e2ab5 55%,#7c3aed 80%,#8b5cf6 100%)" }}>
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 pt-safe-top pt-3 pb-2 flex-shrink-0">
@@ -496,8 +477,14 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         </button>
 
         <div className="text-center">
-          <div className="text-white font-black text-lg leading-none">{worldName} Fly ✈️</div>
-          <div className="text-white/60 text-xs mt-0.5">{alphabetIdx}/{ALPHABET_QUEUE.length} letters</div>
+          <div className="text-white font-black text-lg leading-none">
+            Body Fly ✈️
+            <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full"
+              style={{ background: isPhase2 ? "rgba(236,72,153,0.4)" : "rgba(99,102,241,0.4)", color: "white" }}>
+              {isPhase2 ? "Clothes" : "Body Parts"}
+            </span>
+          </div>
+          <div className="text-white/60 text-xs mt-0.5">{wordIdx}/{FULL_QUEUE.length} words</div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -525,14 +512,20 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       <div className="px-4 pb-1 flex-shrink-0">
         <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background:"rgba(255,255,255,0.15)" }}>
           <div className="h-full rounded-full transition-all duration-500"
-            style={{ width:`${progressPct}%`, background:"linear-gradient(90deg,#fbbf24,#f59e0b)" }}/>
+            style={{ width:`${progressPct}%`, background: isPhase2
+              ? "linear-gradient(90deg,#ec4899,#a855f7)"
+              : "linear-gradient(90deg,#818cf8,#6366f1)" }}/>
+        </div>
+        <div className="flex justify-between text-white/40 text-xs mt-0.5 px-0.5">
+          <span>Body Parts</span>
+          <span>Clothes</span>
         </div>
       </div>
 
       {/* ── Game Area ── */}
       <div ref={areaRef} className="flex-1 relative overflow-hidden select-none">
 
-        {/* Twinkling stars */}
+        {/* Stars */}
         {[...Array(22)].map((_, i) => (
           <div key={i} className="absolute rounded-full bg-white/25" style={{
             width:`${1.5+(i%3)}px`,height:`${1.5+(i%3)}px`,
@@ -543,7 +536,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         {/* Sky emojis */}
         {skyEmojis.map(se => (
           <div key={se.id} className="absolute select-none pointer-events-none" style={{
-            left:`${se.x}%`,top:`${se.y}%`,fontSize:`${se.size}px`,opacity:0.45,
+            left:`${se.x}%`,top:`${se.y}%`,fontSize:`${se.size}px`,opacity:0.4,
             animation:`skyDrift ${se.driftDur}s ease-in-out ${se.driftDelay}s infinite alternate`,
             filter:"drop-shadow(0 0 4px rgba(255,255,255,0.3))"}}>
             {se.emoji}
@@ -557,41 +550,27 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               animation:`cloudDrift ${9+i*2}s ease-in-out ${i*4}s infinite alternate`}}>☁️</div>
         ))}
 
-        {/* ── Floating Letters ── */}
-        {letters.filter(l => !l.collected).map(l => {
-          const colors = categoryColor(l.category)
-          return (
-            <div key={l.id}
-              className="absolute flex flex-col items-center select-none pointer-events-none"
-              style={{
-                left:`${l.x}%`, top:`${l.y}%`,
-                transform:"translateX(-50%)",
-                animation: l.isTarget ? "targetPulse 1.4s ease-in-out infinite" : undefined,
-              }}>
-              <div className="flex items-center justify-center font-black rounded-2xl" style={{
-                width:`${LETTER_SIZE}px`, height:`${LETTER_SIZE}px`,
-                fontSize: l.label.length > 1 ? "20px" : "30px",
-                background: colors.bg, color: colors.text,
-                boxShadow:`0 0 16px ${colors.glow},0 4px 12px rgba(0,0,0,0.3)`,
-                border: l.isTarget ? "3px solid white" : "2px solid rgba(255,255,255,0.35)",
-                position:"relative",
-              }}>
-                {l.label}
-                {l.isTarget && (
-                  <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center"
-                    style={{fontSize:"9px",fontWeight:900,color:"#92400e"}}>★</div>
-                )}
-              </div>
-              {/* Spanish + English label */}
-              <div className="mt-1 px-2 py-0.5 rounded-lg font-bold text-center"
-                style={{fontSize:"10px",background:"rgba(0,0,0,0.60)",backdropFilter:"blur(4px)",
-                  border:"1px solid rgba(255,255,255,0.2)",whiteSpace:"nowrap",lineHeight:1.4}}>
-                <span className="text-yellow-200 block">{l.spanish}</span>
-                <span className="text-white/70 block" style={{fontSize:"9px"}}>{l.english}</span>
-              </div>
+        {/* ── Floating Spanish Words ── */}
+        {words.filter(w => !w.collected).map(w => (
+          <div key={w.id}
+            className="absolute flex flex-col items-center select-none pointer-events-none"
+            style={{
+              left:`${w.x}%`, top:`${w.y}%`,
+              transform:"translateX(-50%)",
+            }}>
+            <div className="flex items-center justify-center font-black rounded-2xl px-3" style={{
+              height:`${WORD_H}px`,
+              minWidth: "70px",
+              fontSize: w.spanish.length > 7 ? "13px" : "16px",
+              background: isPhase2 ? "#fbcfe8" : "#bfdbfe",
+              color:      isPhase2 ? "#831843" : "#1e3a8a",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+              border: "2px solid rgba(255,255,255,0.35)",
+            }}>
+              {w.spanish}
             </div>
-          )
-        })}
+          </div>
+        ))}
 
         {/* ── Pop Particles ── */}
         {popItems.map(p => (
@@ -599,16 +578,16 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
             className="absolute flex flex-col items-center pointer-events-none select-none"
             style={{left:`${p.x}%`,top:`${p.y}%`,transform:"translateX(-50%)",
               animation:"popFloat 1.1s ease-out forwards",zIndex:15}}>
-            <div className="font-black rounded-2xl flex items-center justify-center" style={{
-              width:`${LETTER_SIZE}px`,height:`${LETTER_SIZE}px`,
-              fontSize: p.label.length > 1 ? "20px" : "30px",
+            <div className="font-black rounded-2xl flex items-center justify-center px-3" style={{
+              height:`${WORD_H}px`, minWidth:"70px",
+              fontSize: p.spanish.length > 7 ? "13px" : "16px",
               background: p.correct ? "#4ade80" : "#f87171",
               color:      p.correct ? "#14532d" : "#7f1d1d",
               boxShadow:  p.correct
                 ? "0 0 20px rgba(74,222,128,0.8),0 4px 12px rgba(0,0,0,0.3)"
                 : "0 0 20px rgba(248,113,113,0.8),0 4px 12px rgba(0,0,0,0.3)",
               border:"3px solid white",
-            }}>{p.label}</div>
+            }}>{p.spanish}</div>
             <div className="mt-1 px-2 py-0.5 rounded-lg font-bold text-white text-center"
               style={{fontSize:"11px",
                 background: p.correct ? "rgba(74,222,128,0.35)" : "rgba(248,113,113,0.35)",
@@ -636,10 +615,10 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         ))}
 
         {/* ── Bunny ── */}
-        {gamePhase === "playing" && (
+        {(gamePhase === "playing" || gamePhase === "phase_transition") && (
           <div ref={bunnyElRef} className="absolute pointer-events-none" style={{
             width:`${BUNNY_W}px`,height:`${BUNNY_H}px`,zIndex:10,
-            filter:"sepia(1) hue-rotate(180deg) saturate(3) brightness(1.6) drop-shadow(0 0 10px rgba(99,179,237,0.9)) drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
+            filter:"sepia(1) hue-rotate(290deg) saturate(3) brightness(1.5) drop-shadow(0 0 10px rgba(236,72,153,0.9)) drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
           }}>
             <Image src="/images/super-bunny-nobg.gif" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
@@ -672,22 +651,33 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         {/* ── Instructions Screen ── */}
         {gamePhase === "instructions" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center px-8"
-            style={{zIndex:50,background:"rgba(5,3,30,0.95)",backdropFilter:"blur(12px)"}}>
+            style={{zIndex:50,background:"rgba(10,3,30,0.95)",backdropFilter:"blur(12px)"}}>
             <div className="text-8xl mb-5" style={{animation:"countdownPop 0.6s ease-out forwards"}}>🐰</div>
-            <div className="text-white font-black text-2xl text-center mb-5">Alphabet Fly!</div>
+            <div className="text-white font-black text-2xl text-center mb-5">Body Fly!</div>
             <div className="text-center mb-8 px-6 py-4 rounded-2xl"
               style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.25)",maxWidth:"300px"}}>
               <div className="text-white font-bold text-base leading-relaxed">
-                Use your <span className="text-yellow-300 font-black">arrow keys</span> to fly the bunny to the correct words!
+                Use your <span className="text-yellow-300 font-black">arrow keys</span> to fly the bunny to the correct Spanish words!
               </div>
             </div>
             <button
               onClick={() => { setGamePhase("countdown"); gamePhaseRef.current = "countdown" }}
               className="px-8 py-4 rounded-2xl font-black text-white text-lg transition-transform active:scale-95"
-              style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",
-                boxShadow:"0 4px 24px rgba(99,102,241,0.6)"}}>
+              style={{background:"linear-gradient(135deg,#ec4899,#a855f7)",
+                boxShadow:"0 4px 24px rgba(236,72,153,0.6)"}}>
               Let&apos;s Go! 🚀
             </button>
+          </div>
+        )}
+
+        {/* ── Phase Transition ── */}
+        {gamePhase === "phase_transition" && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center"
+            style={{zIndex:35,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)"}}>
+            <div className="text-7xl mb-4" style={{animation:"countdownPop 0.5s ease-out forwards"}}>👗</div>
+            <div className="text-white font-black text-3xl text-center mb-2">Body Parts: ✅</div>
+            <div className="text-white/80 font-bold text-xl text-center mb-1">Now: Clothes!</div>
+            <div className="text-white/50 text-sm text-center mt-2">Get ready — it's a little faster!</div>
           </div>
         )}
 
@@ -704,8 +694,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
             <div className="px-6 py-3 rounded-2xl text-white/70 text-sm text-center max-w-xs"
               style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)"}}>
               <strong className="text-white">Hold any arrow</strong> to steer 🐰<br/>
-              Fly into the <span className="text-yellow-300 font-bold">★ starred letter</span>!<br/>
-              <span className="text-xs opacity-60 mt-1 block">Letters in order: A → B → C → CH…</span>
+              Fly to the <span className="text-yellow-300 font-bold">correct Spanish word</span>!<br/>
+              <span className="text-xs opacity-60 mt-1 block">English prompt shown at bottom</span>
             </div>
           </div>
         )}
@@ -713,7 +703,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         {/* ── Win screen ── */}
         {gamePhase === "complete" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6"
-            style={{zIndex:40,background:"linear-gradient(160deg,rgba(15,5,40,0.96),rgba(30,27,75,0.98))",backdropFilter:"blur(10px)"}}>
+            style={{zIndex:40,background:"linear-gradient(160deg,rgba(15,5,40,0.96),rgba(76,18,114,0.98))",backdropFilter:"blur(10px)"}}>
             {[...Array(18)].map((_,i) => (
               <div key={i} className="absolute pointer-events-none" style={{
                 left:`${(i*37+11)%94}%`,top:`${(i*53+7)%88}%`,
@@ -723,9 +713,9 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
             ))}
             <div className="text-8xl mb-3" style={{animation:"countdownPop 0.6s ease-out forwards"}}>🏆</div>
             <div className="text-white font-black text-3xl text-center mb-1">¡Lo lograste!</div>
-            <div className="text-white/70 font-bold text-base text-center mb-6">You finished the whole alphabet!</div>
+            <div className="text-white/70 font-bold text-base text-center mb-6">All {FULL_QUEUE.length} words collected!</div>
             <div className="flex gap-4 mb-8">
-              {[{label:"Score",val:score},{label:"Coins",val:localCoins},{label:"Letters",val:ALPHABET_QUEUE.length}].map(s => (
+              {[{label:"Score",val:score},{label:"Coins",val:localCoins},{label:"Words",val:FULL_QUEUE.length}].map(s => (
                 <div key={s.label} className="flex flex-col items-center px-5 py-3 rounded-2xl"
                   style={{background:"rgba(251,191,36,0.18)",border:"1px solid rgba(251,191,36,0.4)"}}>
                   <span className="text-yellow-300 font-black text-2xl">{s.val}</span>
@@ -733,32 +723,17 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
                 </div>
               ))}
             </div>
-            <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-xs">
-              {ALPHABET_QUEUE.map(entry => (
-                <div key={entry.label}
-                  className="flex items-center justify-center rounded-xl font-black"
-                  style={{
-                    width:"38px",height:"38px",
-                    fontSize: entry.label.length > 1 ? "11px" : "18px",
-                    background: entry.category==="vowel" ? "#fef08a" : entry.category==="special" ? "#fbcfe8" : "#bfdbfe",
-                    color:      entry.category==="vowel" ? "#92400e" : entry.category==="special" ? "#831843" : "#1e3a8a",
-                    boxShadow:"0 2px 8px rgba(0,0,0,0.25)",
-                  }}>
-                  {entry.label}
-                </div>
-              ))}
-            </div>
             <div className="flex gap-3">
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
-                setAlphabetIdx(0); alphabetIdxRef.current = 0
-                setLetters([]); setCoinItems([]); setPopItems([])
+                setWordIdx(0); wordIdxRef.current = 0
+                setWords([]); setCoinItems([]); setPopItems([])
                 setCountdown(3); setFlashScreen(null); setShowHint(false)
                 waveTimerRef.current = 0; coinTimerRef.current = 0
                 setGamePhase("countdown"); gamePhaseRef.current = "countdown"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
-                style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",boxShadow:"0 4px 20px rgba(99,102,241,0.5)"}}>
+                style={{background:"linear-gradient(135deg,#ec4899,#a855f7)",boxShadow:"0 4px 20px rgba(236,72,153,0.5)"}}>
                 Play Again 🔄
               </button>
               <button onClick={onClose}
@@ -771,15 +746,15 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         )}
       </div>
 
-      {/* ── Bottom bar ── */}
-      <div className="flex-shrink-0 pb-safe-bottom" style={{background:"rgba(0,0,0,0.45)",backdropFilter:"blur(12px)"}}>
-        {/* Prompt */}
+      {/* ── Bottom bar — English prompt ── */}
+      <div className="flex-shrink-0 pb-safe-bottom" style={{background:"rgba(0,0,0,0.50)",backdropFilter:"blur(12px)"}}>
+        {/* English prompt */}
         <div className="px-4 py-4 text-center">
           <div className="inline-block px-5 py-2.5 rounded-2xl"
-            style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)"}}>
-            <div className="text-white/60 text-xs font-bold uppercase tracking-wider mb-0.5">Find it!</div>
+            style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.35)"}}>
+            <div className="text-white/60 text-xs font-bold uppercase tracking-wider mb-0.5">Find in Spanish →</div>
             <div className="text-white font-black text-3xl leading-tight tracking-wide">
-              {currentEntry.label}
+              {currentEntry.english}
             </div>
           </div>
         </div>
@@ -818,12 +793,11 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         }
         @keyframes countdownPop {
           0%   { transform:scale(0.5); opacity:0; }
-          50%  { transform:scale(1.2); opacity:1; }
-          100% { transform:scale(1);   opacity:1; }
+          60%  { transform:scale(1.15); opacity:1; }
+          100% { transform:scale(1); opacity:1; }
         }
         @keyframes popFloat {
-          0%   { opacity:1; transform:translateX(-50%) translateY(0px) scale(1.15); }
-          40%  { opacity:1; transform:translateX(-50%) translateY(-28px) scale(1); }
+          0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
           100% { opacity:0; transform:translateX(-50%) translateY(-60px) scale(0.8); }
         }
       `}</style>
