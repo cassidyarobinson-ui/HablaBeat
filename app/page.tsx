@@ -7,8 +7,14 @@ import dynamic from "next/dynamic"
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
-const AlphabetFly = dynamic(() => import("@/components/alphabet-fly"), { ssr: false })
-const BodyFly = dynamic(() => import("@/components/body-fly"), { ssr: false })
+const AlphabetFly  = dynamic(() => import("@/components/alphabet-fly"),  { ssr: false })
+const BodyFly      = dynamic(() => import("@/components/body-fly"),       { ssr: false })
+const PetFly       = dynamic(() => import("@/components/pet-fly"),        { ssr: false })
+const TravelFly    = dynamic(() => import("@/components/travel-fly"),     { ssr: false })
+const NumbersFly   = dynamic(() => import("@/components/numbers-fly"),    { ssr: false })
+const TimeFly      = dynamic(() => import("@/components/time-fly"),       { ssr: false })
+const FeelingsFly  = dynamic(() => import("@/components/feelings-fly"),   { ssr: false })
+const FoodFly      = dynamic(() => import("@/components/food-fly"),       { ssr: false })
 import {
   Play,
   BookOpen,
@@ -2302,6 +2308,60 @@ export default function HablaBeat() {
       />
     )
   }
+  if (flyGameSection === "pets-syllables") {
+    return (
+      <PetFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
+  if (flyGameSection === "places") {
+    return (
+      <TravelFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
+  if (flyGameSection === "numbers") {
+    return (
+      <NumbersFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
+  if (flyGameSection === "numbers-time") {
+    return (
+      <TimeFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
+  if (flyGameSection === "colors-feelings") {
+    return (
+      <FeelingsFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
+  if (flyGameSection === "foods") {
+    return (
+      <FoodFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
 
   // DDR Game View
   if (currentView === "ddr" && currentSong && selectedLanguage === "spanish") {
@@ -3756,7 +3816,8 @@ export default function HablaBeat() {
 
                     {/* ✈️ Fly Game Button — sits below songs, inside scroll area */}
                     {(() => {
-                      const isActive = openSection!.id === "alphabet-vowels" || openSection!.id === "body-world"
+                      const FLY_SECTIONS = new Set(["alphabet-vowels","body-world","pets-syllables","places","numbers","numbers-time","colors-feelings","foods"])
+                      const isActive = FLY_SECTIONS.has(openSection!.id)
                       const isBody = openSection!.id === "body-world"
                       return (
                         <div className="pt-3 flex justify-center">
