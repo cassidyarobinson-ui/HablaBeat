@@ -24,6 +24,7 @@ export interface FlyPhaseConfig {
   bubbleText:     string    // word-bubble text color
   progressGrad:   string    // progress-bar CSS gradient
   badgeColor:     string    // rgba for phase badge bg
+  colorMap?:      Record<string, string>  // spanish word → CSS background (dynamic sky color)
 }
 
 export interface VocabFlyProps {
@@ -434,9 +435,15 @@ export default function VocabFly({
   const bubbleBg     = currentPhase.bubbleBg
   const bubbleText   = currentPhase.bubbleText
 
+  // Dynamic color background — if the current phase has a colorMap and the target word
+  // is in it, swap the sky to that color while playing (e.g. "amarillo" → yellow sky)
+  const dynamicBg = (gamePhase === "playing" || gamePhase === "phase_transition")
+    ? (currentPhase.colorMap?.[currentEntry.spanish] ?? currentPhase.bgGradient)
+    : currentPhase.bgGradient
+
   return (
     <div className="fixed inset-0 z-[200] flex flex-col"
-      style={{ background: currentPhase.bgGradient }}>
+      style={{ background: dynamicBg, transition: "background 0.9s ease" }}>
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 pt-safe-top pt-3 pb-2 flex-shrink-0">

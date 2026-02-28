@@ -40,6 +40,29 @@ const PHASE2_WORDS = [
   { spanish: "prisa",        english: "in a hurry"},
 ]
 
+// ── Color-sky map — each word gets its own themed gradient background ──────────
+const COLOR_MAP: Record<string, string> = {
+  // Pure colors
+  rojo:        "linear-gradient(180deg,#450a0a 0%,#7f1d1d 30%,#dc2626 70%,#f87171 100%)",
+  naranja:     "linear-gradient(180deg,#431407 0%,#9a3412 30%,#ea580c 70%,#fb923c 100%)",
+  amarillo:    "linear-gradient(180deg,#422006 0%,#713f12 30%,#ca8a04 70%,#fde047 100%)",
+  verde:       "linear-gradient(180deg,#052e16 0%,#14532d 30%,#16a34a 70%,#4ade80 100%)",
+  azul:        "linear-gradient(180deg,#172554 0%,#1e3a8a 30%,#2563eb 70%,#60a5fa 100%)",
+  morado:      "linear-gradient(180deg,#2e1065 0%,#4c1d95 30%,#7c3aed 70%,#c084fc 100%)",
+  blanco:      "linear-gradient(180deg,#1e293b 0%,#475569 30%,#94a3b8 70%,#e2e8f0 100%)",
+  negro:       "linear-gradient(180deg,#000000 0%,#0f172a 30%,#1e293b 70%,#334155 100%)",
+  gris:        "linear-gradient(180deg,#0f172a 0%,#1e293b 30%,#475569 70%,#94a3b8 100%)",
+  // Rainbow — full spectrum sweep
+  "arco iris": "linear-gradient(180deg,#172554 0%,#4c1d95 18%,#6d28d9 30%,#1d4ed8 42%,#065f46 54%,#92400e 66%,#b91c1c 78%,#be185d 100%)",
+  // Nature-associated colors
+  mariposa:    "linear-gradient(180deg,#1e1b4b 0%,#312e81 30%,#4f46e5 70%,#a5b4fc 100%)",   // butterfly = indigo/violet
+  sol:         "linear-gradient(180deg,#1c1917 0%,#78350f 30%,#d97706 70%,#fbbf24 100%)",   // sun = golden amber
+  hoja:        "linear-gradient(180deg,#052e16 0%,#166534 30%,#15803d 70%,#86efac 100%)",   // leaf = forest green
+  uva:         "linear-gradient(180deg,#1e0a3c 0%,#581c87 30%,#9333ea 70%,#d8b4fe 100%)",  // grape = deep purple
+  nube:        "linear-gradient(180deg,#0c4a6e 0%,#0369a1 30%,#38bdf8 70%,#e0f2fe 100%)",  // cloud = sky blue→white
+  piedra:      "linear-gradient(180deg,#0f172a 0%,#292524 30%,#57534e 70%,#a8a29e 100%)",  // stone = warm gray
+}
+
 const config: Omit<VocabFlyProps, "coins" | "onCoinsChange" | "onClose"> = {
   title: "Feelings Fly",
   icon: "🌈",
@@ -51,6 +74,7 @@ const config: Omit<VocabFlyProps, "coins" | "onCoinsChange" | "onClose"> = {
     bubbleBg: "#fed7aa", bubbleText: "#9a3412",
     progressGrad: "linear-gradient(90deg,#fb923c,#ea580c)",
     badgeColor: "rgba(154,52,18,0.5)",
+    colorMap: COLOR_MAP,
   },
   phase2: {
     words: PHASE2_WORDS,
