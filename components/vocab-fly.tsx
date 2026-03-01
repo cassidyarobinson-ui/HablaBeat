@@ -616,19 +616,43 @@ export default function VocabFly({
               animation:`cloudDrift ${9+i*2}s ease-in-out ${i*4}s infinite alternate`}}>☁️</div>
         ))}
 
-        {/* ── Floating Spanish Words ── */}
+        {/* ── Floating Spanish Words (star/sun style) ── */}
         {words.filter(w => !w.collected).map(w => (
           <div key={w.id}
             className="absolute flex flex-col items-center select-none pointer-events-none"
             style={{ left:`${w.x}%`, top:`${w.y}%`, transform:"translateX(-50%)" }}>
-            <div className="flex items-center justify-center font-black rounded-2xl px-3" style={{
-              height:`${WORD_H}px`, minWidth:"70px",
-              fontSize: w.spanish.length > 8 ? "12px" : w.spanish.length > 6 ? "14px" : "16px",
-              background: bubbleBg, color: bubbleText,
-              boxShadow:"0 4px 12px rgba(0,0,0,0.25)",
-              border:"2px solid rgba(255,255,255,0.35)",
+            {/* Outer glow ring */}
+            <div style={{
+              position:"relative", display:"flex", alignItems:"center", justifyContent:"center",
+              minWidth:"74px", height:`${WORD_H + 8}px`, padding:"0 14px",
             }}>
-              {w.spanish}
+              {/* Glow halo */}
+              <div style={{
+                position:"absolute", inset:"-6px",
+                borderRadius:"50%",
+                background:`radial-gradient(circle, ${bubbleBg}55 0%, transparent 70%)`,
+                animation:"starGlow 2s ease-in-out infinite alternate",
+              }}/>
+              {/* Star body */}
+              <div className="flex items-center justify-center font-black" style={{
+                position:"relative", zIndex:1,
+                minWidth:"70px", height:`${WORD_H}px`, padding:"0 12px",
+                fontSize: w.spanish.length > 8 ? "12px" : w.spanish.length > 6 ? "14px" : "16px",
+                background:`radial-gradient(ellipse at 35% 30%, ${bubbleBg}, ${bubbleBg}dd)`,
+                color: bubbleText,
+                borderRadius:"50%",
+                boxShadow:`0 0 18px ${bubbleBg}88, 0 0 6px ${bubbleBg}44, 0 4px 12px rgba(0,0,0,0.3)`,
+                border:"2.5px solid rgba(255,255,255,0.5)",
+                animation:"starFloat 3s ease-in-out infinite",
+              }}>
+                {/* Inner shine */}
+                <div style={{
+                  position:"absolute", top:"4px", left:"20%", width:"35%", height:"30%",
+                  borderRadius:"50%",
+                  background:"linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%)",
+                }}/>
+                <span style={{position:"relative",zIndex:1}}>{w.spanish}</span>
+              </div>
             </div>
           </div>
         ))}
@@ -639,14 +663,17 @@ export default function VocabFly({
             className="absolute flex flex-col items-center pointer-events-none select-none"
             style={{left:`${p.x}%`,top:`${p.y}%`,transform:"translateX(-50%)",
               animation:"popFloat 1.1s ease-out forwards",zIndex:15}}>
-            <div className="font-black rounded-2xl flex items-center justify-center px-3" style={{
-              height:`${WORD_H}px`, minWidth:"70px",
+            <div className="font-black flex items-center justify-center" style={{
+              height:`${WORD_H}px`, minWidth:"70px", padding:"0 12px",
               fontSize: p.spanish.length > 8 ? "12px" : p.spanish.length > 6 ? "14px" : "16px",
-              background: p.correct ? "#4ade80" : "#f87171",
+              background: p.correct
+                ? "radial-gradient(ellipse at 35% 30%, #4ade80, #22c55e)"
+                : "radial-gradient(ellipse at 35% 30%, #f87171, #ef4444)",
               color:      p.correct ? "#14532d" : "#7f1d1d",
+              borderRadius:"50%",
               boxShadow:  p.correct
-                ? "0 0 20px rgba(74,222,128,0.8),0 4px 12px rgba(0,0,0,0.3)"
-                : "0 0 20px rgba(248,113,113,0.8),0 4px 12px rgba(0,0,0,0.3)",
+                ? "0 0 24px rgba(74,222,128,0.9),0 4px 12px rgba(0,0,0,0.3)"
+                : "0 0 24px rgba(248,113,113,0.9),0 4px 12px rgba(0,0,0,0.3)",
               border:"3px solid white",
             }}>{p.spanish}</div>
             <div className="mt-1 px-2 py-0.5 rounded-lg font-bold text-white text-center"
@@ -913,6 +940,14 @@ export default function VocabFly({
         @keyframes popFloat {
           0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
           100% { opacity:0; transform:translateX(-50%) translateY(-60px) scale(0.8); }
+        }
+        @keyframes starGlow {
+          0%   { opacity:0.4; transform:scale(0.9); }
+          100% { opacity:0.8; transform:scale(1.15); }
+        }
+        @keyframes starFloat {
+          0%,100% { transform:scale(1) rotate(-2deg); }
+          50%     { transform:scale(1.06) rotate(2deg); }
         }
       `}</style>
     </div>

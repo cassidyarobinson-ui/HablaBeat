@@ -572,7 +572,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               animation:`cloudDrift ${9+i*2}s ease-in-out ${i*4}s infinite alternate`}}>☁️</div>
         ))}
 
-        {/* ── Floating Letters ── */}
+        {/* ── Floating Letters (star/sun style) ── */}
         {letters.filter(l => !l.collected).map(l => {
           const colors = categoryColor(l.category)
           return (
@@ -583,19 +583,40 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
                 transform:"translateX(-50%)",
                 animation: l.isTarget ? "targetPulse 1.4s ease-in-out infinite" : undefined,
               }}>
-              <div className="flex items-center justify-center font-black rounded-2xl" style={{
-                width:`${LETTER_SIZE}px`, height:`${LETTER_SIZE}px`,
-                fontSize: l.label.length > 1 ? "20px" : "30px",
-                background: colors.bg, color: colors.text,
-                boxShadow:`0 0 16px ${colors.glow},0 4px 12px rgba(0,0,0,0.3)`,
-                border: l.isTarget ? "3px solid white" : "2px solid rgba(255,255,255,0.35)",
-                position:"relative",
+              {/* Glow halo */}
+              <div style={{
+                position:"relative", display:"flex", alignItems:"center", justifyContent:"center",
+                width:`${LETTER_SIZE + 12}px`, height:`${LETTER_SIZE + 12}px`,
               }}>
-                {l.label}
-                {l.isTarget && (
-                  <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center"
-                    style={{fontSize:"9px",fontWeight:900,color:"#92400e"}}>★</div>
-                )}
+                <div style={{
+                  position:"absolute", inset:"-8px",
+                  borderRadius:"50%",
+                  background:`radial-gradient(circle, ${colors.glow}55 0%, transparent 70%)`,
+                  animation:"starGlow 2s ease-in-out infinite alternate",
+                }}/>
+                <div className="flex items-center justify-center font-black" style={{
+                  position:"relative", zIndex:1,
+                  width:`${LETTER_SIZE}px`, height:`${LETTER_SIZE}px`,
+                  fontSize: l.label.length > 1 ? "20px" : "30px",
+                  background: `radial-gradient(ellipse at 35% 30%, ${colors.bg}, ${colors.bg}dd)`,
+                  color: colors.text,
+                  borderRadius:"50%",
+                  boxShadow:`0 0 18px ${colors.glow}88, 0 0 6px ${colors.glow}44, 0 4px 12px rgba(0,0,0,0.3)`,
+                  border: l.isTarget ? "3px solid white" : "2.5px solid rgba(255,255,255,0.5)",
+                  animation:"starFloat 3s ease-in-out infinite",
+                }}>
+                  {/* Inner shine */}
+                  <div style={{
+                    position:"absolute", top:"4px", left:"20%", width:"35%", height:"30%",
+                    borderRadius:"50%",
+                    background:"linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%)",
+                  }}/>
+                  <span style={{position:"relative",zIndex:1}}>{l.label}</span>
+                  {l.isTarget && (
+                    <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center"
+                      style={{fontSize:"9px",fontWeight:900,color:"#92400e",zIndex:2}}>★</div>
+                  )}
+                </div>
               </div>
               {/* Spanish + English label */}
               <div className="mt-1 px-2 py-0.5 rounded-lg font-bold text-center"
@@ -861,6 +882,14 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           0%   { opacity:1; transform:translateX(-50%) translateY(0px) scale(1.15); }
           40%  { opacity:1; transform:translateX(-50%) translateY(-28px) scale(1); }
           100% { opacity:0; transform:translateX(-50%) translateY(-60px) scale(0.8); }
+        }
+        @keyframes starGlow {
+          0%   { opacity:0.4; transform:scale(0.9); }
+          100% { opacity:0.8; transform:scale(1.15); }
+        }
+        @keyframes starFloat {
+          0%,100% { transform:scale(1) rotate(-2deg); }
+          50%     { transform:scale(1.06) rotate(2deg); }
         }
       `}</style>
     </div>
