@@ -620,7 +620,7 @@ export default function BodyFly({ coins: initialCoins, onCoinsChange, onClose }:
             width:`${BUNNY_W}px`,height:`${BUNNY_H}px`,zIndex:10,
             filter:"sepia(1) hue-rotate(290deg) saturate(3) brightness(1.5) drop-shadow(0 0 10px rgba(236,72,153,0.9)) drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
           }}>
-            <Image src="/images/super-bunny-nobg.gif" alt="Bunny"
+            <Image src="/images/super-bunny-winner.png" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
               className="w-full h-full object-contain" unoptimized priority/>
           </div>

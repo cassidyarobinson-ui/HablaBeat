@@ -666,7 +666,7 @@ export default function VocabFly({
             width:`${BUNNY_W}px`,height:`${BUNNY_H}px`,zIndex:10,
             filter:"drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
           }}>
-            <Image src="/images/super-bunny-nobg.gif" alt="Bunny"
+            <Image src="/images/super-bunny-winner.png" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
               className="w-full h-full object-contain" unoptimized priority/>
           </div>

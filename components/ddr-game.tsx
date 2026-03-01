@@ -95,8 +95,39 @@ const LANE_TEXT_COLORS = ["text-red-500", "text-blue-500", "text-green-500", "te
 
 // Keywords per song for "Key Words" mode — words as they appear in the lyrics (lowercase, no punctuation)
 const SONG_KEYWORDS: Record<number, Set<string>> = {
-  4: new Set(["partes","del","de","la","cuerpo","cara","cabeza","pelo","cuello","garganta","hombros","brazos","codos","dedos","muñecas","manos","espalda","barriga","pierna","rodilla","pies","ojos","nariz","labios","dientes","oreja","boca","lengua","frente","bailar","baila"]),
+  // ── Alphabet World ──
+  1: new Set(["a","b","c","d","e","f","g","h","i","j","k","l","m","n","ñ","o","p","q","r","s","t","u","v","w","x","y","z","abecedario"]),
+  2: new Set(["ñ","ch","rr","ll","niño","baño","churro","chico","muchacho","perro","carro","llama","lluvia","llorar","letras"]),
+  3: new Set(["a","e","i","o","u","vocales"]),
+  // ── Body World ──
+  4: new Set(["cuerpo","cara","cabeza","pelo","cuello","garganta","hombros","brazos","codos","dedos","muñecas","manos","espalda","barriga","pierna","rodilla","pies","ojos","nariz","labios","dientes","oreja","boca","lengua","frente"]),
+  // ── Roles World (Clothes + Family + Jobs) ──
   5: new Set(["ropa","camisa","pantalón","zapatos","cinturón","gorra","guantes","calcetín","falda","suéter","chaqueta","bufanda","traje","vestido","pijama","botas","sandalias"]),
+  6: new Set(["familia","papá","mamá","hermano","hermana","tío","tía","abuela","abuelo","primo","prima","sobrino","sobrina","mascota"]),
+  7: new Set(["doctor","bombero","panadero","maestra","piloto","carpintero","cantante","chef","jardinero","dentista","artista","ingeniero","policía","granjero","pintor","actor","enfermera","escritor","veterinario","conductor","arquitecto","traductor","profesión","trabajos"]),
+  // ── Pet World ──
+  8: new Set(["araña","elefante","iguana","oso","unicornio","búho","conejo","chivo","delfín","flamenco","gato","hipopótamo","jirafa","koala","león","mono","nutria","ñandú","pingüino","quetzal","rinoceronte","serpiente","tigre","vaca","wombat","xoloitzcuintle","yak","zorro","animales"]),
+  9: new Set(["perro","gato","conejo","pato","vaca","oveja","gallina","caballo","cabra","tortuga","mascotas"]),
+  10: new Set(["agua","cielo","bosque","montaña","pez","tortuga","rana","cangrejo","pájaro","águila","abeja","colibrí","oso","zorro","ardilla","araña","ciempiés","animales"]),
+  // ── Travel World ──
+  11: new Set(["casa","sillón","taza","mesa","cocina","sartén","vitrina","plato","hornilla","baño","jabón","lavamanos","cuarto","cama","marco","lámpara","zapato","casita"]),
+  12: new Set(["dónde","baño","escuela","biblioteca","playa","parque","tienda","hospital","panadería","casa","cine","lugares"]),
+  13: new Set(["izquierda","derecha","arriba","abajo","delante","detrás","cerca","lejos","gira","vuelta","frente","atrás","direcciones"]),
+  // ── Numbers World ──
+  14: new Set(["uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","números"]),
+  15: new Set(["diez","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa","cien","números"]),
+  // ── Time World ──
+  16: new Set(["lunes","martes","miércoles","jueves","viernes","sábado","domingo","enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre","primavera","verano","otoño","invierno","días","semana","meses","estaciones"]),
+  17: new Set(["hora","reloj","una","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","cuarto","media","punto","menos"]),
+  // ── Feelings & Colors World ──
+  18: new Set(["rojo","naranja","amarillo","verde","azul","morado","blanco","negro","gris","colores","roja","morada","blanca"]),
+  19: new Set(["feliz","triste","enojado","cansado","sorprendido","aburrido","contento","nervioso","sientes","sentimientos"]),
+  20: new Set(["sed","hambre","frío","calor","sueño","miedo","tos","prisa","tengo"]),
+  // ── Food World ──
+  21: new Set(["frutas","manzana","frutilla","naranja","papaya","sandía","durazno","banana","melón","piña","pera","guayaba","uva","ciruela","mora","arándano","higo","tamarindo"]),
+  22: new Set(["verduras","tomate","pimiento","zanahoria","maíz","papa","lechuga","berenjena","cebolla","acelga"]),
+  23: new Set(["desayuno","almuerzo","cena","mañana","tarde","noche","leche","pan","fruta","huevo","sopa","arroz","pollo","ensalada","pasta","pescado","verdura","avena","comidas"]),
+  24: new Set(["pedir","favor","jugo","arroz","tenedor","cuchillo","plato","cuchara","sopa","servilleta","gracias","cenar","restaurante"]),
 }
 
 export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeEffect = "effect-default", activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["effect-default","pointer-carrot"], onEquipEffect, onEquipTheme, onEquipPointer }: DDRGameProps) {
@@ -171,7 +202,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const allNotes: Note[] = []
     timingData.lyrics.forEach((line, lineIndex) => {
       line.words.forEach((word, wordIndex) => {
-        if (keywordSet && !keywordSet.has(stripPunct(word.text))) return
+        if (keywordSet) {
+          const stripped = stripPunct(word.text)
+          if (!keywordSet.has(stripped)) return
+          // Skip single-char keywords (like "a","y","e") in multi-word lines —
+          // they're grammar words (prepositions/conjunctions), not vocab being taught
+          if (stripped.length <= 1 && line.words.length > 1) return
+        }
         allNotes.push({
           text: word.text,
           english: translateWord(word.text),
@@ -1068,7 +1105,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const keywordSet = SONG_KEYWORDS[songNumber] ?? null
     if (!keywordSet) return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
     const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
-    return timingData.lyrics.reduce((sum, line) => sum + line.words.filter(w => keywordSet.has(stripPunct(w.text))).length, 0)
+    return timingData.lyrics.reduce((sum, line) => sum + line.words.filter(w => {
+      const stripped = stripPunct(w.text)
+      if (!keywordSet.has(stripped)) return false
+      if (stripped.length <= 1 && line.words.length > 1) return false
+      return true
+    }).length, 0)
   })()
 
   // LOADING STATE
