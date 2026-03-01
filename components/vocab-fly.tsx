@@ -123,7 +123,7 @@ export default function VocabFly({
   const PHASE1_LEN = useRef(phase1.words.length).current
 
   // ── Render state ──────────────────────────────────────────────────────────
-  const [gamePhase,    setGamePhase]    = useState<"instructions" | "countdown" | "playing" | "phase_transition" | "complete">("instructions")
+  const [gamePhase,    setGamePhase]    = useState<"instructions" | "countdown" | "playing" | "phase_transition" | "complete" | "practice_more">("instructions")
   const [countdown,    setCountdown]    = useState(3)
   const [score,        setScore]        = useState(0)
   const [localCoins,   setLocalCoins]   = useState(initialCoins)
@@ -147,9 +147,13 @@ export default function VocabFly({
   const touchTargetX = useRef(50)
   const touchTargetY = useRef(BUNNY_Y_INIT)
   const isTouching   = useRef(false)
+  // Speed multiplier — increases 0.08 per correct answer (cap 2.5×)
+  const speedMultiplierRef = useRef(1.0)
+  // Wrong-answer counter — 5 wrong hits sends player to practice_more screen
+  const wrongCountRef = useRef(0)
 
   const wordIdxRef         = useRef(0)
-  const gamePhaseRef       = useRef<"instructions" | "countdown" | "playing" | "phase_transition" | "complete">("instructions")
+  const gamePhaseRef       = useRef<"instructions" | "countdown" | "playing" | "phase_transition" | "complete" | "practice_more">("instructions")
   const collectedThisFrame = useRef(false)
   const wordItemIdRef      = useRef(0)
   const coinIdRef          = useRef(0)
@@ -265,7 +269,7 @@ export default function VocabFly({
       id: wordItemIdRef.current++,
       spanish: item.spanish, english: item.english,
       x: positions[i], y: -8 - Math.random() * 6,
-      speed: speedBase + Math.random() * speedVariance,
+      speed: (speedBase + Math.random() * speedVariance) * speedMultiplierRef.current,
       isTarget: item.spanish === targetSpanish, collected: false,
     })))
   }, [])
@@ -393,9 +397,19 @@ export default function VocabFly({
       setHintEntry(entry)
       setShowHint(true)
       setTimeout(() => { setFlashScreen(null); setShowHint(false) }, 900)
+      // Speed up on every correct answer — max 2.5×
+      speedMultiplierRef.current = Math.min(2.5, speedMultiplierRef.current + 0.08)
     } else {
       setFlashScreen("wrong")
       setTimeout(() => setFlashScreen(null), 400)
+      wrongCountRef.current += 1
+      if (wrongCountRef.current >= 5) {
+        setTimeout(() => {
+          setFlashScreen(null); setShowHint(false)
+          setGamePhase("practice_more"); gamePhaseRef.current = "practice_more"
+        }, 500)
+        return
+      }
     }
     const nextIdx = idx + 1
 
@@ -635,9 +649,9 @@ export default function VocabFly({
         {(gamePhase === "playing" || gamePhase === "phase_transition") && (
           <div ref={bunnyElRef} className="absolute pointer-events-none" style={{
             width:`${BUNNY_W}px`,height:`${BUNNY_H}px`,zIndex:10,
-            filter:"sepia(1) hue-rotate(185deg) saturate(4) brightness(1.15) drop-shadow(0 0 10px rgba(96,165,250,0.9)) drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
+            filter:"drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
           }}>
-            <Image src="/images/super-bunny-nobg.gif" alt="Bunny"
+            <Image src="/images/super-bunny-blue-nobg.gif" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
               className="w-full h-full object-contain" unoptimized priority/>
           </div>
@@ -722,6 +736,38 @@ export default function VocabFly({
           </div>
         )}
 
+        {/* ── Practice More screen — 5 wrong answers ── */}
+        {gamePhase === "practice_more" && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-8"
+            style={{zIndex:45,background:"linear-gradient(160deg,rgba(20,0,0,0.97),rgba(80,10,10,0.98))",backdropFilter:"blur(10px)"}}>
+            <div className="text-8xl mb-4" style={{animation:"countdownPop 0.6s ease-out forwards"}}>📚</div>
+            <div className="text-white font-black text-2xl text-center mb-3">You Need More Practice!</div>
+            <div className="text-white/70 font-bold text-base text-center mb-8 max-w-xs leading-relaxed">
+              You missed 5 words — go back and review the vocabulary before trying again! You&apos;ve got this! 💪
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => {
+                setScore(0); scoreRef.current = 0
+                setWordIdx(0); wordIdxRef.current = 0
+                setWords([]); setCoinItems([]); setPopItems([])
+                setCountdown(3); setFlashScreen(null); setShowHint(false)
+                waveTimerRef.current = 0; coinTimerRef.current = 0
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0
+                setGamePhase("countdown"); gamePhaseRef.current = "countdown"
+              }}
+                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
+                style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)"}}>
+                Try Again 🔄
+              </button>
+              <button onClick={onClose}
+                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
+                style={{background: accentColor, boxShadow:"0 4px 20px rgba(0,0,0,0.4)"}}>
+                Go Practice 📖
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ── Win screen ── */}
         {gamePhase === "complete" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6"
@@ -752,6 +798,7 @@ export default function VocabFly({
                 setWords([]); setCoinItems([]); setPopItems([])
                 setCountdown(3); setFlashScreen(null); setShowHint(false)
                 waveTimerRef.current = 0; coinTimerRef.current = 0
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0
                 setGamePhase("countdown"); gamePhaseRef.current = "countdown"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
