@@ -2264,17 +2264,17 @@ export default function HablaBeat() {
           .shimmer-title {
             background: linear-gradient(
               90deg,
-              #fff 0%, #fff 35%,
-              rgba(255,255,255,0.4) 45%,
-              #fffbe6 50%,
-              rgba(255,255,255,0.4) 55%,
-              #fff 65%, #fff 100%
+              #fff 0%, #fff 30%,
+              #fef9c3 42%,
+              #fde047 50%,
+              #fef9c3 58%,
+              #fff 70%, #fff 100%
             );
             background-size: 200% 100%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: titleShimmer 2s ease-in-out 0.5s 1 both;
+            animation: titleShimmer 1.5s ease-in-out 0.6s 1 both;
           }
         `}</style>
 
@@ -3332,17 +3332,17 @@ export default function HablaBeat() {
           .shimmer-title {
             background: linear-gradient(
               90deg,
-              #fff 0%, #fff 35%,
-              rgba(255,255,255,0.4) 45%,
-              #fffbe6 50%,
-              rgba(255,255,255,0.4) 55%,
-              #fff 65%, #fff 100%
+              #fff 0%, #fff 30%,
+              #fef9c3 42%,
+              #fde047 50%,
+              #fef9c3 58%,
+              #fff 70%, #fff 100%
             );
             background-size: 200% 100%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: titleShimmer 2s ease-in-out 0.5s 1 both;
+            animation: titleShimmer 1.5s ease-in-out 0.6s 1 both;
           }
           @keyframes fireFlicker {
             0%,100% { transform: scaleY(1) rotate(-3deg); }
