@@ -167,6 +167,8 @@ export default function VocabFly({
   const waveTimerRef       = useRef(0)
   const coinTimerRef       = useRef(0)
   const lastTimeRef        = useRef(0)
+  const facingRight        = useRef(false)
+  const prevBunnyX         = useRef(50)
   const rafRef             = useRef<number | null>(null)
   const onCoinsChangeRef   = useRef(onCoinsChange)
   const scoreRef           = useRef(0)
@@ -496,6 +498,10 @@ export default function VocabFly({
       if (bunnyElRef.current) {
         bunnyElRef.current.style.left = `calc(${bunnyX.current}% - ${BUNNY_W / 2}px)`
         bunnyElRef.current.style.top  = `calc(${bunnyY.current}% - ${BUNNY_H / 2}px)`
+        const dx = bunnyX.current - prevBunnyX.current
+        if (Math.abs(dx) > 0.15) facingRight.current = dx > 0
+        prevBunnyX.current = bunnyX.current
+        bunnyElRef.current.style.transform = facingRight.current ? "scaleX(-1)" : "scaleX(1)"
       }
       raf = requestAnimationFrame(update)
     }

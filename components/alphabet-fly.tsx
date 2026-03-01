@@ -216,8 +216,10 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   useEffect(() => { gamePhaseRef.current = gamePhase }, [gamePhase])
 
   // ── DOM refs ─────────────────────────────────────────────────────────────
-  const areaRef    = useRef<HTMLDivElement>(null)
-  const bunnyElRef = useRef<HTMLDivElement>(null)
+  const areaRef      = useRef<HTMLDivElement>(null)
+  const bunnyElRef   = useRef<HTMLDivElement>(null)
+  const facingRight  = useRef(false)
+  const prevBunnyX   = useRef(50)
 
   // ── Hold-to-steer ────────────────────────────────────────────────────────
   const holdIntervalRef      = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -470,6 +472,10 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       if (bunnyElRef.current) {
         bunnyElRef.current.style.left = `calc(${bunnyX.current}% - ${BUNNY_W / 2}px)`
         bunnyElRef.current.style.top  = `calc(${bunnyY.current}% - ${BUNNY_H / 2}px)`
+        const dx = bunnyX.current - prevBunnyX.current
+        if (Math.abs(dx) > 0.15) facingRight.current = dx > 0
+        prevBunnyX.current = bunnyX.current
+        bunnyElRef.current.style.transform = facingRight.current ? "scaleX(-1)" : "scaleX(1)"
       }
       raf = requestAnimationFrame(update)
     }
