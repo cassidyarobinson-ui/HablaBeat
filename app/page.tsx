@@ -2212,6 +2212,15 @@ export default function HablaBeat() {
       size: 18 + (i * 7) % 20,
       rotate: (i * 37) % 360,
     }))
+    // Generate 10 falling carrots
+    const carrots = Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+      left: `${8 + (i * 11) % 82}%`,
+      delay: `${0.3 + (i * 0.19) % 1.5}s`,
+      duration: `${1.6 + (i * 0.17) % 1.0}s`,
+      size: 22 + (i * 5) % 14,
+      rotate: (i * 41) % 360,
+    }))
 
     return (
       <div
@@ -2231,6 +2240,13 @@ export default function HablaBeat() {
             85%  { opacity: 1; }
             100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)); opacity: 0; }
           }
+          @keyframes carrotFall {
+            0%   { transform: translateY(-50px) rotate(var(--r)) scale(0.8); opacity: 0; }
+            10%  { opacity: 1; transform: translateY(0) rotate(var(--r)) scale(1); }
+            50%  { transform: translateY(50vh) rotate(calc(var(--r) + 180deg)) scale(1); }
+            90%  { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)) scale(0.9); opacity: 0; }
+          }
           @keyframes splashPulse {
             0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(251,191,36,0.4)); }
             50%       { transform: scale(1.04); filter: drop-shadow(0 0 28px rgba(251,191,36,0.65)); }
@@ -2240,8 +2256,8 @@ export default function HablaBeat() {
             100% { opacity: 1; transform: translateY(0) scale(1); }
           }
           @keyframes titleShimmer {
-            0%   { background-position: -200% center; }
-            100% { background-position: 200% center; }
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
           }
           .splash-bunny { animation: splashPulse 2s ease-in-out infinite; }
           .splash-word  { animation: splashWordFade 0.6s ease 0.3s both; }
@@ -2279,6 +2295,21 @@ export default function HablaBeat() {
           }}>
             <div style={{ position: "absolute", top: "15%", left: "20%", width: "30%", height: "18%", background: "radial-gradient(ellipse,rgba(255,255,255,0.55),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
           </div>
+        ))}
+
+        {/* Falling carrots */}
+        {carrots.map(c => (
+          <div key={`carrot-${c.id}`} style={{
+            position: "absolute",
+            left: c.left,
+            top: "-50px",
+            fontSize: `${c.size}px`,
+            animation: `carrotFall ${c.duration} ${c.delay} ease-in infinite`,
+            ["--r" as any]: `${c.rotate}deg`,
+            zIndex: 1,
+            pointerEvents: "none",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
+          }}>🥕</div>
         ))}
 
         {/* Bunny centered */}
@@ -3295,8 +3326,8 @@ export default function HablaBeat() {
             animation: swirlBg 12s ease-in-out infinite;
           }
           @keyframes titleShimmer {
-            0%   { background-position: -200% center; }
-            100% { background-position: 200% center; }
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
           }
           .shimmer-title {
             background: linear-gradient(
