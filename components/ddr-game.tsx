@@ -127,7 +127,42 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   21: new Set(["frutas","manzana","frutilla","naranja","papaya","sandía","durazno","banana","melón","piña","pera","guayaba","uva","ciruela","mora","arándano","higo","tamarindo"]),
   22: new Set(["verduras","tomate","pimiento","zanahoria","maíz","papa","lechuga","berenjena","cebolla","acelga"]),
   23: new Set(["desayuno","almuerzo","cena","mañana","tarde","noche","leche","pan","fruta","huevo","sopa","arroz","pollo","ensalada","pasta","pescado","verdura","avena","comidas"]),
-  24: new Set(["pedir","favor","jugo","arroz","tenedor","cuchillo","plato","cuchara","sopa","servilleta","gracias","cenar","restaurante"]),
+  24: new Set(["pedir","favor","jugo","arroz","tenedor","cuchillo","plato","cuchara","sopa","servilleta","gracias","cenar","restaurante","hola","terminar"]),
+  // ── AR World ──
+  25: new Set(["hablar","bailar","cantar","estudiar","jugar","trabajar","nadar","dibujar","ayudar","caminar","escuchar","yo","tú","él","ella","nosotros","ellos"]),
+  26: new Set(["gustar","gusta","cantar","bailar","comer","correr","chocolate","tomate","lechuga","frutas","verduras","ojos","nariz","camisa","pantalones","zapatos","me","te","le","nos","les"]),
+  27: new Set(["estoy","estás","está","estamos","están","estar","feliz","enfermo","nerviosa","cansados","contentos","enojados","aburridos","aquí","allí","tren"]),
+  // ── ER World ──
+  28: new Set(["beber","comer","leer","aprender","correr"]),
+  29: new Set(["tengo","tienes","tiene","tenemos","tienen","leer","saltar","pensar","ayudar","escuchar","trabajar"]),
+  30: new Set(["soy","eres","es","somos","son","ser","estudiante","cocinero","españa","artista","amiga","suave"]),
+  // ── IR World ──
+  31: new Set(["vivir","escribir","abrir","asistir","decidir"]),
+  32: new Set(["voy","vas","va","vamos","van","ir","parque","baño","escuela","cuarto","cine","mercado","playa","restaurante","biblioteca","fiesta","supermercado","gimnasio","hospital"]),
+  33: new Set(["digo","dices","dice","decimos","dicen","decir","hola","sí","aquí","verdad","felicidad","explicar","nombre","chiste"]),
+  // ── Quick Past World ──
+  34: new Set(["ayer","anoche","hablé","comiste","corrió","escribió","bailamos","vivieron","pretérito","repente"]),
+  35: new Set(["hablar","caminar","cocinar","mirar","hablé","caminó","cocinamos","miraron"]),
+  36: new Set(["comer","beber","escribir","vivir","comí","bebiste","escribió","vivimos","comieron"]),
+  37: new Set(["estar","poder","poner","saber","tener","venir","querer","hacer","decir","traer","conducir","estuv","pud","pus","sup","tuv","vin","quis","hic","dij","traj","conduj"]),
+  // ── Long Past World ──
+  38: new Set(["era","iba","veía","aba","abas","ábamos","aban","ía","ías","íamos","ían","imperfecto"]),
+  39: new Set(["era","eras","éramos","eran","iba","ibas","íbamos","iban","veía","veías","veíamos","veían"]),
+  40: new Set(["era","fue","iba","fui","hacía","hizo","tenía","tuvo","siempre","repente","imperfecto","pretérito"]),
+  // ── Future World ──
+  41: new Set(["cantaré","comeré","viviré","futuro","hablaré","escribiré"]),
+  42: new Set(["tendré","diré","haré","saldré","vendré","querré","sabré","pondré","podré","habré","cabré","valdré"]),
+  // ── Conditional World ──
+  43: new Set(["cantaría","comerías","viviría","condicional","hablaría","escribiría"]),
+  44: new Set(["tendría","diría","haría","saldría","vendría","querría","sabría","pondría","podría","habría","valdría"]),
+  // ── Pronoun World ──
+  45: new Set(["despertarse","irse","prepararse","cepillarse","lavarse","peinarse","dormirse","me","te","se","nos","reflexivo"]),
+  46: new Set(["dar","mandar","explicar","mostrar","traer","lo","la","los","las","le","les","me","te","nos","se"]),
+  // ── Advanced World ──
+  47: new Set(["ven","habla","escribe","come","corre","haz","mira","corras","hables","toques","mientas","fumes","olvides","rindas","mandato"]),
+  48: new Set(["por","para","gracias"]),
+  49: new Set(["quiero","espero","importante","ojalá","temo","alegra","creo","subjuntivo"]),
+  50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","modo","comido","gordo"]),
 }
 
 export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeEffect = "effect-default", activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["effect-default","pointer-carrot"], onEquipEffect, onEquipTheme, onEquipPointer }: DDRGameProps) {
