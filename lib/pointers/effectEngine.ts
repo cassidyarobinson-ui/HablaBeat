@@ -412,15 +412,15 @@ const rainbow_beam: EffectFn = (ctx, palette) => {
   `, "absolute pointer-events-none rounded-full")
   spawn(container, ring, 370)
 
-  // 5 rainbow emojis flying out radially — varied sizes
-  const rainbowEmojis = ["🌈", "✨", "💫", "🌟", "🎨"]
-  const rainbowSizes = [32, 12, 24, 18, 28]
-  for (let i = 0; i < 5; i++) {
-    const angle = (i / 5) * Math.PI * 2
-    const dist = 28 + Math.random() * 22
+  // 8 rainbow emojis flying out radially — lots of 🌈 + sparkles
+  const rainbowEmojis = ["🌈", "🌈", "✨", "🌈", "💫", "🌈", "🌟", "🌈"]
+  const rainbowSizes = [32, 18, 12, 26, 24, 14, 20, 30]
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2
+    const dist = 30 + Math.random() * 28
     const tx = Math.cos(angle) * dist
-    const ty = Math.sin(angle) * dist - 10
-    spawnEmoji(container, rainbowEmojis[i], cx, 18, tx, ty, rainbowSizes[i], 480 + i * 30)
+    const ty = Math.sin(angle) * dist - 12
+    spawnEmoji(container, rainbowEmojis[i], cx, 18, tx, ty, rainbowSizes[i], 460 + i * 25)
   }
 }
 
@@ -454,6 +454,17 @@ const rocket_trail: EffectFn = (ctx, palette) => {
     }, i * 40)
   }
 
+  // 5 rocket emojis flying out in different directions
+  const rocketEmojis = ["🚀", "🚀", "🚀", "💥", "🚀"]
+  const rocketSizes = [24, 16, 20, 28, 14]
+  for (let i = 0; i < 5; i++) {
+    const angle = (i / 5) * Math.PI * 2
+    const dist = 26 + Math.random() * 24
+    const tx = Math.cos(angle) * dist
+    const ty = Math.sin(angle) * dist - 10
+    spawnEmoji(container, rocketEmojis[i], cx, 18, tx, ty, rocketSizes[i], 440 + i * 40)
+  }
+
   // Explosion ring after rocket lands
   setTimeout(() => {
     for (let i = 0; i < 3; i++) {
@@ -474,20 +485,20 @@ const star_shower: EffectFn = (ctx, palette) => {
   const cx = laneLeft + laneWidth / 2
 
   const starEmojis = ["⭐", "🌟", "💫"]
-  const ufoEmojis  = ["🛸", "👾"]
+  const ufoEmojis  = ["🛸", "👾", "👽"]
 
-  // 12 emoji particles radiating out — 80% star, 20% UFO
-  for (let i = 0; i < 12; i++) {
-    const angle = (i / 12) * Math.PI * 2
-    const dist = 28 + Math.random() * 30
+  // 14 emoji particles radiating out — 60% star, 40% UFO/alien
+  for (let i = 0; i < 14; i++) {
+    const angle = (i / 14) * Math.PI * 2
+    const dist = 28 + Math.random() * 32
     const tx = Math.cos(angle) * dist
     const ty = Math.sin(angle) * dist - 10
-    const isUfo = Math.random() < 0.20
+    const isUfo = Math.random() < 0.40
     const emoji = isUfo
       ? ufoEmojis[Math.floor(Math.random() * ufoEmojis.length)]
       : starEmojis[Math.floor(Math.random() * starEmojis.length)]
-    const size = isUfo ? 20 + Math.random() * 8 : 14 + Math.random() * 8
-    spawnEmoji(container, emoji, cx, 16, tx, ty, size, 400 + i * 20)
+    const size = isUfo ? 18 + Math.random() * 12 : 12 + Math.random() * 10
+    spawnEmoji(container, emoji, cx, 16, tx, ty, size, 380 + i * 18)
   }
 
   // Central gold flash
@@ -560,15 +571,15 @@ const dragon_flame: EffectFn = (ctx, palette) => {
     spawn(container, ember, 820)
   }
 
-  // 3 dragon emojis + 3 flame emojis flying out — varied sizes
-  const dragonSet = ["🐉", "🔥", "🐉", "🔥", "🔥", "🐉"]
-  const dragonSizes = [34, 14, 20, 28, 12, 26]
-  for (let i = 0; i < 6; i++) {
-    const angle = (i / 6) * Math.PI * 2
-    const dist = 26 + Math.random() * 24
+  // 8 dragon + flame emojis flying out — more dragons
+  const dragonSet = ["🐉", "🔥", "🐉", "🐲", "🔥", "🐉", "🔥", "🐉"]
+  const dragonSizes = [34, 14, 22, 28, 12, 26, 16, 20]
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2
+    const dist = 28 + Math.random() * 28
     const tx = Math.cos(angle) * dist
     const ty = Math.sin(angle) * dist - 12
-    spawnEmoji(container, dragonSet[i], cx, 18, tx, ty, dragonSizes[i], 500 + i * 60)
+    spawnEmoji(container, dragonSet[i], cx, 18, tx, ty, dragonSizes[i], 480 + i * 50)
   }
 
   // Dragon shield indicator bar
