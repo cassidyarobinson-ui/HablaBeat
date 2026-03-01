@@ -2239,8 +2239,27 @@ export default function HablaBeat() {
             0%   { opacity: 0; transform: translateY(8px) scale(0.95); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
           }
+          @keyframes titleShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+          }
           .splash-bunny { animation: splashPulse 2s ease-in-out infinite; }
           .splash-word  { animation: splashWordFade 0.6s ease 0.3s both; }
+          .shimmer-title {
+            background: linear-gradient(
+              90deg,
+              #fff 0%, #fff 35%,
+              rgba(255,255,255,0.4) 45%,
+              #fffbe6 50%,
+              rgba(255,255,255,0.4) 55%,
+              #fff 65%, #fff 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleShimmer 3s ease-in-out infinite;
+          }
         `}</style>
 
         {/* Falling coins */}
@@ -2278,8 +2297,8 @@ export default function HablaBeat() {
             border: "3px solid rgba(255,255,255,0.7)",
             boxShadow: "0 4px 20px rgba(168,85,247,0.25), inset 0 1px 0 rgba(255,255,255,0.5)",
           }}>
-            <p style={{
-              fontSize: "2.4rem", fontWeight: 900, color: "white", letterSpacing: "0.03em",
+            <p className="shimmer-title" style={{
+              fontSize: "2.4rem", fontWeight: 900, letterSpacing: "0.03em",
               textShadow: "0 2px 8px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.3)",
               lineHeight: 1, margin: 0,
             }}>HablaBeat</p>
@@ -3275,6 +3294,25 @@ export default function HablaBeat() {
             background-size: 400% 400%;
             animation: swirlBg 12s ease-in-out infinite;
           }
+          @keyframes titleShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+          }
+          .shimmer-title {
+            background: linear-gradient(
+              90deg,
+              #fff 0%, #fff 35%,
+              rgba(255,255,255,0.4) 45%,
+              #fffbe6 50%,
+              rgba(255,255,255,0.4) 55%,
+              #fff 65%, #fff 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleShimmer 3s ease-in-out infinite;
+          }
           @keyframes fireFlicker {
             0%,100% { transform: scaleY(1) rotate(-3deg); }
             25%      { transform: scaleY(1.08) rotate(2deg); }
@@ -3506,7 +3544,7 @@ export default function HablaBeat() {
                   }} />
                   <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
                   <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-3xl font-black text-white tracking-wide drop-shadow-md"
+                    <h1 className="text-3xl font-black tracking-wide drop-shadow-md shimmer-title"
                       style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
                       HablaBeat
                     </h1>
