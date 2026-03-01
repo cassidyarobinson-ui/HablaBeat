@@ -272,6 +272,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const [popItems,  setPopItems]  = useState<PopParticle[]>([])
   const [skyEmojis] = useState<SkyEmoji[]>(makeSkyEmojis)
   const [wrongCount,  setWrongCount]  = useState(0)
+  const [halfSkull,   setHalfSkull]   = useState(false)
   const [missedWords, setMissedWords] = useState<{ label: string; spanish: string; english: string }[]>([])
   const [showLoadout, setShowLoadout] = useState(false)
 
@@ -285,6 +286,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const gamePhaseRef         = useRef<"instructions" | "countdown" | "playing" | "complete" | "practice_more">("instructions")
   const speedMultiplierRef   = useRef(1.0)
   const wrongCountRef        = useRef(0)
+  const halfSkullRef         = useRef(false)
   const collectedThisFrame   = useRef(false)
   const letterIdRef          = useRef(0)
   const coinIdRef            = useRef(0)
@@ -426,6 +428,9 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       setFlashScreen("wrong")
       playWrongSound()
       setTimeout(() => setFlashScreen(null), 400)
+      // Wrong word always gives a full skull (and clears any half skull)
+      halfSkullRef.current = false
+      setHalfSkull(false)
       wrongCountRef.current += 1
       setWrongCount(wrongCountRef.current)
       setMissedWords(prev => [...prev, entry])
@@ -556,7 +561,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       spawnRocks()
     }
 
-    // Rock collisions
+    // Rock collisions — rocks give half skulls (2 rocks = 1 full skull)
     setRockItems(prev => prev.map(r => {
       if (r.hit) return r
       const newY = r.y + r.speed * (dt / 16)
@@ -568,13 +573,22 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         playWrongSound()
         setFlashScreen("wrong")
         setTimeout(() => setFlashScreen(null), 400)
-        wrongCountRef.current += 1
-        setWrongCount(wrongCountRef.current)
-        if (wrongCountRef.current >= 5) {
-          setTimeout(() => {
-            setFlashScreen(null); setShowHint(false)
-            setGamePhase("practice_more"); gamePhaseRef.current = "practice_more"
-          }, 500)
+        if (halfSkullRef.current) {
+          // Already had half skull → complete to full skull
+          halfSkullRef.current = false
+          setHalfSkull(false)
+          wrongCountRef.current += 1
+          setWrongCount(wrongCountRef.current)
+          if (wrongCountRef.current >= 5) {
+            setTimeout(() => {
+              setFlashScreen(null); setShowHint(false)
+              setGamePhase("practice_more"); gamePhaseRef.current = "practice_more"
+            }, 500)
+          }
+        } else {
+          // No half skull → give half skull
+          halfSkullRef.current = true
+          setHalfSkull(true)
         }
         return { ...r, y: newY, hit: true }
       }
@@ -705,15 +719,19 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
             </div>
           </div>
           <div className="flex gap-0.5 flex-shrink-0">
-            {[0,1,2,3,4].map(i => (
-              <span key={i} style={{
-                fontSize: "14px",
-                opacity: i < wrongCount ? 1 : 0.25,
-                filter: i < wrongCount ? "none" : "grayscale(1)",
-                transition: "all 0.3s ease",
-                transform: i < wrongCount ? "scale(1.1)" : "scale(1)",
-              }}>💀</span>
-            ))}
+            {[0,1,2,3,4].map(i => {
+              const isFull = i < wrongCount
+              const isHalf = !isFull && i === wrongCount && halfSkull
+              return (
+                <span key={i} style={{
+                  fontSize: "14px",
+                  opacity: isFull ? 1 : isHalf ? 0.6 : 0.25,
+                  filter: isFull ? "none" : isHalf ? "none" : "grayscale(1)",
+                  transition: "all 0.3s ease",
+                  transform: isFull ? "scale(1.1)" : isHalf ? "scale(1.05)" : "scale(1)",
+                }}>{isHalf ? "🩻" : "💀"}</span>
+              )
+            })}
           </div>
         </div>
       </div>
