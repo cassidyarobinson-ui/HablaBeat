@@ -113,6 +113,7 @@ interface Props {
   coins: number
   onCoinsChange: (delta: number) => void
   onClose: () => void
+  songFilter?: (entry: { label: string; category: string }) => boolean
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -165,7 +166,15 @@ function makeSkyEmojis(): SkyEmoji[] {
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoinsChange, onClose }: Props) {
+export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoinsChange, onClose, songFilter }: Props) {
+
+  // ── Filtered queue based on songFilter (for per-song mode) ───────────────
+  const FILTERED_QUEUE = useRef(songFilter ? ALPHABET_QUEUE.filter(e => songFilter(e)) : ALPHABET_QUEUE).current
+
+  // ── Speech toggle ────────────────────────────────────────────────────────
+  const [localSpeechEnabled, setLocalSpeechEnabled] = useState(false)
+  const speechEnabledRef = useRef(false)
+  useEffect(() => { speechEnabledRef.current = localSpeechEnabled }, [localSpeechEnabled])
 
   // ── Render state (drives UI) ─────────────────────────────────────────────
   const [gamePhase,   setGamePhase]   = useState<"instructions" | "countdown" | "playing" | "complete">("instructions")
@@ -264,9 +273,9 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
   // ── Spawn helpers (stable — no deps that change) ─────────────────────────
   const spawnWave = useCallback((targetLabel: string) => {
-    const pool = ALPHABET_QUEUE.filter(a => a.label !== targetLabel)
+    const pool = ALPHABET_QUEUE.filter(a => a.label !== targetLabel) // use full queue for distractors
     const distractors = shuffle(pool).slice(0, 2)
-    const targetItem  = ALPHABET_QUEUE.find(a => a.label === targetLabel)!
+    const targetItem  = FILTERED_QUEUE.find(a => a.label === targetLabel) ?? ALPHABET_QUEUE.find(a => a.label === targetLabel)!
     const all         = shuffle([targetItem, ...distractors])
     const positions   = shuffle([15, 35, 55, 72, 88]).slice(0, 3)
     const newLetters: FloatingLetter[] = all.map((item, i) => ({
@@ -300,7 +309,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const advanceRef = useRef<(wasCorrect: boolean) => void>(() => {})
   advanceRef.current = (wasCorrect: boolean) => {
     const idx   = alphabetIdxRef.current
-    const entry = ALPHABET_QUEUE[idx]
+    const entry = FILTERED_QUEUE[idx]
     if (wasCorrect) {
       setFlashScreen("correct")
       setScore(s => { scoreRef.current = s + 10; return s + 10 })
@@ -312,7 +321,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       setTimeout(() => setFlashScreen(null), 400)
     }
     const nextIdx = idx + 1
-    if (nextIdx >= ALPHABET_QUEUE.length) {
+    if (nextIdx >= FILTERED_QUEUE.length) {
       alphabetIdxRef.current = nextIdx
       setAlphabetIdx(nextIdx)
       setTimeout(() => {
@@ -326,7 +335,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     alphabetIdxRef.current = nextIdx
     setAlphabetIdx(nextIdx)
     // say the new target letter
-    setTimeout(() => speakSpanish(ALPHABET_QUEUE[nextIdx].label), 400)
+    if (speechEnabledRef.current) setTimeout(() => speakSpanish(FILTERED_QUEUE[nextIdx].label), 400)
     waveTimerRef.current = 99999  // trigger immediate new wave
   }
 
@@ -362,7 +371,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
       if (dist < HIT_RADIUS && !collectedThisFrame.current) {
         collectedThisFrame.current = true
-        speakSpanish(l.label)
+        if (speechEnabledRef.current) speakSpanish(l.label)
         setPopItems(pp => [...pp, {
           id: popIdRef.current++,
           label: l.label,
@@ -398,7 +407,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     waveTimerRef.current += dt
     if (waveTimerRef.current > 2200 + Math.random() * 600) {
       waveTimerRef.current = 0
-      const cur = ALPHABET_QUEUE[alphabetIdxRef.current % ALPHABET_QUEUE.length]
+      const cur = FILTERED_QUEUE[alphabetIdxRef.current % FILTERED_QUEUE.length]
       spawnWave(cur.label)
     }
 
@@ -432,9 +441,9 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       setGamePhase("playing")
       gamePhaseRef.current = "playing"
       alphabetIdxRef.current = 0
-      spawnWave(ALPHABET_QUEUE[0].label)
+      spawnWave(FILTERED_QUEUE[0].label)
       waveTimerRef.current = 0
-      setTimeout(() => speakSpanish(ALPHABET_QUEUE[0].label), 400)
+      if (speechEnabledRef.current) setTimeout(() => speakSpanish(FILTERED_QUEUE[0].label), 400)
       return
     }
     const t = setTimeout(() => setCountdown(c => c - 1), 1000)
@@ -480,8 +489,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   // ─────────────────────────────────────────────────────────────────────────
 
   const worldName   = sectionTitle.replace(" World", "")
-  const progressPct = Math.round((alphabetIdx / ALPHABET_QUEUE.length) * 100)
-  const currentEntry = ALPHABET_QUEUE[Math.min(alphabetIdx, ALPHABET_QUEUE.length - 1)]
+  const progressPct = Math.round((alphabetIdx / FILTERED_QUEUE.length) * 100)
+  const currentEntry = FILTERED_QUEUE[Math.min(alphabetIdx, FILTERED_QUEUE.length - 1)]
 
   return (
     <div className="fixed inset-0 z-[200] flex flex-col"
@@ -497,7 +506,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
         <div className="text-center">
           <div className="text-white font-black text-lg leading-none">{worldName} Fly ✈️</div>
-          <div className="text-white/60 text-xs mt-0.5">{alphabetIdx}/{ALPHABET_QUEUE.length} letters</div>
+          <div className="text-white/60 text-xs mt-0.5">{alphabetIdx}/{FILTERED_QUEUE.length} letters</div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -681,6 +690,27 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
                 Use your <span className="text-yellow-300 font-black">arrow keys</span> to fly the bunny to the correct words!
               </div>
             </div>
+            {/* Speech toggle */}
+            <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-2xl"
+              style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",maxWidth:"300px",width:"100%"}}>
+              <span className="text-2xl">{localSpeechEnabled ? "🔊" : "🔇"}</span>
+              <div className="flex-1">
+                <div className="text-white font-bold text-sm">Say letters aloud</div>
+                <div className="text-white/50 text-xs">Hear pronunciation during play</div>
+              </div>
+              <button
+                onClick={() => setLocalSpeechEnabled(prev => !prev)}
+                className="w-12 h-7 rounded-full transition-all relative flex-shrink-0"
+                style={{
+                  background: localSpeechEnabled
+                    ? "linear-gradient(135deg, #22c55e, #16a34a)"
+                    : "rgba(255,255,255,0.15)",
+                  border: "1.5px solid " + (localSpeechEnabled ? "rgba(34,197,94,0.6)" : "rgba(255,255,255,0.2)"),
+                }}>
+                <div className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all"
+                  style={{ left: localSpeechEnabled ? "calc(100% - 22px)" : "2px" }} />
+              </button>
+            </div>
             <button
               onClick={() => { setGamePhase("countdown"); gamePhaseRef.current = "countdown" }}
               className="px-8 py-4 rounded-2xl font-black text-white text-lg transition-transform active:scale-95"
@@ -725,7 +755,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
             <div className="text-white font-black text-3xl text-center mb-1">¡Lo lograste!</div>
             <div className="text-white/70 font-bold text-base text-center mb-6">You finished the whole alphabet!</div>
             <div className="flex gap-4 mb-8">
-              {[{label:"Score",val:score},{label:"Coins",val:localCoins},{label:"Letters",val:ALPHABET_QUEUE.length}].map(s => (
+              {[{label:"Score",val:score},{label:"Coins",val:localCoins},{label:"Letters",val:FILTERED_QUEUE.length}].map(s => (
                 <div key={s.label} className="flex flex-col items-center px-5 py-3 rounded-2xl"
                   style={{background:"rgba(251,191,36,0.18)",border:"1px solid rgba(251,191,36,0.4)"}}>
                   <span className="text-yellow-300 font-black text-2xl">{s.val}</span>
@@ -734,7 +764,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               ))}
             </div>
             <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-xs">
-              {ALPHABET_QUEUE.map(entry => (
+              {FILTERED_QUEUE.map(entry => (
                 <div key={entry.label}
                   className="flex items-center justify-center rounded-xl font-black"
                   style={{

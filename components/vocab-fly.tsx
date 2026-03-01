@@ -31,13 +31,14 @@ export interface VocabFlyProps {
   title:           string   // game title text
   icon:            string   // emoji next to title
   phase1:          FlyPhaseConfig
-  phase2:          FlyPhaseConfig
-  transitionMsg:   string   // e.g. "Now: Habitats! 🌳"
-  transitionIcon:  string   // large emoji at transition screen
+  phase2?:         FlyPhaseConfig       // optional for single-phase mode
+  transitionMsg?:  string   // e.g. "Now: Habitats! 🌳"
+  transitionIcon?: string   // large emoji at transition screen
   accentColor:     string   // CSS gradient for Let's Go + Play Again buttons
   coins:           number
   onCoinsChange:   (delta: number) => void
   onClose:         () => void
+  speechEnabled?:  boolean  // controls speech during play, default false
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -116,11 +117,13 @@ export default function VocabFly({
   transitionMsg, transitionIcon,
   accentColor,
   coins: initialCoins, onCoinsChange, onClose,
+  speechEnabled,
 }: VocabFlyProps) {
 
   // ── Stable computed values (init once at mount) ───────────────────────────
-  const FULL_QUEUE = useRef([...phase1.words, ...phase2.words]).current
+  const FULL_QUEUE = useRef(phase2 ? [...phase1.words, ...phase2.words] : [...phase1.words]).current
   const PHASE1_LEN = useRef(phase1.words.length).current
+  const isSinglePhase = !phase2
 
   // ── Render state ──────────────────────────────────────────────────────────
   const [gamePhase,    setGamePhase]    = useState<"instructions" | "countdown" | "playing" | "phase_transition" | "complete" | "practice_more">("instructions")
@@ -168,12 +171,17 @@ export default function VocabFly({
   const onCoinsChangeRef   = useRef(onCoinsChange)
   const scoreRef           = useRef(0)
 
+  // Speech toggle — local state so user can toggle on instructions screen
+  const [localSpeechEnabled, setLocalSpeechEnabled] = useState(speechEnabled ?? false)
+  const speechEnabledRef = useRef(localSpeechEnabled)
+  useEffect(() => { speechEnabledRef.current = localSpeechEnabled }, [localSpeechEnabled])
+
   // Keep phase configs accessible in callbacks
   const phase1Ref = useRef(phase1)
-  const phase2Ref = useRef(phase2)
+  const phase2Ref = useRef(phase2 ?? phase1)
 
   useEffect(() => { phase1Ref.current = phase1 }, [phase1])
-  useEffect(() => { phase2Ref.current = phase2 }, [phase2])
+  useEffect(() => { phase2Ref.current = phase2 ?? phase1 }, [phase2])
   useEffect(() => { onCoinsChangeRef.current = onCoinsChange }, [onCoinsChange])
   useEffect(() => { wordIdxRef.current = wordIdx }, [wordIdx])
   useEffect(() => { gamePhaseRef.current = gamePhase }, [gamePhase])
@@ -341,7 +349,7 @@ export default function VocabFly({
 
       if (dist < HIT_RADIUS && !collectedThisFrame.current) {
         collectedThisFrame.current = true
-        speakSpanish(w.spanish)
+        if (speechEnabledRef.current) speakSpanish(w.spanish)
         setPopItems(pp => [...pp, {
           id: popIdRef.current++,
           spanish: w.spanish, english: w.english,
@@ -428,7 +436,7 @@ export default function VocabFly({
     }
     const nextIdx = idx + 1
 
-    if (nextIdx === PHASE1_LEN) {
+    if (nextIdx === PHASE1_LEN && !isSinglePhase) {
       wordIdxRef.current = nextIdx
       setWordIdx(nextIdx)
       setGamePhase("phase_transition")
@@ -455,7 +463,7 @@ export default function VocabFly({
 
     wordIdxRef.current = nextIdx
     setWordIdx(nextIdx)
-    setTimeout(() => speakSpanish(FULL_QUEUE[nextIdx].spanish), 400)
+    if (speechEnabledRef.current) setTimeout(() => speakSpanish(FULL_QUEUE[nextIdx].spanish), 400)
     waveTimerRef.current = 99999
   }
 
@@ -472,7 +480,7 @@ export default function VocabFly({
       gamePhaseRef.current = "playing"
       lastTimeRef.current = performance.now()
       waveTimerRef.current = 99999
-      speakSpanish(FULL_QUEUE[0].spanish)
+      if (speechEnabledRef.current) speakSpanish(FULL_QUEUE[0].spanish)
       rafRef.current = requestAnimationFrame(gameLoop)
     }, 600)
     return () => clearTimeout(t)
@@ -507,8 +515,8 @@ export default function VocabFly({
 
   const progressPct  = Math.round((wordIdx / FULL_QUEUE.length) * 100)
   const currentEntry = FULL_QUEUE[Math.min(wordIdx, FULL_QUEUE.length - 1)]
-  const isPhase2     = wordIdx >= PHASE1_LEN
-  const currentPhase = isPhase2 ? phase2 : phase1
+  const isPhase2     = !isSinglePhase && wordIdx >= PHASE1_LEN
+  const currentPhase = isPhase2 ? phase2! : phase1
   const bubbleBg     = currentPhase.bubbleBg
   const bubbleText   = currentPhase.bubbleText
 
@@ -569,7 +577,7 @@ export default function VocabFly({
         </div>
         <div className="flex justify-between text-white/40 text-xs mt-0.5 px-0.5">
           <span>{phase1.label}</span>
-          <span>{phase2.label}</span>
+          {phase2 && <span>{phase2.label}</span>}
         </div>
       </div>
 
@@ -709,6 +717,27 @@ export default function VocabFly({
                 }
               </div>
             </div>
+            {/* Speech toggle */}
+            <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-2xl"
+              style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",maxWidth:"300px",width:"100%"}}>
+              <span className="text-2xl">{localSpeechEnabled ? "🔊" : "🔇"}</span>
+              <div className="flex-1">
+                <div className="text-white font-bold text-sm">Say words aloud</div>
+                <div className="text-white/50 text-xs">Hear pronunciation during play</div>
+              </div>
+              <button
+                onClick={() => setLocalSpeechEnabled(prev => !prev)}
+                className="w-12 h-7 rounded-full transition-all relative flex-shrink-0"
+                style={{
+                  background: localSpeechEnabled
+                    ? "linear-gradient(135deg, #22c55e, #16a34a)"
+                    : "rgba(255,255,255,0.15)",
+                  border: "1.5px solid " + (localSpeechEnabled ? "rgba(34,197,94,0.6)" : "rgba(255,255,255,0.2)"),
+                }}>
+                <div className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all"
+                  style={{ left: localSpeechEnabled ? "calc(100% - 22px)" : "2px" }} />
+              </button>
+            </div>
             <button
               onClick={() => { setGamePhase("countdown"); gamePhaseRef.current = "countdown" }}
               className="px-8 py-4 rounded-2xl font-black text-white text-lg transition-transform active:scale-95"
@@ -719,7 +748,7 @@ export default function VocabFly({
         )}
 
         {/* ── Phase Transition ── */}
-        {gamePhase === "phase_transition" && (
+        {gamePhase === "phase_transition" && transitionIcon && transitionMsg && (
           <div className="absolute inset-0 flex flex-col items-center justify-center"
             style={{zIndex:35,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)"}}>
             <div className="text-7xl mb-4" style={{animation:"countdownPop 0.5s ease-out forwards"}}>{transitionIcon}</div>

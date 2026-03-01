@@ -1773,39 +1773,39 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               >▶ Resume</button>
             </div>
 
-            {/* Category tabs */}
-            <div className="flex gap-2 px-4 pb-3 flex-shrink-0">
-              {([
-                { key: "pointer" as const, label: "🎯 Pointer" },
-                { key: "effect"  as const, label: "💥 Effect"  },
-              ]).map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setLoadoutTab(tab.key)}
-                  className="flex-1 py-2 rounded-full text-xs font-black transition-all active:scale-95"
-                  style={loadoutTab === tab.key
-                    ? { background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white", boxShadow: "0 2px 10px rgba(168,85,247,0.5)" }
-                    : { background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.55)" }}
-                >{tab.label}</button>
-              ))}
-            </div>
+            {/* Active pointer hero card */}
+            {(() => {
+              const active = GAME_CATALOG.find(i => i.id === activePointer)
+              return active ? (
+                <div className="mx-5 mb-3 flex items-center gap-3 px-4 py-3 rounded-2xl flex-shrink-0" style={{
+                  background: "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(99,102,241,0.3))",
+                  border: "1.5px solid rgba(168,85,247,0.5)",
+                }}>
+                  <span style={{ fontSize: "36px" }}>{active.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-black text-sm">{active.name}</p>
+                    <p className="text-white/50 text-[11px]">Currently equipped</p>
+                  </div>
+                  <span className="text-[10px] font-black px-2.5 py-1 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>
+                </div>
+              ) : null
+            })()}
 
-            {/* Items grid — scrollable */}
+            {/* Pointer items grid — scrollable */}
             <div className="overflow-y-auto px-4 pb-6" style={{ WebkitOverflowScrolling: "touch" }}>
-              <div className="grid grid-cols-3 gap-2.5">
-                {GAME_CATALOG.filter(i => i.category === loadoutTab).map(item => {
+              <div className="grid grid-cols-4 gap-2">
+                {GAME_CATALOG.filter(i => i.category === "pointer").map(item => {
                   const owned = storeOwned.includes(item.id)
-                  const isActive = (loadoutTab === "effect" ? activeEffect : activePointer) === item.id
+                  const isActive = activePointer === item.id
                   return (
                     <button
                       key={item.id}
                       disabled={!owned}
                       onClick={() => {
                         if (!owned) return
-                        if (loadoutTab === "effect") onEquipEffect?.(item.id)
-                        else onEquipPointer?.(item.id)
+                        onEquipPointer?.(item.id)
                       }}
-                      className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl transition-all active:scale-90"
+                      className="flex flex-col items-center gap-1 py-2.5 px-1.5 rounded-xl transition-all active:scale-90"
                       style={{
                         background: isActive
                           ? "linear-gradient(135deg, rgba(168,85,247,0.45), rgba(99,102,241,0.45))"
@@ -1814,14 +1814,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                         opacity: owned ? 1 : 0.35,
                       }}
                     >
-                      <span style={{ fontSize: "28px", filter: owned ? "none" : "grayscale(1)" }}>{item.emoji}</span>
-                      <span className="text-white text-[11px] font-bold text-center leading-tight">{item.name}</span>
-                      {isActive
-                        ? <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>
-                        : !owned
-                          ? <span className="text-white/40 text-[9px]">🔒 Locked</span>
-                          : <span className="text-white/40 text-[9px]">Tap to use</span>
-                      }
+                      <span style={{ fontSize: "24px", filter: owned ? "none" : "grayscale(1)" }}>{item.emoji}</span>
+                      <span className="text-white text-[10px] font-bold text-center leading-tight">{item.name}</span>
+                      {!owned && <span className="text-white/40 text-[8px]">🔒</span>}
                     </button>
                   )
                 })}
@@ -1867,7 +1862,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             }}
           >
             <span style={{ fontSize: "16px" }}>{GAME_CATALOG.find(i => i.id === activePointer)?.emoji ?? "🥕"}</span>
-            <span style={{ fontSize: "13px" }}>Gear ⚙️</span>
+            <span style={{ fontSize: "13px" }}>⚙️</span>
           </button>
         </div>
 

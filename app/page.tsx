@@ -4,19 +4,12 @@ import React, { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
 import { LYRIC_TRANSLATIONS } from "@/lib/lyric-translations"
+import { SONG_FLY_DATA } from "@/lib/song-fly-data"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
-const AlphabetFly  = dynamic(() => import("@/components/alphabet-fly"),  { ssr: false })
-const BodyFly      = dynamic(() => import("@/components/body-fly"),       { ssr: false })
-const RolesFly     = dynamic(() => import("@/components/roles-fly"),     { ssr: false })
-const PetFly       = dynamic(() => import("@/components/pet-fly"),        { ssr: false })
-const TravelFly    = dynamic(() => import("@/components/travel-fly"),     { ssr: false })
-const NumbersFly   = dynamic(() => import("@/components/numbers-fly"),    { ssr: false })
-const TimeFly      = dynamic(() => import("@/components/time-fly"),       { ssr: false })
-const FeelingsFly  = dynamic(() => import("@/components/feelings-fly"),   { ssr: false })
-const FoodFly      = dynamic(() => import("@/components/food-fly"),       { ssr: false })
+const SongFly      = dynamic(() => import("@/components/song-fly"),      { ssr: false })
 import {
   Play,
   BookOpen,
@@ -1546,8 +1539,8 @@ export default function HablaBeat() {
   // Bank tab toggle
   const [bankTab, setBankTab] = useState<"worlds" | "items">("worlds")
 
-  // Fly game state — which world's fly game is open (null = closed)
-  const [flyGameSection, setFlyGameSection] = useState<string | null>(null)
+  // Fly game state — which song's fly game is open (null = closed)
+  const [flySongNumber, setFlySongNumber] = useState<number | null>(null)
 
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
@@ -2290,86 +2283,14 @@ export default function HablaBeat() {
     )
   }
 
-  // Fly Game View
-  if (flyGameSection === "alphabet-vowels") {
+  // Fly Game View — per-song fly
+  if (flySongNumber !== null) {
     return (
-      <AlphabetFly
-        sectionTitle="Alphabet World"
-        coins={challengeCoins}
-        onCoinsChange={(delta) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "body-world") {
-    return (
-      <BodyFly
+      <SongFly
+        songNumber={flySongNumber}
         coins={challengeCoins}
         onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "roles-world") {
-    return (
-      <RolesFly
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "pets-syllables") {
-    return (
-      <PetFly
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "places") {
-    return (
-      <TravelFly
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "numbers") {
-    return (
-      <NumbersFly
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "numbers-time") {
-    return (
-      <TimeFly
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "colors-feelings") {
-    return (
-      <FeelingsFly
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
-      />
-    )
-  }
-  if (flyGameSection === "foods") {
-    return (
-      <FoodFly
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setFlyGameSection(null)}
+        onClose={() => setFlySongNumber(null)}
       />
     )
   }
@@ -3717,19 +3638,6 @@ export default function HablaBeat() {
                         <div className="flex gap-2 items-center">
                           <span className="text-white/60 text-xs font-bold tracking-wide uppercase shrink-0">Loadout</span>
                           <div className="flex gap-1.5 flex-1">
-                            {/* Effect chip */}
-                            <button
-                              onClick={() => setLoadoutOpen(loadoutOpen === "effect" ? null : "effect")}
-                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-black transition-all active:scale-90"
-                              style={{
-                                background: loadoutOpen === "effect" ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.18)",
-                                border: loadoutOpen === "effect" ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid rgba(255,255,255,0.3)",
-                                color: "white", backdropFilter: "blur(8px)",
-                              }}
-                            >
-                              <span>{activeEffectItem?.emoji ?? "💧"}</span>
-                              <span className="opacity-80">Effect</span>
-                            </button>
                             {/* Pointer chip */}
                             <button
                               onClick={() => setLoadoutOpen(loadoutOpen === "pointer" ? null : "pointer")}
@@ -3741,7 +3649,8 @@ export default function HablaBeat() {
                               }}
                             >
                               <span>{activePointerItem?.emoji ?? "🥕"}</span>
-                              <span className="opacity-80">Arrow</span>
+                              <span className="opacity-80">{activePointerItem?.name?.split(" ")[0] ?? "Carrot"}</span>
+                              <span className="opacity-50">⚙️</span>
                             </button>
                           </div>
                         </div>
@@ -3750,14 +3659,13 @@ export default function HablaBeat() {
                         {loadoutOpen && (
                           <div className="mt-2 rounded-2xl overflow-hidden" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.15)" }}>
                             <div className="flex gap-2 overflow-x-auto px-3 py-2.5" style={{ scrollbarWidth: "none" }}>
-                              {STORE_CATALOG.filter(i => i.id.startsWith(loadoutOpen === "effect" ? "effect-" : "pointer-") && storeOwned.includes(i.id)).map(item => {
-                                const isActive = (loadoutOpen === "effect" ? activeEffect : activePointer) === item.id
+                              {STORE_CATALOG.filter(i => i.id.startsWith("pointer-") && storeOwned.includes(i.id)).map(item => {
+                                const isActive = activePointer === item.id
                                 return (
                                   <button
                                     key={item.id}
                                     onClick={() => {
-                                      if (loadoutOpen === "effect") setActiveEffect(item.id)
-                                      else setActivePointer(item.id)
+                                      setActivePointer(item.id)
                                       setLoadoutOpen(null)
                                     }}
                                     className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl transition-all active:scale-90"
@@ -3773,7 +3681,7 @@ export default function HablaBeat() {
                                   </button>
                                 )
                               })}
-                              {STORE_CATALOG.filter(i => i.id.startsWith(loadoutOpen === "effect" ? "effect-" : "pointer-") && !storeOwned.includes(i.id)).map(item => (
+                              {STORE_CATALOG.filter(i => i.id.startsWith("pointer-") && !storeOwned.includes(i.id)).map(item => (
                                 <button key={item.id} className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl opacity-40" style={{ minWidth: "56px", cursor: "default" }}>
                                   <span style={{ fontSize: "22px", filter: "grayscale(1)" }}>{item.emoji}</span>
                                   <span className="text-white text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px" }}>{item.name.split(" ")[0]}</span>
@@ -3842,47 +3750,21 @@ export default function HablaBeat() {
                                   Pop
                                 </button>
                               )}
+                              {selectedLanguage === "spanish" && SONG_FLY_DATA[song.number] && (
+                                <button
+                                  onClick={() => setFlySongNumber(song.number)}
+                                  className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                  style={{ background: "linear-gradient(135deg, #06b6d4, #8b5cf6)", boxShadow: "0 4px 12px rgba(139,92,246,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                >
+                                  Fly
+                                </button>
+                              )}
                             </div>
                           </div>
                         )
                       })}
                     </div>
 
-                    {/* ✈️ Fly Game Button — sits below songs, inside scroll area */}
-                    {(() => {
-                      const FLY_SECTIONS = new Set(["alphabet-vowels","body-world","roles-world","pets-syllables","places","numbers","numbers-time","colors-feelings","foods"])
-                      const isActive = FLY_SECTIONS.has(openSection!.id)
-                      const isBody = openSection!.id === "body-world"
-                      return (
-                        <div className="pt-3 flex justify-center">
-                          <button
-                            onClick={() => setFlyGameSection(openSection!.id)}
-                            className="flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-white text-base transition-all active:scale-95 w-full"
-                            style={{
-                              background: isBody
-                                ? "linear-gradient(135deg, rgba(236,72,153,0.55), rgba(168,85,247,0.55))"
-                                : isActive
-                                  ? "linear-gradient(135deg, rgba(99,102,241,0.55), rgba(139,92,246,0.55))"
-                                  : "rgba(255,255,255,0.10)",
-                              border: isActive
-                                ? "1.5px solid rgba(255,255,255,0.45)"
-                                : "1.5px solid rgba(255,255,255,0.28)",
-                              backdropFilter: "blur(10px)",
-                              boxShadow: isActive
-                                ? "0 4px 16px rgba(168,85,247,0.35)"
-                                : "0 2px 10px rgba(0,0,0,0.15)",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <span style={{ fontSize: "22px", animation: "btnBounce 1.1s ease-in-out infinite" }}>🐰</span>
-                            {openSection!.title.replace(" World", "")} Fly
-                            {isActive && (
-                              <span className="text-xs font-bold px-1.5 py-0.5 rounded-full ml-1" style={{ background: "rgba(255,255,255,0.25)", color: "white" }}>NEW</span>
-                            )}
-                          </button>
-                        </div>
-                      )
-                    })()}
                   </div>
 
                   {/* Bottom bar — next world + vocab bank */}
