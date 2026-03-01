@@ -126,7 +126,24 @@ interface Props {
   songFilter?: (entry: { label: string; category: string }) => boolean
   onGameEnd?: (score: number) => void
   onChallenge?: (score: number) => void
+  activePointer?: string
+  storeOwned?: string[]
+  onEquipPointer?: (id: string) => void
 }
+
+// Mini catalog for fly loadout UI
+const FLY_GEAR_CATALOG = [
+  { id: "pointer-carrot",    name: "Carrot",           emoji: "🥕" },
+  { id: "pointer-red-laser", name: "Red Laser",        emoji: "🔴" },
+  { id: "pointer-banana",    name: "Banana Blaster",   emoji: "🍌" },
+  { id: "pointer-water",     name: "Water Cannon",     emoji: "💧" },
+  { id: "pointer-lightning", name: "Lightning Bolt",   emoji: "⚡" },
+  { id: "pointer-ice",       name: "Ice Blaster",      emoji: "❄️" },
+  { id: "pointer-rainbow",   name: "Rainbow Laser",    emoji: "🌈" },
+  { id: "pointer-rocket",    name: "Rocket Launcher",  emoji: "🚀" },
+  { id: "pointer-star",      name: "Star Shooter",     emoji: "⭐" },
+  { id: "pointer-dragon",    name: "Dragon Breath",    emoji: "🐉" },
+]
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -229,7 +246,7 @@ function playCoinSound() {
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoinsChange, onClose, songFilter, onGameEnd, onChallenge }: Props) {
+export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoinsChange, onClose, songFilter, onGameEnd, onChallenge, activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipPointer }: Props) {
 
   // ── Filtered queue based on songFilter (for per-song mode) ───────────────
   const FILTERED_QUEUE = useRef(songFilter ? ALPHABET_QUEUE.filter(e => songFilter(e)) : ALPHABET_QUEUE).current
@@ -256,6 +273,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const [skyEmojis] = useState<SkyEmoji[]>(makeSkyEmojis)
   const [wrongCount,  setWrongCount]  = useState(0)
   const [missedWords, setMissedWords] = useState<{ label: string; spanish: string; english: string }[]>([])
+  const [showLoadout, setShowLoadout] = useState(false)
 
   // ── Refs (game-loop readable without stale closures) ─────────────────────
   const bunnyX    = useRef(50)
@@ -636,11 +654,20 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 pt-safe-top pt-3 pb-2 flex-shrink-0">
-        <button onClick={onClose}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white/80 text-sm font-bold active:scale-95 transition-all"
-          style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
-          ← Back
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button onClick={onClose}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white/80 text-sm font-bold active:scale-95 transition-all"
+            style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
+            ← Back
+          </button>
+          {storeOwned.length > 1 && (
+            <button onClick={() => setShowLoadout(true)}
+              className="px-2.5 py-1.5 rounded-full text-sm active:scale-90 transition-all"
+              style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
+              {FLY_GEAR_CATALOG.find(g => g.id === activePointer)?.emoji || "🥕"}
+            </button>
+          )}
+        </div>
 
         <div className="text-center">
           <div className="text-white font-black text-lg leading-none">{worldName} Fly ✈️</div>
@@ -1015,11 +1042,14 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               ))}
             </div>
             {onChallenge && (
-              <button onClick={() => onChallenge(scoreRef.current)}
-                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95 mb-3 w-full max-w-xs"
-                style={{background:"linear-gradient(135deg,#06b6d4,#0891b2)",boxShadow:"0 4px 20px rgba(6,182,212,0.5)",border:"1.5px solid rgba(255,255,255,0.3)"}}>
-                ⚔️ Challenge a Friend
-              </button>
+              <div className="w-full max-w-xs mb-3">
+                <button onClick={() => onChallenge(scoreRef.current)}
+                  className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95 w-full"
+                  style={{background:"linear-gradient(135deg,#06b6d4,#0891b2)",boxShadow:"0 4px 20px rgba(6,182,212,0.5)",border:"1.5px solid rgba(255,255,255,0.3)"}}>
+                  ⚔️ Challenge a Friend
+                </button>
+                <p className="text-center text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>Win and earn 2x points! 💰</p>
+              </div>
             )}
             <div className="flex gap-3">
               <button onClick={() => {
@@ -1116,6 +1146,48 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           100% { transform:translateX(-50%) rotate(0deg); }
         }
       `}</style>
+
+      {/* Loadout overlay — shows owned gear only */}
+      {showLoadout && (
+        <div className="absolute inset-0 z-[999] flex flex-col items-center justify-end" style={{ background: "rgba(0,0,0,0.75)" }} onClick={() => setShowLoadout(false)}>
+          <div className="w-full max-w-md rounded-t-3xl overflow-hidden"
+            style={{ background: "linear-gradient(180deg, #1a0d2e 0%, #0f0520 100%)", border: "1.5px solid rgba(168,85,247,0.35)", borderBottom: "none", boxShadow: "0 -8px 40px rgba(0,0,0,0.7)", maxHeight: "60dvh" }}
+            onClick={e => e.stopPropagation()}>
+            <div className="flex justify-center pt-3 pb-1"><div className="w-10 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.25)" }} /></div>
+            <div className="flex items-center justify-between px-5 pt-1 pb-3">
+              <div>
+                <p className="text-white text-xl font-black">⚙️ Loadout</p>
+                <p className="text-white/50 text-xs mt-0.5">Tap to equip — owned gear only</p>
+              </div>
+              <button onClick={() => setShowLoadout(false)}
+                className="px-4 py-2 rounded-full font-black text-white text-sm active:scale-90 transition-all"
+                style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)", boxShadow: "0 4px 14px rgba(34,197,94,0.4)" }}>
+                ▶ Close
+              </button>
+            </div>
+            <div className="overflow-y-auto px-4 pb-6" style={{ WebkitOverflowScrolling: "touch" }}>
+              <div className="grid grid-cols-4 gap-2">
+                {FLY_GEAR_CATALOG.filter(item => storeOwned.includes(item.id)).map(item => {
+                  const isActive = activePointer === item.id
+                  return (
+                    <button key={item.id}
+                      onClick={() => { onEquipPointer?.(item.id); setShowLoadout(false) }}
+                      className="flex flex-col items-center gap-1 py-2.5 px-1.5 rounded-xl transition-all active:scale-90"
+                      style={{
+                        background: isActive ? "linear-gradient(135deg, rgba(168,85,247,0.45), rgba(99,102,241,0.45))" : "rgba(255,255,255,0.08)",
+                        border: isActive ? "2px solid rgba(168,85,247,0.9)" : "1.5px solid rgba(255,255,255,0.08)",
+                      }}>
+                      <span style={{ fontSize: "24px" }}>{item.emoji}</span>
+                      <span className="text-white text-[10px] font-bold text-center leading-tight">{item.name}</span>
+                      {isActive && <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓</span>}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

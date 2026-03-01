@@ -73,20 +73,20 @@ const SECTION_GRADIENTS: Record<string, string> = {
 
 const STORE_CATALOG: StoreItem[] = [
   // ── Pointer Arrows ──
-  // 🟢 Common
+  // 🟢 Common (easy to unlock early)
   { id: "pointer-carrot",    name: "Carrot",          emoji: "🥕", cost: 0,    category: "pointer", description: "The original HablaBeat arrow",              previewEmoji: "🥕" },
-  { id: "pointer-red-laser", name: "Red Laser",       emoji: "🔴", cost: 150,  category: "pointer", description: "Precision beam. Feels sharp, not stronger", previewEmoji: "🔴" },
-  { id: "pointer-banana",    name: "Banana Blaster",  emoji: "🍌", cost: 200,  category: "pointer", description: "Visible spinning banana. Playful chaos",    previewEmoji: "🍌" },
-  { id: "pointer-water",     name: "Water Cannon",    emoji: "💧", cost: 250,  category: "pointer", description: "Splash burst. Micro slow on next bubble",   previewEmoji: "💧" },
+  { id: "pointer-red-laser", name: "Red Laser",       emoji: "🔴", cost: 250,  category: "pointer", description: "Precision beam. Feels sharp, not stronger", previewEmoji: "🔴" },
+  { id: "pointer-banana",    name: "Banana Blaster",  emoji: "🍌", cost: 500,  category: "pointer", description: "Visible spinning banana. Playful chaos",    previewEmoji: "🍌" },
+  { id: "pointer-water",     name: "Water Cannon",    emoji: "💧", cost: 750,  category: "pointer", description: "Splash burst. Micro slow on next bubble",   previewEmoji: "💧" },
   // 🔵 Rare
-  { id: "pointer-lightning", name: "Lightning Bolt",  emoji: "⚡", cost: 400,  category: "pointer", description: "10% chance to chain to the next note",      previewEmoji: "⚡" },
-  { id: "pointer-ice",       name: "Ice Blaster",     emoji: "❄️", cost: 500,  category: "pointer", description: "Freeze & shatter. Slows next note for 1s",  previewEmoji: "❄️" },
+  { id: "pointer-lightning", name: "Lightning Bolt",  emoji: "⚡", cost: 1500, category: "pointer", description: "10% chance to chain to the next note",      previewEmoji: "⚡" },
+  { id: "pointer-ice",       name: "Ice Blaster",     emoji: "❄️", cost: 2000, category: "pointer", description: "Freeze & shatter. Slows next note for 1s",  previewEmoji: "❄️" },
   // 🟣 Epic
-  { id: "pointer-rainbow",   name: "Rainbow Laser",   emoji: "🌈", cost: 900,  category: "pointer", description: "Combo meter fills slightly faster",         previewEmoji: "🌈" },
-  { id: "pointer-rocket",    name: "Rocket Launcher", emoji: "🚀", cost: 1000, category: "pointer", description: "Splash radius. High impact, play patient",  previewEmoji: "🚀" },
-  { id: "pointer-star",      name: "Star Shooter",    emoji: "⭐", cost: 1100, category: "pointer", description: "+10% coins per hit. Pure grind tool",       previewEmoji: "⭐" },
+  { id: "pointer-rainbow",   name: "Rainbow Laser",   emoji: "🌈", cost: 3500, category: "pointer", description: "Combo meter fills slightly faster",         previewEmoji: "🌈" },
+  { id: "pointer-rocket",    name: "Rocket Launcher", emoji: "🚀", cost: 5000, category: "pointer", description: "Splash radius. High impact, play patient",  previewEmoji: "🚀" },
+  { id: "pointer-star",      name: "Star Shooter",    emoji: "⭐", cost: 6500, category: "pointer", description: "+10% coins per hit. Pure grind tool",       previewEmoji: "⭐" },
   // 🟡 Legendary
-  { id: "pointer-dragon",    name: "Dragon Breath",   emoji: "🐉", cost: 2000, category: "pointer", description: "One miss per song won't break your combo",  previewEmoji: "🐉" },
+  { id: "pointer-dragon",    name: "Dragon Breath",   emoji: "🐉", cost: 10000, category: "pointer", description: "One miss per song won't break your combo",  previewEmoji: "🐉" },
 ]
 
 // Rarity metadata for pointer store cards
@@ -2340,6 +2340,9 @@ export default function HablaBeat() {
           if (!flyData) return
           setPendingFlyChallenge({ songNumber: flySongNumber!, title: flyData.title, score })
         }}
+        activePointer={activePointer}
+        storeOwned={storeOwned}
+        onEquipPointer={setActivePointer}
       />
     )
   }
@@ -3835,7 +3838,8 @@ export default function HablaBeat() {
               <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
                 <p className="text-4xl text-center mb-2">⚔️</p>
                 <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
-                <p className="text-sm text-gray-500 text-center mb-5">Pick who you want to challenge — they'll get your score to beat after you play!</p>
+                <p className="text-sm text-gray-500 text-center mb-1">Pick who you want to challenge — they'll get your score to beat after you play!</p>
+                <p className="text-sm font-bold text-center mb-4" style={{ color: "#f59e0b" }}>Win and earn 2x points! 💰</p>
 
                 {/* Contact picker if supported */}
                 {"contacts" in navigator && "ContactsManager" in window && (
@@ -3880,7 +3884,8 @@ export default function HablaBeat() {
               <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
                 <p className="text-4xl text-center mb-2">⚔️</p>
                 <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
-                <p className="text-sm text-gray-500 text-center mb-2">Send your Fly score on <strong>{pendingFlyChallenge.title}</strong> for them to beat!</p>
+                <p className="text-sm text-gray-500 text-center mb-1">Send your Fly score on <strong>{pendingFlyChallenge.title}</strong> for them to beat!</p>
+                <p className="text-sm font-bold text-center mb-2" style={{ color: "#f59e0b" }}>Win and earn 2x points! 💰</p>
                 <p className="text-center text-2xl font-black text-yellow-500 mb-4">💰 {pendingFlyChallenge.score}</p>
 
                 {"contacts" in navigator && "ContactsManager" in window && (

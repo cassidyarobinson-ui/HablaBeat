@@ -1405,6 +1405,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 <span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>{linkCopied ? "✅" : "⚔️"}</span>
                 {linkCopied ? "Link Copied!" : "Challenge a Friend"}
               </button>
+              <p className="text-center text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>Win and earn 2x points!</p>
             </div>
 
             {/* Back / Next Song row */}
@@ -1457,6 +1458,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                   <p className="text-4xl mb-2" style={{ animation: "btnBounce 0.9s ease-in-out infinite" }}>⚔️</p>
                   <h2 className="text-xl font-black text-white">Challenge a Friend</h2>
                   <p className="text-white/60 text-sm mt-1">Send your score — can they beat it?</p>
+                  <p className="text-sm font-bold mt-1" style={{ color: "#fbbf24" }}>Win and earn 2x points! 💰</p>
                 </div>
 
                 {/* Score summary pill */}

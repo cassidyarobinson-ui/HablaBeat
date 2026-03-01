@@ -13,9 +13,12 @@ interface Props {
   onClose: () => void
   onGameEnd?: (score: number) => void
   onChallenge?: (score: number) => void
+  activePointer?: string
+  storeOwned?: string[]
+  onEquipPointer?: (id: string) => void
 }
 
-export default function SongFly({ songNumber, coins, onCoinsChange, onClose, onGameEnd, onChallenge }: Props) {
+export default function SongFly({ songNumber, coins, onCoinsChange, onClose, onGameEnd, onChallenge, activePointer, storeOwned, onEquipPointer }: Props) {
   const data = SONG_FLY_DATA[songNumber]
   if (!data) return null
 
@@ -29,6 +32,9 @@ export default function SongFly({ songNumber, coins, onCoinsChange, onClose, onG
         songFilter={data.alphabetFilter}
         onGameEnd={onGameEnd}
         onChallenge={onChallenge}
+        activePointer={activePointer}
+        storeOwned={storeOwned}
+        onEquipPointer={onEquipPointer}
       />
     )
   }
@@ -45,6 +51,9 @@ export default function SongFly({ songNumber, coins, onCoinsChange, onClose, onG
       speechEnabled={false}
       onGameEnd={onGameEnd}
       onChallenge={onChallenge}
+      activePointer={activePointer}
+      storeOwned={storeOwned}
+      onEquipPointer={onEquipPointer}
     />
   )
 }
