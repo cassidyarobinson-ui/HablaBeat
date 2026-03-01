@@ -39,6 +39,8 @@ export interface VocabFlyProps {
   onCoinsChange:   (delta: number) => void
   onClose:         () => void
   speechEnabled?:  boolean  // controls speech during play, default false
+  onGameEnd?:      (score: number) => void
+  onChallenge?:    (score: number) => void
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -169,7 +171,7 @@ export default function VocabFly({
   transitionMsg, transitionIcon,
   accentColor,
   coins: initialCoins, onCoinsChange, onClose,
-  speechEnabled,
+  speechEnabled, onGameEnd, onChallenge,
 }: VocabFlyProps) {
 
   // ── Stable computed values (init once at mount) ───────────────────────────
@@ -568,6 +570,7 @@ export default function VocabFly({
       setTimeout(() => {
         setFlashScreen(null); setShowHint(false)
         setGamePhase("complete"); gamePhaseRef.current = "complete"
+        onGameEnd?.(scoreRef.current)
       }, 1000)
       return
     }
@@ -1026,6 +1029,13 @@ export default function VocabFly({
                 </div>
               ))}
             </div>
+            {onChallenge && (
+              <button onClick={() => onChallenge(scoreRef.current)}
+                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95 mb-3 w-full max-w-xs"
+                style={{background:"linear-gradient(135deg,#06b6d4,#0891b2)",boxShadow:"0 4px 20px rgba(6,182,212,0.5)",border:"1.5px solid rgba(255,255,255,0.3)"}}>
+                ⚔️ Challenge a Friend
+              </button>
+            )}
             <div className="flex gap-3">
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0

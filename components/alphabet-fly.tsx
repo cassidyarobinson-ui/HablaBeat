@@ -124,6 +124,8 @@ interface Props {
   onCoinsChange: (delta: number) => void
   onClose: () => void
   songFilter?: (entry: { label: string; category: string }) => boolean
+  onGameEnd?: (score: number) => void
+  onChallenge?: (score: number) => void
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -227,7 +229,7 @@ function playCoinSound() {
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoinsChange, onClose, songFilter }: Props) {
+export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoinsChange, onClose, songFilter, onGameEnd, onChallenge }: Props) {
 
   // ── Filtered queue based on songFilter (for per-song mode) ───────────────
   const FILTERED_QUEUE = useRef(songFilter ? ALPHABET_QUEUE.filter(e => songFilter(e)) : ALPHABET_QUEUE).current
@@ -426,6 +428,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         setShowHint(false)
         setGamePhase("complete")
         gamePhaseRef.current = "complete"
+        onGameEnd?.(scoreRef.current)
       }, 1000)
       return
     }
@@ -1011,6 +1014,13 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
                 </div>
               ))}
             </div>
+            {onChallenge && (
+              <button onClick={() => onChallenge(scoreRef.current)}
+                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95 mb-3 w-full max-w-xs"
+                style={{background:"linear-gradient(135deg,#06b6d4,#0891b2)",boxShadow:"0 4px 20px rgba(6,182,212,0.5)",border:"1.5px solid rgba(255,255,255,0.3)"}}>
+                ⚔️ Challenge a Friend
+              </button>
+            )}
             <div className="flex gap-3">
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0

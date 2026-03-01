@@ -11,9 +11,11 @@ interface Props {
   coins: number
   onCoinsChange: (delta: number) => void
   onClose: () => void
+  onGameEnd?: (score: number) => void
+  onChallenge?: (score: number) => void
 }
 
-export default function SongFly({ songNumber, coins, onCoinsChange, onClose }: Props) {
+export default function SongFly({ songNumber, coins, onCoinsChange, onClose, onGameEnd, onChallenge }: Props) {
   const data = SONG_FLY_DATA[songNumber]
   if (!data) return null
 
@@ -25,6 +27,8 @@ export default function SongFly({ songNumber, coins, onCoinsChange, onClose }: P
         onCoinsChange={onCoinsChange}
         onClose={onClose}
         songFilter={data.alphabetFilter}
+        onGameEnd={onGameEnd}
+        onChallenge={onChallenge}
       />
     )
   }
@@ -39,6 +43,8 @@ export default function SongFly({ songNumber, coins, onCoinsChange, onClose }: P
       onCoinsChange={onCoinsChange}
       onClose={onClose}
       speechEnabled={false}
+      onGameEnd={onGameEnd}
+      onChallenge={onChallenge}
     />
   )
 }

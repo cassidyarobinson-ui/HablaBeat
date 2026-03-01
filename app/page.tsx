@@ -1517,6 +1517,11 @@ export default function HablaBeat() {
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
+  const [popHighScores, setPopHighScores] = useState<Record<number, number>>({})
+  const [flyHighScores, setFlyHighScores] = useState<Record<number, number>>({})
+
+  // Fly challenge state
+  const [pendingFlyChallenge, setPendingFlyChallenge] = useState<{ songNumber: number; title: string; score: number } | null>(null)
 
   // Challenge pre-select state
   const [showFriendPicker, setShowFriendPicker] = useState(false)
@@ -1572,6 +1577,8 @@ export default function HablaBeat() {
     setTotalVocabBank(loadPersisted("hablabeat-total-vocab-bank", 0))
     setBestGrades(loadPersisted("hablabeat-best-grades", {}))
     setSongPlayCounts(loadPersisted("hablabeat-song-play-counts", {}))
+    setPopHighScores(loadPersisted("hablabeat-pop-high-scores", {}))
+    setFlyHighScores(loadPersisted("hablabeat-fly-high-scores", {}))
     setUserName(loadPersisted("hablabeat-user-name", ""))
     setUserPhoto(loadPersisted("hablabeat-user-photo", ""))
     setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
@@ -1609,6 +1616,8 @@ export default function HablaBeat() {
   useEffect(() => { if (totalVocabBank > 0) localStorage.setItem("hablabeat-total-vocab-bank", JSON.stringify(totalVocabBank)) }, [totalVocabBank])
   useEffect(() => { if (Object.keys(bestGrades).length > 0) localStorage.setItem("hablabeat-best-grades", JSON.stringify(bestGrades)) }, [bestGrades])
   useEffect(() => { if (Object.keys(songPlayCounts).length > 0) localStorage.setItem("hablabeat-song-play-counts", JSON.stringify(songPlayCounts)) }, [songPlayCounts])
+  useEffect(() => { if (Object.keys(popHighScores).length > 0) localStorage.setItem("hablabeat-pop-high-scores", JSON.stringify(popHighScores)) }, [popHighScores])
+  useEffect(() => { if (Object.keys(flyHighScores).length > 0) localStorage.setItem("hablabeat-fly-high-scores", JSON.stringify(flyHighScores)) }, [flyHighScores])
   useEffect(() => { localStorage.setItem("hablabeat-user-name", JSON.stringify(userName)) }, [userName])
   useEffect(() => { localStorage.setItem("hablabeat-user-photo", JSON.stringify(userPhoto)) }, [userPhoto])
   useEffect(() => { localStorage.setItem("hablabeat-challenges-sent", JSON.stringify(totalChallengesSent)) }, [totalChallengesSent])
@@ -2038,6 +2047,11 @@ export default function HablaBeat() {
     })
     // Track play count per song
     setSongPlayCounts(prev => ({ ...prev, [songNum]: (prev[songNum] || 0) + 1 }))
+    // Track Pop high score per song
+    setPopHighScores(prev => {
+      if (bank > (prev[songNum] || 0)) return { ...prev, [songNum]: bank }
+      return prev
+    })
     // Queue leaderboard entry — user will enter name on leaderboard page
     const songTitle = curriculumData.flatMap(c => c.sections.flatMap(s => s.songs)).find((s: any) => s.number === songNum)?.title ?? `Song ${songNum}`
     setPendingLeaderboardEntry({ flow, bank, grade, song: songTitle })
@@ -2132,6 +2146,35 @@ export default function HablaBeat() {
     if (!pendingChallengeSong) return
     setShowFriendPicker(false)
     handlePlayDDR(pendingChallengeSong.songId, pendingChallengeSong.categoryId, pendingChallengeSong.sectionId)
+  }
+
+  // Fly challenge — generate URL and send SMS
+  const handleSendFlyChallenge = (phone: string) => {
+    if (!pendingFlyChallenge) return
+    const payload: Record<string, unknown> = {
+      mode: "fly",
+      s: pendingFlyChallenge.songNumber,
+      t: pendingFlyChallenge.title,
+      sc: pendingFlyChallenge.score,
+    }
+    if (userName) payload.n = userName
+    if (userPhoto) payload.p = userPhoto
+    if (totalVocabBank) payload.vb = totalVocabBank
+    if (totalChallengesSent) payload.cs = totalChallengesSent + 1
+    if (challengesWon) payload.cw = challengesWon
+    if (dailyStreak) payload.str = dailyStreak
+    const raw = btoa(JSON.stringify(payload)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
+    const url = `${window.location.origin}/challenge/${raw}`
+    const digits = phone.replace(/\D/g, "")
+    const senderName = userName || "Someone"
+    const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their Fly score on HablaBeat! Can you top it? ${url}`)
+    if (digits.length >= 10) {
+      window.open(`sms:${digits}?body=${message}`, "_blank")
+    } else {
+      navigator.clipboard.writeText(url).catch(() => {})
+    }
+    setTotalChallengesSent(prev => prev + 1)
+    setPendingFlyChallenge(null)
   }
 
   // Add new function to handle play count increment when song completes
@@ -2286,6 +2329,17 @@ export default function HablaBeat() {
         coins={challengeCoins}
         onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
         onClose={() => setFlySongNumber(null)}
+        onGameEnd={(score) => {
+          setFlyHighScores(prev => {
+            if (score > (prev[flySongNumber!] || 0)) return { ...prev, [flySongNumber!]: score }
+            return prev
+          })
+        }}
+        onChallenge={(score) => {
+          const flyData = SONG_FLY_DATA[flySongNumber!]
+          if (!flyData) return
+          setPendingFlyChallenge({ songNumber: flySongNumber!, title: flyData.title, score })
+        }}
       />
     )
   }
@@ -3703,7 +3757,7 @@ export default function HablaBeat() {
                                 </span>
                               )}
                             </div>
-                            {/* Sing · Pop — pill buttons */}
+                            {/* Sing · Pop · Fly — pill buttons with high scores */}
                             <div className="flex flex-wrap gap-2 mt-2.5 ml-7">
                               {isClickable && (
                                 <button
@@ -3715,22 +3769,32 @@ export default function HablaBeat() {
                                 </button>
                               )}
                               {selectedLanguage === "spanish" && (
-                                <button
-                                  onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                  className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 12px rgba(249,115,22,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
-                                >
-                                  Pop
-                                </button>
+                                <div className="flex flex-col items-center">
+                                  <button
+                                    onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
+                                    className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                    style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 12px rgba(249,115,22,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                  >
+                                    Pop
+                                  </button>
+                                  {popHighScores[song.number] > 0 && (
+                                    <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {popHighScores[song.number]}</span>
+                                  )}
+                                </div>
                               )}
                               {selectedLanguage === "spanish" && SONG_FLY_DATA[song.number] && (
-                                <button
-                                  onClick={() => setFlySongNumber(song.number)}
-                                  className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #06b6d4, #8b5cf6)", boxShadow: "0 4px 12px rgba(139,92,246,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
-                                >
-                                  Fly
-                                </button>
+                                <div className="flex flex-col items-center">
+                                  <button
+                                    onClick={() => setFlySongNumber(song.number)}
+                                    className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                    style={{ background: "linear-gradient(135deg, #06b6d4, #8b5cf6)", boxShadow: "0 4px 12px rgba(139,92,246,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                  >
+                                    Fly
+                                  </button>
+                                  {flyHighScores[song.number] > 0 && (
+                                    <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {flyHighScores[song.number]}</span>
+                                  )}
+                                </div>
                               )}
                             </div>
                           </div>
@@ -3806,6 +3870,51 @@ export default function HablaBeat() {
                   {friendPhone.replace(/\D/g,"").length >= 10 ? "🥕 Let's Play!" : "Enter a number to continue"}
                 </button>
                 <button onClick={() => setShowFriendPicker(false)} className="w-full py-2 text-gray-400 text-sm">Cancel</button>
+              </div>
+            </div>
+          )}
+
+          {/* Fly Challenge Modal — send SMS after completing fly game */}
+          {pendingFlyChallenge && (
+            <div className="fixed inset-0 z-[70] flex items-center justify-center px-6" style={{ background: "rgba(0,0,0,0.65)" }} onClick={() => setPendingFlyChallenge(null)}>
+              <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+                <p className="text-4xl text-center mb-2">⚔️</p>
+                <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
+                <p className="text-sm text-gray-500 text-center mb-2">Send your Fly score on <strong>{pendingFlyChallenge.title}</strong> for them to beat!</p>
+                <p className="text-center text-2xl font-black text-yellow-500 mb-4">💰 {pendingFlyChallenge.score}</p>
+
+                {"contacts" in navigator && "ContactsManager" in window && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        // @ts-ignore
+                        const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
+                        if (contacts?.length && contacts[0].tel?.length) {
+                          setFriendPhone(contacts[0].tel[0])
+                        }
+                      } catch { /* cancelled */ }
+                    }}
+                    className="w-full py-3 rounded-2xl font-bold text-white text-base mb-3"
+                    style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)" }}
+                  >👥 Pick from Contacts</button>
+                )}
+
+                <input
+                  type="tel"
+                  placeholder="📱 Friend's phone number"
+                  value={friendPhone}
+                  onChange={e => setFriendPhone(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-lg text-center font-medium mb-4 focus:outline-none focus:border-blue-400"
+                />
+
+                <button
+                  onClick={() => handleSendFlyChallenge(friendPhone)}
+                  className="w-full py-3.5 rounded-2xl font-black text-white text-lg mb-2 transition-all active:scale-95"
+                  style={{ background: friendPhone.replace(/\D/g,"").length >= 10 ? "linear-gradient(135deg, #06b6d4, #8b5cf6)" : "linear-gradient(135deg, #9ca3af, #6b7280)" }}
+                >
+                  {friendPhone.replace(/\D/g,"").length >= 10 ? "🦋 Send Challenge!" : "Enter a number to continue"}
+                </button>
+                <button onClick={() => setPendingFlyChallenge(null)} className="w-full py-2 text-gray-400 text-sm">Cancel</button>
               </div>
             </div>
           )}

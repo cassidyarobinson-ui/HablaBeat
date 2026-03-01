@@ -5,13 +5,15 @@ import { useParams } from "next/navigation"
 import dynamic from "next/dynamic"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
+const SongFly = dynamic(() => import("@/components/song-fly"), { ssr: false })
 
 interface ChallengeData {
+  mode?: "fly" | "pop"  // fly or pop (default pop for backwards compat)
   s: number    // song number
   t: string    // song title
   sc: number   // challenger score
-  g: string    // challenger grade
-  fc: number   // challenger flow combo
+  g?: string   // challenger grade (pop only)
+  fc?: number  // challenger flow combo (pop only)
   n?: string   // challenger name
   p?: string   // challenger photo base64
   vb?: number  // total vocab bank
@@ -46,14 +48,21 @@ export default function ChallengePage() {
     }
   }, [params.id])
 
-  // Grade order for comparison
+  const isFly = challenge?.mode === "fly"
+
+  // Grade order for comparison (pop mode)
   const GRADE_ORDER = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"]
   const gradeRank = (g: string) => GRADE_ORDER.indexOf(g)
 
-  const handleGameEnd = (_songNum: number, flow: number, bank: number, grade: string) => {
+  const handlePopGameEnd = (_songNum: number, flow: number, bank: number, grade: string) => {
     setMyScore(bank)
     setMyGrade(grade)
     setMyFlow(flow)
+    setStage("result")
+  }
+
+  const handleFlyGameEnd = (score: number) => {
+    setMyScore(score)
     setStage("result")
   }
 
@@ -143,30 +152,39 @@ export default function ChallengePage() {
 
             {/* Score to beat */}
             <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">Score to Beat on {challenge.t}</p>
-              <div className="flex justify-center gap-6">
+              <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">
+                {isFly ? "Fly" : "Pop"} Score to Beat on {challenge.t}
+              </p>
+              {isFly ? (
                 <div className="text-center">
-                  <p className="text-3xl font-black text-yellow-500">{challenge.g}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Grade</p>
+                  <p className="text-4xl font-black text-yellow-600">{challenge.sc}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">💰 Score</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-3xl font-black text-yellow-600">{challenge.sc}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">💰 Bank</p>
+              ) : (
+                <div className="flex justify-center gap-6">
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-yellow-500">{challenge.g}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Grade</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-yellow-600">{challenge.sc}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">💰 Bank</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-orange-500">{challenge.fc}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">🔥 Flow</p>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <p className="text-3xl font-black text-orange-500">{challenge.fc}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">🔥 Flow</p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
           <button
             onClick={() => setStage("playing")}
             className="w-full py-4 rounded-xl font-bold text-xl text-white transition-all hover:opacity-90"
-            style={{ backgroundColor: "#6A9FC0" }}
+            style={{ backgroundColor: isFly ? "#06b6d4" : "#6A9FC0" }}
           >
-            🥕 Accept Challenge!
+            {isFly ? "🦋 Accept Fly Challenge!" : "🥕 Accept Challenge!"}
           </button>
           <a href="/" className="block mt-3 text-sm text-gray-400 hover:text-gray-600">
             Go to HablaBeat instead
@@ -176,34 +194,56 @@ export default function ChallengePage() {
     )
   }
 
-  // ── Playing — full DDR game ──
+  // ── Playing ──
   if (stage === "playing") {
+    if (isFly) {
+      return (
+        <SongFly
+          songNumber={challenge.s}
+          coins={0}
+          onCoinsChange={() => {}}
+          onClose={() => setStage("intro")}
+          onGameEnd={handleFlyGameEnd}
+        />
+      )
+    }
     return (
       <DDRGame
         songNumber={challenge.s}
         songTitle={challenge.t}
         onBack={() => setStage("intro")}
-        onGameEnd={handleGameEnd}
+        onGameEnd={handlePopGameEnd}
       />
     )
   }
 
   // ── Result screen ──
-  const myRank = gradeRank(myGrade)
-  const theirRank = gradeRank(challenge.g)
-
   let outcome: "win" | "lose" | "tie"
-  if (myRank > theirRank) outcome = "win"
-  else if (myRank < theirRank) outcome = "lose"
-  else if (myScore > challenge.sc) outcome = "win"
-  else if (myScore < challenge.sc) outcome = "lose"
-  else outcome = "tie"
+
+  if (isFly) {
+    // Fly: compare scores only
+    if (myScore > challenge.sc) outcome = "win"
+    else if (myScore < challenge.sc) outcome = "lose"
+    else outcome = "tie"
+  } else {
+    // Pop: compare grade first, then score, then flow
+    const myRank = gradeRank(myGrade)
+    const theirRank = gradeRank(challenge.g || "F")
+    if (myRank > theirRank) outcome = "win"
+    else if (myRank < theirRank) outcome = "lose"
+    else if (myScore > challenge.sc) outcome = "win"
+    else if (myScore < challenge.sc) outcome = "lose"
+    else outcome = "tie"
+  }
 
   const resultConfig = {
     win:  { emoji: "🎉", headline: "You Win!", sub: `You crushed ${challengerName}'s score!`, bg: "from-yellow-50 to-white", border: "border-yellow-300", color: "#f59e0b" },
     lose: { emoji: "😅", headline: "You Lose!", sub: `${challengerName} got you this time… rematch?? 🥕`, bg: "from-red-50 to-white", border: "border-red-200", color: "#ef4444" },
     tie:  { emoji: "🤝", headline: "It's a Tie!", sub: "Dead even — incredibly close!", bg: "from-blue-50 to-white", border: "border-blue-200", color: "#6A9FC0" },
   }[outcome]
+
+  const myPopRank = gradeRank(myGrade)
+  const theirPopRank = gradeRank(challenge.g || "F")
 
   return (
     <div className={`min-h-screen bg-gradient-to-b ${resultConfig.bg} flex items-center justify-center px-4`}>
@@ -232,32 +272,41 @@ export default function ChallengePage() {
               <span className="text-xs text-gray-400 font-bold truncate w-16">{challengerName.slice(0, 8)}</span>
             </div>
           </div>
-          {/* Grade row */}
-          <div className="grid grid-cols-3 gap-2 text-center items-center py-2 border-b border-gray-100">
-            <div className="text-left text-sm text-gray-500">Grade</div>
-            <div className={`text-2xl font-black ${myRank >= theirRank ? "text-yellow-500" : "text-gray-400"}`}>{myGrade}</div>
-            <div className={`text-2xl font-black ${theirRank >= myRank ? "text-yellow-500" : "text-gray-400"}`}>{challenge.g}</div>
-          </div>
-          {/* Score row */}
-          <div className="grid grid-cols-3 gap-2 text-center items-center py-2 border-b border-gray-100">
-            <div className="text-left text-sm text-gray-500">💰 Bank</div>
-            <div className={`text-2xl font-black ${myScore >= challenge.sc ? "text-yellow-600" : "text-gray-400"}`}>{myScore}</div>
-            <div className={`text-2xl font-black ${challenge.sc >= myScore ? "text-yellow-600" : "text-gray-400"}`}>{challenge.sc}</div>
-          </div>
-          {/* Flow row */}
-          <div className="grid grid-cols-3 gap-2 text-center items-center py-2">
-            <div className="text-left text-sm text-gray-500">🔥 Flow</div>
-            <div className={`text-2xl font-black ${myFlow >= challenge.fc ? "text-orange-500" : "text-gray-400"}`}>{myFlow}</div>
-            <div className={`text-2xl font-black ${challenge.fc >= myFlow ? "text-orange-500" : "text-gray-400"}`}>{challenge.fc}</div>
-          </div>
+
+          {isFly ? (
+            /* Fly result: score only */
+            <div className="grid grid-cols-3 gap-2 text-center items-center py-2">
+              <div className="text-left text-sm text-gray-500">💰 Score</div>
+              <div className={`text-2xl font-black ${myScore >= challenge.sc ? "text-yellow-600" : "text-gray-400"}`}>{myScore}</div>
+              <div className={`text-2xl font-black ${challenge.sc >= myScore ? "text-yellow-600" : "text-gray-400"}`}>{challenge.sc}</div>
+            </div>
+          ) : (
+            /* Pop result: grade + bank + flow */
+            <>
+              <div className="grid grid-cols-3 gap-2 text-center items-center py-2 border-b border-gray-100">
+                <div className="text-left text-sm text-gray-500">Grade</div>
+                <div className={`text-2xl font-black ${myPopRank >= theirPopRank ? "text-yellow-500" : "text-gray-400"}`}>{myGrade}</div>
+                <div className={`text-2xl font-black ${theirPopRank >= myPopRank ? "text-yellow-500" : "text-gray-400"}`}>{challenge.g}</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center items-center py-2 border-b border-gray-100">
+                <div className="text-left text-sm text-gray-500">💰 Bank</div>
+                <div className={`text-2xl font-black ${myScore >= challenge.sc ? "text-yellow-600" : "text-gray-400"}`}>{myScore}</div>
+                <div className={`text-2xl font-black ${challenge.sc >= myScore ? "text-yellow-600" : "text-gray-400"}`}>{challenge.sc}</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center items-center py-2">
+                <div className="text-left text-sm text-gray-500">🔥 Flow</div>
+                <div className={`text-2xl font-black ${myFlow >= (challenge.fc ?? 0) ? "text-orange-500" : "text-gray-400"}`}>{myFlow}</div>
+                <div className={`text-2xl font-black ${(challenge.fc ?? 0) >= myFlow ? "text-orange-500" : "text-gray-400"}`}>{challenge.fc}</div>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="space-y-2">
-          {/* Rematch — same challenge link so friend can re-challenge */}
           <button
             onClick={() => setStage("playing")}
             className="w-full py-3 rounded-xl font-bold text-white transition-all hover:opacity-90"
-            style={{ backgroundColor: "#6A9FC0" }}
+            style={{ backgroundColor: isFly ? "#06b6d4" : "#6A9FC0" }}
           >
             🔁 Rematch!
           </button>
