@@ -1506,9 +1506,9 @@ export default function HablaBeat() {
   const [totalVocabBank, setTotalVocabBank] = useState(0)
 
   // Leaderboard state
-  const [leaderboard, setLeaderboard] = useState<{ name: string; flow: number; bank: number; grade: string; song: string; date: string }[]>([])
+  const [leaderboard, setLeaderboard] = useState<{ name: string; flow: number; bank: number; grade: string; song: string; date: string; mode?: "pop" | "fly" }[]>([])
   const [leaderboardNameInput, setLeaderboardNameInput] = useState("")
-  const [pendingLeaderboardEntry, setPendingLeaderboardEntry] = useState<{ flow: number; bank: number; grade: string; song: string } | null>(null)
+  const [pendingLeaderboardEntry, setPendingLeaderboardEntry] = useState<{ flow: number; bank: number; grade: string; song: string; mode?: "pop" | "fly" } | null>(null)
   const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false)
   const [openSectionId, setOpenSectionId] = useState<string>("")
   const [worldClosing, setWorldClosing] = useState(false)
@@ -1660,11 +1660,12 @@ export default function HablaBeat() {
       grade: pendingLeaderboardEntry.grade,
       song: pendingLeaderboardEntry.song,
       date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      mode: pendingLeaderboardEntry.mode || "pop" as const,
     }
     setLeaderboard(prev => {
       const updated = [...prev, entry]
-      // Sort by flow (desc), then bank (desc)
-      updated.sort((a, b) => b.flow - a.flow || b.bank - a.bank)
+      // Sort by bank (desc) then flow (desc) — bank is the universal score metric
+      updated.sort((a, b) => b.bank - a.bank || b.flow - a.flow)
       // Keep top 100
       return updated.slice(0, 100)
     })
@@ -2051,7 +2052,7 @@ export default function HablaBeat() {
     })
     // Queue leaderboard entry — user will enter name on leaderboard page
     const songTitle = curriculumData.flatMap(c => c.sections.flatMap(s => s.songs)).find((s: any) => s.number === songNum)?.title ?? `Song ${songNum}`
-    setPendingLeaderboardEntry({ flow, bank, grade, song: songTitle })
+    setPendingLeaderboardEntry({ flow, bank, grade, song: songTitle, mode: "pop" })
     setLeaderboardSubmitted(false)
     setLeaderboardNameInput(userName || "")
   }
@@ -2302,6 +2303,12 @@ export default function HablaBeat() {
             if (score > (prev[flySongNumber!] || 0)) return { ...prev, [flySongNumber!]: score }
             return prev
           })
+          // Queue Fly score for leaderboard
+          const flyData = SONG_FLY_DATA[flySongNumber!]
+          const flyTitle = flyData?.title ?? `Song ${flySongNumber}`
+          setPendingLeaderboardEntry({ flow: 0, bank: score, grade: "—", song: flyTitle, mode: "fly" })
+          setLeaderboardSubmitted(false)
+          setLeaderboardNameInput(userName || "")
         }}
         onChallenge={(score) => {
           const flyData = SONG_FLY_DATA[flySongNumber!]
@@ -2323,7 +2330,7 @@ export default function HablaBeat() {
           const url = `${window.location.origin}/challenge/${raw}`
           const senderName = userName || "Someone"
           const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their Fly score on HablaBeat! Can you top it?\n\n${url}`)
-          window.open(`sms:?&body=${message}`, "_self")
+          window.location.href = `sms:?&body=${message}`
           setTotalChallengesSent(prev => prev + 1)
         }}
         activePointer={activePointer}
@@ -2665,16 +2672,16 @@ export default function HablaBeat() {
             {/* Stat pills */}
             <div className="flex gap-2 px-4 pt-4">
               <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Players</p>
+                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Scores</p>
                 <p className="text-white font-black text-xl">{leaderboard.length}</p>
               </div>
               <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Flow</p>
-                <p className="text-white font-black text-xl">{leaderboard[0]?.flow ?? "—"}</p>
+                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Score</p>
+                <p className="text-white font-black text-xl">{leaderboard[0]?.bank ?? "—"}</p>
               </div>
               <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Bank</p>
-                <p className="text-white font-black text-xl">{leaderboard[0]?.bank ?? "—"}</p>
+                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Flow</p>
+                <p className="text-white font-black text-xl">{leaderboard.filter(e => e.mode !== "fly")[0]?.flow ?? "—"}</p>
               </div>
             </div>
           </div>
@@ -2687,11 +2694,17 @@ export default function HablaBeat() {
               animation: "lbPulse 2s ease-in-out infinite",
             }}>
               <div className="px-5 py-4">
-                <p className="text-white font-black text-lg text-center mb-1">🎉 New Score!</p>
+                <p className="text-white font-black text-lg text-center mb-1">🎉 New {pendingLeaderboardEntry.mode === "fly" ? "Fly" : "Pop"} Score!</p>
                 <div className="flex justify-center gap-4 mb-3">
-                  <span className="text-white/80 text-sm">🔥 <span className="font-black text-white">{pendingLeaderboardEntry.flow}</span> Flow</span>
-                  <span className="text-white/80 text-sm">💰 <span className="font-black text-white">{pendingLeaderboardEntry.bank}</span> Bank</span>
-                  <span className="text-white/80 text-sm">🎓 <span className="font-black" style={{ color: gradeColor[pendingLeaderboardEntry.grade] ?? "#fff" }}>{pendingLeaderboardEntry.grade}</span></span>
+                  {pendingLeaderboardEntry.mode === "fly" ? (
+                    <span className="text-white/80 text-sm">💰 <span className="font-black text-yellow-300">{pendingLeaderboardEntry.bank}</span> Score</span>
+                  ) : (
+                    <>
+                      <span className="text-white/80 text-sm">🔥 <span className="font-black text-white">{pendingLeaderboardEntry.flow}</span> Flow</span>
+                      <span className="text-white/80 text-sm">💰 <span className="font-black text-white">{pendingLeaderboardEntry.bank}</span> Bank</span>
+                      <span className="text-white/80 text-sm">🎓 <span className="font-black" style={{ color: gradeColor[pendingLeaderboardEntry.grade] ?? "#fff" }}>{pendingLeaderboardEntry.grade}</span></span>
+                    </>
+                  )}
                 </div>
                 <p className="text-white/60 text-xs text-center mb-3">{pendingLeaderboardEntry.song}</p>
                 <p className="text-white/80 text-sm font-bold text-center mb-2">Enter your name:</p>
@@ -2763,29 +2776,46 @@ export default function HablaBeat() {
                       }
                     </div>
 
-                    {/* Name + song */}
+                    {/* Name + song + mode */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-black text-sm leading-tight truncate">{entry.name}</p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-white font-black text-sm leading-tight truncate">{entry.name}</p>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold flex-shrink-0" style={{
+                          background: entry.mode === "fly" ? "rgba(6,182,212,0.2)" : "rgba(249,115,22,0.2)",
+                          color: entry.mode === "fly" ? "#67e8f9" : "#fdba74",
+                          border: `1px solid ${entry.mode === "fly" ? "rgba(6,182,212,0.3)" : "rgba(249,115,22,0.3)"}`,
+                        }}>{entry.mode === "fly" ? "🦋" : "🥕"}</span>
+                      </div>
                       <p className="text-white/45 text-[10px] truncate">{entry.song} · {entry.date}</p>
                     </div>
 
-                    {/* Grade */}
-                    <div className="flex-shrink-0 text-center">
-                      <p className="font-black text-lg leading-none" style={{ color: gradeColor[entry.grade] ?? "#fff" }}>{entry.grade}</p>
-                      <p className="text-white/40 text-[9px]">Grade</p>
-                    </div>
+                    {entry.mode === "fly" ? (
+                      /* Fly: just show score */
+                      <div className="flex-shrink-0 text-center min-w-[52px]">
+                        <p className="text-yellow-300 font-black text-lg leading-none">💰{entry.bank}</p>
+                        <p className="text-white/40 text-[9px]">Score</p>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Grade */}
+                        <div className="flex-shrink-0 text-center">
+                          <p className="font-black text-lg leading-none" style={{ color: gradeColor[entry.grade] ?? "#fff" }}>{entry.grade}</p>
+                          <p className="text-white/40 text-[9px]">Grade</p>
+                        </div>
 
-                    {/* Flow */}
-                    <div className="flex-shrink-0 text-center min-w-[42px]">
-                      <p className="text-orange-300 font-black text-base leading-none">🔥{entry.flow}</p>
-                      <p className="text-white/40 text-[9px]">Flow</p>
-                    </div>
+                        {/* Flow */}
+                        <div className="flex-shrink-0 text-center min-w-[42px]">
+                          <p className="text-orange-300 font-black text-base leading-none">🔥{entry.flow}</p>
+                          <p className="text-white/40 text-[9px]">Flow</p>
+                        </div>
 
-                    {/* Bank */}
-                    <div className="flex-shrink-0 text-center min-w-[42px]">
-                      <p className="text-yellow-300 font-black text-base leading-none">💰{entry.bank}</p>
-                      <p className="text-white/40 text-[9px]">Bank</p>
-                    </div>
+                        {/* Bank */}
+                        <div className="flex-shrink-0 text-center min-w-[42px]">
+                          <p className="text-yellow-300 font-black text-base leading-none">💰{entry.bank}</p>
+                          <p className="text-white/40 text-[9px]">Bank</p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )
               })
@@ -3749,13 +3779,15 @@ export default function HablaBeat() {
                             {/* Sing · Pop · Fly — pill buttons with high scores */}
                             <div className="flex flex-wrap gap-2 mt-2.5 ml-7">
                               {isClickable && (
-                                <button
-                                  onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                  className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                  style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 12px rgba(168,85,247,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
-                                >
-                                  Sing
-                                </button>
+                                <div className="flex flex-col items-center">
+                                  <button
+                                    onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
+                                    className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
+                                    style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 12px rgba(168,85,247,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                  >
+                                    Sing
+                                  </button>
+                                </div>
                               )}
                               {selectedLanguage === "spanish" && (
                                 <div className="flex flex-col items-center">

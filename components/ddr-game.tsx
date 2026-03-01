@@ -1264,7 +1264,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     // Open SMS directly — user picks who to text on their phone
     const senderName = userName || "Someone"
     const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their score on HablaBeat! Can you top it?\n\n${url}`)
-    window.open(`sms:?&body=${message}`, "_self")
+    window.location.href = `sms:?&body=${message}`
     setLinkCopied(true)
     setTimeout(() => setLinkCopied(false), 3000)
     onChallengeSent?.()
