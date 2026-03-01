@@ -132,16 +132,21 @@ export default function VocabFly({
   const [showHint,     setShowHint]     = useState(false)
   const [hintEntry,    setHintEntry]    = useState<FlyWord | null>(null)
 
-  const [words,     setWords]     = useState<FloatingWord[]>([])
-  const [coinItems, setCoinItems] = useState<Coin[]>([])
-  const [popItems,  setPopItems]  = useState<PopParticle[]>([])
-  const [skyEmojis] = useState<SkyEmoji[]>(makeSkyEmojis)
+  const [words,        setWords]        = useState<FloatingWord[]>([])
+  const [coinItems,    setCoinItems]    = useState<Coin[]>([])
+  const [popItems,     setPopItems]     = useState<PopParticle[]>([])
+  const [skyEmojis]                    = useState<SkyEmoji[]>(makeSkyEmojis)
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
 
   // ── Mutable refs ──────────────────────────────────────────────────────────
   const bunnyX  = useRef(50)
   const bunnyY  = useRef(BUNNY_Y_INIT)
   const velX    = useRef(0)
   const velY    = useRef(0)
+  // Touch drag: finger position target + active flag (bunny lerps toward target in game loop)
+  const touchTargetX = useRef(50)
+  const touchTargetY = useRef(BUNNY_Y_INIT)
+  const isTouching   = useRef(false)
 
   const wordIdxRef         = useRef(0)
   const gamePhaseRef       = useRef<"instructions" | "countdown" | "playing" | "phase_transition" | "complete">("instructions")
@@ -196,21 +201,39 @@ export default function VocabFly({
 
   useEffect(() => () => { if (holdIntervalRef.current) clearInterval(holdIntervalRef.current) }, [])
 
-  // ── Touch / drag control ───────────────────────────────────────────────────
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (gamePhaseRef.current !== "playing") return
-    e.preventDefault()
-    const touch = e.touches[0]
-    const area = areaRef.current?.getBoundingClientRect()
-    if (!area || !touch) return
-    const xPct = ((touch.clientX - area.left) / area.width) * 100
-    const yPct = ((touch.clientY - area.top)  / area.height) * 100
-    bunnyX.current = Math.max(3, Math.min(94, xPct))
-    bunnyY.current = Math.max(5, Math.min(88, yPct))
-    // zero out velocity so the bunny snaps to finger, not drifts
-    velX.current = 0
-    velY.current = 0
+  // ── Detect touch device for instructions text ─────────────────────────────
+  useEffect(() => {
+    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0)
   }, [])
+
+  // ── Touch / drag control — native listener with passive:false so preventDefault works ──
+  // The handler only records where the finger is; the game loop lerps the bunny toward it
+  // so the bunny trails slightly behind the finger (natural, always visible).
+  useEffect(() => {
+    const area = areaRef.current
+    if (!area) return
+    const handler = (e: TouchEvent) => {
+      if (gamePhaseRef.current !== "playing") return
+      e.preventDefault()
+      const touch = e.touches[0]
+      if (!touch) return
+      const rect = area.getBoundingClientRect()
+      touchTargetX.current = Math.max(3, Math.min(94, ((touch.clientX - rect.left) / rect.width) * 100))
+      touchTargetY.current = Math.max(5, Math.min(88, ((touch.clientY - rect.top)  / rect.height) * 100))
+      isTouching.current = true
+    }
+    const endHandler = () => { isTouching.current = false }
+    area.addEventListener("touchstart",  handler,    { passive: false })
+    area.addEventListener("touchmove",   handler,    { passive: false })
+    area.addEventListener("touchend",    endHandler)
+    area.addEventListener("touchcancel", endHandler)
+    return () => {
+      area.removeEventListener("touchstart",  handler)
+      area.removeEventListener("touchmove",   handler)
+      area.removeEventListener("touchend",    endHandler)
+      area.removeEventListener("touchcancel", endHandler)
+    }
+  }, []) // runs once after mount; gamePhaseRef/areaRef are stable refs
 
   // ── Keyboard ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -267,10 +290,19 @@ export default function VocabFly({
     const areaW = area.width
     const areaH = area.height
 
-    velX.current *= FRICTION
-    velY.current *= FRICTION
-    bunnyX.current = Math.max(3,  Math.min(94, bunnyX.current + velX.current * 0.35))
-    bunnyY.current = Math.max(5,  Math.min(88, bunnyY.current + velY.current * 0.35))
+    if (isTouching.current) {
+      // Lerp bunny toward finger — trails slightly behind, always visible below finger
+      const lerp = Math.min(1, 0.16 * (dt / 16))
+      bunnyX.current = Math.max(3, Math.min(94, bunnyX.current + (touchTargetX.current - bunnyX.current) * lerp))
+      bunnyY.current = Math.max(5, Math.min(88, bunnyY.current + (touchTargetY.current - bunnyY.current) * lerp))
+      velX.current = 0
+      velY.current = 0
+    } else {
+      velX.current *= FRICTION
+      velY.current *= FRICTION
+      bunnyX.current = Math.max(3,  Math.min(94, bunnyX.current + velX.current * 0.35))
+      bunnyY.current = Math.max(5,  Math.min(88, bunnyY.current + velY.current * 0.35))
+    }
 
     collectedThisFrame.current = false
     let targetMissed = false
@@ -514,9 +546,7 @@ export default function VocabFly({
 
       {/* ── Game Area ── */}
       <div ref={areaRef} className="flex-1 relative overflow-hidden select-none"
-        style={{ touchAction: "none" }}
-        onTouchStart={handleTouchMove}
-        onTouchMove={handleTouchMove}>
+        style={{ touchAction: "none" }}>
 
         {/* Stars */}
         {[...Array(22)].map((_, i) => (
@@ -644,7 +674,10 @@ export default function VocabFly({
             <div className="text-center mb-8 px-6 py-4 rounded-2xl"
               style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.25)",maxWidth:"300px"}}>
               <div className="text-white font-bold text-base leading-relaxed">
-                <span className="text-yellow-300 font-black">Drag your finger</span> to fly the bunny to the correct Spanish words!
+                {isTouchDevice
+                  ? <><span className="text-yellow-300 font-black">Drag your finger</span> to fly the bunny to the correct Spanish words!</>
+                  : <>Use your <span className="text-yellow-300 font-black">arrow keys</span> to fly the bunny to the correct Spanish words!</>
+                }
               </div>
             </div>
             <button
@@ -679,7 +712,10 @@ export default function VocabFly({
             </div>
             <div className="px-6 py-3 rounded-2xl text-white/70 text-sm text-center max-w-xs"
               style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)"}}>
-              <strong className="text-white">Drag your finger</strong> to steer 🐰<br/>
+              {isTouchDevice
+                ? <><strong className="text-white">Drag your finger</strong> to steer 🐰<br/></>
+                : <><strong className="text-white">Hold any arrow key</strong> to steer 🐰<br/></>
+              }
               Fly to the <span className="text-yellow-300 font-bold">correct Spanish word</span>!<br/>
               <span className="text-xs opacity-60 mt-1 block">English prompt shown at bottom</span>
             </div>
