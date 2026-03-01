@@ -9,6 +9,7 @@ const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { s
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 const AlphabetFly  = dynamic(() => import("@/components/alphabet-fly"),  { ssr: false })
 const BodyFly      = dynamic(() => import("@/components/body-fly"),       { ssr: false })
+const RolesFly     = dynamic(() => import("@/components/roles-fly"),     { ssr: false })
 const PetFly       = dynamic(() => import("@/components/pet-fly"),        { ssr: false })
 const TravelFly    = dynamic(() => import("@/components/travel-fly"),     { ssr: false })
 const NumbersFly   = dynamic(() => import("@/components/numbers-fly"),    { ssr: false })
@@ -2308,6 +2309,15 @@ export default function HablaBeat() {
       />
     )
   }
+  if (flyGameSection === "roles-world") {
+    return (
+      <RolesFly
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setFlyGameSection(null)}
+      />
+    )
+  }
   if (flyGameSection === "pets-syllables") {
     return (
       <PetFly
@@ -3816,7 +3826,7 @@ export default function HablaBeat() {
 
                     {/* ✈️ Fly Game Button — sits below songs, inside scroll area */}
                     {(() => {
-                      const FLY_SECTIONS = new Set(["alphabet-vowels","body-world","pets-syllables","places","numbers","numbers-time","colors-feelings","foods"])
+                      const FLY_SECTIONS = new Set(["alphabet-vowels","body-world","roles-world","pets-syllables","places","numbers","numbers-time","colors-feelings","foods"])
                       const isActive = FLY_SECTIONS.has(openSection!.id)
                       const isBody = openSection!.id === "body-world"
                       return (
