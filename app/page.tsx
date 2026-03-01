@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
+import { LYRIC_TRANSLATIONS } from "@/lib/lyric-translations"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
@@ -2487,29 +2488,52 @@ export default function HablaBeat() {
               />
 
               {/* Lyrics scroll area */}
-              <div className="bg-gray-950 px-4 py-3" style={{ minHeight: 110 }}>
+              <div className="bg-gray-950 px-4 py-3" style={{ minHeight: 120 }}>
                 {lyricLines.length === 0 ? (
                   <p className="text-center text-gray-500 text-sm pt-6">🎵 Loading lyrics…</p>
                 ) : (
-                  <div className="space-y-1 overflow-hidden" style={{ maxHeight: 100 }}>
+                  <div className="space-y-2 overflow-hidden" style={{ maxHeight: 120 }}>
                     {lyricLines.map((line) => {
                       const isActive = line.id === activeLyricId
                       const isPast = line.id < activeLyricId
+                      const isNearby = Math.abs(line.id - activeLyricId) <= 2
+                      if (!isActive && !isNearby) return null
+                      const englishText = LYRIC_TRANSLATIONS[currentSong?.number ?? 0]?.[line.id]
                       return (
-                        <p
+                        <div
                           key={line.id}
-                          className="text-center transition-all duration-200 leading-snug"
+                          className="text-center transition-all duration-200"
                           style={{
-                            fontSize: isActive ? '1.15rem' : '0.8rem',
-                            fontWeight: isActive ? 700 : 400,
-                            color: isActive ? '#fff' : isPast ? '#4a4a6a' : '#6b6b8a',
-                            textShadow: isActive ? `0 0 12px ${getSongPalette(currentSong?.number ?? 1)[0]}, 0 0 24px ${getSongPalette(currentSong?.number ?? 1)[1]}` : 'none',
                             transform: isActive ? 'scale(1.04)' : 'scale(1)',
-                            display: isActive || Math.abs(line.id - activeLyricId) <= 2 ? 'block' : 'none',
                           }}
                         >
-                          {line.words.map(w => w.text).join(' ')}
-                        </p>
+                          {/* Spanish line */}
+                          <p
+                            className="leading-snug"
+                            style={{
+                              fontSize: isActive ? '1.1rem' : '0.78rem',
+                              fontWeight: isActive ? 700 : 400,
+                              color: isActive ? '#fff' : isPast ? '#4a4a6a' : '#6b6b8a',
+                              textShadow: isActive ? `0 0 12px ${getSongPalette(currentSong?.number ?? 1)[0]}, 0 0 24px ${getSongPalette(currentSong?.number ?? 1)[1]}` : 'none',
+                            }}
+                          >
+                            {line.words.map(w => w.text).join(' ')}
+                          </p>
+                          {/* English translation directly below */}
+                          {englishText && (
+                            <p
+                              className="leading-snug"
+                              style={{
+                                fontSize: isActive ? '0.8rem' : '0.65rem',
+                                fontWeight: isActive ? 600 : 400,
+                                color: isActive ? 'rgba(255,240,140,0.9)' : isPast ? '#3a3a5a' : '#4a4a6a',
+                                marginTop: '1px',
+                              }}
+                            >
+                              {englishText}
+                            </p>
+                          )}
+                        </div>
                       )
                     })}
                     {activeLyricId === -1 && (
