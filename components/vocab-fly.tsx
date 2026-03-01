@@ -147,6 +147,9 @@ export default function VocabFly({
   const touchTargetX = useRef(50)
   const touchTargetY = useRef(BUNNY_Y_INIT)
   const isTouching   = useRef(false)
+  // Velocity of the finger (updated each touchmove) — transferred to bunny on touchend for flick momentum
+  const touchVelX    = useRef(0)
+  const touchVelY    = useRef(0)
   // Speed multiplier — increases 0.08 per correct answer (cap 2.5×)
   const speedMultiplierRef = useRef(1.0)
   // Wrong-answer counter — 5 wrong hits sends player to practice_more screen
@@ -222,11 +225,23 @@ export default function VocabFly({
       const touch = e.touches[0]
       if (!touch) return
       const rect = area.getBoundingClientRect()
-      touchTargetX.current = Math.max(3, Math.min(94, ((touch.clientX - rect.left) / rect.width) * 100))
-      touchTargetY.current = Math.max(5, Math.min(88, ((touch.clientY - rect.top)  / rect.height) * 100))
+      const newX = Math.max(3, Math.min(94, ((touch.clientX - rect.left) / rect.width) * 100))
+      const newY = Math.max(5, Math.min(88, ((touch.clientY - rect.top)  / rect.height) * 100))
+      // Track finger velocity (delta per move event) for flick momentum on release
+      touchVelX.current = newX - touchTargetX.current
+      touchVelY.current = newY - touchTargetY.current
+      touchTargetX.current = newX
+      touchTargetY.current = newY
       isTouching.current = true
     }
-    const endHandler = () => { isTouching.current = false }
+    const endHandler = () => {
+      // Transfer finger velocity to bunny so it keeps moving after a fast flick
+      velX.current = touchVelX.current * 0.7
+      velY.current = touchVelY.current * 0.7
+      touchVelX.current = 0
+      touchVelY.current = 0
+      isTouching.current = false
+    }
     area.addEventListener("touchstart",  handler,    { passive: false })
     area.addEventListener("touchmove",   handler,    { passive: false })
     area.addEventListener("touchend",    endHandler)
@@ -295,8 +310,8 @@ export default function VocabFly({
     const areaH = area.height
 
     if (isTouching.current) {
-      // Lerp bunny toward finger — trails slightly behind, always visible below finger
-      const lerp = Math.min(1, 0.16 * (dt / 16))
+      // Lerp bunny toward finger — 0.10 factor gives Angry Birds-style trail/delay
+      const lerp = Math.min(1, 0.10 * (dt / 16))
       bunnyX.current = Math.max(3, Math.min(94, bunnyX.current + (touchTargetX.current - bunnyX.current) * lerp))
       bunnyY.current = Math.max(5, Math.min(88, bunnyY.current + (touchTargetY.current - bunnyY.current) * lerp))
       velX.current = 0
@@ -651,7 +666,7 @@ export default function VocabFly({
             width:`${BUNNY_W}px`,height:`${BUNNY_H}px`,zIndex:10,
             filter:"drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
           }}>
-            <Image src="/images/super-bunny-blue-nobg.gif" alt="Bunny"
+            <Image src="/images/super-bunny-nobg.gif" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
               className="w-full h-full object-contain" unoptimized priority/>
           </div>
