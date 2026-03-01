@@ -1544,8 +1544,7 @@ export default function HablaBeat() {
 
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
-  const [storeOwned, setStoreOwned] = useState<string[]>(["effect-default", "pointer-carrot"])
-  const [activeEffect, setActiveEffect] = useState("effect-default")
+  const [storeOwned, setStoreOwned] = useState<string[]>(["pointer-carrot"])
   const [activeTheme, setActiveTheme] = useState("theme-default")
   const [activePointer, setActivePointer] = useState("pointer-carrot")
 
@@ -1578,8 +1577,7 @@ export default function HablaBeat() {
     setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
     setChallengesWon(loadPersisted("hablabeat-challenges-won", 0))
     setChallengeCoins(loadPersisted("hablabeat-challenge-coins", 0))
-    setStoreOwned(loadPersisted("hablabeat-store-owned", ["effect-default", "pointer-carrot"]))
-    setActiveEffect(loadPersisted("hablabeat-active-effect", "effect-default"))
+    setStoreOwned(loadPersisted("hablabeat-store-owned", ["pointer-carrot"]))
     setActiveTheme(loadPersisted("hablabeat-active-theme", "theme-default"))
     setActivePointer(loadPersisted("hablabeat-active-pointer", "pointer-carrot"))
     setLunasPurse(loadPersisted("hablabeat-lunas-purse", []))
@@ -1619,7 +1617,6 @@ export default function HablaBeat() {
   useEffect(() => { localStorage.setItem("hablabeat-last-play-date", JSON.stringify(lastPlayDate)) }, [lastPlayDate])
   useEffect(() => { localStorage.setItem("hablabeat-challenge-coins", JSON.stringify(challengeCoins)) }, [challengeCoins])
   useEffect(() => { localStorage.setItem("hablabeat-store-owned", JSON.stringify(storeOwned)) }, [storeOwned])
-  useEffect(() => { localStorage.setItem("hablabeat-active-effect", JSON.stringify(activeEffect)) }, [activeEffect])
   useEffect(() => { localStorage.setItem("hablabeat-active-pointer", JSON.stringify(activePointer)) }, [activePointer])
   useEffect(() => { localStorage.setItem("hablabeat-lunas-purse", JSON.stringify(lunasPurse)) }, [lunasPurse])
   useEffect(() => { if (leaderboard.length > 0) localStorage.setItem("hablabeat-leaderboard", JSON.stringify(leaderboard)) }, [leaderboard])
@@ -1639,13 +1636,11 @@ export default function HablaBeat() {
     if (totalVocabBank < item.cost || storeOwned.includes(item.id)) return
     setTotalVocabBank(prev => prev - item.cost)
     setStoreOwned(prev => [...prev, item.id])
-    if (item.id.startsWith("effect-")) setActiveEffect(item.id)
-    else setActivePointer(item.id)
+    setActivePointer(item.id)
   }
   const handleStoreEquip = (item: StoreItem) => {
     if (!storeOwned.includes(item.id)) return
-    if (item.id.startsWith("effect-")) setActiveEffect(item.id)
-    else setActivePointer(item.id)
+    setActivePointer(item.id)
   }
 
   // Submit leaderboard score
@@ -2316,11 +2311,9 @@ export default function HablaBeat() {
         } : undefined}
         onGameEnd={handleDDRGameEnd}
         onChallengeSent={handleChallengeSent}
-        activeEffect={activeEffect}
         activeTheme={activeTheme}
         activePointer={activePointer}
         storeOwned={storeOwned}
-        onEquipEffect={setActiveEffect}
         onEquipTheme={setActiveTheme}
         onEquipPointer={setActivePointer}
       />
@@ -3099,23 +3092,10 @@ export default function HablaBeat() {
                       </div>
                     ) : item.previewEmoji ? (
                       <div className="w-full h-14 rounded-xl flex items-center justify-center relative overflow-hidden"
-                        style={{ background: item.category === "pointer" && rarityInfo
+                        style={{ background: rarityInfo
                           ? rarityInfo.bg
-                          : item.id === "effect-laser"    ? "linear-gradient(135deg,#001533,#003366)"
-                          : item.id === "effect-lightning"? "linear-gradient(135deg,#1a1a00,#3d3300)"
-                          : item.id === "effect-fire"     ? "linear-gradient(135deg,#1a0000,#330000)"
-                          : item.id === "effect-crystal"  ? "linear-gradient(135deg,#001a33,#003355)"
-                          : item.id === "effect-galaxy"   ? "linear-gradient(135deg,#05000f,#0f0520)"
-                          : item.id === "effect-cyber"    ? "linear-gradient(135deg,#001a1a,#003333)"
-                          : item.id === "effect-rainbow"  ? "linear-gradient(135deg,#fff0f5,#f0f5ff)"
-                          : item.id === "effect-minimal"  ? "linear-gradient(135deg,#0a0a0a,#1a1a1a)"
                           : "linear-gradient(135deg,#e0f7ff,#c7f0ff)"
                         }}>
-                        {/* Effect-specific backgrounds */}
-                        {item.id === "effect-laser" && <div className="absolute inset-0 flex items-center"><div style={{ width:"100%", height:3, background:"linear-gradient(90deg, transparent, #00ffff, #0088ff, transparent)", boxShadow:"0 0 8px #00ffff, 0 0 16px #0088ff" }} /></div>}
-                        {item.id === "effect-lightning" && <><div className="absolute" style={{ top:"10%", left:"40%", width:3, height:"30%", background:"#ffe066", boxShadow:"0 0 6px #ffe066", transform:"rotate(15deg)" }} /><div className="absolute" style={{ top:"40%", left:"52%", width:2, height:"25%", background:"#ffe066", boxShadow:"0 0 6px #ffe066", transform:"rotate(-10deg)" }} /></>}
-                        {item.id === "effect-rainbow" && <div className="absolute inset-0" style={{ background:"linear-gradient(135deg, rgba(255,0,0,0.3), rgba(255,165,0,0.3), rgba(255,255,0,0.3), rgba(0,255,0,0.3), rgba(0,0,255,0.3), rgba(238,130,238,0.3))" }} />}
-                        {item.id === "effect-minimal" && <div className="absolute rounded-full" style={{ width:40, height:40, border:"2px solid rgba(255,255,255,0.5)", left:"50%", top:"50%", transform:"translate(-50%,-50%)" }} />}
                         <span style={{ fontSize:28, position:"relative", zIndex:1, filter: "drop-shadow(0 0 6px rgba(255,255,255,0.8))" }}>{item.previewEmoji}</span>
                       </div>
                     ) : null}
@@ -3158,14 +3138,8 @@ export default function HablaBeat() {
                     </div>
                   </div>
 
-                  {/* Single unified grid — effects + pointer arrows together */}
+                  {/* Pointer arrows grid */}
                   <div>
-                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">💥 Hit Effects</p>
-                    <div className="grid grid-cols-2 gap-3 mb-5">
-                      {STORE_CATALOG.filter(item => item.id.startsWith("effect-")).map(item => (
-                        <StoreCard key={item.id} item={item} isActive={activeEffect === item.id} canAfford={totalVocabBank >= item.cost} />
-                      ))}
-                    </div>
                     <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">🪄 Pointer Arrows</p>
                     <div className="grid grid-cols-2 gap-3">
                       {STORE_CATALOG.filter(item => item.id.startsWith("pointer-")).map(item => (
@@ -3629,9 +3603,8 @@ export default function HablaBeat() {
                       </div>
                     </div>
                   </div>
-                  {/* Loadout bar — shows active effect + pointer, tap to open drawer */}
+                  {/* Loadout bar — shows active pointer, tap to open drawer */}
                   {(() => {
-                    const activeEffectItem  = STORE_CATALOG.find(i => i.id === activeEffect)
                     const activePointerItem = STORE_CATALOG.find(i => i.id === activePointer)
                     return (
                       <div className="px-3 pb-2">

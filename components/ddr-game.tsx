@@ -53,27 +53,15 @@ interface DDRGameProps {
   onNextSong?: () => void
   onGameEnd?: (songNumber: number, flow: number, bank: number, grade: string) => void
   onChallengeSent?: () => void
-  activeEffect?: string
   activeTheme?: string
   activePointer?: string
   storeOwned?: string[]
-  onEquipEffect?: (id: string) => void
   onEquipTheme?: (id: string) => void
   onEquipPointer?: (id: string) => void
 }
 
-// Mini catalog for in-game loadout UI (themes removed)
+// Mini catalog for in-game loadout UI (pointers only)
 const GAME_CATALOG = [
-  { id: "effect-default",   name: "Classic Pop",      emoji: "💧", category: "effect"  },
-  { id: "effect-laser",     name: "Laser Beam",       emoji: "⚡", category: "effect"  },
-  { id: "effect-lightning", name: "Lightning",        emoji: "🌩️", category: "effect"  },
-  { id: "effect-fire",      name: "Fire Burst",       emoji: "🔥", category: "effect"  },
-  { id: "effect-crystal",   name: "Crystal",          emoji: "💎", category: "effect"  },
-  { id: "effect-galaxy",    name: "Galaxy",           emoji: "🌑", category: "effect"  },
-  { id: "effect-cyber",     name: "Cyber Slash",      emoji: "🔷", category: "effect"  },
-  { id: "effect-rainbow",   name: "Rainbow",          emoji: "🌈", category: "effect"  },
-  { id: "effect-minimal",   name: "Minimal Pro",      emoji: "⬜", category: "effect"  },
-  // ── Pointer Skins (11 total) ──
   { id: "pointer-carrot",    name: "Carrot",           emoji: "🥕", category: "pointer" },
   { id: "pointer-red-laser", name: "Red Laser",        emoji: "🔴", category: "pointer" },
   { id: "pointer-banana",    name: "Banana Blaster",   emoji: "🍌", category: "pointer" },
@@ -165,7 +153,7 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","modo","comido","gordo"]),
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeEffect = "effect-default", activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["effect-default","pointer-carrot"], onEquipEffect, onEquipTheme, onEquipPointer }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer }: DDRGameProps) {
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
@@ -182,7 +170,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const [elapsedTime, setElapsedTime] = useState("0:00")
   const [totalTime, setTotalTime] = useState("0:00")
   const [isPaused, setIsPaused] = useState(false)
-  const [loadoutTab, setLoadoutTab] = useState<"effect" | "pointer">("pointer")
   const [showLoadout, setShowLoadout] = useState(false)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -805,158 +792,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       isJustPerfect,
     })
 
-    // ── HIT EFFECT: branches by activeEffect ──────────────────────────────
-    if (activeEffect === "effect-laser") {
-      // Laser Beam: horizontal slash across the lane
-      const slash = document.createElement("div")
-      slash.className = "absolute pointer-events-none"
-      slash.style.cssText = `
-        left: ${laneLeft - 2}%; width: ${laneWidth + 4}%; bottom: 15%; height: 4px;
-        background: linear-gradient(90deg, transparent, ${rainbowColor}, white, ${rainbowColor}, transparent);
-        box-shadow: 0 0 12px ${rainbowColor}, 0 0 24px ${rainbowColor};
-        animation: laserSlash 0.35s ease-out forwards; z-index: 90;
-      `
-      container.appendChild(slash)
-      setTimeout(() => slash.remove(), 350)
-      // Side sparks
-      for (let i = 0; i < 6; i++) {
-        const spark = document.createElement("div")
-        spark.className = "absolute pointer-events-none"
-        const side = i < 3 ? laneLeft - 1 : laneLeft + laneWidth
-        spark.style.cssText = `
-          left: ${side}%; bottom: ${12 + Math.random() * 8}%; width: 2px; height: ${4 + Math.random() * 10}px;
-          background: ${rainbowColor}; opacity: 1;
-          transition: all 0.3s ease-out; z-index: 91;
-        `
-        container.appendChild(spark)
-        setTimeout(() => { spark.style.opacity = "0"; spark.style.transform = `translateY(${-20 - Math.random() * 20}px) rotate(${(Math.random() - 0.5) * 60}deg)` }, 10)
-        setTimeout(() => spark.remove(), 350)
-      }
-    } else if (activeEffect === "effect-lightning") {
-      // Lightning Strike: zigzag bolt from top to hit zone
-      const bolt = document.createElement("div")
-      bolt.className = "absolute pointer-events-none"
-      bolt.style.cssText = `
-        left: ${laneLeft + laneWidth / 2 - 3}%; bottom: 15%; width: 6%; height: 70%;
-        background: linear-gradient(180deg, transparent 0%, ${rainbowColor} 30%, white 50%, ${rainbowColor} 70%, transparent 100%);
-        clip-path: polygon(40% 0%, 70% 0%, 30% 45%, 60% 45%, 0% 100%, 30% 55%, 0% 55%);
-        box-shadow: 0 0 20px ${rainbowColor}; filter: blur(1px);
-        animation: lightningBolt 0.4s ease-out forwards; z-index: 92;
-      `
-      container.appendChild(bolt)
-      setTimeout(() => bolt.remove(), 400)
-    } else if (activeEffect === "effect-fire") {
-      // Fire Burst: rising flame particles
-      for (let i = 0; i < 10; i++) {
-        const flame = document.createElement("div")
-        const size = 8 + Math.random() * 14
-        flame.className = "absolute rounded-full pointer-events-none"
-        flame.style.cssText = `
-          left: ${laneLeft + Math.random() * laneWidth}%; bottom: 12%;
-          width: ${size}px; height: ${size * 1.5}px; border-radius: 50% 50% 30% 30%;
-          background: radial-gradient(ellipse at bottom, #fbbf24, #f97316, #ef4444, transparent);
-          opacity: 0.9; transition: all ${0.4 + Math.random() * 0.4}s ease-out; z-index: 91;
-        `
-        container.appendChild(flame)
-        setTimeout(() => {
-          flame.style.transform = `translateY(-${40 + Math.random() * 60}px) scale(${0.3 + Math.random() * 0.4}) rotate(${(Math.random() - 0.5) * 30}deg)`
-          flame.style.opacity = "0"
-        }, 10)
-        setTimeout(() => flame.remove(), 800)
-      }
-    } else if (activeEffect === "effect-rainbow") {
-      // Rainbow Explosion: colored rings expanding outward
-      const colors = ["#ef4444","#f97316","#fbbf24","#22c55e","#3b82f6","#a855f7","#ec4899"]
-      colors.forEach((c, i) => {
-        const ring = document.createElement("div")
-        ring.className = "absolute rounded-full pointer-events-none"
-        ring.style.cssText = `
-          left: ${laneLeft + laneWidth / 2}%; bottom: 16%; width: 4px; height: 4px;
-          border: 3px solid ${c}; border-radius: 50%;
-          box-shadow: 0 0 8px ${c}; opacity: 1;
-          transition: all ${0.4 + i * 0.05}s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${i * 0.03}s;
-          z-index: 90; transform: translate(-50%, 50%);
-        `
-        container.appendChild(ring)
-        const r = 20 + i * 10
-        setTimeout(() => {
-          ring.style.width = `${r * 2}px`; ring.style.height = `${r * 2}px`
-          ring.style.opacity = "0"; ring.style.left = `${laneLeft + laneWidth / 2 - r / 4}%`
-        }, 10)
-        setTimeout(() => ring.remove(), 600)
-      })
-    } else if (activeEffect === "effect-crystal") {
-      // Crystal Shatter: geometric shard fragments
-      for (let i = 0; i < 8; i++) {
-        const shard = document.createElement("div")
-        const size = 5 + Math.random() * 10
-        shard.className = "absolute pointer-events-none"
-        shard.style.cssText = `
-          left: ${laneLeft + laneWidth / 2}%; bottom: 15%;
-          width: ${size}px; height: ${size * 1.5}px;
-          background: linear-gradient(135deg, rgba(167,243,208,0.9), rgba(103,232,249,0.8), rgba(196,181,253,0.7));
-          clip-path: polygon(50% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-          box-shadow: 0 0 6px rgba(167,243,208,0.8);
-          opacity: 1; transition: all ${0.5 + Math.random() * 0.3}s ease-out; z-index: 91;
-        `
-        container.appendChild(shard)
-        const angle = (i / 8) * Math.PI * 2
-        const dist = 30 + Math.random() * 40
-        setTimeout(() => {
-          shard.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist - 20}px) rotate(${Math.random() * 360}deg) scale(0.1)`
-          shard.style.opacity = "0"
-        }, 10)
-        setTimeout(() => shard.remove(), 800)
-      }
-    } else if (activeEffect === "effect-galaxy") {
-      // Galaxy Collapse: stars imploding inward then exploding
-      for (let i = 0; i < 12; i++) {
-        const star = document.createElement("div")
-        const angle = (i / 12) * Math.PI * 2
-        const startDist = 50 + Math.random() * 30
-        star.className = "absolute pointer-events-none"
-        star.style.cssText = `
-          left: ${laneLeft + laneWidth / 2 + Math.cos(angle) * startDist / 4}%; bottom: ${16 + Math.sin(angle) * startDist / 8}%;
-          width: 4px; height: 4px; border-radius: 50%;
-          background: ${["#818cf8","#a78bfa","#c084fc","#e879f9","#f0abfc"][i % 5]};
-          box-shadow: 0 0 6px currentColor; opacity: 1;
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 91;
-        `
-        container.appendChild(star)
-        setTimeout(() => {
-          star.style.transform = `translate(${Math.cos(angle) * -40}px, ${Math.sin(angle) * -20}px) scale(2)`
-          star.style.opacity = "0"
-        }, 10)
-        setTimeout(() => star.remove(), 520)
-      }
-    } else if (activeEffect === "effect-cyber") {
-      // Neon Cyber Slash: two diagonal cuts
-      ["-45deg", "45deg"].forEach((rot, i) => {
-        const slash = document.createElement("div")
-        slash.className = "absolute pointer-events-none"
-        slash.style.cssText = `
-          left: ${laneLeft}%; width: ${laneWidth}%; bottom: 10%; height: 3px;
-          background: linear-gradient(90deg, transparent, #00ffff, #fff, #00ffff, transparent);
-          box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
-          transform: rotate(${rot}); transform-origin: center;
-          animation: cyberSlash 0.3s ease-out ${i * 0.05}s forwards; z-index: 90;
-        `
-        container.appendChild(slash)
-        setTimeout(() => slash.remove(), 350)
-      })
-    } else if (activeEffect === "effect-minimal") {
-      // Minimal Pro: clean single ring pulse
-      const ring = document.createElement("div")
-      ring.className = "absolute rounded-full pointer-events-none"
-      ring.style.cssText = `
-        left: ${laneLeft + 2}%; width: ${laneWidth - 4}%; bottom: 13%; aspect-ratio: 1;
-        border: 2px solid white; opacity: 0.9;
-        animation: bubblePop 0.4s ease-out forwards; z-index: 90;
-      `
-      container.appendChild(ring)
-      setTimeout(() => ring.remove(), 400)
-    } else {
-      // === DEFAULT: BUBBLE POP ANIMATION ===
+    // ── BUBBLE POP HIT EFFECT ──────────────────────────────
+    {
       // Primary pop ring — fast expanding burst
       const popRing1 = document.createElement("div")
       popRing1.className = "absolute rounded-full pointer-events-none"
@@ -2005,22 +1842,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           0% { transform: translateY(0) scale(1.2); opacity: 1; }
           30% { transform: translateY(20px) scale(1); opacity: 1; }
           100% { transform: translateY(80px) scale(0.6) rotate(15deg); opacity: 0; }
-        }
-        @keyframes laserSlash {
-          0% { transform: scaleX(0); opacity: 1; }
-          40% { transform: scaleX(1.1); opacity: 1; }
-          100% { transform: scaleX(1); opacity: 0; }
-        }
-        @keyframes lightningBolt {
-          0% { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
-          20% { opacity: 1; transform: scaleY(1); }
-          80% { opacity: 0.8; }
-          100% { opacity: 0; }
-        }
-        @keyframes cyberSlash {
-          0% { transform: rotate(var(--r, -45deg)) scaleX(0); opacity: 1; }
-          50% { transform: rotate(var(--r, -45deg)) scaleX(1); opacity: 1; }
-          100% { transform: rotate(var(--r, -45deg)) scaleX(1); opacity: 0; }
         }
         ${POINTER_KEYFRAMES}
       `}</style>
