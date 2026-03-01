@@ -57,15 +57,15 @@ interface SkyEmoji { id: number; emoji: string; x: number; y: number; size: numb
 // CONSTANTS
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BUNNY_W       = 100
-const BUNNY_H       = 100
+const BUNNY_W       = 72
+const BUNNY_H       = 72
 const WORD_H        = 46
 const COIN_SIZE     = 32
 const STEER_IMPULSE = 0.55
 const MAX_SPEED_X   = 6
 const MAX_SPEED_Y   = 5
 const FRICTION      = 0.85
-const HIT_RADIUS    = 60
+const HIT_RADIUS    = 52
 const BUNNY_Y_INIT  = 65
 
 const SKY_EMOJIS = ["🌟","⭐","✨","🎈","🌈","🦋","🌸","🎵","💫","🌺","🍀","🎀","🌙","🌠","🫀"]
@@ -195,6 +195,22 @@ export default function VocabFly({
   }, [])
 
   useEffect(() => () => { if (holdIntervalRef.current) clearInterval(holdIntervalRef.current) }, [])
+
+  // ── Touch / drag control ───────────────────────────────────────────────────
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (gamePhaseRef.current !== "playing") return
+    e.preventDefault()
+    const touch = e.touches[0]
+    const area = areaRef.current?.getBoundingClientRect()
+    if (!area || !touch) return
+    const xPct = ((touch.clientX - area.left) / area.width) * 100
+    const yPct = ((touch.clientY - area.top)  / area.height) * 100
+    bunnyX.current = Math.max(3, Math.min(94, xPct))
+    bunnyY.current = Math.max(5, Math.min(88, yPct))
+    // zero out velocity so the bunny snaps to finger, not drifts
+    velX.current = 0
+    velY.current = 0
+  }, [])
 
   // ── Keyboard ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -497,7 +513,10 @@ export default function VocabFly({
       </div>
 
       {/* ── Game Area ── */}
-      <div ref={areaRef} className="flex-1 relative overflow-hidden select-none">
+      <div ref={areaRef} className="flex-1 relative overflow-hidden select-none"
+        style={{ touchAction: "none" }}
+        onTouchStart={handleTouchMove}
+        onTouchMove={handleTouchMove}>
 
         {/* Stars */}
         {[...Array(22)].map((_, i) => (
@@ -586,7 +605,7 @@ export default function VocabFly({
         {(gamePhase === "playing" || gamePhase === "phase_transition") && (
           <div ref={bunnyElRef} className="absolute pointer-events-none" style={{
             width:`${BUNNY_W}px`,height:`${BUNNY_H}px`,zIndex:10,
-            filter:"sepia(1) hue-rotate(290deg) saturate(3) brightness(1.5) drop-shadow(0 0 10px rgba(236,72,153,0.9)) drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
+            filter:"sepia(1) hue-rotate(185deg) saturate(4) brightness(1.15) drop-shadow(0 0 10px rgba(96,165,250,0.9)) drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
           }}>
             <Image src="/images/super-bunny-nobg.gif" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
@@ -625,7 +644,7 @@ export default function VocabFly({
             <div className="text-center mb-8 px-6 py-4 rounded-2xl"
               style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.25)",maxWidth:"300px"}}>
               <div className="text-white font-bold text-base leading-relaxed">
-                Use your <span className="text-yellow-300 font-black">arrow keys</span> to fly the bunny to the correct Spanish words!
+                <span className="text-yellow-300 font-black">Drag your finger</span> to fly the bunny to the correct Spanish words!
               </div>
             </div>
             <button
@@ -660,7 +679,7 @@ export default function VocabFly({
             </div>
             <div className="px-6 py-3 rounded-2xl text-white/70 text-sm text-center max-w-xs"
               style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)"}}>
-              <strong className="text-white">Hold any arrow</strong> to steer 🐰<br/>
+              <strong className="text-white">Drag your finger</strong> to steer 🐰<br/>
               Fly to the <span className="text-yellow-300 font-bold">correct Spanish word</span>!<br/>
               <span className="text-xs opacity-60 mt-1 block">English prompt shown at bottom</span>
             </div>

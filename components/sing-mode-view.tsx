@@ -1036,10 +1036,8 @@ export default function SingModeView({
     return () => window.removeEventListener("keydown", onKeyDown)
   })
 
-  // Active lyric lines
+  // Active lyric line only
   const activeLine = lyricLines.find(l => l.id === activeLyricId)
-  const prevLine = lyricLines.find(l => l.id === activeLyricId - 1)
-  const nextLine = lyricLines.find(l => l.id === activeLyricId + 1)
 
   // Helper: render a line word-by-word with karaoke highlighting
   function renderLine(
@@ -1120,19 +1118,6 @@ export default function SingModeView({
             {LYRIC_TRANSLATIONS[song.number]?.[activeLine.id] && (
               <p className="text-center text-base leading-snug font-semibold" style={{ color: "rgba(255,240,140,0.92)", letterSpacing: "0.01em" }}>
                 {LYRIC_TRANSLATIONS[song.number][activeLine.id]}
-              </p>
-            )}
-          </div>
-        )}
-        {/* Next line preview: Spanish + English together (faded) */}
-        {nextLine && (
-          <div className="flex flex-col items-center gap-0.5" style={{ opacity: 0.42 }}>
-            <p className="text-center text-sm leading-snug">
-              {renderLine(nextLine, false)}
-            </p>
-            {LYRIC_TRANSLATIONS[song.number]?.[nextLine.id] && (
-              <p className="text-center text-xs leading-snug font-medium" style={{ color: "rgba(255,240,140,0.9)" }}>
-                {LYRIC_TRANSLATIONS[song.number][nextLine.id]}
               </p>
             )}
           </div>
