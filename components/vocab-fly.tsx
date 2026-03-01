@@ -50,7 +50,8 @@ interface FloatingWord {
   x: number; y: number; speed: number
   isTarget: boolean; collected: boolean
 }
-interface Coin { id: number; x: number; y: number; speed: number; collected: boolean }
+interface Coin { id: number; x: number; y: number; speed: number; collected: boolean; size: "small" | "medium" | "large"; points: number }
+interface Rock { id: number; x: number; y: number; speed: number; hit: boolean }
 interface PopParticle { id: number; spanish: string; english: string; x: number; y: number; correct: boolean }
 interface SkyEmoji { id: number; emoji: string; x: number; y: number; size: number; driftDur: number; driftDelay: number }
 
@@ -61,7 +62,8 @@ interface SkyEmoji { id: number; emoji: string; x: number; y: number; size: numb
 const BUNNY_W       = 72
 const BUNNY_H       = 72
 const WORD_H        = 46
-const COIN_SIZE     = 32
+const COIN_SIZES    = { small: 22, medium: 32, large: 44 }
+const ROCK_SIZE     = 28
 const STEER_IMPULSE = 0.55
 const MAX_SPEED_X   = 6
 const MAX_SPEED_Y   = 5
@@ -107,6 +109,56 @@ function speakSpanish(word: string) {
   window.speechSynthesis.speak(utt)
 }
 
+// ── Sound effects via Web Audio API ──
+let _audioCtx: AudioContext | null = null
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new AudioContext()
+  return _audioCtx
+}
+function playCorrectSound() {
+  try {
+    const ctx = getAudioCtx()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = "sine"
+    osc.frequency.setValueAtTime(587, ctx.currentTime)       // D5
+    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.08) // G5
+    osc.frequency.setValueAtTime(988, ctx.currentTime + 0.16) // B5
+    gain.gain.setValueAtTime(0.18, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.35)
+  } catch {}
+}
+function playWrongSound() {
+  try {
+    const ctx = getAudioCtx()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = "triangle"
+    osc.frequency.setValueAtTime(310, ctx.currentTime)
+    osc.frequency.linearRampToValueAtTime(180, ctx.currentTime + 0.25)
+    gain.gain.setValueAtTime(0.2, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3)
+  } catch {}
+}
+function playCoinSound() {
+  try {
+    const ctx = getAudioCtx()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = "sine"
+    osc.frequency.setValueAtTime(1047, ctx.currentTime)
+    osc.frequency.setValueAtTime(1319, ctx.currentTime + 0.06)
+    gain.gain.setValueAtTime(0.12, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15)
+  } catch {}
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -137,9 +189,12 @@ export default function VocabFly({
 
   const [words,        setWords]        = useState<FloatingWord[]>([])
   const [coinItems,    setCoinItems]    = useState<Coin[]>([])
+  const [rockItems,    setRockItems]    = useState<Rock[]>([])
   const [popItems,     setPopItems]     = useState<PopParticle[]>([])
   const [skyEmojis]                    = useState<SkyEmoji[]>(makeSkyEmojis)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
+  const [wrongCount,   setWrongCount]   = useState(0)
+  const [missedWords,  setMissedWords]  = useState<FlyWord[]>([])
 
   // ── Mutable refs ──────────────────────────────────────────────────────────
   const bunnyX  = useRef(50)
@@ -163,9 +218,11 @@ export default function VocabFly({
   const collectedThisFrame = useRef(false)
   const wordItemIdRef      = useRef(0)
   const coinIdRef          = useRef(0)
+  const rockIdRef          = useRef(0)
   const popIdRef           = useRef(0)
   const waveTimerRef       = useRef(0)
   const coinTimerRef       = useRef(0)
+  const rockTimerRef       = useRef(0)
   const lastTimeRef        = useRef(0)
   const facingRight        = useRef(false)
   const prevBunnyX         = useRef(50)
@@ -236,7 +293,7 @@ export default function VocabFly({
       if (!touch) return
       const rect = area.getBoundingClientRect()
       const newX = Math.max(3, Math.min(94, ((touch.clientX - rect.left) / rect.width) * 100))
-      const newY = Math.max(5, Math.min(88, ((touch.clientY - rect.top)  / rect.height) * 100))
+      const newY = Math.max(5, Math.min(88, ((touch.clientY - rect.top)  / rect.height) * 100 - 12))
       // Track finger velocity (delta per move event) for flick momentum on release
       touchVelX.current = newX - touchTargetX.current
       touchVelY.current = newY - touchTargetY.current
@@ -301,10 +358,24 @@ export default function VocabFly({
 
   const spawnCoins = useCallback(() => {
     const count = Math.random() < 0.4 ? 3 : 2
-    setCoinItems(prev => [...prev, ...Array.from({ length: count }, () => ({
-      id: coinIdRef.current++,
-      x: 8 + Math.random() * 84, y: -8 - Math.random() * 6,
-      speed: 0.12 + Math.random() * 0.08, collected: false,
+    setCoinItems(prev => [...prev, ...Array.from({ length: count }, () => {
+      const r = Math.random()
+      const size: "small" | "medium" | "large" = r < 0.5 ? "small" : r < 0.85 ? "medium" : "large"
+      const points = size === "small" ? 1 : size === "medium" ? 2 : 5
+      return {
+        id: coinIdRef.current++,
+        x: 8 + Math.random() * 84, y: -8 - Math.random() * 6,
+        speed: 0.12 + Math.random() * 0.08, collected: false, size, points,
+      }
+    })])
+  }, [])
+
+  const spawnRocks = useCallback(() => {
+    const count = 1 + (Math.random() < 0.3 ? 1 : 0)
+    setRockItems(prev => [...prev, ...Array.from({ length: count }, () => ({
+      id: rockIdRef.current++,
+      x: 10 + Math.random() * 80, y: -8 - Math.random() * 6,
+      speed: 0.15 + Math.random() * 0.10, hit: false,
     }))])
   }, [])
 
@@ -402,14 +473,48 @@ export default function VocabFly({
         (newY / 100) * areaH - (bunnyY.current / 100) * areaH
       )
       if (dist < HIT_RADIUS * 0.85) {
-        onCoinsChangeRef.current(1); setLocalCoins(lc => lc + 1)
+        playCoinSound()
+        onCoinsChangeRef.current(c.points); setLocalCoins(lc => lc + c.points)
         return { ...c, collected: true }
       }
       return { ...c, y: newY }
     }))
 
+    // Rock timer
+    rockTimerRef.current += dt
+    if (rockTimerRef.current >= 6000) {
+      rockTimerRef.current = 0
+      spawnRocks()
+    }
+
+    // Rock collisions
+    setRockItems(prev => prev.map(r => {
+      if (r.hit) return r
+      const newY = r.y + r.speed * (dt / 16)
+      const dist = Math.hypot(
+        (r.x / 100) * areaW - (bunnyX.current / 100) * areaW,
+        (newY / 100) * areaH - (bunnyY.current / 100) * areaH
+      )
+      if (dist < HIT_RADIUS * 0.7) {
+        playWrongSound()
+        setFlashScreen("wrong")
+        setTimeout(() => setFlashScreen(null), 400)
+        wrongCountRef.current += 1
+        setWrongCount(wrongCountRef.current)
+        if (wrongCountRef.current >= 5) {
+          setTimeout(() => {
+            setFlashScreen(null); setShowHint(false)
+            setGamePhase("practice_more"); gamePhaseRef.current = "practice_more"
+          }, 500)
+        }
+        return { ...r, y: newY, hit: true }
+      }
+      if (newY > 110) return { ...r, hit: true }
+      return { ...r, y: newY }
+    }))
+
     rafRef.current = requestAnimationFrame(gameLoop)
-  }, [spawnWave, spawnCoins, FULL_QUEUE, PHASE1_LEN])
+  }, [spawnWave, spawnCoins, spawnRocks, FULL_QUEUE, PHASE1_LEN])
 
   // ── Advance word (called from game loop) ──────────────────────────────────
   const advanceRef = useRef<(wasCorrect: boolean) => void>(() => {})
@@ -422,12 +527,16 @@ export default function VocabFly({
       setHintEntry(entry)
       setShowHint(true)
       setTimeout(() => { setFlashScreen(null); setShowHint(false) }, 900)
-      // Speed up on every correct answer — max 2.5×
-      speedMultiplierRef.current = Math.min(2.5, speedMultiplierRef.current + 0.08)
+      // Speed up on every correct answer — max 1.6×
+      speedMultiplierRef.current = Math.min(1.6, speedMultiplierRef.current + 0.03)
+      playCorrectSound()
     } else {
       setFlashScreen("wrong")
+      playWrongSound()
       setTimeout(() => setFlashScreen(null), 400)
       wrongCountRef.current += 1
+      setWrongCount(wrongCountRef.current)
+      setMissedWords(prev => [...prev, entry])
       if (wrongCountRef.current >= 5) {
         setTimeout(() => {
           setFlashScreen(null); setShowHint(false)
@@ -499,7 +608,8 @@ export default function VocabFly({
         bunnyElRef.current.style.left = `calc(${bunnyX.current}% - ${BUNNY_W / 2}px)`
         bunnyElRef.current.style.top  = `calc(${bunnyY.current}% - ${BUNNY_H / 2}px)`
         const dx = bunnyX.current - prevBunnyX.current
-        if (Math.abs(dx) > 0.15) facingRight.current = dx > 0
+        if (Math.abs(velX.current) > 0.3) facingRight.current = velX.current > 0
+        else if (Math.abs(dx) > 0.1) facingRight.current = dx > 0
         prevBunnyX.current = bunnyX.current
         bunnyElRef.current.style.transform = facingRight.current ? "scaleX(-1)" : "scaleX(1)"
       }
@@ -575,11 +685,26 @@ export default function VocabFly({
         </div>
       </div>
 
-      {/* Progress bar */}
+      {/* Progress bar + skull strikes */}
       <div className="px-4 pb-1 flex-shrink-0">
-        <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background:"rgba(255,255,255,0.15)" }}>
-          <div className="h-full rounded-full transition-all duration-500"
-            style={{ width:`${progressPct}%`, background: currentPhase.progressGrad }}/>
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background:"rgba(255,255,255,0.15)" }}>
+              <div className="h-full rounded-full transition-all duration-500"
+                style={{ width:`${progressPct}%`, background: currentPhase.progressGrad }}/>
+            </div>
+          </div>
+          <div className="flex gap-0.5 flex-shrink-0">
+            {[0,1,2,3,4].map(i => (
+              <span key={i} style={{
+                fontSize: "14px",
+                opacity: i < wrongCount ? 1 : 0.25,
+                filter: i < wrongCount ? "none" : "grayscale(1)",
+                transition: "all 0.3s ease",
+                transform: i < wrongCount ? "scale(1.1)" : "scale(1)",
+              }}>💀</span>
+            ))}
+          </div>
         </div>
         <div className="flex justify-between text-white/40 text-xs mt-0.5 px-0.5">
           <span>{phase1.label}</span>
@@ -685,20 +810,40 @@ export default function VocabFly({
           </div>
         ))}
 
-        {/* ── Coins ── */}
-        {coinItems.filter(c => !c.collected).map(c => (
-          <div key={c.id} className="absolute select-none pointer-events-none" style={{
-            left:`${c.x}%`,top:`${c.y}%`,
-            width:`${COIN_SIZE}px`,height:`${COIN_SIZE}px`,borderRadius:"50%",
-            background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-            border:"2px solid #92400E",
-            boxShadow:"0 2px 8px rgba(0,0,0,0.2),inset 0 -2px 4px rgba(120,53,0,0.4),0 0 12px rgba(251,191,36,0.6)",
-            transform:"translateX(-50%)",animation:"coinSpin 1.3s linear infinite",position:"absolute",
-          }}>
-            <div style={{position:"absolute",top:"14%",left:"18%",width:"32%",height:"20%",
-              background:"radial-gradient(ellipse,rgba(255,255,255,0.6),rgba(255,255,255,0) 70%)",
-              borderRadius:"50%",transform:"rotate(-15deg)"}}/>
-          </div>
+        {/* ── Coins (3 sizes) ── */}
+        {coinItems.filter(c => !c.collected).map(c => {
+          const sz = COIN_SIZES[c.size]
+          return (
+            <div key={c.id} className="absolute select-none pointer-events-none" style={{
+              left:`${c.x}%`,top:`${c.y}%`,
+              width:`${sz}px`,height:`${sz}px`,borderRadius:"50%",
+              background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+              border: c.size === "large" ? "3px solid #92400E" : "2px solid #92400E",
+              boxShadow: c.size === "large"
+                ? "0 2px 12px rgba(0,0,0,0.3),inset 0 -2px 4px rgba(120,53,0,0.4),0 0 20px rgba(251,191,36,0.8)"
+                : "0 2px 8px rgba(0,0,0,0.2),inset 0 -2px 4px rgba(120,53,0,0.4),0 0 12px rgba(251,191,36,0.6)",
+              transform:"translateX(-50%)",animation:"coinSpin 1.3s linear infinite",position:"absolute",
+            }}>
+              <div style={{position:"absolute",top:"14%",left:"18%",width:"32%",height:"20%",
+                background:"radial-gradient(ellipse,rgba(255,255,255,0.6),rgba(255,255,255,0) 70%)",
+                borderRadius:"50%",transform:"rotate(-15deg)"}}/>
+              {c.size === "large" && (
+                <div className="absolute inset-0 flex items-center justify-center font-black"
+                  style={{fontSize:"14px",color:"#92400E",textShadow:"0 1px 2px rgba(254,243,199,0.6)"}}>5</div>
+              )}
+            </div>
+          )
+        })}
+
+        {/* ── Rocks ── */}
+        {rockItems.filter(r => !r.hit).map(r => (
+          <div key={r.id} className="absolute select-none pointer-events-none" style={{
+            left:`${r.x}%`,top:`${r.y}%`,
+            width:`${ROCK_SIZE}px`,height:`${ROCK_SIZE}px`,
+            transform:"translateX(-50%)",
+            fontSize:`${ROCK_SIZE - 4}px`,lineHeight:1,
+            animation:"rockTumble 2.5s linear infinite",
+          }}>🪨</div>
         ))}
 
         {/* ── Bunny ── */}
@@ -815,21 +960,34 @@ export default function VocabFly({
 
         {/* ── Practice More screen — 5 wrong answers ── */}
         {gamePhase === "practice_more" && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-8"
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-6"
             style={{zIndex:45,background:"linear-gradient(160deg,rgba(20,0,0,0.97),rgba(80,10,10,0.98))",backdropFilter:"blur(10px)"}}>
-            <div className="text-8xl mb-4" style={{animation:"countdownPop 0.6s ease-out forwards"}}>📚</div>
-            <div className="text-white font-black text-2xl text-center mb-3">You Need More Practice!</div>
-            <div className="text-white/70 font-bold text-base text-center mb-8 max-w-xs leading-relaxed">
-              You missed 5 words — go back and review the vocabulary before trying again! You&apos;ve got this! 💪
+            <div className="text-5xl mb-3" style={{animation:"countdownPop 0.6s ease-out forwards"}}>💀💀💀💀💀</div>
+            <div className="text-white font-black text-2xl text-center mb-2">5 Strikes — Game Over!</div>
+            <div className="text-white/60 font-bold text-sm text-center mb-4">Review the words you missed:</div>
+
+            {/* Missed words list */}
+            <div className="w-full max-w-xs mb-6 space-y-2">
+              {missedWords.slice(0, 5).map((w, i) => (
+                <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-xl"
+                  style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)"}}>
+                  <span className="text-red-400 text-lg">💀</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white font-black text-base">{w.spanish}</div>
+                    <div className="text-white/50 text-xs">{w.english}</div>
+                  </div>
+                </div>
+              ))}
             </div>
+
             <div className="flex gap-3">
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
                 setWordIdx(0); wordIdxRef.current = 0
-                setWords([]); setCoinItems([]); setPopItems([])
+                setWords([]); setCoinItems([]); setRockItems([]); setPopItems([])
                 setCountdown(3); setFlashScreen(null); setShowHint(false)
-                waveTimerRef.current = 0; coinTimerRef.current = 0
-                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0
+                waveTimerRef.current = 0; coinTimerRef.current = 0; rockTimerRef.current = 0
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
                 setGamePhase("countdown"); gamePhaseRef.current = "countdown"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
@@ -839,7 +997,7 @@ export default function VocabFly({
               <button onClick={onClose}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
                 style={{background: accentColor, boxShadow:"0 4px 20px rgba(0,0,0,0.4)"}}>
-                Go Practice 📖
+                Study More 📖
               </button>
             </div>
           </div>
@@ -872,10 +1030,10 @@ export default function VocabFly({
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
                 setWordIdx(0); wordIdxRef.current = 0
-                setWords([]); setCoinItems([]); setPopItems([])
+                setWords([]); setCoinItems([]); setRockItems([]); setPopItems([])
                 setCountdown(3); setFlashScreen(null); setShowHint(false)
-                waveTimerRef.current = 0; coinTimerRef.current = 0
-                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0
+                waveTimerRef.current = 0; coinTimerRef.current = 0; rockTimerRef.current = 0
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
                 setGamePhase("countdown"); gamePhaseRef.current = "countdown"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
@@ -948,6 +1106,13 @@ export default function VocabFly({
         @keyframes starFloat {
           0%,100% { transform:scale(1) rotate(-2deg); }
           50%     { transform:scale(1.06) rotate(2deg); }
+        }
+        @keyframes rockTumble {
+          0%   { transform:translateX(-50%) rotate(0deg); }
+          25%  { transform:translateX(-50%) rotate(15deg); }
+          50%  { transform:translateX(-50%) rotate(0deg); }
+          75%  { transform:translateX(-50%) rotate(-15deg); }
+          100% { transform:translateX(-50%) rotate(0deg); }
         }
       `}</style>
     </div>

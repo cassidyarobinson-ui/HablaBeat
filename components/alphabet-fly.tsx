@@ -87,6 +87,16 @@ interface Coin {
   y: number
   speed: number
   collected: boolean
+  size: "small" | "medium" | "large"
+  points: number
+}
+
+interface Rock {
+  id: number
+  x: number
+  y: number
+  speed: number
+  hit: boolean
 }
 
 interface PopParticle {
@@ -123,7 +133,8 @@ interface Props {
 const BUNNY_W      = 100
 const BUNNY_H      = 100
 const LETTER_SIZE  = 58
-const COIN_SIZE    = 32
+const COIN_SIZES   = { small: 22, medium: 32, large: 44 }
+const ROCK_SIZE    = 28
 const STEER_IMPULSE = 0.55
 const MAX_SPEED_X  = 6
 const MAX_SPEED_Y  = 5
@@ -162,6 +173,56 @@ function makeSkyEmojis(): SkyEmoji[] {
   }))
 }
 
+// ── Sound effects via Web Audio API ──
+let _audioCtx: AudioContext | null = null
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new AudioContext()
+  return _audioCtx
+}
+function playCorrectSound() {
+  try {
+    const ctx = getAudioCtx()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = "sine"
+    osc.frequency.setValueAtTime(587, ctx.currentTime)
+    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.08)
+    osc.frequency.setValueAtTime(988, ctx.currentTime + 0.16)
+    gain.gain.setValueAtTime(0.18, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.35)
+  } catch {}
+}
+function playWrongSound() {
+  try {
+    const ctx = getAudioCtx()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = "triangle"
+    osc.frequency.setValueAtTime(310, ctx.currentTime)
+    osc.frequency.linearRampToValueAtTime(180, ctx.currentTime + 0.25)
+    gain.gain.setValueAtTime(0.2, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3)
+  } catch {}
+}
+function playCoinSound() {
+  try {
+    const ctx = getAudioCtx()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = "sine"
+    osc.frequency.setValueAtTime(1047, ctx.currentTime)
+    osc.frequency.setValueAtTime(1319, ctx.currentTime + 0.06)
+    gain.gain.setValueAtTime(0.12, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15)
+  } catch {}
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -177,7 +238,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   useEffect(() => { speechEnabledRef.current = localSpeechEnabled }, [localSpeechEnabled])
 
   // ── Render state (drives UI) ─────────────────────────────────────────────
-  const [gamePhase,   setGamePhase]   = useState<"instructions" | "countdown" | "playing" | "complete">("instructions")
+  const [gamePhase,   setGamePhase]   = useState<"instructions" | "countdown" | "playing" | "complete" | "practice_more">("instructions")
   const [countdown,   setCountdown]   = useState(3)
   const [score,       setScore]       = useState(0)
   const [localCoins,  setLocalCoins]  = useState(initialCoins)
@@ -188,8 +249,11 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
   const [letters,   setLetters]   = useState<FloatingLetter[]>([])
   const [coinItems, setCoinItems] = useState<Coin[]>([])
+  const [rockItems, setRockItems] = useState<Rock[]>([])
   const [popItems,  setPopItems]  = useState<PopParticle[]>([])
   const [skyEmojis] = useState<SkyEmoji[]>(makeSkyEmojis)
+  const [wrongCount,  setWrongCount]  = useState(0)
+  const [missedWords, setMissedWords] = useState<{ label: string; spanish: string; english: string }[]>([])
 
   // ── Refs (game-loop readable without stale closures) ─────────────────────
   const bunnyX    = useRef(50)
@@ -198,13 +262,17 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const velY      = useRef(0)
 
   const alphabetIdxRef       = useRef(0)   // mirrors alphabetIdx for the RAF
-  const gamePhaseRef         = useRef<"instructions" | "countdown" | "playing" | "complete">("instructions")
+  const gamePhaseRef         = useRef<"instructions" | "countdown" | "playing" | "complete" | "practice_more">("instructions")
+  const speedMultiplierRef   = useRef(1.0)
+  const wrongCountRef        = useRef(0)
   const collectedThisFrame   = useRef(false)
   const letterIdRef          = useRef(0)
   const coinIdRef            = useRef(0)
+  const rockIdRef            = useRef(0)
   const popIdRef             = useRef(0)
   const waveTimerRef         = useRef(0)
   const coinTimerRef         = useRef(0)
+  const rockTimerRef         = useRef(0)
   const lastTimeRef          = useRef(0)
   const rafRef               = useRef<number | null>(null)
   const onCoinsChangeRef     = useRef(onCoinsChange)
@@ -288,7 +356,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       category: item.category,
       x: positions[i],
       y: -8 - Math.random() * 6,
-      speed: 0.20 + Math.random() * 0.10,
+      speed: (0.20 + Math.random() * 0.10) * speedMultiplierRef.current,
       isTarget: item.label === targetLabel,
       collected: false,
     }))
@@ -297,14 +365,28 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
   const spawnCoins = useCallback(() => {
     const count = Math.random() < 0.4 ? 3 : 2
-    const coins: Coin[] = Array.from({ length: count }, () => ({
-      id: coinIdRef.current++,
-      x: 8 + Math.random() * 84,
-      y: -8 - Math.random() * 6,
-      speed: 0.12 + Math.random() * 0.08,
-      collected: false,
-    }))
+    const coins: Coin[] = Array.from({ length: count }, () => {
+      const r = Math.random()
+      const size: "small" | "medium" | "large" = r < 0.5 ? "small" : r < 0.85 ? "medium" : "large"
+      const points = size === "small" ? 1 : size === "medium" ? 2 : 5
+      return {
+        id: coinIdRef.current++,
+        x: 8 + Math.random() * 84,
+        y: -8 - Math.random() * 6,
+        speed: 0.12 + Math.random() * 0.08,
+        collected: false, size, points,
+      }
+    })
     setCoinItems(prev => [...prev, ...coins])
+  }, [])
+
+  const spawnRocks = useCallback(() => {
+    const count = 1 + (Math.random() < 0.3 ? 1 : 0)
+    setRockItems(prev => [...prev, ...Array.from({ length: count }, () => ({
+      id: rockIdRef.current++,
+      x: 10 + Math.random() * 80, y: -8 - Math.random() * 6,
+      speed: 0.15 + Math.random() * 0.10, hit: false,
+    }))])
   }, [])
 
   // ── Advance alphabet (called from game loop via ref) ─────────────────────
@@ -318,9 +400,22 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       setHintEntry(entry)
       setShowHint(true)
       setTimeout(() => { setFlashScreen(null); setShowHint(false) }, 900)
+      speedMultiplierRef.current = Math.min(1.6, speedMultiplierRef.current + 0.03)
+      playCorrectSound()
     } else {
       setFlashScreen("wrong")
+      playWrongSound()
       setTimeout(() => setFlashScreen(null), 400)
+      wrongCountRef.current += 1
+      setWrongCount(wrongCountRef.current)
+      setMissedWords(prev => [...prev, entry])
+      if (wrongCountRef.current >= 5) {
+        setTimeout(() => {
+          setFlashScreen(null); setShowHint(false)
+          setGamePhase("practice_more"); gamePhaseRef.current = "practice_more"
+        }, 500)
+        return
+      }
     }
     const nextIdx = idx + 1
     if (nextIdx >= FILTERED_QUEUE.length) {
@@ -336,9 +431,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
     }
     alphabetIdxRef.current = nextIdx
     setAlphabetIdx(nextIdx)
-    // say the new target letter
     if (speechEnabledRef.current) setTimeout(() => speakSpanish(FILTERED_QUEUE[nextIdx].label), 400)
-    waveTimerRef.current = 99999  // trigger immediate new wave
+    waveTimerRef.current = 99999
   }
 
   // ── Main game loop (stable ref — never recreated) ─────────────────────────
@@ -420,7 +514,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       const dist = Math.hypot((c.x / 100) * areaW - (bunnyX.current / 100) * areaW,
                               (newY / 100) * areaH - (bunnyY.current / 100) * areaH)
       if (dist < HIT_RADIUS * 0.75) {
-        setLocalCoins(lc => { onCoinsChangeRef.current(1); return lc + 1 })
+        playCoinSound()
+        setLocalCoins(lc => { onCoinsChangeRef.current(c.points); return lc + c.points })
         return { ...c, collected: true }
       }
       if (newY > 110) return { ...c, collected: true }
@@ -433,8 +528,41 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       spawnCoins()
     }
 
+    // Rock timer
+    rockTimerRef.current += dt
+    if (rockTimerRef.current >= 6000) {
+      rockTimerRef.current = 0
+      spawnRocks()
+    }
+
+    // Rock collisions
+    setRockItems(prev => prev.map(r => {
+      if (r.hit) return r
+      const newY = r.y + r.speed * (dt / 16)
+      const dist = Math.hypot(
+        (r.x / 100) * areaW - (bunnyX.current / 100) * areaW,
+        (newY / 100) * areaH - (bunnyY.current / 100) * areaH
+      )
+      if (dist < HIT_RADIUS * 0.7) {
+        playWrongSound()
+        setFlashScreen("wrong")
+        setTimeout(() => setFlashScreen(null), 400)
+        wrongCountRef.current += 1
+        setWrongCount(wrongCountRef.current)
+        if (wrongCountRef.current >= 5) {
+          setTimeout(() => {
+            setFlashScreen(null); setShowHint(false)
+            setGamePhase("practice_more"); gamePhaseRef.current = "practice_more"
+          }, 500)
+        }
+        return { ...r, y: newY, hit: true }
+      }
+      if (newY > 110) return { ...r, hit: true }
+      return { ...r, y: newY }
+    }))
+
     rafRef.current = requestAnimationFrame(gameLoop)
-  }, [spawnWave, spawnCoins])   // spawnWave/spawnCoins are stable (useCallback with no deps)
+  }, [spawnWave, spawnCoins, spawnRocks])
 
   // ── Countdown ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -473,7 +601,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         bunnyElRef.current.style.left = `calc(${bunnyX.current}% - ${BUNNY_W / 2}px)`
         bunnyElRef.current.style.top  = `calc(${bunnyY.current}% - ${BUNNY_H / 2}px)`
         const dx = bunnyX.current - prevBunnyX.current
-        if (Math.abs(dx) > 0.15) facingRight.current = dx > 0
+        if (Math.abs(velX.current) > 0.3) facingRight.current = velX.current > 0
+        else if (Math.abs(dx) > 0.1) facingRight.current = dx > 0
         prevBunnyX.current = bunnyX.current
         bunnyElRef.current.style.transform = facingRight.current ? "scaleX(-1)" : "scaleX(1)"
       }
@@ -536,11 +665,26 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         </div>
       </div>
 
-      {/* Progress bar */}
+      {/* Progress bar + skull strikes */}
       <div className="px-4 pb-1 flex-shrink-0">
-        <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background:"rgba(255,255,255,0.15)" }}>
-          <div className="h-full rounded-full transition-all duration-500"
-            style={{ width:`${progressPct}%`, background:"linear-gradient(90deg,#fbbf24,#f59e0b)" }}/>
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background:"rgba(255,255,255,0.15)" }}>
+              <div className="h-full rounded-full transition-all duration-500"
+                style={{ width:`${progressPct}%`, background:"linear-gradient(90deg,#fbbf24,#f59e0b)" }}/>
+            </div>
+          </div>
+          <div className="flex gap-0.5 flex-shrink-0">
+            {[0,1,2,3,4].map(i => (
+              <span key={i} style={{
+                fontSize: "14px",
+                opacity: i < wrongCount ? 1 : 0.25,
+                filter: i < wrongCount ? "none" : "grayscale(1)",
+                transition: "all 0.3s ease",
+                transform: i < wrongCount ? "scale(1.1)" : "scale(1)",
+              }}>💀</span>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -654,21 +798,41 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           </div>
         ))}
 
-        {/* ── Coins ── */}
-        {coinItems.filter(c => !c.collected).map(c => (
-          <div key={c.id} className="absolute select-none pointer-events-none" style={{
-            left:`${c.x}%`,top:`${c.y}%`,
-            width:`${COIN_SIZE}px`,height:`${COIN_SIZE}px`,
-            borderRadius:"50%",
-            background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-            border:"2px solid #92400E",
-            boxShadow:"0 2px 8px rgba(0,0,0,0.2),inset 0 -2px 4px rgba(120,53,0,0.4),inset 1px 1px 4px rgba(254,243,199,0.5),0 0 12px rgba(251,191,36,0.6)",
-            transform:"translateX(-50%)",animation:"coinSpin 1.3s linear infinite",position:"absolute",
-          }}>
-            <div style={{position:"absolute",top:"14%",left:"18%",width:"32%",height:"20%",
-              background:"radial-gradient(ellipse,rgba(255,255,255,0.6),rgba(255,255,255,0) 70%)",
-              borderRadius:"50%",transform:"rotate(-15deg)"}}/>
-          </div>
+        {/* ── Coins (3 sizes) ── */}
+        {coinItems.filter(c => !c.collected).map(c => {
+          const sz = COIN_SIZES[c.size]
+          return (
+            <div key={c.id} className="absolute select-none pointer-events-none" style={{
+              left:`${c.x}%`,top:`${c.y}%`,
+              width:`${sz}px`,height:`${sz}px`,
+              borderRadius:"50%",
+              background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+              border: c.size === "large" ? "3px solid #92400E" : "2px solid #92400E",
+              boxShadow: c.size === "large"
+                ? "0 2px 12px rgba(0,0,0,0.3),inset 0 -2px 4px rgba(120,53,0,0.4),0 0 20px rgba(251,191,36,0.8)"
+                : "0 2px 8px rgba(0,0,0,0.2),inset 0 -2px 4px rgba(120,53,0,0.4),0 0 12px rgba(251,191,36,0.6)",
+              transform:"translateX(-50%)",animation:"coinSpin 1.3s linear infinite",position:"absolute",
+            }}>
+              <div style={{position:"absolute",top:"14%",left:"18%",width:"32%",height:"20%",
+                background:"radial-gradient(ellipse,rgba(255,255,255,0.6),rgba(255,255,255,0) 70%)",
+                borderRadius:"50%",transform:"rotate(-15deg)"}}/>
+              {c.size === "large" && (
+                <div className="absolute inset-0 flex items-center justify-center font-black"
+                  style={{fontSize:"14px",color:"#92400E",textShadow:"0 1px 2px rgba(254,243,199,0.6)"}}>5</div>
+              )}
+            </div>
+          )
+        })}
+
+        {/* ── Rocks ── */}
+        {rockItems.filter(r => !r.hit).map(r => (
+          <div key={r.id} className="absolute select-none pointer-events-none" style={{
+            left:`${r.x}%`,top:`${r.y}%`,
+            width:`${ROCK_SIZE}px`,height:`${ROCK_SIZE}px`,
+            transform:"translateX(-50%)",
+            fontSize:`${ROCK_SIZE - 4}px`,lineHeight:1,
+            animation:"rockTumble 2.5s linear infinite",
+          }}>🪨</div>
         ))}
 
         {/* ── Bunny ── */}
@@ -767,6 +931,48 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           </div>
         )}
 
+        {/* ── Practice more screen (5 strikes) ── */}
+        {gamePhase === "practice_more" && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-6"
+            style={{zIndex:45,background:"linear-gradient(160deg,rgba(20,0,0,0.97),rgba(80,10,10,0.98))",backdropFilter:"blur(10px)"}}>
+            <div className="text-5xl mb-3" style={{animation:"countdownPop 0.6s ease-out forwards"}}>💀💀💀💀💀</div>
+            <div className="text-white font-black text-2xl text-center mb-2">5 Strikes — Game Over!</div>
+            <div className="text-white/60 font-bold text-sm text-center mb-4">Review the letters you missed:</div>
+            <div className="w-full max-w-xs mb-6 space-y-2">
+              {missedWords.slice(0, 5).map((w, i) => (
+                <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-xl"
+                  style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)"}}>
+                  <span className="text-red-400 text-lg">💀</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white font-black text-base">{w.label} — {w.spanish}</div>
+                    <div className="text-white/50 text-xs">{w.english}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => {
+                setScore(0); scoreRef.current = 0
+                setAlphabetIdx(0); alphabetIdxRef.current = 0
+                setLetters([]); setCoinItems([]); setRockItems([]); setPopItems([])
+                setCountdown(3); setFlashScreen(null); setShowHint(false)
+                waveTimerRef.current = 0; coinTimerRef.current = 0; rockTimerRef.current = 0
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
+                setGamePhase("countdown"); gamePhaseRef.current = "countdown"
+              }}
+                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
+                style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)"}}>
+                Try Again 🔄
+              </button>
+              <button onClick={onClose}
+                className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
+                style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",boxShadow:"0 4px 20px rgba(99,102,241,0.5)"}}>
+                Study More 📖
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ── Win screen ── */}
         {gamePhase === "complete" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6"
@@ -809,9 +1015,10 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
                 setAlphabetIdx(0); alphabetIdxRef.current = 0
-                setLetters([]); setCoinItems([]); setPopItems([])
+                setLetters([]); setCoinItems([]); setRockItems([]); setPopItems([])
                 setCountdown(3); setFlashScreen(null); setShowHint(false)
-                waveTimerRef.current = 0; coinTimerRef.current = 0
+                waveTimerRef.current = 0; coinTimerRef.current = 0; rockTimerRef.current = 0
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
                 setGamePhase("countdown"); gamePhaseRef.current = "countdown"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
@@ -890,6 +1097,13 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         @keyframes starFloat {
           0%,100% { transform:scale(1) rotate(-2deg); }
           50%     { transform:scale(1.06) rotate(2deg); }
+        }
+        @keyframes rockTumble {
+          0%   { transform:translateX(-50%) rotate(0deg); }
+          25%  { transform:translateX(-50%) rotate(15deg); }
+          50%  { transform:translateX(-50%) rotate(0deg); }
+          75%  { transform:translateX(-50%) rotate(-15deg); }
+          100% { transform:translateX(-50%) rotate(0deg); }
         }
       `}</style>
     </div>
