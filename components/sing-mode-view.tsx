@@ -1108,15 +1108,16 @@ export default function SingModeView({
       <div className="flex-1" />
 
       {/* ── Lyrics near bottom ── */}
-      <div className="relative z-10 px-6 pb-2 flex flex-col items-center gap-2">
-        {/* Active line: Spanish (karaoke) + English paired directly below */}
+      <div className="relative z-10 px-3 pb-2 flex flex-col items-center gap-1">
+        {/* Active line: Spanish (karaoke) + matching English translation directly below */}
         {activeLine && (
-          <div className="flex flex-col items-center gap-0.5">
-            <p className="text-center text-2xl leading-tight font-bold" style={{ letterSpacing: "0.01em" }}>
+          <div className="flex flex-col items-center gap-0.5 w-full max-w-sm px-3 py-2 rounded-2xl"
+            style={{ background: "rgba(0,0,0,0.38)", backdropFilter: "blur(6px)" }}>
+            <p className="text-center text-lg sm:text-xl leading-snug font-bold w-full" style={{ letterSpacing: "0.01em" }}>
               {renderLine(activeLine, true)}
             </p>
             {LYRIC_TRANSLATIONS[song.number]?.[activeLine.id] && (
-              <p className="text-center text-base leading-snug font-semibold" style={{ color: "rgba(255,240,140,0.92)", letterSpacing: "0.01em" }}>
+              <p className="text-center text-sm sm:text-base leading-snug font-semibold w-full" style={{ color: "rgba(255,240,140,0.95)", letterSpacing: "0.01em" }}>
                 {LYRIC_TRANSLATIONS[song.number][activeLine.id]}
               </p>
             )}
