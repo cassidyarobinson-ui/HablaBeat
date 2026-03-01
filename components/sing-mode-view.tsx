@@ -1277,23 +1277,32 @@ export default function SingModeView({
       <div className="flex-1" />
 
       {/* ── Lyrics near bottom ── */}
-      <div className="relative z-10 px-6 pb-2 flex flex-col items-center gap-1">
-        {/* English translation above active Spanish line */}
-        {activeLine && LYRIC_TRANSLATIONS[song.number]?.[activeLine.id] && (
-          <p className="text-center text-sm leading-snug font-medium" style={{ color: "rgba(255,255,180,0.85)", letterSpacing: "0.01em" }}>
-            {LYRIC_TRANSLATIONS[song.number][activeLine.id]}
-          </p>
-        )}
+      <div className="relative z-10 px-6 pb-2 flex flex-col items-center gap-2">
+        {/* Active line: Spanish (karaoke) + English paired directly below */}
         {activeLine && (
-          <p className="text-center text-2xl leading-tight font-bold" style={{ letterSpacing: "0.01em" }}>
-            {renderLine(activeLine, true)}
-          </p>
+          <div className="flex flex-col items-center gap-0.5">
+            <p className="text-center text-2xl leading-tight font-bold" style={{ letterSpacing: "0.01em" }}>
+              {renderLine(activeLine, true)}
+            </p>
+            {LYRIC_TRANSLATIONS[song.number]?.[activeLine.id] && (
+              <p className="text-center text-base leading-snug font-semibold" style={{ color: "rgba(255,240,140,0.92)", letterSpacing: "0.01em" }}>
+                {LYRIC_TRANSLATIONS[song.number][activeLine.id]}
+              </p>
+            )}
+          </div>
         )}
-        {/* Next line preview below */}
+        {/* Next line preview: Spanish + English together (faded) */}
         {nextLine && (
-          <p className="text-center text-sm leading-snug mt-1" style={{ opacity: 0.4 }}>
-            {renderLine(nextLine, false)}
-          </p>
+          <div className="flex flex-col items-center gap-0.5" style={{ opacity: 0.42 }}>
+            <p className="text-center text-sm leading-snug">
+              {renderLine(nextLine, false)}
+            </p>
+            {LYRIC_TRANSLATIONS[song.number]?.[nextLine.id] && (
+              <p className="text-center text-xs leading-snug font-medium" style={{ color: "rgba(255,240,140,0.9)" }}>
+                {LYRIC_TRANSLATIONS[song.number][nextLine.id]}
+              </p>
+            )}
+          </div>
         )}
       </div>
 
