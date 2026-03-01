@@ -2274,7 +2274,7 @@ export default function HablaBeat() {
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: titleShimmer 3s ease-in-out infinite;
+            animation: titleShimmer 2s ease-in-out 0.5s 1 both;
           }
         `}</style>
 
@@ -3342,7 +3342,7 @@ export default function HablaBeat() {
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: titleShimmer 3s ease-in-out infinite;
+            animation: titleShimmer 2s ease-in-out 0.5s 1 both;
           }
           @keyframes fireFlicker {
             0%,100% { transform: scaleY(1) rotate(-3deg); }
