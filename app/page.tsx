@@ -1520,9 +1520,6 @@ export default function HablaBeat() {
   const [popHighScores, setPopHighScores] = useState<Record<number, number>>({})
   const [flyHighScores, setFlyHighScores] = useState<Record<number, number>>({})
 
-  // Fly challenge state
-  const [pendingFlyChallenge, setPendingFlyChallenge] = useState<{ songNumber: number; title: string; score: number } | null>(null)
-
   // Challenge pre-select state
   const [showFriendPicker, setShowFriendPicker] = useState(false)
   const [pendingChallengeSong, setPendingChallengeSong] = useState<{songId: string; categoryId: string; sectionId: string} | null>(null)
@@ -2148,35 +2145,6 @@ export default function HablaBeat() {
     handlePlayDDR(pendingChallengeSong.songId, pendingChallengeSong.categoryId, pendingChallengeSong.sectionId)
   }
 
-  // Fly challenge — generate URL and send SMS
-  const handleSendFlyChallenge = (phone: string) => {
-    if (!pendingFlyChallenge) return
-    const payload: Record<string, unknown> = {
-      mode: "fly",
-      s: pendingFlyChallenge.songNumber,
-      t: pendingFlyChallenge.title,
-      sc: pendingFlyChallenge.score,
-    }
-    if (userName) payload.n = userName
-    if (userPhoto) payload.p = userPhoto
-    if (totalVocabBank) payload.vb = totalVocabBank
-    if (totalChallengesSent) payload.cs = totalChallengesSent + 1
-    if (challengesWon) payload.cw = challengesWon
-    if (dailyStreak) payload.str = dailyStreak
-    const raw = btoa(JSON.stringify(payload)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
-    const url = `${window.location.origin}/challenge/${raw}`
-    const digits = phone.replace(/\D/g, "")
-    const senderName = userName || "Someone"
-    const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their Fly score on HablaBeat! Can you top it? ${url}`)
-    if (digits.length >= 10) {
-      window.open(`sms:${digits}?body=${message}`, "_blank")
-    } else {
-      navigator.clipboard.writeText(url).catch(() => {})
-    }
-    setTotalChallengesSent(prev => prev + 1)
-    setPendingFlyChallenge(null)
-  }
-
   // Add new function to handle play count increment when song completes
   const handleSongComplete = (songId, categoryId, sectionId) => {
     // Update play count only when song completes
@@ -2338,7 +2306,25 @@ export default function HablaBeat() {
         onChallenge={(score) => {
           const flyData = SONG_FLY_DATA[flySongNumber!]
           if (!flyData) return
-          setPendingFlyChallenge({ songNumber: flySongNumber!, title: flyData.title, score })
+          // Generate challenge URL and open SMS directly
+          const payload: Record<string, unknown> = {
+            mode: "fly",
+            s: flySongNumber!,
+            t: flyData.title,
+            sc: score,
+          }
+          if (userName) payload.n = userName
+          if (userPhoto) payload.p = userPhoto
+          if (totalVocabBank) payload.vb = totalVocabBank
+          if (totalChallengesSent) payload.cs = totalChallengesSent + 1
+          if (challengesWon) payload.cw = challengesWon
+          if (dailyStreak) payload.str = dailyStreak
+          const raw = btoa(JSON.stringify(payload)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
+          const url = `${window.location.origin}/challenge/${raw}`
+          const senderName = userName || "Someone"
+          const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their Fly score on HablaBeat! Can you top it?\n\n${url}`)
+          window.open(`sms:?&body=${message}`, "_self")
+          setTotalChallengesSent(prev => prev + 1)
         }}
         activePointer={activePointer}
         storeOwned={storeOwned}
@@ -3831,98 +3817,6 @@ export default function HablaBeat() {
               </div>
             )
           })()}
-
-          {/* ── Friend Picker Modal — shown before Challenge starts ── */}
-          {showFriendPicker && (
-            <div className="fixed inset-0 z-[70] flex items-center justify-center px-6" style={{ background: "rgba(0,0,0,0.65)" }} onClick={() => setShowFriendPicker(false)}>
-              <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
-                <p className="text-4xl text-center mb-2">⚔️</p>
-                <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
-                <p className="text-sm text-gray-500 text-center mb-1">Pick who you want to challenge — they'll get your score to beat after you play!</p>
-                <p className="text-sm font-bold text-center mb-4" style={{ color: "#f59e0b" }}>Win and earn 2x points! 💰</p>
-
-                {/* Contact picker if supported */}
-                {"contacts" in navigator && "ContactsManager" in window && (
-                  <button
-                    onClick={async () => {
-                      try {
-                        // @ts-ignore
-                        const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
-                        if (contacts?.length && contacts[0].tel?.length) {
-                          setFriendPhone(contacts[0].tel[0])
-                        }
-                      } catch { /* cancelled */ }
-                    }}
-                    className="w-full py-3 rounded-2xl font-bold text-white text-base mb-3"
-                    style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)" }}
-                  >👥 Pick from Contacts</button>
-                )}
-
-                <input
-                  type="tel"
-                  placeholder="📱 Friend's phone number"
-                  value={friendPhone}
-                  onChange={e => setFriendPhone(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-lg text-center font-medium mb-4 focus:outline-none focus:border-blue-400"
-                />
-
-                <button
-                  onClick={startChallengeWithFriend}
-                  className="w-full py-3.5 rounded-2xl font-black text-white text-lg mb-2 transition-all active:scale-95"
-                  style={{ background: friendPhone.replace(/\D/g,"").length >= 10 ? "linear-gradient(135deg, #f97316, #ef4444)" : "linear-gradient(135deg, #9ca3af, #6b7280)" }}
-                >
-                  {friendPhone.replace(/\D/g,"").length >= 10 ? "🥕 Let's Play!" : "Enter a number to continue"}
-                </button>
-                <button onClick={() => setShowFriendPicker(false)} className="w-full py-2 text-gray-400 text-sm">Cancel</button>
-              </div>
-            </div>
-          )}
-
-          {/* Fly Challenge Modal — send SMS after completing fly game */}
-          {pendingFlyChallenge && (
-            <div className="fixed inset-0 z-[70] flex items-center justify-center px-6" style={{ background: "rgba(0,0,0,0.65)" }} onClick={() => setPendingFlyChallenge(null)}>
-              <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
-                <p className="text-4xl text-center mb-2">⚔️</p>
-                <h2 className="text-xl font-black text-center text-gray-900 mb-1">Challenge a Friend</h2>
-                <p className="text-sm text-gray-500 text-center mb-1">Send your Fly score on <strong>{pendingFlyChallenge.title}</strong> for them to beat!</p>
-                <p className="text-sm font-bold text-center mb-2" style={{ color: "#f59e0b" }}>Win and earn 2x points! 💰</p>
-                <p className="text-center text-2xl font-black text-yellow-500 mb-4">💰 {pendingFlyChallenge.score}</p>
-
-                {"contacts" in navigator && "ContactsManager" in window && (
-                  <button
-                    onClick={async () => {
-                      try {
-                        // @ts-ignore
-                        const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
-                        if (contacts?.length && contacts[0].tel?.length) {
-                          setFriendPhone(contacts[0].tel[0])
-                        }
-                      } catch { /* cancelled */ }
-                    }}
-                    className="w-full py-3 rounded-2xl font-bold text-white text-base mb-3"
-                    style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)" }}
-                  >👥 Pick from Contacts</button>
-                )}
-
-                <input
-                  type="tel"
-                  placeholder="📱 Friend's phone number"
-                  value={friendPhone}
-                  onChange={e => setFriendPhone(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-lg text-center font-medium mb-4 focus:outline-none focus:border-blue-400"
-                />
-
-                <button
-                  onClick={() => handleSendFlyChallenge(friendPhone)}
-                  className="w-full py-3.5 rounded-2xl font-black text-white text-lg mb-2 transition-all active:scale-95"
-                  style={{ background: friendPhone.replace(/\D/g,"").length >= 10 ? "linear-gradient(135deg, #06b6d4, #8b5cf6)" : "linear-gradient(135deg, #9ca3af, #6b7280)" }}
-                >
-                  {friendPhone.replace(/\D/g,"").length >= 10 ? "🦋 Send Challenge!" : "Enter a number to continue"}
-                </button>
-                <button onClick={() => setPendingFlyChallenge(null)} className="w-full py-2 text-gray-400 text-sm">Cancel</button>
-              </div>
-            </div>
-          )}
 
           {/* ── GALAXY MAP — stacked, one always open ── */}
           <div className="px-2 pt-2 pb-[88px] space-y-2">

@@ -1255,30 +1255,19 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     if (userPhoto) payload.p = userPhoto
     if (totalVocabBank) payload.vb = totalVocabBank
     if (bestFlow) payload.bf = bestFlow
-    if (totalChallengesSent) payload.cs = totalChallengesSent + 1  // +1 for this challenge
+    if (totalChallengesSent) payload.cs = totalChallengesSent + 1
     if (challengesWon) payload.cw = challengesWon
     if (dailyStreak) payload.str = dailyStreak
     const raw = btoa(JSON.stringify(payload)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
     const url = `${window.location.origin}/challenge/${raw}`
     setChallengeUrl(url)
-    setChallengePhone("")
-    setShowChallengeModal(true)
-    onChallengeSent?.()
-  }
-
-  const handleSendChallenge = () => {
-    const digits = challengePhone.replace(/\D/g, "")
+    // Open SMS directly — user picks who to text on their phone
     const senderName = userName || "Someone"
-    const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their score on HablaBeat! Can you top it? ${challengeUrl}`)
-    if (digits.length >= 10) {
-      window.open(`sms:${digits}?body=${message}`, "_blank")
-    } else {
-      // No valid number — just copy the link
-      navigator.clipboard.writeText(challengeUrl).catch(() => {})
-      setLinkCopied(true)
-      setTimeout(() => setLinkCopied(false), 3000)
-    }
-    setShowChallengeModal(false)
+    const message = encodeURIComponent(`🥕 ${senderName} challenges you to beat their score on HablaBeat! Can you top it?\n\n${url}`)
+    window.open(`sms:?&body=${message}`, "_self")
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 3000)
+    onChallengeSent?.()
   }
 
   // END SCREEN
@@ -1444,113 +1433,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </p>
           </div>
         </div>
-
-        {/* Challenge modal — styled to match app */}
-        {showChallengeModal && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-8" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }} onClick={() => setShowChallengeModal(false)}>
-            <div className="w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()} style={{ background: "linear-gradient(160deg, #1e1b4b 0%, #4c1d95 60%, #6d28d9 100%)", border: "1.5px solid rgba(255,255,255,0.2)" }}>
-              {/* Modal header gradient ribbon */}
-              <div className="h-1" style={{ background: "linear-gradient(90deg, #fbbf24, #a855f7, #3b82f6, #06b6d4, #34d399)" }} />
-
-              <div className="p-6">
-                {/* Header */}
-                <div className="text-center mb-5">
-                  <p className="text-4xl mb-2" style={{ animation: "btnBounce 0.9s ease-in-out infinite" }}>⚔️</p>
-                  <h2 className="text-xl font-black text-white">Challenge a Friend</h2>
-                  <p className="text-white/60 text-sm mt-1">Send your score — can they beat it?</p>
-                  <p className="text-sm font-bold mt-1" style={{ color: "#fbbf24" }}>Win and earn 2x points! 💰</p>
-                </div>
-
-                {/* Score summary pill */}
-                <div className="flex items-center justify-center gap-4 mb-5 py-3 rounded-2xl" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)" }}>
-                  <div className="text-center">
-                    <p className="text-white/50 text-xs font-bold uppercase tracking-wider">Grade</p>
-                    <p className={`text-2xl font-black ${gradeColor}`}>{grade}</p>
-                  </div>
-                  <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.2)" }} />
-                  <div className="text-center">
-                    <p className="text-white/50 text-xs font-bold uppercase tracking-wider">Flow</p>
-                    <p className="text-2xl font-black text-orange-300">🔥 {maxCombo}</p>
-                  </div>
-                  <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.2)" }} />
-                  <div className="text-center">
-                    <p className="text-white/50 text-xs font-bold uppercase tracking-wider">Bank</p>
-                    <p className="text-2xl font-black text-yellow-300">💰 {score}</p>
-                  </div>
-                </div>
-
-                {/* Contact picker — only shown if browser supports it */}
-                {"contacts" in navigator && "ContactsManager" in window && (
-                  <button
-                    onClick={async () => {
-                      try {
-                        // @ts-ignore — Contact Picker API not yet in TS types
-                        const contacts = await navigator.contacts.select(["name", "tel"], { multiple: false })
-                        if (contacts?.length && contacts[0].tel?.length) {
-                          setChallengePhone(contacts[0].tel[0])
-                        }
-                      } catch { /* user cancelled */ }
-                    }}
-                    className="w-full py-3.5 rounded-full font-black text-white text-base mb-3 transition-all active:scale-95 flex items-center justify-center gap-2"
-                    style={{ background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "0 4px 14px rgba(14,165,233,0.4)" }}
-                  >
-                    👥 Pick from Contacts
-                  </button>
-                )}
-
-                {/* Phone input */}
-                <input
-                  type="tel"
-                  placeholder="📱 Friend's phone number"
-                  value={challengePhone}
-                  onChange={e => setChallengePhone(e.target.value)}
-                  className="w-full px-4 py-3.5 text-lg text-center font-bold mb-3 rounded-2xl focus:outline-none"
-                  style={{
-                    background: "rgba(255,255,255,0.12)",
-                    border: "1.5px solid rgba(255,255,255,0.25)",
-                    color: "white",
-                    caretColor: "white",
-                  }}
-                />
-
-                {/* Send button */}
-                <div className="rounded-full p-[2px] mb-2" style={{ background: challengePhone.replace(/\D/g,"").length >= 10 ? "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))" : "transparent", boxShadow: challengePhone.replace(/\D/g,"").length >= 10 ? "0 6px 20px rgba(249,115,22,0.4)" : "none" }}>
-                  <button
-                    onClick={handleSendChallenge}
-                    className="w-full py-3.5 rounded-full font-black text-white text-lg transition-all active:scale-95"
-                    style={challengePhone.replace(/\D/g,"").length >= 10
-                      ? { background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }
-                      : { background: "rgba(255,255,255,0.15)", opacity: 0.6 }
-                    }
-                  >
-                    📲 Send Challenge Text
-                  </button>
-                </div>
-
-                {/* Copy link */}
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(challengeUrl).catch(() => {})
-                    setLinkCopied(true)
-                    setTimeout(() => setLinkCopied(false), 3000)
-                    setShowChallengeModal(false)
-                  }}
-                  className="w-full py-3 rounded-full font-bold text-white/60 text-sm transition-all active:scale-95"
-                  style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}
-                >
-                  📋 Just Copy the Link
-                </button>
-
-                <button
-                  onClick={() => setShowChallengeModal(false)}
-                  className="w-full py-2 mt-2 text-white/35 text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* End screen animations */}
         <style jsx>{`
