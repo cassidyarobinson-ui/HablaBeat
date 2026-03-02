@@ -245,7 +245,7 @@ export default function BodyFly({ coins: initialCoins, onCoinsChange, onClose }:
       isTarget: item.spanish === targetSpanish,
       collected: false,
     }))
-    setWords(newWords)
+    setWords(prev => [...prev.filter(w => !w.collected && w.y < 110), ...newWords])
   }, [])
 
   const spawnCoins = useCallback(() => {
@@ -370,7 +370,8 @@ export default function BodyFly({ coins: initialCoins, onCoinsChange, onClose }:
         advanceRef.current(false)
         return { ...w, y: newY, collected: true }
       }
-
+      // Clean up non-target words that go off screen
+      if (newY > 115) return { ...w, y: newY, collected: true }
       return { ...w, y: newY }
     }))
 
@@ -407,6 +408,8 @@ export default function BodyFly({ coins: initialCoins, onCoinsChange, onClose }:
         setLocalCoins(lc => lc + 1)
         return { ...c, collected: true }
       }
+      // Clean up coins that go off screen
+      if (newY > 115) return { ...c, collected: true }
       return { ...c, y: newY }
     }))
 

@@ -382,7 +382,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
       isTarget: item.label === targetLabel,
       collected: false,
     }))
-    setLetters(newLetters)
+    setLetters(prev => [...prev.filter(l => !l.collected && l.y < 110), ...newLetters])
   }, [])
 
   const spawnCoins = useCallback(() => {
@@ -773,7 +773,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
               style={{
                 left:`${l.x}%`, top:`${l.y}%`,
                 transform:"translateX(-50%)",
-                animation: l.isTarget ? "targetPulse 1.4s ease-in-out infinite" : undefined,
+                animation: undefined,
               }}>
               {/* Glow halo */}
               <div style={{
@@ -794,7 +794,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
                   color: colors.text,
                   borderRadius:"50%",
                   boxShadow:`0 0 18px ${colors.glow}88, 0 0 6px ${colors.glow}44, 0 4px 12px rgba(0,0,0,0.3)`,
-                  border: l.isTarget ? "3px solid white" : "2.5px solid rgba(255,255,255,0.5)",
+                  border: "2.5px solid rgba(255,255,255,0.5)",
                   animation:"starFloat 3s ease-in-out infinite",
                 }}>
                   {/* Inner shine */}
@@ -804,10 +804,6 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
                     background:"linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%)",
                   }}/>
                   <span style={{position:"relative",zIndex:1}}>{l.label}</span>
-                  {l.isTarget && (
-                    <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center"
-                      style={{fontSize:"9px",fontWeight:900,color:"#92400e",zIndex:2}}>★</div>
-                  )}
                 </div>
               </div>
               {/* Spanish + English label */}

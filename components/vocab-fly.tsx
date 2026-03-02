@@ -370,13 +370,14 @@ export default function VocabFly({
     const target = pool.find(w => w.spanish === targetSpanish)!
     const all = shuffle([target, ...distractors])
     const positions = shuffle([12, 30, 50, 68, 85]).slice(0, 3)
-    setWords(all.map((item, i) => ({
+    const newWords = all.map((item, i) => ({
       id: wordItemIdRef.current++,
       spanish: item.spanish, english: item.english,
       x: positions[i], y: -8 - Math.random() * 6,
       speed: (speedBase + Math.random() * speedVariance) * speedMultiplierRef.current,
       isTarget: item.spanish === targetSpanish, collected: false,
-    })))
+    }))
+    setWords(prev => [...prev.filter(w => !w.collected && w.y < 110), ...newWords])
   }, [])
 
   const spawnCoins = useCallback(() => {
@@ -464,6 +465,8 @@ export default function VocabFly({
         advanceRef.current(false)
         return { ...w, y: newY, collected: true }
       }
+      // Clean up non-target words that go off screen
+      if (newY > 115) return { ...w, y: newY, collected: true }
       return { ...w, y: newY }
     }))
 
@@ -500,6 +503,8 @@ export default function VocabFly({
         onCoinsChangeRef.current(c.points); setLocalCoins(lc => lc + c.points)
         return { ...c, collected: true }
       }
+      // Clean up coins that go off screen
+      if (newY > 115) return { ...c, collected: true }
       return { ...c, y: newY }
     }))
 
