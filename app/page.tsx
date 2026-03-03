@@ -2306,19 +2306,8 @@ export default function HablaBeat() {
           .splash-bunny { animation: splashPulse 2s ease-in-out infinite; }
           .splash-word  { animation: splashWordFade 0.6s ease 0.3s both; }
           .shimmer-title {
-            background: linear-gradient(
-              90deg,
-              #fff 0%, #fff 30%,
-              #fef9c3 42%,
-              #fde047 50%,
-              #fef9c3 58%,
-              #fff 70%, #fff 100%
-            );
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: titleShimmer 1.5s ease-in-out 0.6s 1 both;
+            color: #fff;
+            -webkit-text-fill-color: #fff;
           }
         `}</style>
 
@@ -2372,9 +2361,9 @@ export default function HablaBeat() {
             border: "3px solid rgba(255,255,255,0.7)",
             boxShadow: "0 4px 20px rgba(168,85,247,0.25), inset 0 1px 0 rgba(255,255,255,0.5)",
           }}>
-            <p className="shimmer-title" style={{
+            <p style={{
               fontSize: "2.4rem", fontWeight: 900, letterSpacing: "0.03em",
-              textShadow: "0 2px 8px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.3)",
+              color: "#fff",
               lineHeight: 1, margin: 0,
             }}>HablaBeat</p>
           </div>
@@ -3362,19 +3351,8 @@ export default function HablaBeat() {
             100% { background-position: -200% center; }
           }
           .shimmer-title {
-            background: linear-gradient(
-              90deg,
-              #fff 0%, #fff 30%,
-              #fef9c3 42%,
-              #fde047 50%,
-              #fef9c3 58%,
-              #fff 70%, #fff 100%
-            );
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: titleShimmer 1.5s ease-in-out 0.6s 1 both;
+            color: #fff;
+            -webkit-text-fill-color: #fff;
           }
           @keyframes fireFlicker {
             0%,100% { transform: scaleY(1) rotate(-3deg); }
@@ -3432,6 +3410,18 @@ export default function HablaBeat() {
             100% { opacity: 1; transform: scale(1); }
           }
           .world-content-in { animation: worldContentFadeIn 0.4s ease 0.7s both; }
+          .world-content-in .flag-text {
+            color: #fff;
+            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
+            paint-order: stroke fill;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 0 8px rgba(0,0,0,0.25);
+          }
+          .world-content-in .flag-text-light {
+            color: rgba(255,255,255,0.9);
+            -webkit-text-stroke: 0.8px rgba(0,0,0,0.55);
+            paint-order: stroke fill;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 6px rgba(0,0,0,0.2);
+          }
           @keyframes shootingStar {
             0%   { transform: translateX(0) translateY(0) rotate(-40deg); opacity: 0; }
             8%   { opacity: 1; }
@@ -3607,8 +3597,7 @@ export default function HablaBeat() {
                   }} />
                   <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
                   <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-3xl font-black tracking-wide drop-shadow-md shimmer-title"
-                      style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
+                    <h1 className="text-3xl font-black tracking-wide text-white">
                       HablaBeat
                     </h1>
                     <button
@@ -3678,6 +3667,8 @@ export default function HablaBeat() {
             }
             if (!openSection || !openCategory) return null
             const sectionGradient = SECTION_GRADIENTS[openSection.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+            const countryName = (openSection as any).country ?? ""
+            const flagBg = COUNTRY_FLAG[countryName]
             const closeWorld = () => {
               setWorldClosing(true)
               setTimeout(() => { setOpenSectionId(""); setWorldClosing(false) }, 450)
@@ -3687,7 +3678,10 @@ export default function HablaBeat() {
                 className={worldClosing ? "world-zoom-out" : "world-zoom-in"}
                 style={{
                   position: "fixed", inset: 0, zIndex: 60,
-                  background: sectionGradient,
+                  ...(flagBg
+                    ? { backgroundImage: `url(${flagBg.url})`, backgroundSize: "cover", backgroundPosition: "center center", backgroundRepeat: "no-repeat" }
+                    : { background: sectionGradient }
+                  ),
                   "--ox": worldZoomOrigin.x, "--oy": worldZoomOrigin.y,
                 } as React.CSSProperties}
               >
@@ -3726,35 +3720,8 @@ export default function HablaBeat() {
                     })}
                   </div>
                 )}
-                {/* Emoji background — fills the phone screen like a soft watermark */}
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
-                  <div style={{
-                    fontSize: "min(90vw, 90vh)",
-                    lineHeight: 1,
-                    opacity: 0.2,
-                    filter: "blur(0px)",
-                    userSelect: "none",
-                    transform: "rotate(-10deg)",
-                  }}>
-                    {openSection.id === "ar-verbs" ? "A"
-                      : openSection.id === "er-verbs" ? "E"
-                      : openSection.id === "ir-verbs" ? "I"
-                      : openSection.icon}
-                  </div>
-                </div>
-                {/* Starfield inside world */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                  <span className="star-twinkle absolute text-white/60" style={{ top:"6%",  left:"12%",  fontSize:"14px", animationDuration:"2.1s" }}>★</span>
-                  <span className="star-twinkle absolute text-white/40" style={{ top:"5%",  left:"55%",  fontSize:"10px", animationDuration:"1.7s", animationDelay:"0.4s" }}>✦</span>
-                  <span className="star-twinkle absolute text-white/50" style={{ top:"10%", left:"80%",  fontSize:"12px", animationDuration:"2.5s", animationDelay:"0.8s" }}>★</span>
-                  <span className="star-twinkle absolute text-white/40" style={{ top:"18%", left:"5%",   fontSize:"9px",  animationDuration:"1.9s", animationDelay:"1.2s" }}>✦</span>
-                  <span className="star-twinkle absolute text-white/60" style={{ top:"22%", left:"90%",  fontSize:"11px", animationDuration:"2.3s", animationDelay:"0.2s" }}>★</span>
-                  <span className="star-twinkle absolute text-white/30" style={{ top:"45%", left:"3%",   fontSize:"8px",  animationDuration:"1.8s", animationDelay:"1.5s" }}>✦</span>
-                  <span className="star-twinkle absolute text-white/50" style={{ top:"60%", left:"92%",  fontSize:"10px", animationDuration:"2.7s", animationDelay:"0.6s" }}>★</span>
-                  <span className="star-twinkle absolute text-white/40" style={{ top:"75%", left:"20%",  fontSize:"8px",  animationDuration:"2.0s", animationDelay:"1.0s" }}>✦</span>
-                  <span className="star-twinkle absolute text-white/50" style={{ top:"85%", left:"70%",  fontSize:"12px", animationDuration:"1.6s", animationDelay:"0.3s" }}>★</span>
-                  <span className="star-twinkle absolute text-white/30" style={{ top:"90%", left:"40%",  fontSize:"9px",  animationDuration:"2.2s", animationDelay:"1.8s" }}>✦</span>
-                </div>
+                {/* Light overlay to soften the flag */}
+                <div className="absolute inset-0 pointer-events-none" style={{ background: "rgba(255,255,255,0.35)" }} />
                 {/* Content */}
                 <div className="world-content-in flex flex-col h-full max-w-md mx-auto">
                   {/* Header */}
@@ -3772,8 +3739,8 @@ export default function HablaBeat() {
                           : openSection.icon}
                       </span>
                       <div>
-                        <h2 className="text-white font-black text-xl leading-tight drop-shadow">{openSection.title}</h2>
-                        <p className="text-white/70 text-xs font-semibold">{openSection.songs.length} songs · {openCategory.title}</p>
+                        <h2 className="flag-text font-black text-xl leading-tight">{openSection.title}</h2>
+                        <p className="flag-text-light text-xs font-semibold">{openSection.songs.length} songs · {openCategory.title}</p>
                       </div>
                     </div>
                   </div>
@@ -3783,7 +3750,7 @@ export default function HablaBeat() {
                     return (
                       <div className="px-3 pb-2">
                         <div className="flex gap-2 items-center">
-                          <span className="text-white/60 text-xs font-bold tracking-wide uppercase shrink-0">Loadout</span>
+                          <span className="flag-text-light text-xs font-bold tracking-wide uppercase shrink-0">Loadout</span>
                           <div className="flex gap-1.5 flex-1">
                             {/* Pointer chip */}
                             <button
@@ -3856,14 +3823,9 @@ export default function HablaBeat() {
                             style={{ borderBottom: idx < openSection!.songs.length - 1 ? "1px solid rgba(255,255,255,0.15)" : "none" }}
                           >
                             <div className="flex items-center gap-2.5">
-                              <span className="text-xs font-bold text-white/50 w-5 text-center flex-shrink-0">{song.number}</span>
+                              <span className="flag-text-light text-xs font-bold w-5 text-center flex-shrink-0">{song.number}</span>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                  <h4 className="font-bold text-white truncate text-sm drop-shadow-sm">{song.title}</h4>
-                                  {selectedLanguage === "spanish" && (
-                                    <span className="text-sm leading-none flex-shrink-0">{getSongCountry(song.number).flag}</span>
-                                  )}
-                                </div>
+                                <h4 className="flag-text font-bold truncate text-sm">{song.title}</h4>
                                 <div className="h-1 w-20 rounded-full mt-1 overflow-hidden" style={{ background: "rgba(255,255,255,0.2)" }}>
                                   <div className="h-full rounded-full transition-all duration-500" style={{
                                     width: `${Math.min(100, ((song.playCount || 0) / 3) * 100)}%`,
@@ -3883,10 +3845,10 @@ export default function HablaBeat() {
                                 <div className="flex flex-col items-center">
                                   <button
                                     onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                    className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                    style={{ background: "linear-gradient(135deg, #a855f7, #6366f1)", boxShadow: "0 4px 12px rgba(168,85,247,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                    className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
+                                    style={{ background: openCategory!.id === "people-places-things" ? "#93c5fd" : "#c4b5fd", color: openCategory!.id === "people-places-things" ? "#2563eb" : "#7c3aed", boxShadow: openCategory!.id === "people-places-things" ? "0 4px 12px rgba(59,130,246,0.35)" : "0 4px 12px rgba(139,92,246,0.35)", border: openCategory!.id === "people-places-things" ? "2px solid #2563eb" : "2px solid #7c3aed" }}
                                   >
-                                    Sing
+                                    🎤 Sing
                                   </button>
                                 </div>
                               )}
@@ -3894,10 +3856,10 @@ export default function HablaBeat() {
                                 <div className="flex flex-col items-center">
                                   <button
                                     onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                    className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                    style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "0 4px 12px rgba(249,115,22,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                    className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
+                                    style={{ background: openCategory!.id === "people-places-things" ? "#93c5fd" : "#c4b5fd", color: openCategory!.id === "people-places-things" ? "#2563eb" : "#7c3aed", boxShadow: openCategory!.id === "people-places-things" ? "0 4px 12px rgba(59,130,246,0.35)" : "0 4px 12px rgba(139,92,246,0.35)", border: openCategory!.id === "people-places-things" ? "2px solid #2563eb" : "2px solid #7c3aed" }}
                                   >
-                                    Pop
+                                    🥕 Pop
                                   </button>
                                   {popHighScores[song.number] > 0 && (
                                     <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {popHighScores[song.number]}</span>
@@ -3908,10 +3870,10 @@ export default function HablaBeat() {
                                 <div className="flex flex-col items-center">
                                   <button
                                     onClick={() => setFlySongNumber(song.number)}
-                                    className="px-4 py-2 rounded-full font-black text-white text-sm transition-all active:scale-90"
-                                    style={{ background: "linear-gradient(135deg, #06b6d4, #8b5cf6)", boxShadow: "0 4px 12px rgba(139,92,246,0.6)", border: "1.5px solid rgba(255,255,255,0.3)" }}
+                                    className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
+                                    style={{ background: openCategory!.id === "people-places-things" ? "#93c5fd" : "#c4b5fd", color: openCategory!.id === "people-places-things" ? "#2563eb" : "#7c3aed", boxShadow: openCategory!.id === "people-places-things" ? "0 4px 12px rgba(59,130,246,0.35)" : "0 4px 12px rgba(139,92,246,0.35)", border: openCategory!.id === "people-places-things" ? "2px solid #2563eb" : "2px solid #7c3aed" }}
                                   >
-                                    Fly
+                                    ☁️ Fly
                                   </button>
                                   {flyHighScores[song.number] > 0 && (
                                     <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {flyHighScores[song.number]}</span>
@@ -3971,6 +3933,13 @@ export default function HablaBeat() {
                 transform: scale(0.88) !important;
                 transition-duration: 0.08s;
               }
+              .mode-btn {
+                transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+              }
+              .mode-btn:hover {
+                transform: scale(1.08);
+                filter: brightness(0.92);
+              }
               @keyframes storeTabIn {
                 0%   { opacity: 0; transform: scale(0.95) translateY(6px); }
                 60%  { opacity: 1; transform: scale(1.01) translateY(-1px); }
@@ -3984,18 +3953,18 @@ export default function HablaBeat() {
             {curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id
               const catGradient = catIdx === 0
-                ? "linear-gradient(160deg, #3a6fa8 0%, #4a4ebd 40%, #2e6fa8 70%, #3a5aaa 100%)"
-                : "linear-gradient(160deg, #6b3faa 0%, #8a4ed4 40%, #6a3aaa 70%, #5a3aaa 100%)"
+                ? "linear-gradient(160deg, #f8fafc 0%, #eef4fb 40%, #f0f7ff 70%, #f8fafc 100%)"
+                : "linear-gradient(160deg, #faf8ff 0%, #f3eefb 40%, #f5f0ff 70%, #faf8ff 100%)"
               const catGlow = catIdx === 0
-                ? "0 0 28px rgba(56,189,248,0.3), 0 4px 16px rgba(0,0,0,0.2)"
-                : "0 0 28px rgba(167,139,250,0.3), 0 4px 16px rgba(0,0,0,0.2)"
+                ? "0 2px 12px rgba(0,0,0,0.08)"
+                : "0 2px 12px rgba(0,0,0,0.08)"
               const catAccent = catIdx === 0
-                ? ["#38bdf8","#22d3ee","#67e8f9"]
-                : ["#a78bfa","#c084fc","#e879f9"]
+                ? ["#2563eb","#0ea5e9","#3b82f6"]
+                : ["#7c3aed","#a855f7","#9333ea"]
 
               return (
                 <div key={category.id} className="rounded-3xl transition-all duration-300"
-                  style={{ background: catGradient, boxShadow: catGlow, border: `2px solid ${isOpen ? catAccent[0] + "66" : "rgba(255,255,255,0.08)"}`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
+                  style={{ background: catGradient, boxShadow: catGlow, border: `2px solid ${isOpen ? catAccent[0] + "33" : "rgba(0,0,0,0.06)"}`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
 
                   {/* ── Header row — always visible ── */}
                   <button
@@ -4005,21 +3974,21 @@ export default function HablaBeat() {
                   >
                     {/* Stars */}
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                      <span className="star-twinkle absolute text-yellow-400" style={{ top:"15%", left:"5%", fontSize:"9px", animationDuration:"2.1s" }}>★</span>
-                      <span className="star-twinkle absolute" style={{ top:"20%", left:"45%", fontSize:"7px", animationDuration:"1.7s", animationDelay:"0.5s", color: catAccent[0] }}>✦</span>
-                      <span className="star-twinkle absolute text-white" style={{ top:"10%", left:"70%", fontSize:"6px", animationDuration:"2.5s", animationDelay:"0.9s" }}>★</span>
-                      <span className="star-twinkle absolute" style={{ bottom:"15%", left:"80%", fontSize:"8px", animationDuration:"1.9s", animationDelay:"1.3s", color: catAccent[1] }}>✦</span>
-                      <span className="star-twinkle-slow absolute text-white" style={{ top:"5%", right:"8%", fontSize:"11px", animationDuration:"3.5s", animationDelay:"0.8s" }}>✧</span>
+                      <span className="star-twinkle absolute" style={{ top:"15%", left:"5%", fontSize:"9px", animationDuration:"2.1s", color: catAccent[0], opacity: 0.3 }}>★</span>
+                      <span className="star-twinkle absolute" style={{ top:"20%", left:"45%", fontSize:"7px", animationDuration:"1.7s", animationDelay:"0.5s", color: catAccent[1], opacity: 0.25 }}>✦</span>
+                      <span className="star-twinkle absolute" style={{ top:"10%", left:"70%", fontSize:"6px", animationDuration:"2.5s", animationDelay:"0.9s", color: catAccent[0], opacity: 0.2 }}>★</span>
+                      <span className="star-twinkle absolute" style={{ bottom:"15%", left:"80%", fontSize:"8px", animationDuration:"1.9s", animationDelay:"1.3s", color: catAccent[1], opacity: 0.25 }}>✦</span>
+                      <span className="star-twinkle-slow absolute" style={{ top:"5%", right:"8%", fontSize:"11px", animationDuration:"3.5s", animationDelay:"0.8s", color: catAccent[0], opacity: 0.15 }}>✧</span>
                     </div>
 
                     {/* Title */}
                     <div className="flex-1 text-left pl-1">
-                      <p className="text-white text-[13px] leading-tight drop-shadow"><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-normal"> {(category as any).titleSub}</span> : null}</p>
-                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: catAccent[0], opacity: 0.8 }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
+                      <p className="text-gray-900 text-[13px] leading-tight"><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-normal text-gray-600"> {(category as any).titleSub}</span> : null}</p>
+                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: catAccent[0] }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
                     </div>
 
                     {/* Chevron */}
-                    <span className="text-white/50 text-sm font-bold">{isOpen ? "▲" : "▼"}</span>
+                    <span className="text-gray-400 text-sm font-bold">{isOpen ? "▲" : "▼"}</span>
                   </button>
 
                   {/* ── World grid — only when open ── */}
@@ -4045,7 +4014,7 @@ export default function HablaBeat() {
                             return (
                               <path key={`diag-${row}`} fill="none"
                                 d={`M ${x1} ${y1 + 44} C ${x1 - 15} ${y2 - 15}, ${x2 + 15} ${y1 + 15}, ${x2} ${y2 - 44}`}
-                                stroke="rgba(255,255,255,0.5)" strokeWidth="2"
+                                stroke="rgba(0,0,0,0.12)" strokeWidth="2"
                                 strokeDasharray="6 4" strokeLinecap="round"
                                 filter={`url(#path-glow-${category.id})`}
                               />
@@ -4130,7 +4099,7 @@ export default function HablaBeat() {
                             const y = row * 100 + 50
                             return (
                               <line key={`hrow-${row}`} x1={50} y1={y} x2={(itemsInRow - 1) * 100 + 50} y2={y}
-                                stroke="rgba(255,255,255,0.45)" strokeWidth="2.5"
+                                stroke="rgba(0,0,0,0.1)" strokeWidth="2.5"
                                 strokeDasharray="8 5" strokeLinecap="round"
                               />
                             )
