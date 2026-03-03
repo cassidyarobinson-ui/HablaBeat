@@ -72,25 +72,25 @@ const COUNTRY_FLAG: Record<string, { url: string; pos: string; size: string }> =
 
 // ── SECTION GRADIENTS (fallback) ────────────────────────────────────────────
 const SECTION_GRADIENTS: Record<string, string> = {
-  "alphabet-vowels":  "linear-gradient(135deg, #fbbf24, #f59e0b)",
-  "the-self":         "linear-gradient(135deg, #2dd4bf, #0d9488)",
-  "body-world":       "linear-gradient(135deg, #f472b6, #ec4899)",
-  "roles-world":      "linear-gradient(135deg, #fb923c, #ea580c)",
-  "pets-syllables":   "linear-gradient(135deg, #22d3ee, #0891b2)",
-  "places":           "linear-gradient(135deg, #34d399, #059669)",
-  "numbers":          "linear-gradient(135deg, #a78bfa, #7c3aed)",
-  "numbers-time":     "linear-gradient(135deg, #06b6d4, #0891b2)",
-  "colors-feelings":  "linear-gradient(135deg, #f97316, #dc2626)",
-  "foods":            "linear-gradient(135deg, #fb923c, #f59e0b)",
-  "ar-verbs":         "linear-gradient(135deg, #22d3ee, #0284c7)",
-  "er-verbs":         "linear-gradient(135deg, #4ade80, #16a34a)",
-  "ir-verbs":         "linear-gradient(135deg, #c084fc, #9333ea)",
-  "preterite":        "linear-gradient(135deg, #fb923c, #ea580c)",
-  "imperfecto":       "linear-gradient(135deg, #fde047, #ca8a04)",
-  "futuro":           "linear-gradient(135deg, #38bdf8, #0369a1)",
-  "conditional":      "linear-gradient(135deg, #67e8f9, #0e7490)",
-  "pronouns":         "linear-gradient(135deg, #6ee7b7, #047857)",
-  "advanced":         "linear-gradient(135deg, #818cf8, #4338ca)",
+  "alphabet-vowels":  "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "the-self":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "body-world":       "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "roles-world":      "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "pets-syllables":   "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "places":           "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "numbers":          "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "numbers-time":     "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "colors-feelings":  "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "foods":            "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "ar-verbs":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "er-verbs":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "ir-verbs":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "preterite":        "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "imperfecto":       "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "futuro":           "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "conditional":      "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "pronouns":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "advanced":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
 }
 
 const STORE_CATALOG: StoreItem[] = [
@@ -2270,7 +2270,7 @@ export default function HablaBeat() {
       <div
         style={{
           position: "fixed", inset: 0, zIndex: 9999,
-          background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)",
+          background: "#fafafa",
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           opacity: splashFading ? 0 : 1,
           transition: "opacity 0.5s ease",
@@ -2346,27 +2346,22 @@ export default function HablaBeat() {
         ))}
 
         {/* Bunny centered */}
-        <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "16px" }}>
+        <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "-4px" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain" }} />
         </div>
 
-        {/* Logo ribbon — matches songs page style */}
-        <div className="splash-word" style={{ zIndex: 2, textAlign: "center" }}>
-          <div style={{
-            display: "inline-block",
-            background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
-            borderRadius: "999px",
-            padding: "10px 28px",
-            border: "3px solid rgba(255,255,255,0.7)",
-            boxShadow: "0 4px 20px rgba(168,85,247,0.25), inset 0 1px 0 rgba(255,255,255,0.5)",
-          }}>
-            <p style={{
-              fontSize: "2.4rem", fontWeight: 900, letterSpacing: "0.03em",
-              color: "#fff",
-              lineHeight: 1, margin: 0,
-            }}>HablaBeat</p>
-          </div>
+        {/* Logo text — blue with black outline + yellow glow behind */}
+        <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
+          <div style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", width: "600px", height: "160px", background: "radial-gradient(ellipse 110% 80%, rgba(251,191,36,0.3) 0%, rgba(251,191,36,0.18) 35%, rgba(251,191,36,0.08) 60%, transparent 85%)", pointerEvents: "none", zIndex: -1 }} />
+          <p style={{
+            fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.08em",
+            color: "#aed8ef",
+            lineHeight: 1, margin: 0,
+            WebkitTextStroke: "3px #1a1a2e",
+            paintOrder: "stroke fill",
+            textTransform: "uppercase" as const,
+          }}>HablaBeat</p>
           <p style={{ color: "rgba(0,0,0,0.35)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
@@ -2660,7 +2655,7 @@ export default function HablaBeat() {
           {/* Bottom Navigation */}
           <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => { stopMic(); setCurrentView("songs") }}>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => { stopMic(); setCurrentView("songs") }}>
                 <Music className="h-6 w-6" />
                 <span className="text-xs font-bold">Songs</span>
               </Button>
@@ -2708,59 +2703,23 @@ export default function HablaBeat() {
         `}</style>
         <div className="max-w-md mx-auto min-h-screen pb-24">
 
-          {/* Header */}
-          <div className="relative overflow-hidden pb-5 rounded-3xl mx-2 mt-2" style={{
-            background: "linear-gradient(180deg, #1e1b4b 0%, #312e81 40%, #4c1d95 80%, #6d28d9 100%)"
-          }}>
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {[
-                { top:"8%",  left:"8%",  size:12, delay:"0s" },
-                { top:"15%", left:"50%", size:9,  delay:"0.4s" },
-                { top:"6%",  left:"75%", size:11, delay:"0.8s" },
-                { top:"22%", left:"88%", size:8,  delay:"0.2s" },
-                { top:"35%", left:"5%",  size:7,  delay:"1.1s" },
-                { top:"28%", left:"60%", size:10, delay:"0.6s" },
-              ].map((s, i) => (
-                <span key={i} className="star-twinkle absolute text-yellow-300" style={{ top: s.top, left: s.left, fontSize: s.size, animationDuration: "2s", animationDelay: s.delay }}>★</span>
-              ))}
+          {/* Header — solid blue bar */}
+          <div style={{ background: "#4a7cdb" }}>
+            <div className="flex items-center px-4 pt-10 pb-3 gap-3">
+              <h1 className="text-2xl font-black text-white flex-1">🏆 Leaderboard</h1>
             </div>
-
-            <div className="flex items-end px-3 pt-4 gap-0">
-              <div className="w-24 h-24 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
+            <div className="flex gap-4 px-4 pb-3">
+              <div className="flex items-center gap-1.5">
+                <span className="text-white/60 text-xs font-bold">Scores</span>
+                <span className="text-white font-black text-sm">{leaderboard.length}</span>
               </div>
-              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
-                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
-                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
-                  border: "3px solid rgba(255,255,255,0.7)",
-                }}>
-                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
-                    borderTop: "14px solid transparent",
-                    borderBottom: "14px solid transparent",
-                    borderRight: "12px solid #fbbf24"
-                  }} />
-                  <h1 className="text-2xl font-black text-white text-center tracking-wide drop-shadow-md">
-                    🏆 Leaderboard
-                  </h1>
-                </div>
-                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{ background: "linear-gradient(90deg, #34d399, #06b6d4)" }} />
+              <div className="flex items-center gap-1.5">
+                <span className="text-white/60 text-xs font-bold">Top</span>
+                <span className="text-white font-black text-sm">{leaderboard[0]?.bank ?? "—"}</span>
               </div>
-            </div>
-
-            {/* Stat pills */}
-            <div className="flex gap-2 px-4 pt-4">
-              <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Scores</p>
-                <p className="text-white font-black text-xl">{leaderboard.length}</p>
-              </div>
-              <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Score</p>
-                <p className="text-white font-black text-xl">{leaderboard[0]?.bank ?? "—"}</p>
-              </div>
-              <div className="flex-1 rounded-2xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Top Flow</p>
-                <p className="text-white font-black text-xl">{leaderboard.filter(e => e.mode !== "fly")[0]?.flow ?? "—"}</p>
+              <div className="flex items-center gap-1.5">
+                <span className="text-white/60 text-xs font-bold">Flow</span>
+                <span className="text-white font-black text-sm">{leaderboard.filter(e => e.mode !== "fly")[0]?.flow ?? "—"}</span>
               </div>
             </div>
           </div>
@@ -2936,81 +2895,23 @@ export default function HablaBeat() {
       <div className="min-h-screen swirl-bg">
         <div className="max-w-md mx-auto min-h-screen">
 
-          {/* Header — matches songs page style */}
-          <div className="relative overflow-hidden pb-5 rounded-3xl mx-2 mt-2" style={{
-            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
-          }}>
-            {/* cloud blobs */}
-            <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-            <div className="absolute top-2 right-[-10px] w-28 h-16 rounded-full opacity-35" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-            <span className="absolute top-8 right-8 text-yellow-300 text-xl select-none" style={{ filter: "drop-shadow(0 0 4px gold)" }}>✦</span>
-            <span className="absolute top-16 left-6 text-yellow-200 text-sm select-none" style={{ filter: "drop-shadow(0 0 3px gold)" }}>✦</span>
-
-            {/* Bunny + Title row */}
-            <div className="flex items-end px-3 pt-4 gap-0">
-              <div className="w-28 h-28 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
-              </div>
-              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
-                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
-                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
-                  border: "3px solid rgba(255,255,255,0.7)",
-                  boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
-                }}>
-                  {/* ribbon tail left */}
-                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
-                    borderTop: "14px solid transparent",
-                    borderBottom: "14px solid transparent",
-                    borderRight: "12px solid #fbbf24"
-                  }} />
-                  <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
-                  <span className="absolute bottom-1 right-6 text-white/30 text-xs select-none">✦</span>
-                  <h1 className="text-3xl font-black text-white text-center tracking-wide drop-shadow-md"
-                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.3)" }}>
-                    Vocab Bank 💰
-                  </h1>
-                </div>
-                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{
-                  background: "linear-gradient(90deg, #34d399, #06b6d4)"
-                }} />
-              </div>
+          {/* Header — solid blue bar */}
+          <div style={{ background: "#4a7cdb" }}>
+            <div className="flex items-center px-4 pt-10 pb-2 gap-3">
+              <h1 className="text-2xl font-black text-white flex-1">Vocab Bank 💰</h1>
             </div>
-
-            {/* Stats — three cards: vocab bank + worlds collected + items purchased */}
-            <div className="px-3 mt-4 flex gap-3">
-              {/* Vocab Bank */}
-              <div className="flex-1 relative overflow-hidden rounded-2xl px-3 py-4 shadow-lg" style={{
-                background: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 60%, #6d28d9 100%)",
-                border: "2px solid rgba(255,255,255,0.6)",
-                boxShadow: "0 4px 20px rgba(167,139,250,0.4)"
-              }}>
-                <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
-                <div className="absolute right-2 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                <p className="text-white font-black leading-none" style={{ fontSize: "1.6rem" }}>{totalVocabBank.toLocaleString()}</p>
-                <p className="text-white font-bold text-xs leading-tight mt-0.5">vocab<br/>bank 💰</p>
+            <div className="flex gap-5 px-4 pb-3">
+              <div className="flex items-center gap-1.5">
+                <span className="text-white font-black text-lg">{totalVocabBank.toLocaleString()}</span>
+                <span className="text-white/60 text-xs font-bold">vocab</span>
               </div>
-              {/* Worlds Collected */}
-              <div className="flex-1 relative overflow-hidden rounded-2xl px-3 py-4 shadow-lg" style={{
-                background: "linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #6ee7b7 100%)",
-                border: "2px solid rgba(255,255,255,0.6)",
-                boxShadow: "0 4px 20px rgba(52,211,153,0.4)"
-              }}>
-                <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
-                <div className="absolute right-2 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                <p className="text-white font-black leading-none" style={{ fontSize: "1.6rem" }}>{earnedCoins.length}</p>
-                <p className="text-white font-bold text-xs leading-tight mt-0.5">worlds<br/>collected 🌍</p>
+              <div className="flex items-center gap-1.5">
+                <span className="text-white font-black text-lg">{earnedCoins.length}</span>
+                <span className="text-white/60 text-xs font-bold">worlds</span>
               </div>
-              {/* Items Purchased */}
-              <div className="flex-1 relative overflow-hidden rounded-2xl px-3 py-4 shadow-lg" style={{
-                background: "linear-gradient(135deg, #fb923c 0%, #f43f5e 60%, #e11d48 100%)",
-                border: "2px solid rgba(255,255,255,0.6)",
-                boxShadow: "0 4px 20px rgba(251,146,60,0.4)"
-              }}>
-                <span className="absolute top-2 right-3 text-white/40 text-lg select-none">✦</span>
-                <div className="absolute right-2 top-0 bottom-0 w-16 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-                <p className="text-white font-black leading-none" style={{ fontSize: "1.6rem" }}>{storeOwned.length}</p>
-                <p className="text-white font-bold text-xs leading-tight mt-0.5">items<br/>purchased 👛</p>
+              <div className="flex items-center gap-1.5">
+                <span className="text-white font-black text-lg">{storeOwned.length}</span>
+                <span className="text-white/60 text-xs font-bold">items</span>
               </div>
             </div>
           </div>
@@ -3024,18 +2925,18 @@ export default function HablaBeat() {
                 onClick={() => setBankTab("worlds")}
                 className="flex-1 py-2.5 rounded-xl text-sm font-black transition-all"
                 style={bankTab === "worlds" ? {
-                  background: "linear-gradient(135deg, #34d399, #22d3ee)",
+                  background: "#4a7cdb",
                   color: "white",
-                  boxShadow: "0 2px 8px rgba(52,211,153,0.4)"
+                  boxShadow: "0 2px 8px rgba(74,124,219,0.3)"
                 } : { color: "#6b7280" }}
               >🌍 Worlds</button>
               <button
                 onClick={() => setBankTab("items")}
                 className="flex-1 py-2.5 rounded-xl text-sm font-black transition-all"
                 style={bankTab === "items" ? {
-                  background: "linear-gradient(135deg, #a855f7, #6366f1)",
+                  background: "#4a7cdb",
                   color: "white",
-                  boxShadow: "0 2px 8px rgba(168,85,247,0.4)"
+                  boxShadow: "0 2px 8px rgba(74,124,219,0.3)"
                 } : { color: "#6b7280" }}
               >👛 Items</button>
             </div>
@@ -3058,7 +2959,7 @@ export default function HablaBeat() {
                         {earnedCoins.map((coin) => {
                           // Find the matching section to get its gradient + icon
                           const matchSection = curriculumData.flatMap(c => c.sections).find(s => s.id === coin.id.replace("-coin",""))
-                          const sectionGradient = matchSection ? (SECTION_GRADIENTS[matchSection.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)") : "linear-gradient(135deg, #fbbf24, #f59e0b)"
+                          const sectionGradient = matchSection ? (SECTION_GRADIENTS[matchSection.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)") : "linear-gradient(135deg, #fbbf24, #f59e0b)"
                           const displayIcon = matchSection?.icon ?? coin.icon
                           const words = coin.name.split(" ")
                           const topText = words.slice(0, -1).join(" ")
@@ -3125,7 +3026,7 @@ export default function HablaBeat() {
                     <p className="text-xs text-gray-400 mb-3 italic">Beat a friend in a challenge to unlock 🏆</p>
                     <div className="grid grid-cols-3 gap-4">
                       {notYetCollected.map((section, sectionIdx) => {
-                        const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+                        const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)"
                         const words = section.title.split(" ")
                         const topText = words.slice(0, -1).join(" ")
                         const botText = words[words.length - 1]
@@ -3307,7 +3208,7 @@ export default function HablaBeat() {
                 <Music className="h-6 w-6" />
                 <span className="text-xs font-semibold">Songs</span>
               </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("coins")}>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => setCurrentView("coins")}>
                 <Coins className="h-6 w-6" />
                 <span className="text-xs font-bold">Bank</span>
               </Button>
@@ -3327,24 +3228,8 @@ export default function HablaBeat() {
       <div className="min-h-screen swirl-bg">
         {/* Animated swirl background styles */}
         <style>{`
-          @keyframes swirlBg {
-            0%   { background-position: 0% 50%; }
-            25%  { background-position: 50% 100%; }
-            50%  { background-position: 100% 50%; }
-            75%  { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
-          }
           .swirl-bg {
-            background: linear-gradient(
-              135deg,
-              #e0fdf4 0%,
-              #dbeeff 25%,
-              #e0fdf4 50%,
-              #cff3ff 75%,
-              #e0fdf4 100%
-            );
-            background-size: 400% 400%;
-            animation: swirlBg 12s ease-in-out infinite;
+            background: linear-gradient(180deg, #edf2fa 0%, #f5f7fb 40%, #fafafa 100%);
           }
           @keyframes titleShimmer {
             0%   { background-position: 200% center; }
@@ -3412,27 +3297,11 @@ export default function HablaBeat() {
           .world-content-in { animation: worldContentFadeIn 0.4s ease 0.7s both; }
           .world-content-in .flag-text {
             color: #fff;
-            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
-            paint-order: stroke fill;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 0 8px rgba(0,0,0,0.25);
+            text-shadow: 0 1px 6px rgba(0,0,0,0.6);
           }
           .world-content-in .flag-text-light {
-            color: rgba(255,255,255,0.9);
-            -webkit-text-stroke: 0.8px rgba(0,0,0,0.55);
-            paint-order: stroke fill;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 6px rgba(0,0,0,0.2);
-          }
-          @keyframes shootingStar {
-            0%   { transform: translateX(0) translateY(0) rotate(-40deg); opacity: 0; }
-            8%   { opacity: 1; }
-            80%  { opacity: 0.8; }
-            100% { transform: translateX(200px) translateY(90px) rotate(-40deg); opacity: 0; }
-          }
-          @keyframes shootingStarB {
-            0%   { transform: translateX(0) translateY(0) rotate(-20deg); opacity: 0; }
-            8%   { opacity: 1; }
-            80%  { opacity: 0.8; }
-            100% { transform: translateX(180px) translateY(50px) rotate(-20deg); opacity: 0; }
+            color: rgba(255,255,255,0.85);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
           }
           @keyframes twinkle {
             0%, 100% { opacity: 0.15; transform: scale(0.7); }
@@ -3560,99 +3429,48 @@ export default function HablaBeat() {
             </div>
           )}
 
-          {/* ── HEADER ── */}
-          <div className="relative overflow-hidden pb-4 rounded-3xl mx-2 mt-2" style={{
-            background: "linear-gradient(180deg, #e0f7ff 0%, #c7f0ff 40%, #d4f5e9 70%, #e0fdf4 100%)"
-          }}>
-            {/* soft cloud blobs */}
-            <div className="absolute top-6 left-[-20px] w-36 h-20 rounded-full opacity-40" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-            <div className="absolute top-2 right-[-10px] w-28 h-16 rounded-full opacity-35" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-            <div className="absolute bottom-8 left-1/3 w-24 h-12 rounded-full opacity-30" style={{ background: "radial-gradient(ellipse, white, transparent)" }} />
-            {/* sparkle stars */}
-            <span className="absolute top-8 right-8 text-yellow-300 text-xl select-none" style={{ filter: "drop-shadow(0 0 4px gold)" }}>✦</span>
-            <span className="absolute top-16 left-6 text-yellow-200 text-sm select-none" style={{ filter: "drop-shadow(0 0 3px gold)" }}>✦</span>
-            <span className="absolute top-5 left-1/2 text-white text-xs select-none opacity-60">✦</span>
-
-            {/* Bunny + Title ribbon row */}
-            <div className="flex items-end px-3 pt-4 gap-0">
-              {/* Bunny GIF — overlaps slightly downward */}
-              <div className="w-28 h-28 flex-shrink-0 relative z-10" style={{ marginBottom: "-8px" }}>
+          {/* ── HEADER — Duolingo-style solid blue bar ── */}
+          <div style={{ background: "#4a7cdb" }}>
+            {/* Top bar: bunny + title + profile */}
+            <div className="flex items-center px-4 pt-10 pb-2 gap-3">
+              <div className="w-10 h-10 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain drop-shadow-xl bunny-tilt" />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" />
               </div>
-
-              {/* Title ribbon */}
-              <div className="flex-1 relative ml-1" style={{ marginBottom: "4px" }}>
-                {/* ribbon shape */}
-                <div className="relative rounded-3xl px-4 py-3 shadow-lg overflow-hidden" style={{
-                  background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 85%, #34d399 100%)",
-                  border: "3px solid rgba(255,255,255,0.7)",
-                  boxShadow: "0 4px 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.5)"
-                }}>
-                  {/* ribbon tail left */}
-                  <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-0 h-0" style={{
-                    borderTop: "14px solid transparent",
-                    borderBottom: "14px solid transparent",
-                    borderRight: "12px solid #fbbf24"
-                  }} />
-                  <span className="absolute top-1 left-4 text-white/40 text-xs select-none">✦</span>
-                  <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-3xl font-black tracking-wide text-white">
-                      HablaBeat
-                    </h1>
-                    <button
-                      onClick={() => setShowProfileModal(true)}
-                      className="w-10 h-10 rounded-full overflow-hidden border-2 shadow-md hover:opacity-90 transition-opacity flex-shrink-0"
-                      style={{ borderColor: "rgba(255,255,255,0.7)", backgroundColor: "#e0f2fe" }}
-                      title="Edit profile"
-                    >
-                      {userPhoto ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="flex items-center justify-center w-full h-full text-xl">🐰</span>
-                      )}
-                    </button>
-                  </div>
-                </div>
-                {/* ribbon bottom rounded tab */}
-                <div className="mx-6 h-3 rounded-b-2xl shadow-sm" style={{
-                  background: "linear-gradient(90deg, #34d399, #06b6d4)"
-                }} />
+              <h1 className="text-2xl font-black tracking-wide text-white flex-1">HablaBeat</h1>
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="w-9 h-9 rounded-full overflow-hidden border-2 hover:opacity-90 transition-opacity flex-shrink-0"
+                style={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.2)" }}
+                title="Edit profile"
+              >
+                {userPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="flex items-center justify-center w-full h-full text-lg">🐰</span>
+                )}
+              </button>
+            </div>
+            {/* Stats row — inline like Duolingo */}
+            <div className="flex items-center justify-center gap-6 px-4 pb-3">
+              <div className="flex items-center gap-1.5">
+                <span className="emoji-fire text-lg">🔥</span>
+                <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="emoji-swords text-lg">⚔️</span>
+                <span className="text-white font-black text-sm">{challengesWon}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="emoji-lightning text-lg">⚡</span>
+                <span className="text-white font-black text-sm">{bestFlow}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg">💰</span>
+                <span className="text-white font-black text-sm">{totalVocabBank}</span>
               </div>
             </div>
-
-            {/* Stats row — 3 tiles */}
-            <div className="px-3 mt-4 grid grid-cols-3 gap-2">
-              {/* Day Streak */}
-              <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
-                background: "linear-gradient(135deg, #fbbf24, #f97316)",
-                border: "2px solid rgba(255,255,255,0.5)"
-              }}>
-                <span className="absolute top-1 right-2 text-white/40 text-sm select-none">✦</span>
-                <p className="text-2xl font-black leading-none text-white"><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
-                <p className="font-bold text-xs mt-1 text-white/90">Day Streak</p>
-              </div>
-              {/* Challenges Won */}
-              <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
-                background: "linear-gradient(135deg, #a855f7, #7c3aed)",
-                border: "2px solid rgba(255,255,255,0.5)"
-              }}>
-                <span className="absolute top-1 right-2 text-white/40 text-sm select-none">✦</span>
-                <p className="text-2xl font-black leading-none text-white"><span className="emoji-swords">⚔️</span> {challengesWon}</p>
-                <p className="font-bold text-xs mt-1 text-white/90">Challenges Won</p>
-              </div>
-              {/* Best Flow */}
-              <div className="relative overflow-hidden rounded-2xl p-2.5 shadow-sm transition-transform hover:scale-[1.02]" style={{
-                background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
-                border: "2px solid rgba(255,255,255,0.5)"
-              }}>
-                <span className="absolute top-1 right-2 text-white/40 text-sm select-none">✦</span>
-                <p className="text-2xl font-black leading-none text-white"><span className="emoji-lightning">⚡</span> {bestFlow}</p>
-                <p className="font-bold text-xs mt-1 text-white/90">Best Flow</p>
-              </div>
-            </div>
-
           </div>
 
           {/* ✨ World overlay — zooms in when a world is tapped */}
@@ -3666,7 +3484,7 @@ export default function HablaBeat() {
               if (sec) { openSection = sec; openCategory = cat; break }
             }
             if (!openSection || !openCategory) return null
-            const sectionGradient = SECTION_GRADIENTS[openSection.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+            const sectionGradient = SECTION_GRADIENTS[openSection.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)"
             const countryName = (openSection as any).country ?? ""
             const flagBg = COUNTRY_FLAG[countryName]
             const closeWorld = () => {
@@ -3678,70 +3496,31 @@ export default function HablaBeat() {
                 className={worldClosing ? "world-zoom-out" : "world-zoom-in"}
                 style={{
                   position: "fixed", inset: 0, zIndex: 60,
-                  ...(flagBg
-                    ? { backgroundImage: `url(${flagBg.url})`, backgroundSize: "cover", backgroundPosition: "center center", backgroundRepeat: "no-repeat" }
-                    : { background: sectionGradient }
-                  ),
+                  background: "#fafafa",
                   "--ox": worldZoomOrigin.x, "--oy": worldZoomOrigin.y,
                 } as React.CSSProperties}
               >
-                {/* Star burst particles — shoot outward at the start of zoom */}
-                {!worldClosing && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {Array.from({ length: 18 }).map((_, i) => {
-                      const angle = (i / 18) * 360
-                      const dist = 35 + (i % 3) * 20
-                      const size = 3 + (i % 4) * 2
-                      const colors = ["#fff","#fde68a","#f0abfc","#7dd3fc","#bbf7d0","#fca5a5"]
-                      const col = colors[i % colors.length]
-                      const delay = (i % 4) * 0.03
-                      return (
-                        <div
-                          key={i}
-                          style={{
-                            position: "absolute",
-                            left: worldZoomOrigin.x,
-                            top: worldZoomOrigin.y,
-                            width: `${size}px`,
-                            height: `${size}px`,
-                            borderRadius: i % 3 === 0 ? "0" : "50%",
-                            background: col,
-                            boxShadow: `0 0 6px ${col}`,
-                            clipPath: i % 3 === 0
-                              ? "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"
-                              : "none",
-                            transform: "translate(-50%, -50%)",
-                            animation: `worldStarBurst 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}s forwards`,
-                            "--sa": `${angle}deg`,
-                            "--sd": `${dist}vw`,
-                          } as React.CSSProperties}
-                        />
-                      )
-                    })}
-                  </div>
-                )}
-                {/* Light overlay to soften the flag */}
-                <div className="absolute inset-0 pointer-events-none" style={{ background: "rgba(255,255,255,0.35)" }} />
                 {/* Content */}
                 <div className="world-content-in flex flex-col h-full max-w-md mx-auto">
-                  {/* Header */}
-                  <div className="flex items-center gap-3 px-4 pt-10 pb-4">
-                    <button
-                      onClick={closeWorld}
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-xl active:scale-90 transition-all"
-                      style={{ background: "rgba(0,0,0,0.25)" }}
-                    >←</button>
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-3xl">
-                        {openSection.id === "ar-verbs" ? <span className="flex items-center justify-center font-black rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#1e1b4b,#312e81)", color:"#fbbf24", boxShadow:"0 2px 6px rgba(0,0,0,0.3)" }}>A</span>
-                          : openSection.id === "er-verbs" ? <span className="flex items-center justify-center font-black rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#164e63,#0e7490)", color:"#6ee7b7", boxShadow:"0 2px 6px rgba(0,0,0,0.3)" }}>E</span>
-                          : openSection.id === "ir-verbs" ? <span className="flex items-center justify-center font-black rounded-lg" style={{ fontSize:"20px", width:"32px", height:"32px", background:"linear-gradient(135deg,#4a1942,#831843)", color:"#f9a8d4", boxShadow:"0 2px 6px rgba(0,0,0,0.3)" }}>I</span>
-                          : openSection.icon}
-                      </span>
-                      <div>
-                        <h2 className="flag-text font-black text-xl leading-tight">{openSection.title}</h2>
-                        <p className="flag-text-light text-xs font-semibold">{openSection.songs.length} songs · {openCategory.title}</p>
+                  {/* Header — solid blue bar like Duolingo */}
+                  <div style={{ background: "#4a7cdb" }}>
+                    <div className="flex items-center gap-3 px-4 pt-10 pb-3">
+                      <button
+                        onClick={closeWorld}
+                        className="w-9 h-9 rounded-full flex items-center justify-center font-black text-lg active:scale-90 transition-all flex-shrink-0"
+                        style={{ background: "rgba(255,255,255,0.2)", color: "#ffffff" }}
+                      >←</button>
+                      <span className="text-2xl flex-shrink-0">{openSection.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <h2 className="font-black text-lg leading-tight text-white">{openSection.title}</h2>
+                        <p className="text-xs font-semibold text-white/70">{openSection.songs.length} songs · {countryName}</p>
                       </div>
+                      {flagBg && (
+                        <div className="w-10 h-7 rounded-md overflow-hidden flex-shrink-0" style={{ border: "2px solid rgba(255,255,255,0.4)" }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={flagBg.url.replace("w640", "w80")} alt={countryName} className="w-full h-full object-cover" />
+                        </div>
+                      )}
                     </div>
                   </div>
                   {/* Loadout bar — shows active pointer, tap to open drawer */}
@@ -3750,16 +3529,16 @@ export default function HablaBeat() {
                     return (
                       <div className="px-3 pb-2">
                         <div className="flex gap-2 items-center">
-                          <span className="flag-text-light text-xs font-bold tracking-wide uppercase shrink-0">Loadout</span>
+                          <span className="text-xs font-bold tracking-wide uppercase shrink-0" style={{ color: "#a1a1aa" }}>Loadout</span>
                           <div className="flex gap-1.5 flex-1">
                             {/* Pointer chip */}
                             <button
                               onClick={() => setLoadoutOpen(loadoutOpen === "pointer" ? null : "pointer")}
                               className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-black transition-all active:scale-90"
                               style={{
-                                background: loadoutOpen === "pointer" ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.18)",
-                                border: loadoutOpen === "pointer" ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid rgba(255,255,255,0.3)",
-                                color: "white", backdropFilter: "blur(8px)",
+                                background: loadoutOpen === "pointer" ? "#f0f4ff" : "#ffffff",
+                                border: loadoutOpen === "pointer" ? "1.5px solid #bdd0ef" : "1.5px solid #e5e7eb",
+                                color: "#18181b",
                               }}
                             >
                               <span>{activePointerItem?.emoji ?? "🥕"}</span>
@@ -3771,7 +3550,7 @@ export default function HablaBeat() {
 
                         {/* Quick-swap drawer */}
                         {loadoutOpen && (
-                          <div className="mt-2 rounded-2xl overflow-hidden" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+                          <div className="mt-2 rounded-2xl overflow-hidden" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
                             <div className="flex gap-2 overflow-x-auto px-3 py-2.5" style={{ scrollbarWidth: "none" }}>
                               {STORE_CATALOG.filter(i => i.id.startsWith("pointer-") && storeOwned.includes(i.id)).map(item => {
                                 const isActive = activePointer === item.id
@@ -3784,26 +3563,26 @@ export default function HablaBeat() {
                                     }}
                                     className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl transition-all active:scale-90"
                                     style={{
-                                      background: isActive ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.08)",
-                                      border: isActive ? "1.5px solid rgba(255,255,255,0.7)" : "1.5px solid transparent",
+                                      background: isActive ? "#f0f4ff" : "#f9fafb",
+                                      border: isActive ? "1.5px solid #bdd0ef" : "1.5px solid #e5e7eb",
                                       minWidth: "56px",
                                     }}
                                   >
                                     <span style={{ fontSize: "22px" }}>{item.emoji}</span>
-                                    <span className="text-white text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px" }}>{item.name.split(" ")[0]}</span>
-                                    {isActive && <span className="text-green-300 text-[9px] font-black">✓ ON</span>}
+                                    <span className="text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px", color: "#18181b" }}>{item.name.split(" ")[0]}</span>
+                                    {isActive && <span className="text-[9px] font-black" style={{ color: "#4a7cdb" }}>✓ ON</span>}
                                   </button>
                                 )
                               })}
                               {STORE_CATALOG.filter(i => i.id.startsWith("pointer-") && !storeOwned.includes(i.id)).map(item => (
-                                <button key={item.id} className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl opacity-40" style={{ minWidth: "56px", cursor: "default" }}>
+                                <button key={item.id} className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl opacity-40" style={{ minWidth: "56px", cursor: "default", background: "#f9fafb", border: "1.5px solid #e5e7eb" }}>
                                   <span style={{ fontSize: "22px", filter: "grayscale(1)" }}>{item.emoji}</span>
-                                  <span className="text-white text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px" }}>{item.name.split(" ")[0]}</span>
-                                  <span className="text-white/60 text-[9px]">🔒</span>
+                                  <span className="text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px", color: "#71717a" }}>{item.name.split(" ")[0]}</span>
+                                  <span className="text-[9px]" style={{ color: "#a1a1aa" }}>🔒</span>
                                 </button>
                               ))}
                             </div>
-                            <p className="text-center text-white/40 text-[10px] pb-2">Unlock more in the Shop 👛</p>
+                            <p className="text-center text-[10px] pb-2" style={{ color: "#a1a1aa" }}>Unlock more in the Shop 👛</p>
                           </div>
                         )}
                       </div>
@@ -3812,29 +3591,29 @@ export default function HablaBeat() {
 
                   {/* Song list */}
                   <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: "120px" }}>
-                    <div className="bg-white/15 backdrop-blur-sm rounded-3xl overflow-hidden">
+                    <div className="rounded-2xl overflow-hidden" style={{ background: "#ffffff", border: "1px solid #e5e7eb" }}>
                       {openSection.songs.map((song, idx) => {
                         const isClickable = song.youtubeId && song.youtubeId !== ""
                         const songBestGrade = bestGrades[song.number]
                         return (
                           <div
                             key={song.id}
-                            className="px-4 py-3 transition-all active:scale-[0.99]"
-                            style={{ borderBottom: idx < openSection!.songs.length - 1 ? "1px solid rgba(255,255,255,0.15)" : "none" }}
+                            className="px-4 py-4 transition-all active:scale-[0.99]"
+                            style={{ borderBottom: idx < openSection!.songs.length - 1 ? "1px solid #f4f4f5" : "none" }}
                           >
                             <div className="flex items-center gap-2.5">
-                              <span className="flag-text-light text-xs font-bold w-5 text-center flex-shrink-0">{song.number}</span>
+                              <span className="text-xs font-bold w-5 text-center flex-shrink-0" style={{ color: "#a1a1aa" }}>{song.number}</span>
                               <div className="flex-1 min-w-0">
-                                <h4 className="flag-text font-bold truncate text-sm">{song.title}</h4>
-                                <div className="h-1 w-20 rounded-full mt-1 overflow-hidden" style={{ background: "rgba(255,255,255,0.2)" }}>
+                                <h4 className="font-bold truncate text-sm" style={{ color: "#18181b" }}>{song.title}</h4>
+                                <div className="h-1 w-20 rounded-full mt-1 overflow-hidden" style={{ background: "#f4f4f5" }}>
                                   <div className="h-full rounded-full transition-all duration-500" style={{
                                     width: `${Math.min(100, ((song.playCount || 0) / 3) * 100)}%`,
-                                    background: song.playCount >= 3 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)"
+                                    background: song.playCount >= 3 ? "#4a7cdb" : "#b3cff0"
                                   }} />
                                 </div>
                               </div>
                               {songBestGrade && (
-                                <span className="text-xs font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(255,255,255,0.25)", color: "white" }}>
+                                <span className="text-xs font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "#f0f4ff", color: "#4a7cdb", border: "1px solid #d6e4f5" }}>
                                   {songBestGrade}
                                 </span>
                               )}
@@ -3846,7 +3625,7 @@ export default function HablaBeat() {
                                   <button
                                     onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
                                     className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
-                                    style={{ background: openCategory!.id === "people-places-things" ? "#93c5fd" : "#c4b5fd", color: openCategory!.id === "people-places-things" ? "#2563eb" : "#7c3aed", boxShadow: openCategory!.id === "people-places-things" ? "0 4px 12px rgba(59,130,246,0.35)" : "0 4px 12px rgba(139,92,246,0.35)", border: openCategory!.id === "people-places-things" ? "2px solid #2563eb" : "2px solid #7c3aed" }}
+                                    style={{ background: "#f0f4ff", color: "#4a7cdb", boxShadow: "0 1px 2px rgba(74,124,219,0.08)", border: "1.5px solid #bdd0ef" }}
                                   >
                                     🎤 Sing
                                   </button>
@@ -3857,7 +3636,7 @@ export default function HablaBeat() {
                                   <button
                                     onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
                                     className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
-                                    style={{ background: openCategory!.id === "people-places-things" ? "#93c5fd" : "#c4b5fd", color: openCategory!.id === "people-places-things" ? "#2563eb" : "#7c3aed", boxShadow: openCategory!.id === "people-places-things" ? "0 4px 12px rgba(59,130,246,0.35)" : "0 4px 12px rgba(139,92,246,0.35)", border: openCategory!.id === "people-places-things" ? "2px solid #2563eb" : "2px solid #7c3aed" }}
+                                    style={{ background: "#f0f4ff", color: "#4a7cdb", boxShadow: "0 1px 2px rgba(74,124,219,0.08)", border: "1.5px solid #bdd0ef" }}
                                   >
                                     🥕 Pop
                                   </button>
@@ -3871,7 +3650,7 @@ export default function HablaBeat() {
                                   <button
                                     onClick={() => setFlySongNumber(song.number)}
                                     className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
-                                    style={{ background: openCategory!.id === "people-places-things" ? "#93c5fd" : "#c4b5fd", color: openCategory!.id === "people-places-things" ? "#2563eb" : "#7c3aed", boxShadow: openCategory!.id === "people-places-things" ? "0 4px 12px rgba(59,130,246,0.35)" : "0 4px 12px rgba(139,92,246,0.35)", border: openCategory!.id === "people-places-things" ? "2px solid #2563eb" : "2px solid #7c3aed" }}
+                                    style={{ background: "#f0f4ff", color: "#4a7cdb", boxShadow: "0 1px 2px rgba(74,124,219,0.08)", border: "1.5px solid #bdd0ef" }}
                                   >
                                     ☁️ Fly
                                   </button>
@@ -3894,15 +3673,15 @@ export default function HablaBeat() {
                     const currentIdx = allSections.findIndex(s => s.id === openSection!.id)
                     const nextSection = allSections[currentIdx + 1]
                     return (
-                      <div className="absolute bottom-0 left-0 right-0 px-4 pb-5 pt-3" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 100%)" }}>
-                        <div className="flex items-center justify-between rounded-2xl px-4 py-3 max-w-md mx-auto" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,0.18)" }}>
+                      <div className="absolute bottom-0 left-0 right-0 px-4 pb-5 pt-3" style={{ background: "linear-gradient(0deg, #fafafa 60%, transparent 100%)" }}>
+                        <div className="flex items-center justify-between rounded-2xl px-4 py-3 max-w-md mx-auto" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
                           <div>
-                            <p className="text-white/55 text-xs font-bold uppercase tracking-wider">Next World</p>
-                            <p className="text-white font-black text-sm leading-tight">{nextSection ? nextSection.title : "🏆 All worlds complete!"}</p>
+                            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "#a1a1aa" }}>Next World</p>
+                            <p className="font-black text-sm leading-tight" style={{ color: "#18181b" }}>{nextSection ? nextSection.title : "🏆 All worlds complete!"}</p>
                           </div>
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "rgba(255,200,0,0.2)", border: "1px solid rgba(255,200,0,0.3)" }}>
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "#f0f4ff", border: "1px solid #bdd0ef" }}>
                             <span style={{ fontSize: "15px" }}>💰</span>
-                            <span className="text-white font-black text-sm">{totalVocabBank.toLocaleString()}</span>
+                            <span className="font-black text-sm" style={{ color: "#4a7cdb" }}>{totalVocabBank.toLocaleString()}</span>
                           </div>
                         </div>
                       </div>
@@ -3914,7 +3693,7 @@ export default function HablaBeat() {
           })()}
 
           {/* ── GALAXY MAP — stacked, one always open ── */}
-          <div className="px-2 pt-2 pb-[88px] space-y-2">
+          <div className="px-3 pt-4 pb-[88px] space-y-4">
             <style>{`
               @keyframes galaxyOpen {
                 from { opacity: 0; transform: scaleY(0.9); }
@@ -3926,8 +3705,8 @@ export default function HablaBeat() {
                 transform: scale(1);
               }
               .world-btn:hover {
-                transform: scale(1.15);
-                box-shadow: 0 8px 28px rgba(0,0,0,0.45), 0 0 0 3px rgba(255,255,255,0.35);
+                transform: scale(1.08);
+                box-shadow: 0 4px 16px rgba(0,0,0,0.2), 0 0 0 2px rgba(74,124,219,0.25);
               }
               .world-btn:active {
                 transform: scale(0.88) !important;
@@ -3952,19 +3731,13 @@ export default function HablaBeat() {
             `}</style>
             {curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id
-              const catGradient = catIdx === 0
-                ? "linear-gradient(160deg, #f8fafc 0%, #eef4fb 40%, #f0f7ff 70%, #f8fafc 100%)"
-                : "linear-gradient(160deg, #faf8ff 0%, #f3eefb 40%, #f5f0ff 70%, #faf8ff 100%)"
-              const catGlow = catIdx === 0
-                ? "0 2px 12px rgba(0,0,0,0.08)"
-                : "0 2px 12px rgba(0,0,0,0.08)"
-              const catAccent = catIdx === 0
-                ? ["#2563eb","#0ea5e9","#3b82f6"]
-                : ["#7c3aed","#a855f7","#9333ea"]
+              const catGradient = "#ffffff"
+              const catGlow = "0 1px 3px rgba(0,0,0,0.04)"
+              const catAccent = ["#4a7cdb","#7ba3e8","#5b7fbf"]
 
               return (
                 <div key={category.id} className="rounded-3xl transition-all duration-300"
-                  style={{ background: catGradient, boxShadow: catGlow, border: `2px solid ${isOpen ? catAccent[0] + "33" : "rgba(0,0,0,0.06)"}`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
+                  style={{ background: catGradient, boxShadow: catGlow, border: `1px solid ${isOpen ? "#d6e4f5" : "#e5e7eb"}`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
 
                   {/* ── Header row — always visible ── */}
                   <button
@@ -3972,19 +3745,10 @@ export default function HablaBeat() {
                     className="relative w-full flex items-center gap-3 px-3 overflow-hidden active:opacity-80 transition-all"
                     style={{ height: "60px" }}
                   >
-                    {/* Stars */}
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                      <span className="star-twinkle absolute" style={{ top:"15%", left:"5%", fontSize:"9px", animationDuration:"2.1s", color: catAccent[0], opacity: 0.3 }}>★</span>
-                      <span className="star-twinkle absolute" style={{ top:"20%", left:"45%", fontSize:"7px", animationDuration:"1.7s", animationDelay:"0.5s", color: catAccent[1], opacity: 0.25 }}>✦</span>
-                      <span className="star-twinkle absolute" style={{ top:"10%", left:"70%", fontSize:"6px", animationDuration:"2.5s", animationDelay:"0.9s", color: catAccent[0], opacity: 0.2 }}>★</span>
-                      <span className="star-twinkle absolute" style={{ bottom:"15%", left:"80%", fontSize:"8px", animationDuration:"1.9s", animationDelay:"1.3s", color: catAccent[1], opacity: 0.25 }}>✦</span>
-                      <span className="star-twinkle-slow absolute" style={{ top:"5%", right:"8%", fontSize:"11px", animationDuration:"3.5s", animationDelay:"0.8s", color: catAccent[0], opacity: 0.15 }}>✧</span>
-                    </div>
-
                     {/* Title */}
                     <div className="flex-1 text-left pl-1">
                       <p className="text-gray-900 text-[13px] leading-tight"><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-normal text-gray-600"> {(category as any).titleSub}</span> : null}</p>
-                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: catAccent[0] }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
+                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: "#71717a" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
                     </div>
 
                     {/* Chevron */}
@@ -4024,7 +3788,7 @@ export default function HablaBeat() {
                         {category.sections.map((section, sectionIdx) => {
                           const countryName = (section as any).country ?? ""
                           const flagData = COUNTRY_FLAG[countryName]
-                          const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+                          const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)"
                           return (
                             <div key={section.id} className="world-float aspect-square relative" style={{ zIndex: 10, animationDelay: `${(sectionIdx * 0.4) % 3}s` }}>
                             <button
@@ -4040,16 +3804,13 @@ export default function HablaBeat() {
                               onTouchStart={playWorldHover}
                               className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
                               style={{
-                                ...(flagData
-                                  ? { backgroundImage: `url(${flagData.url})`, backgroundPosition: flagData.pos, backgroundSize: flagData.size, backgroundRepeat: "no-repeat" }
-                                  : { background: sectionGradient }
-                                ),
-                                border: "2px solid rgba(255,255,255,0.5)",
-                                boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+                                background: "linear-gradient(180deg, #5b9be6 0%, #4a7cdb 50%, #3d6bc4 100%)",
+                                border: "3px solid rgba(255,255,255,0.6)",
+                                boxShadow: "0 3px 12px rgba(74,124,219,0.3)",
                               }}
                             >
                               {isSectionBadgeUnlocked(section) && (
-                                <div className="absolute top-1 right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
+                                <div className="absolute top-1 right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-sm z-10" />
                               )}
                               <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "72px", lineHeight: 1 }}>
                                 {section.id === "ar-verbs"
@@ -4119,7 +3880,7 @@ export default function HablaBeat() {
             {/* Bottom Navigation */}
             <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
               <div className="flex justify-around">
-                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("songs")}>
+                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => setCurrentView("songs")}>
                   <Music className="h-6 w-6" />
                   <span className="text-xs font-bold">Songs</span>
                 </Button>
@@ -4154,7 +3915,7 @@ export default function HablaBeat() {
                 <Coins className="h-6 w-6" />
                 <span className="text-xs font-semibold">Bank</span>
               </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("visualizer")}>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => setCurrentView("visualizer")}>
                 <Sparkles className="h-6 w-6" />
                 <span className="text-xs font-bold">Visualizer</span>
               </Button>
