@@ -71,6 +71,7 @@ interface FloatingWord {
 }
 interface Coin { id: number; x: number; y: number; speed: number; collected: boolean; size: "small" | "medium" | "large"; points: number }
 interface Rock { id: number; x: number; y: number; speed: number; hit: boolean }
+interface Heart { id: number; x: number; y: number; speed: number; collected: boolean }
 interface PopParticle { id: number; spanish: string; english: string; x: number; y: number; correct: boolean }
 interface SkyEmoji { id: number; emoji: string; x: number; y: number; size: number; driftDur: number; driftDelay: number }
 
@@ -83,6 +84,7 @@ const BUNNY_H       = 72
 const WORD_H        = 46
 const COIN_SIZES    = { small: 22, medium: 32, large: 44 }
 const ROCK_SIZE     = 28
+const HEART_SIZE    = 30
 const STEER_IMPULSE = 0.55
 const MAX_SPEED_X   = 6
 const MAX_SPEED_Y   = 5
@@ -163,6 +165,22 @@ function playWrongSound() {
     osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3)
   } catch {}
 }
+function playHeartSound() {
+  try {
+    const ctx = getAudioCtx()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.type = "sine"
+    osc.frequency.setValueAtTime(523, ctx.currentTime)        // C5
+    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1)  // E5
+    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2)  // G5
+    osc.frequency.setValueAtTime(1047, ctx.currentTime + 0.3) // C6
+    gain.gain.setValueAtTime(0.15, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.45)
+  } catch {}
+}
 function playCoinSound() {
   try {
     const ctx = getAudioCtx()
@@ -210,6 +228,7 @@ export default function VocabFly({
   const [words,        setWords]        = useState<FloatingWord[]>([])
   const [coinItems,    setCoinItems]    = useState<Coin[]>([])
   const [rockItems,    setRockItems]    = useState<Rock[]>([])
+  const [heartItems,   setHeartItems]   = useState<Heart[]>([])
   const [popItems,     setPopItems]     = useState<PopParticle[]>([])
   const [skyEmojis]                    = useState<SkyEmoji[]>(makeSkyEmojis)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
@@ -242,6 +261,8 @@ export default function VocabFly({
   const wordItemIdRef      = useRef(0)
   const coinIdRef          = useRef(0)
   const rockIdRef          = useRef(0)
+  const heartIdRef         = useRef(0)
+  const skullsSinceHeart   = useRef(0)  // spawn a heart after every 2 full skulls
   const popIdRef           = useRef(0)
   const waveTimerRef       = useRef(0)
   const coinTimerRef       = useRef(0)
@@ -403,6 +424,14 @@ export default function VocabFly({
     }))])
   }, [])
 
+  const spawnHeart = useCallback(() => {
+    setHeartItems(prev => [...prev, {
+      id: heartIdRef.current++,
+      x: 10 + Math.random() * 80, y: -8,
+      speed: 0.10 + Math.random() * 0.05, collected: false,
+    }])
+  }, [])
+
   // ── Main game loop ────────────────────────────────────────────────────────
   const gameLoop = useCallback((ts: number) => {
     if (gamePhaseRef.current !== "playing") return
@@ -533,6 +562,12 @@ export default function VocabFly({
           setHalfSkull(false)
           wrongCountRef.current += 1
           setWrongCount(wrongCountRef.current)
+          // Spawn a heart after every 2 full skulls
+          skullsSinceHeart.current += 1
+          if (skullsSinceHeart.current >= 2) {
+            skullsSinceHeart.current = 0
+            setTimeout(() => spawnHeart(), 800)
+          }
           if (wrongCountRef.current >= 5) {
             setTimeout(() => {
               setFlashScreen(null); setShowHint(false)
@@ -550,8 +585,34 @@ export default function VocabFly({
       return { ...r, y: newY }
     }))
 
+    // Heart collisions — catching a heart removes 1 skull
+    setHeartItems(prev => prev.map(h => {
+      if (h.collected) return h
+      const newY = h.y + h.speed * (dt / 16)
+      const dist = Math.hypot(
+        (h.x / 100) * areaW - (bunnyX.current / 100) * areaW,
+        (newY / 100) * areaH - (bunnyY.current / 100) * areaH
+      )
+      if (dist < HIT_RADIUS * 0.85) {
+        playHeartSound()
+        setFlashScreen("correct")
+        setTimeout(() => setFlashScreen(null), 400)
+        // Remove a skull (clear half skull first, then remove a full one if possible)
+        if (halfSkullRef.current) {
+          halfSkullRef.current = false
+          setHalfSkull(false)
+        } else if (wrongCountRef.current > 0) {
+          wrongCountRef.current -= 1
+          setWrongCount(wrongCountRef.current)
+        }
+        return { ...h, y: newY, collected: true }
+      }
+      if (newY > 110) return { ...h, collected: true }
+      return { ...h, y: newY }
+    }))
+
     rafRef.current = requestAnimationFrame(gameLoop)
-  }, [spawnWave, spawnCoins, spawnRocks, FULL_QUEUE, PHASE1_LEN])
+  }, [spawnWave, spawnCoins, spawnRocks, spawnHeart, FULL_QUEUE, PHASE1_LEN])
 
   // ── Advance word (called from game loop) ──────────────────────────────────
   const advanceRef = useRef<(wasCorrect: boolean) => void>(() => {})
@@ -576,6 +637,12 @@ export default function VocabFly({
       setHalfSkull(false)
       wrongCountRef.current += 1
       setWrongCount(wrongCountRef.current)
+      // Spawn a heart after every 2 full skulls
+      skullsSinceHeart.current += 1
+      if (skullsSinceHeart.current >= 2) {
+        skullsSinceHeart.current = 0
+        setTimeout(() => spawnHeart(), 800)
+      }
       setMissedWords(prev => [...prev, entry])
       if (wrongCountRef.current >= 5) {
         setTimeout(() => {
@@ -900,6 +967,18 @@ export default function VocabFly({
           }}>🪨</div>
         ))}
 
+        {/* ── Hearts (health restore) ── */}
+        {heartItems.filter(h => !h.collected).map(h => (
+          <div key={h.id} className="absolute select-none pointer-events-none" style={{
+            left:`${h.x}%`,top:`${h.y}%`,
+            width:`${HEART_SIZE}px`,height:`${HEART_SIZE}px`,
+            transform:"translateX(-50%)",
+            fontSize:`${HEART_SIZE - 4}px`,lineHeight:1,
+            filter:"drop-shadow(0 2px 6px rgba(255,100,100,0.6))",
+            animation:"heartFloat 1.5s ease-in-out infinite alternate",
+          }}>❤️</div>
+        ))}
+
         {/* ── Bunny ── */}
         {(gamePhase === "playing" || gamePhase === "phase_transition") && (
           <div ref={bunnyElRef} className="absolute pointer-events-none" style={{
@@ -1038,10 +1117,10 @@ export default function VocabFly({
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
                 setWordIdx(0); wordIdxRef.current = 0
-                setWords([]); setCoinItems([]); setRockItems([]); setPopItems([])
+                setWords([]); setCoinItems([]); setRockItems([]); setHeartItems([]); setPopItems([])
                 setCountdown(3); setFlashScreen(null); setShowHint(false)
                 waveTimerRef.current = 0; coinTimerRef.current = 0; rockTimerRef.current = 0
-                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([]); skullsSinceHeart.current = 0; halfSkullRef.current = false; setHalfSkull(false)
                 setGamePhase("countdown"); gamePhaseRef.current = "countdown"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
@@ -1094,10 +1173,10 @@ export default function VocabFly({
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
                 setWordIdx(0); wordIdxRef.current = 0
-                setWords([]); setCoinItems([]); setRockItems([]); setPopItems([])
+                setWords([]); setCoinItems([]); setRockItems([]); setHeartItems([]); setPopItems([])
                 setCountdown(3); setFlashScreen(null); setShowHint(false)
                 waveTimerRef.current = 0; coinTimerRef.current = 0; rockTimerRef.current = 0
-                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
+                speedMultiplierRef.current = 1.0; wrongCountRef.current = 0; setWrongCount(0); setMissedWords([]); skullsSinceHeart.current = 0; halfSkullRef.current = false; setHalfSkull(false)
                 setGamePhase("countdown"); gamePhaseRef.current = "countdown"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
@@ -1177,6 +1256,10 @@ export default function VocabFly({
           50%  { transform:translateX(-50%) rotate(0deg); }
           75%  { transform:translateX(-50%) rotate(-15deg); }
           100% { transform:translateX(-50%) rotate(0deg); }
+        }
+        @keyframes heartFloat {
+          0%   { transform:translateX(-50%) scale(1); }
+          100% { transform:translateX(-50%) scale(1.2); }
         }
       `}</style>
 

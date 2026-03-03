@@ -37,7 +37,7 @@ const SONG_COUNTRY: Record<number, CountryData> = {
     "tacos al pastor mexico street food","mole sauce mexico traditional","tamales mexico food culture","chiles en nogada mexico dish",
     "axolotl mexico underwater salamander","jaguar mexico wildlife jungle","monarch butterfly migration mexico","mexican wolf wildlife nature",
   ]},
-  // ── Guatemala — You World 🇬🇹 blue/white/blue ────────────────────────────────
+  // ── Guatemala — Body World 🇬🇹 blue/white/blue ───────────────────────────────
   4: { country: "Guatemala", flag: "🇬🇹", flagColors: ["#4997D0","#FFFFFF","#4997D0"], palette: ["#FF00FF","#00FFFF","#FFD700"], pexelsQueries: [
     "marimba dance guatemala traditional","mayan dance guatemala ceremony","guatemala traditional dance colorful","guatemala indigenous dance ritual",
     "lake atitlan guatemala volcano","pacaya volcano guatemala eruption","guatemala rainforest jungle green","tikal pyramid jungle guatemala",
@@ -52,27 +52,27 @@ const SONG_COUNTRY: Record<number, CountryData> = {
     "pepian stew guatemala food","kak'ik turkey soup guatemala","guatemala tamales traditional food","rellenitos guatemala dessert plantain",
     "quetzal bird guatemala colorful","jaguar guatemala wildlife","howler monkey guatemala jungle","guatemala tropical bird wildlife",
   ]},
-  6: { country: "Guatemala", flag: "🇬🇹", flagColors: ["#4997D0","#FFFFFF","#4997D0"], palette: ["#FF00FF","#00FFFF","#FFD700"], pexelsQueries: [
-    "marimba dance guatemala traditional","mayan dance guatemala ceremony","guatemala traditional dance colorful","guatemala indigenous dance ritual",
-    "lake atitlan guatemala volcano","pacaya volcano guatemala eruption","guatemala rainforest jungle green","tikal pyramid jungle guatemala",
-    "huipil blouse guatemala indigenous woman","corte skirt guatemala traditional","mayan ceremonial outfit guatemala","guatemala colorful textile traditional dress",
-    "pepian stew guatemala food","kak'ik turkey soup guatemala","guatemala tamales traditional food","rellenitos guatemala dessert plantain",
-    "quetzal bird guatemala colorful","jaguar guatemala wildlife","howler monkey guatemala jungle","guatemala tropical bird wildlife",
-  ]},
-  7: { country: "Guatemala", flag: "🇬🇹", flagColors: ["#4997D0","#FFFFFF","#4997D0"], palette: ["#FF00FF","#00FFFF","#FFD700"], pexelsQueries: [
-    "marimba dance guatemala traditional","mayan dance guatemala ceremony","guatemala traditional dance colorful","guatemala indigenous dance ritual",
-    "lake atitlan guatemala volcano","pacaya volcano guatemala eruption","guatemala rainforest jungle green","tikal pyramid jungle guatemala",
-    "huipil blouse guatemala indigenous woman","corte skirt guatemala traditional","mayan ceremonial outfit guatemala","guatemala colorful textile traditional dress",
-    "pepian stew guatemala food","kak'ik turkey soup guatemala","guatemala tamales traditional food","rellenitos guatemala dessert plantain",
-    "quetzal bird guatemala colorful","jaguar guatemala wildlife","howler monkey guatemala jungle","guatemala tropical bird wildlife",
-  ]},
-  // ── El Salvador & Honduras — Pet World ───────────────────────────────────────
-  8: { country: "El Salvador", flag: "🇸🇻", flagColors: ["#0F47AF","#FFFFFF","#0F47AF"], palette: ["#228B22","#FF6347","#1E90FF"], pexelsQueries: [
+  6: { country: "El Salvador", flag: "🇸🇻", flagColors: ["#0F47AF","#FFFFFF","#0F47AF"], palette: ["#228B22","#FF6347","#1E90FF"], pexelsQueries: [
     "xuc dance el salvador folk","el salvador traditional folk dance","el salvador carnival parade costume","el salvador independence cultural dance",
     "el imposible national park el salvador","el salvador volcano landscape","el salvador lake coatepeque","el salvador pacific coast beach",
     "el salvador traditional folk costume blouse","el salvador colorful festival dress","el salvador indigenous craft textile","el salvador folkloric costume colorful",
     "pupusas el salvador street food","yuca frita el salvador food","el salvador tamales food","el salvador traditional cuisine",
     "baird tapir central america wildlife","toucan central america bird","howler monkey central america jungle","el salvador tropical wildlife nature",
+  ]},
+  7: { country: "El Salvador", flag: "🇸🇻", flagColors: ["#0F47AF","#FFFFFF","#0F47AF"], palette: ["#228B22","#FF6347","#1E90FF"], pexelsQueries: [
+    "xuc dance el salvador folk","el salvador traditional folk dance","el salvador carnival parade costume","el salvador independence cultural dance",
+    "el imposible national park el salvador","el salvador volcano landscape","el salvador lake coatepeque","el salvador pacific coast beach",
+    "el salvador traditional folk costume blouse","el salvador colorful festival dress","el salvador indigenous craft textile","el salvador folkloric costume colorful",
+    "pupusas el salvador street food","yuca frita el salvador food","el salvador tamales food","el salvador traditional cuisine",
+    "baird tapir central america wildlife","toucan central america bird","howler monkey central america jungle","el salvador tropical wildlife nature",
+  ]},
+  // ── Honduras — Pet World 🇭🇳 ─────────────────────────────────────────────────
+  8: { country: "Honduras", flag: "🇭🇳", flagColors: ["#0073CF","#FFFFFF","#0073CF"], palette: ["#228B22","#FF6347","#1E90FF"], pexelsQueries: [
+    "punta dance garifuna honduras","garifuna dance drumming honduras","honduras traditional festival dance","honduras folkloric dance costume",
+    "bay islands honduras caribbean","pico bonito national park honduras","honduras caribbean coast beach","honduras coral reef underwater",
+    "garifuna attire honduras traditional","lenca indigenous clothing honduras","honduras festival traditional costume","honduras folkloric dress colorful",
+    "baleadas honduras street food","sopa de caracol honduras seafood","honduras tamales food culture","honduras traditional food cuisine",
+    "scarlet macaw honduras bird","jaguar honduras wildlife","manatee central america water","honduras tropical wildlife nature",
   ]},
   9: { country: "Honduras", flag: "🇭🇳", flagColors: ["#0073CF","#FFFFFF","#0073CF"], palette: ["#228B22","#FF6347","#1E90FF"], pexelsQueries: [
     "punta dance garifuna honduras","garifuna dance drumming honduras","honduras traditional festival dance","honduras folkloric dance costume",
@@ -81,12 +81,12 @@ const SONG_COUNTRY: Record<number, CountryData> = {
     "baleadas honduras street food","sopa de caracol honduras seafood","honduras tamales food culture","honduras traditional food cuisine",
     "scarlet macaw honduras bird","jaguar honduras wildlife","manatee central america water","honduras tropical wildlife nature",
   ]},
-  10: { country: "El Salvador", flag: "🇸🇻", flagColors: ["#0F47AF","#FFFFFF","#0F47AF"], palette: ["#228B22","#FF6347","#1E90FF"], pexelsQueries: [
-    "xuc dance el salvador folk","el salvador traditional folk dance","el salvador carnival parade costume","el salvador independence cultural dance",
-    "el imposible national park el salvador","el salvador volcano landscape","el salvador lake coatepeque","el salvador pacific coast beach",
-    "el salvador traditional folk costume blouse","el salvador colorful festival dress","el salvador indigenous craft textile","el salvador folkloric costume colorful",
-    "pupusas el salvador street food","yuca frita el salvador food","el salvador tamales food","el salvador traditional cuisine",
-    "baird tapir central america wildlife","toucan central america bird","howler monkey central america jungle","el salvador tropical wildlife nature",
+  10: { country: "Honduras", flag: "🇭🇳", flagColors: ["#0073CF","#FFFFFF","#0073CF"], palette: ["#228B22","#FF6347","#1E90FF"], pexelsQueries: [
+    "punta dance garifuna honduras","garifuna dance drumming honduras","honduras traditional festival dance","honduras folkloric dance costume",
+    "bay islands honduras caribbean","pico bonito national park honduras","honduras caribbean coast beach","honduras coral reef underwater",
+    "garifuna attire honduras traditional","lenca indigenous clothing honduras","honduras festival traditional costume","honduras folkloric dress colorful",
+    "baleadas honduras street food","sopa de caracol honduras seafood","honduras tamales food culture","honduras traditional food cuisine",
+    "scarlet macaw honduras bird","jaguar honduras wildlife","manatee central america water","honduras tropical wildlife nature",
   ]},
   // ── Nicaragua — Travel World 🇳🇮 blue/white/blue ─────────────────────────────
   11: { country: "Nicaragua", flag: "🇳🇮", flagColors: ["#3D6CC0","#FFFFFF","#3D6CC0"], palette: ["#FF4500","#00CED1","#FF8C00"], pexelsQueries: [
@@ -110,7 +110,7 @@ const SONG_COUNTRY: Record<number, CountryData> = {
     "nacatamales nicaragua food","vigoron nicaragua street food","gallo pinto nicaragua rice beans","nicaragua traditional cuisine food",
     "howler monkey nicaragua jungle","sea turtle nicaragua pacific","ocelot central america wildlife","nicaragua tropical bird wildlife",
   ]},
-  // ── Costa Rica — Time World 🇨🇷 blue/white/red/white/blue ────────────────────
+  // ── Costa Rica — Numbers World 🇨🇷 blue/white/red/white/blue ──────────────────
   14: { country: "Costa Rica", flag: "🇨🇷", flagColors: ["#002B7F","#FFFFFF","#CE1126"], palette: ["#00FF7F","#32CD32","#008080"], pexelsQueries: [
     "punto guanacasteco costa rica dance","costa rica traditional folk dance","costa rica carnival parade dance","costa rica folkloric costume dance",
     "arenal volcano costa rica","monteverde cloud forest costa rica","costa rica beach pacific sunset","costa rica waterfall jungle tropical",
@@ -125,43 +125,44 @@ const SONG_COUNTRY: Record<number, CountryData> = {
     "gallo pinto costa rica breakfast","casado costa rica food plate","arroz con leche costa rica dessert","costa rica typical food culture",
     "sloth costa rica jungle","toucan costa rica rainforest","scarlet macaw costa rica bird","jaguar costa rica wildlife",
   ]},
-  16: { country: "Costa Rica", flag: "🇨🇷", flagColors: ["#002B7F","#FFFFFF","#CE1126"], palette: ["#00FF7F","#32CD32","#008080"], pexelsQueries: [
-    "punto guanacasteco costa rica dance","costa rica traditional folk dance","costa rica carnival parade dance","costa rica folkloric costume dance",
-    "arenal volcano costa rica","monteverde cloud forest costa rica","costa rica beach pacific sunset","costa rica waterfall jungle tropical",
-    "guanacaste dress costa rica traditional","pollera costa rica folk costume","costa rica folkloric dance dress","costa rica traditional festival costume",
-    "gallo pinto costa rica breakfast","casado costa rica food plate","arroz con leche costa rica dessert","costa rica typical food culture",
-    "sloth costa rica jungle","toucan costa rica rainforest","scarlet macaw costa rica bird","jaguar costa rica wildlife",
-  ]},
-  17: { country: "Costa Rica", flag: "🇨🇷", flagColors: ["#002B7F","#FFFFFF","#CE1126"], palette: ["#00FF7F","#32CD32","#008080"], pexelsQueries: [
-    "punto guanacasteco costa rica dance","costa rica traditional folk dance","costa rica carnival parade dance","costa rica folkloric costume dance",
-    "arenal volcano costa rica","monteverde cloud forest costa rica","costa rica beach pacific sunset","costa rica waterfall jungle tropical",
-    "guanacaste dress costa rica traditional","pollera costa rica folk costume","costa rica folkloric dance dress","costa rica traditional festival costume",
-    "gallo pinto costa rica breakfast","casado costa rica food plate","arroz con leche costa rica dessert","costa rica typical food culture",
-    "sloth costa rica jungle","toucan costa rica rainforest","scarlet macaw costa rica bird","jaguar costa rica wildlife",
-  ]},
-  // ── Panama — Feelings Color World 🇵🇦 red/white/blue ─────────────────────────
-  18: { country: "Panama", flag: "🇵🇦", flagColors: ["#CC0001","#FFFFFF","#003580"], palette: ["#FFD700","#DC143C","#1E90FF"], pexelsQueries: [
+  // ── Panama — Time World 🇵🇦 red/white/blue ────────────────────────────────────
+  16: { country: "Panama", flag: "🇵🇦", flagColors: ["#CC0001","#FFFFFF","#003580"], palette: ["#FFD700","#DC143C","#1E90FF"], pexelsQueries: [
     "tamborito dance panama traditional","congo dance panama afro","panama folkloric festival dance costume","panama carnival parade dancers",
     "bocas del toro panama caribbean","darien rainforest panama jungle","san blas islands panama guna","panama canal tropical landscape",
     "pollera dress panama national costume","mola shirt guna indigenous panama","panama carnival costume elaborate","panama folkloric traditional costume",
     "sancocho panama soup traditional","arroz con pollo panama food","ceviche panama seafood","panama traditional food cuisine",
     "harpy eagle panama bird","capuchin monkey panama jungle","sloth panama wildlife","panama tropical wildlife nature",
   ]},
-  19: { country: "Panama", flag: "🇵🇦", flagColors: ["#CC0001","#FFFFFF","#003580"], palette: ["#FFD700","#DC143C","#1E90FF"], pexelsQueries: [
+  17: { country: "Panama", flag: "🇵🇦", flagColors: ["#CC0001","#FFFFFF","#003580"], palette: ["#FFD700","#DC143C","#1E90FF"], pexelsQueries: [
     "tamborito dance panama traditional","congo dance panama afro","panama folkloric festival dance costume","panama carnival parade dancers",
     "bocas del toro panama caribbean","darien rainforest panama jungle","san blas islands panama guna","panama canal tropical landscape",
     "pollera dress panama national costume","mola shirt guna indigenous panama","panama carnival costume elaborate","panama folkloric traditional costume",
     "sancocho panama soup traditional","arroz con pollo panama food","ceviche panama seafood","panama traditional food cuisine",
     "harpy eagle panama bird","capuchin monkey panama jungle","sloth panama wildlife","panama tropical wildlife nature",
   ]},
-  20: { country: "Panama", flag: "🇵🇦", flagColors: ["#CC0001","#FFFFFF","#003580"], palette: ["#FFD700","#DC143C","#1E90FF"], pexelsQueries: [
-    "tamborito dance panama traditional","congo dance panama afro","panama folkloric festival dance costume","panama carnival parade dancers",
-    "bocas del toro panama caribbean","darien rainforest panama jungle","san blas islands panama guna","panama canal tropical landscape",
-    "pollera dress panama national costume","mola shirt guna indigenous panama","panama carnival costume elaborate","panama folkloric traditional costume",
-    "sancocho panama soup traditional","arroz con pollo panama food","ceviche panama seafood","panama traditional food cuisine",
-    "harpy eagle panama bird","capuchin monkey panama jungle","sloth panama wildlife","panama tropical wildlife nature",
+  // ── Puerto Rico / DR — Feelings Color World 🇵🇷🇩🇴 ──────────────────────────────
+  18: { country: "Puerto Rico", flag: "🇵🇷", flagColors: ["#EF3340","#FFFFFF","#0A3161"], palette: ["#CC0000","#1E90FF","#FFD700"], pexelsQueries: [
+    "salsa dance puerto rico","bomba plena dance puerto rico","puerto rico carnival parade costume","puerto rico folk dance festival",
+    "el yunque rainforest puerto rico","bioluminescent bay puerto rico","puerto rico beach caribbean","old san juan colorful puerto rico",
+    "bomba dress puerto rico traditional","puerto rico folkloric costume","puerto rico carnival costume colorful","puerto rico festival traditional attire",
+    "mofongo puerto rico plantain food","pasteles puerto rico food","arroz con gandules puerto rico","puerto rico street food culture",
+    "coqui frog puerto rico","manatee puerto rico sea","iguana puerto rico wildlife","puerto rico tropical bird nature",
   ]},
-  // ── Caribbean — Food World ────────────────────────────────────────────────────
+  19: { country: "Puerto Rico", flag: "🇵🇷", flagColors: ["#EF3340","#FFFFFF","#0A3161"], palette: ["#CC0000","#1E90FF","#FFD700"], pexelsQueries: [
+    "salsa dance puerto rico","bomba plena dance puerto rico","puerto rico carnival parade costume","puerto rico folk dance festival",
+    "el yunque rainforest puerto rico","bioluminescent bay puerto rico","puerto rico beach caribbean","old san juan colorful puerto rico",
+    "bomba dress puerto rico traditional","puerto rico folkloric costume","puerto rico carnival costume colorful","puerto rico festival traditional attire",
+    "mofongo puerto rico plantain food","pasteles puerto rico food","arroz con gandules puerto rico","puerto rico street food culture",
+    "coqui frog puerto rico","manatee puerto rico sea","iguana puerto rico wildlife","puerto rico tropical bird nature",
+  ]},
+  20: { country: "Dominican Republic", flag: "🇩🇴", flagColors: ["#002D62","#FFFFFF","#CF142B"], palette: ["#1E90FF","#CC0000","#FFD700"], pexelsQueries: [
+    "merengue dance dominican republic","bachata dance dominican republic","dominican republic carnival parade costume","dominican republic folk dance festival",
+    "punta cana beach dominican republic","samana peninsula dominican republic","dominican republic mountains scenery","dominican republic waterfall nature",
+    "dominican republic folk festival costume","dominican republic carnaval attire colorful","dominican republic traditional dress","dominican republic carnival mask costume",
+    "mangu dominican republic breakfast","sancocho dominican republic stew","mofongo dominican republic food","dominican republic traditional food culture",
+    "hispaniolan solenodon wildlife","dominican republic parrot bird","iguana dominican republic wildlife","dominican republic tropical nature",
+  ]},
+  // ── Cuba — Food World 🇨🇺 ─────────────────────────────────────────────────────
   21: { country: "Cuba", flag: "🇨🇺", flagColors: ["#002A8F","#FFFFFF","#CF142B"], palette: ["#FFD700","#CC0000","#1E90FF"], pexelsQueries: [
     "salsa dance cuba havana","rumba dance cuba afrocuban","cuba son cubano music dance","cuba carnival santiago dance",
     "vinales valley cuba tobacco","varadero beach cuba turquoise","sierra maestra cuba mountains","havana malecon cuba seafront",
@@ -169,19 +170,19 @@ const SONG_COUNTRY: Record<number, CountryData> = {
     "ropa vieja cuba traditional dish","tostones cuba fried plantain","moros y cristianos cuba rice beans","cuba street food culture",
     "cuban crocodile wildlife","bee hummingbird cuba smallest bird","cuban hutia rodent wildlife","cuba tropical bird wildlife",
   ]},
-  22: { country: "Dominican Republic", flag: "🇩🇴", flagColors: ["#002D62","#FFFFFF","#CF142B"], palette: ["#1E90FF","#CC0000","#FFD700"], pexelsQueries: [
-    "merengue dance dominican republic","bachata dance dominican republic","dominican republic carnival parade costume","dominican republic folk dance festival",
-    "punta cana beach dominican republic","samana peninsula dominican republic","dominican republic mountains scenery","dominican republic waterfall nature",
-    "dominican republic folk festival costume","dominican republic carnaval attire colorful","dominican republic traditional dress","dominican republic carnival mask costume",
-    "mangu dominican republic breakfast","sancocho dominican republic stew","mofongo dominican republic food","dominican republic traditional food culture",
-    "hispaniolan solenodon wildlife","dominican republic parrot bird","iguana dominican republic wildlife","dominican republic tropical nature",
+  22: { country: "Cuba", flag: "🇨🇺", flagColors: ["#002A8F","#FFFFFF","#CF142B"], palette: ["#FFD700","#CC0000","#1E90FF"], pexelsQueries: [
+    "salsa dance cuba havana","rumba dance cuba afrocuban","cuba son cubano music dance","cuba carnival santiago dance",
+    "vinales valley cuba tobacco","varadero beach cuba turquoise","sierra maestra cuba mountains","havana malecon cuba seafront",
+    "guayabera shirt cuba traditional","cuba folkloric dance outfit","cuba carnival costume colorful","cuba rumba dance dress",
+    "ropa vieja cuba traditional dish","tostones cuba fried plantain","moros y cristianos cuba rice beans","cuba street food culture",
+    "cuban crocodile wildlife","bee hummingbird cuba smallest bird","cuban hutia rodent wildlife","cuba tropical bird wildlife",
   ]},
-  23: { country: "Puerto Rico", flag: "🇵🇷", flagColors: ["#EF3340","#FFFFFF","#0A3161"], palette: ["#CC0000","#1E90FF","#FFD700"], pexelsQueries: [
-    "salsa dance puerto rico","bomba plena dance puerto rico","puerto rico carnival parade costume","puerto rico folk dance festival",
-    "el yunque rainforest puerto rico","bioluminescent bay puerto rico","puerto rico beach caribbean","old san juan colorful puerto rico",
-    "bomba dress puerto rico traditional","puerto rico folkloric costume","puerto rico carnival costume colorful","puerto rico festival traditional attire",
-    "mofongo puerto rico plantain food","pasteles puerto rico food","arroz con gandules puerto rico","puerto rico street food culture",
-    "coqui frog puerto rico","manatee puerto rico sea","iguana puerto rico wildlife","puerto rico tropical bird nature",
+  23: { country: "Cuba", flag: "🇨🇺", flagColors: ["#002A8F","#FFFFFF","#CF142B"], palette: ["#FFD700","#CC0000","#1E90FF"], pexelsQueries: [
+    "salsa dance cuba havana","rumba dance cuba afrocuban","cuba son cubano music dance","cuba carnival santiago dance",
+    "vinales valley cuba tobacco","varadero beach cuba turquoise","sierra maestra cuba mountains","havana malecon cuba seafront",
+    "guayabera shirt cuba traditional","cuba folkloric dance outfit","cuba carnival costume colorful","cuba rumba dance dress",
+    "ropa vieja cuba traditional dish","tostones cuba fried plantain","moros y cristianos cuba rice beans","cuba street food culture",
+    "cuban crocodile wildlife","bee hummingbird cuba smallest bird","cuban hutia rodent wildlife","cuba tropical bird wildlife",
   ]},
   // ── Colombia — AR World 🇨🇴 yellow/blue/red ──────────────────────────────────
   24: { country: "Colombia", flag: "🇨🇴", flagColors: ["#FCD116","#003087","#CE1126"], palette: ["#1E90FF","#FFD700","#CC0000"], pexelsQueries: [

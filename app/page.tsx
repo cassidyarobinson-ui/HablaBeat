@@ -48,7 +48,29 @@ interface StoreItem {
   previewEmoji?: string   // large emoji shown in the card image area
 }
 
-// ── SECTION GRADIENTS ───────────────────────────────────────────────────────
+// ── COUNTRY FLAG URLS (used as world button backgrounds) ────────────────────
+const COUNTRY_FLAG: Record<string, { url: string; pos: string; size: string }> = {
+  "Mexico":             { url: "https://flagcdn.com/w640/mx.png",  pos: "center center", size: "cover" },
+  "Guatemala":          { url: "https://flagcdn.com/w640/gt.png",  pos: "center center", size: "cover" },
+  "El Salvador":        { url: "https://flagcdn.com/w640/sv.png",  pos: "center center", size: "cover" },
+  "Honduras":           { url: "https://flagcdn.com/w640/hn.png",  pos: "center center", size: "cover" },
+  "Nicaragua":          { url: "https://flagcdn.com/w640/ni.png",  pos: "center center", size: "cover" },
+  "Costa Rica":         { url: "https://flagcdn.com/w640/cr.png",  pos: "center center", size: "cover" },
+  "Panama":             { url: "https://flagcdn.com/w640/pa.png",  pos: "center center", size: "cover" },
+  "Puerto Rico / DR":   { url: "https://flagcdn.com/w640/pr.png",  pos: "center center", size: "cover" },
+  "Cuba":               { url: "https://flagcdn.com/w640/cu.png",  pos: "center center", size: "cover" },
+  "Colombia":           { url: "https://flagcdn.com/w640/co.png",  pos: "40% 15%",       size: "180%" },
+  "Venezuela":          { url: "https://flagcdn.com/w640/ve.png",  pos: "center 85%",    size: "180%" },
+  "Ecuador":            { url: "https://flagcdn.com/w640/ec.png",  pos: "60% 50%",       size: "160%" },
+  "Peru":               { url: "https://flagcdn.com/w640/pe.png",  pos: "center center", size: "cover" },
+  "Bolivia":            { url: "https://flagcdn.com/w640/bo.png",  pos: "center center", size: "cover" },
+  "Paraguay":           { url: "https://flagcdn.com/w640/py.png",  pos: "center center", size: "cover" },
+  "Uruguay":            { url: "https://flagcdn.com/w640/uy.png",  pos: "center center", size: "cover" },
+  "Chile":              { url: "https://flagcdn.com/w640/cl.png",  pos: "center center", size: "cover" },
+  "Argentina":          { url: "https://flagcdn.com/w640/ar.png",  pos: "center center", size: "cover" },
+}
+
+// ── SECTION GRADIENTS (fallback) ────────────────────────────────────────────
 const SECTION_GRADIENTS: Record<string, string> = {
   "alphabet-vowels":  "linear-gradient(135deg, #fbbf24, #f59e0b)",
   "the-self":         "linear-gradient(135deg, #2dd4bf, #0d9488)",
@@ -132,14 +154,16 @@ const languages = {
     curriculum: [
       {
         id: "people-places-things",
-        title: "Noun Galaxy",
+        title: "NOUNS",
+        titleSub: "in North, Central America & Caribbean Islands",
         icon: "🌟",
         color: latinoColors.orange,
         isMainCategory: true,
         sections: [
           {
             id: "alphabet-vowels",
-            title: "Alphabet World",
+            title: "Alphabet",
+            country: "Mexico",
             icon: "📚",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -172,7 +196,8 @@ const languages = {
           },
           {
             id: "body-world",
-            title: "Body World",
+            title: "Body",
+            country: "Guatemala",
             icon: "🧍",
             color: latinoColors.teal,
             badgeUnlocked: false,
@@ -190,7 +215,8 @@ const languages = {
           },
           {
             id: "roles-world",
-            title: "Roles World",
+            title: "Roles",
+            country: "El Salvador",
             icon: "👨‍👩‍👧",
             color: latinoColors.orange,
             badgeUnlocked: false,
@@ -215,7 +241,8 @@ const languages = {
           },
           {
             id: "pets-syllables",
-            title: "Pet World",
+            title: "Pet",
+            country: "Honduras",
             icon: "🐕",
             color: latinoColors.aqua,
             badgeUnlocked: false,
@@ -248,7 +275,8 @@ const languages = {
           },
           {
             id: "places",
-            title: "Travel World",
+            title: "Travel",
+            country: "Nicaragua",
             icon: "🏠",
             color: latinoColors.mint,
             badgeUnlocked: false,
@@ -274,7 +302,8 @@ const languages = {
           },
           {
             id: "numbers",
-            title: "Numbers World",
+            title: "Numbers",
+            country: "Costa Rica",
             icon: "🔢",
             color: latinoColors.purple,
             badgeUnlocked: false,
@@ -299,7 +328,8 @@ const languages = {
           },
           {
             id: "numbers-time",
-            title: "Time World",
+            title: "Time",
+            country: "Panama",
             icon: "🕐",
             color: latinoColors.aqua,
             badgeUnlocked: false,
@@ -323,27 +353,9 @@ const languages = {
             ],
           },
           {
-            id: "colors-feelings",
-            title: "Feelings Color World",
-            icon: "🌈",
-            color: latinoColors.orange,
-            badgeUnlocked: false,
-            songs: [
-              { id: "colores", title: "Colores", number: 18, playCount: 0, completed: false, youtubeId: "rlLf4YlGMf0" },
-              {
-                id: "feliz",
-                title: "Estoy Feliz",
-                number: 19,
-                playCount: 0,
-                completed: false,
-                youtubeId: "ncDUEJR03d0",
-              },
-              { id: "sed", title: "Tengo Sed", number: 20, playCount: 0, completed: false, youtubeId: "Ip3KgS0rDno" },
-            ],
-          },
-          {
             id: "foods",
-            title: "Food World",
+            title: "Food",
+            country: "Cuba",
             icon: "🍎",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -367,18 +379,40 @@ const languages = {
               },
             ],
           },
+          {
+            id: "colors-feelings",
+            title: "Feelings Color",
+            country: "Puerto Rico / DR",
+            icon: "🌈",
+            color: latinoColors.orange,
+            badgeUnlocked: false,
+            songs: [
+              { id: "colores", title: "Colores", number: 18, playCount: 0, completed: false, youtubeId: "rlLf4YlGMf0" },
+              {
+                id: "feliz",
+                title: "Estoy Feliz",
+                number: 19,
+                playCount: 0,
+                completed: false,
+                youtubeId: "ncDUEJR03d0",
+              },
+              { id: "sed", title: "Tengo Sed", number: 20, playCount: 0, completed: false, youtubeId: "Ip3KgS0rDno" },
+            ],
+          },
         ],
       },
       {
         id: "verbs",
-        title: "Verb Galaxy",
+        title: "VERBS",
+        titleSub: "in South America",
         icon: "⚡",
         color: latinoColors.teal,
         isMainCategory: true,
         sections: [
           {
             id: "ar-verbs",
-            title: "AR World",
+            title: "AR",
+            country: "Colombia",
             icon: "🅰️",
             color: latinoColors.aqua,
             badgeUnlocked: false,
@@ -405,7 +439,8 @@ const languages = {
           },
           {
             id: "er-verbs",
-            title: "ER World",
+            title: "ER",
+            country: "Venezuela",
             icon: "🅴",
             color: latinoColors.mint,
             badgeUnlocked: false,
@@ -424,7 +459,8 @@ const languages = {
           },
           {
             id: "ir-verbs",
-            title: "IR World",
+            title: "IR",
+            country: "Ecuador",
             icon: "🅸",
             color: latinoColors.purple,
             badgeUnlocked: false,
@@ -443,7 +479,8 @@ const languages = {
           },
           {
             id: "preterite",
-            title: "Quick Past World",
+            title: "Quick Past",
+            country: "Peru",
             icon: "⏪",
             color: latinoColors.orange,
             badgeUnlocked: false,
@@ -477,7 +514,8 @@ const languages = {
           },
           {
             id: "imperfecto",
-            title: "Long Past World",
+            title: "Long Past",
+            country: "Bolivia",
             icon: "🔄",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -510,7 +548,8 @@ const languages = {
           },
           {
             id: "futuro",
-            title: "Future World",
+            title: "Future",
+            country: "Paraguay",
             icon: "⏩",
             color: latinoColors.teal,
             badgeUnlocked: false,
@@ -528,7 +567,8 @@ const languages = {
           },
           {
             id: "conditional",
-            title: "Conditional World",
+            title: "Conditional",
+            country: "Uruguay",
             icon: "🤔",
             color: latinoColors.aqua,
             badgeUnlocked: false,
@@ -553,7 +593,8 @@ const languages = {
           },
           {
             id: "pronouns",
-            title: "Pronoun World",
+            title: "Pronoun",
+            country: "Chile",
             icon: "👥",
             color: latinoColors.mint,
             badgeUnlocked: false,
@@ -578,7 +619,8 @@ const languages = {
           },
           {
             id: "advanced",
-            title: "Advanced World",
+            title: "Advanced",
+            country: "Argentina",
             icon: "🎓",
             color: latinoColors.purple,
             badgeUnlocked: false,
@@ -1737,68 +1779,70 @@ export default function HablaBeat() {
   // Per-song country data — exact mapping from world JSON (50 Spanish songs)
   type SongCountryData = { country: string; flag: string; palette: string[]; pexelsQuery: string }
   const SONG_COUNTRY_MAP: Record<number, SongCountryData> = {
-    // World 1 — Alphabet World → Mexico (1-3)
+    // World 1 (Nouns) — Alphabet → Mexico (1-3)
     1:  { country: 'Mexico',             flag: '🇲🇽', palette: ['#00CED1','#FF1493','#FF8C00'], pexelsQuery: 'mexico papel picado colorful fiesta' },
     2:  { country: 'Mexico',             flag: '🇲🇽', palette: ['#00CED1','#FF1493','#FF8C00'], pexelsQuery: 'mexico talavera tiles colorful mosaic' },
     3:  { country: 'Mexico',             flag: '🇲🇽', palette: ['#00CED1','#FF1493','#FF8C00'], pexelsQuery: 'mexico huichol art colorful patterns' },
-    // World 2 — Self World → Guatemala (4-7)
+    // World 2 — Body → Guatemala (4-5)
     4:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala mayan woven textiles colorful huipil' },
     5:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala colorful market fabric weaving' },
-    6:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala jungle temple ancient mayan' },
-    7:  { country: 'Guatemala',          flag: '🇬🇹', palette: ['#FF00FF','#00FFFF','#FFD700'], pexelsQuery: 'guatemala traditional dance colorful costume' },
-    // World 3 — Pet World → El Salvador & Honduras (8-10)
-    8:  { country: 'El Salvador',        flag: '🇸🇻', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'el salvador colorful wildlife tropical nature' },
-    9:  { country: 'Honduras',           flag: '🇭🇳', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'honduras tropical wildlife colorful reef' },
-    10: { country: 'El Salvador',        flag: '🇸🇻', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'central america ceramic folk art colorful' },
-    // World 4 — Travel World → Nicaragua (11-13)
+    // World 3 — Roles → El Salvador (6-7)
+    6:  { country: 'El Salvador',        flag: '🇸🇻', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'el salvador colorful pupusas market street' },
+    7:  { country: 'El Salvador',        flag: '🇸🇻', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'el salvador tropical nature volcano flowers' },
+    // World 4 — Pet → Honduras (8-10)
+    8:  { country: 'Honduras',           flag: '🇭🇳', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'honduras tropical wildlife colorful reef' },
+    9:  { country: 'Honduras',           flag: '🇭🇳', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'honduras roatan island colorful caribbean' },
+    10: { country: 'Honduras',           flag: '🇭🇳', palette: ['#228B22','#FF6347','#1E90FF'], pexelsQuery: 'honduras copan mayan ruins jungle colorful' },
+    // World 5 (Nouns) — Travel → Nicaragua (11-13)
     11: { country: 'Nicaragua',          flag: '🇳🇮', palette: ['#FF4500','#00CED1','#FF8C00'], pexelsQuery: 'nicaragua lake volcano dramatic landscape' },
     12: { country: 'Nicaragua',          flag: '🇳🇮', palette: ['#FF4500','#00CED1','#FF8C00'], pexelsQuery: 'nicaragua colorful mosaic patterns streets' },
     13: { country: 'Nicaragua',          flag: '🇳🇮', palette: ['#FF4500','#00CED1','#FF8C00'], pexelsQuery: 'nicaragua colorful market street art' },
-    // World 5 — Time World → Costa Rica (14-17)
+    // World 6 — Numbers → Costa Rica (14-15)
     14: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica rainforest wildlife colorful tropical' },
     15: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica jungle animals bright colorful' },
-    16: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica colorful birds toucans nature' },
-    17: { country: 'Costa Rica',         flag: '🇨🇷', palette: ['#00FF7F','#32CD32','#008080'], pexelsQuery: 'costa rica tropical flowers waterfall colorful' },
-    // World 6 — Feelings & Color World → Panama (18-20)
-    18: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama pollera dress traditional colorful' },
-    19: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama tropical flowers bright colorful' },
-    20: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama colorful city canal tropical' },
-    // World 7 — Food World → Caribbean: Cuba, Dominican Republic, Puerto Rico (21-23)
+    // World 7 — Time → Panama (16-17)
+    16: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama pollera dress traditional colorful' },
+    17: { country: 'Panama',             flag: '🇵🇦', palette: ['#FFFFFF','#FFD700','#DC143C'], pexelsQuery: 'panama colorful city canal tropical' },
+    // World 8 — Feelings Color → Caribbean Islands: Puerto Rico & Dominican Republic (18-20)
+    18: { country: 'Puerto Rico',        flag: '🇵🇷', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'puerto rico colorful streets old san juan' },
+    19: { country: 'Puerto Rico',        flag: '🇵🇷', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'puerto rico tropical beach colorful sunset' },
+    20: { country: 'Dominican Republic', flag: '🇩🇴', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'dominican republic merengue dance colorful festival' },
+    // World 9 — Food → Cuba (21-23)
     21: { country: 'Cuba',               flag: '🇨🇺', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'cuba salsa dance colorful havana street' },
-    22: { country: 'Dominican Republic', flag: '🇩🇴', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'dominican republic merengue dance colorful festival' },
-    23: { country: 'Puerto Rico',        flag: '🇵🇷', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'puerto rico colorful streets old san juan' },
-    // World 8 — AR World → Colombia (24-27)
+    22: { country: 'Cuba',               flag: '🇨🇺', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'cuba vintage cars colorful buildings havana' },
+    23: { country: 'Cuba',               flag: '🇨🇺', palette: ['#FFD700','#87CEEB','#FF69B4'], pexelsQuery: 'cuba tropical music colorful streets festival' },
+    // World 1 (Verbs) — AR → Colombia (24-27)
     24: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia carnaval barranquilla colorful masks feathers' },
     25: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia cumbia dance colorful skirts' },
     26: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia medellin colorful street art flowers' },
     27: { country: 'Colombia',           flag: '🇨🇴', palette: ['#1E90FF','#FFD700','#FF0000'], pexelsQuery: 'colombia colorful coffee region flowers landscape' },
-    // World 9 — ER World → Venezuela (28-30)
+    // World 2 (Verbs) — ER → Venezuela (28-30)
     28: { country: 'Venezuela',          flag: '🇻🇪', palette: ['#DAA520','#228B22','#CC0000'], pexelsQuery: 'venezuela angel falls waterfall dramatic nature' },
     29: { country: 'Venezuela',          flag: '🇻🇪', palette: ['#DAA520','#228B22','#CC0000'], pexelsQuery: 'venezuela joropo harp music traditional dance' },
     30: { country: 'Venezuela',          flag: '🇻🇪', palette: ['#DAA520','#228B22','#CC0000'], pexelsQuery: 'venezuela tepui table mountain colorful landscape' },
-    // World 10 — IR World → Ecuador (31-33)
+    // World 3 (Verbs) — IR → Ecuador (31-33)
     31: { country: 'Ecuador',            flag: '🇪🇨', palette: ['#000080','#DC143C','#FFD700'], pexelsQuery: 'ecuador andean textiles colorful patterns market' },
     32: { country: 'Ecuador',            flag: '🇪🇨', palette: ['#000080','#DC143C','#FFD700'], pexelsQuery: 'ecuador galapagos islands colorful wildlife' },
     33: { country: 'Ecuador',            flag: '🇪🇨', palette: ['#000080','#DC143C','#FFD700'], pexelsQuery: 'ecuador otavalo market colorful textiles weaving' },
-    // World 11 — Quick Past World → Peru (34-37)
+    // World 4 (Verbs) — Quick Past → Peru (34-37)
     34: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru chicha art fluorescent colorful poster' },
     35: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru marinera dance silhouette colorful festival' },
     36: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru machu picchu inca colorful sunrise' },
     37: { country: 'Peru',               flag: '🇵🇪', palette: ['#FF1493','#CC0000','#FFD700'], pexelsQuery: 'peru cusco colorful traditional carnival' },
-    // World 12 — Long Past World → Bolivia (38-40)
+    // World 5 (Verbs) — Long Past → Bolivia (38-40)
     38: { country: 'Bolivia',            flag: '🇧🇴', palette: ['#FF4500','#00CC00','#8B4513'], pexelsQuery: 'bolivia diablada devil mask festival colorful' },
     39: { country: 'Bolivia',            flag: '🇧🇴', palette: ['#FF4500','#00CC00','#8B4513'], pexelsQuery: 'bolivia altiplano textile woven colorful patterns' },
     40: { country: 'Bolivia',            flag: '🇧🇴', palette: ['#FF4500','#00CC00','#8B4513'], pexelsQuery: 'bolivia salar de uyuni salt flat colorful sky' },
-    // World 13 — Future World → Paraguay (41-42)
+    // World 6 (Verbs) — Future → Paraguay (41-42)
     41: { country: 'Paraguay',           flag: '🇵🇾', palette: ['#FFFFFF','#00CC00','#1E90FF'], pexelsQuery: 'paraguay nanduti lace colorful patterns weaving' },
     42: { country: 'Paraguay',           flag: '🇵🇾', palette: ['#FFFFFF','#00CC00','#1E90FF'], pexelsQuery: 'paraguay colorful traditional festival dance music' },
-    // World 14 — Conditional World → Uruguay (43-44)
+    // World 7 (Verbs) — Conditional → Uruguay (43-44)
     43: { country: 'Uruguay',            flag: '🇺🇾', palette: ['#20B2AA','#FF8C00','#A9A9A9'], pexelsQuery: 'uruguay coastal ocean surf colorful sunset' },
     44: { country: 'Uruguay',            flag: '🇺🇾', palette: ['#20B2AA','#FF8C00','#A9A9A9'], pexelsQuery: 'uruguay candombe drum dance colorful afro' },
-    // World 15 — Pronoun World → Chile (45-46)
+    // World 8 (Verbs) — Pronoun → Chile (45-46)
     45: { country: 'Chile',              flag: '🇨🇱', palette: ['#ADD8E6','#DC143C','#696969'], pexelsQuery: 'chile andes mountains dramatic colorful landscape' },
     46: { country: 'Chile',              flag: '🇨🇱', palette: ['#ADD8E6','#DC143C','#696969'], pexelsQuery: 'chile patagonia colorful nature torres del paine' },
-    // World 16 — Advanced World → Argentina (47-50)
+    // World 9 (Verbs) — Advanced → Argentina (47-50)
     47: { country: 'Argentina',          flag: '🇦🇷', palette: ['#8B0000','#191970','#FFD700'], pexelsQuery: 'argentina tango dance dramatic couple silhouette' },
     48: { country: 'Argentina',          flag: '🇦🇷', palette: ['#8B0000','#191970','#FFD700'], pexelsQuery: 'argentina buenos aires colorful la boca street art' },
     49: { country: 'Argentina',          flag: '🇦🇷', palette: ['#8B0000','#191970','#FFD700'], pexelsQuery: 'argentina patagonia grand vista dramatic colorful' },
@@ -2635,10 +2679,6 @@ export default function HablaBeat() {
                 <Coins className="h-6 w-6" />
                 <span className="text-xs font-semibold">Bank</span>
               </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => { stopMic(); setCurrentView("leaderboard") }}>
-                <span style={{ fontSize: 22 }}>🏆</span>
-                <span className="text-xs font-semibold">Ranks</span>
-              </Button>
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => { stopMic(); setCurrentView("visualizer") }}>
                 <Sparkles className="h-6 w-6" />
                 <span className="text-xs font-semibold">Visualizer</span>
@@ -2883,10 +2923,6 @@ export default function HablaBeat() {
             <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
               <Coins className="h-6 w-6" />
               <span className="text-xs font-semibold">Bank</span>
-            </Button>
-            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("leaderboard")}>
-              <span style={{ fontSize: 24 }}>🏆</span>
-              <span className="text-xs font-bold">Ranks</span>
             </Button>
             <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
               <Sparkles className="h-6 w-6" />
@@ -3285,10 +3321,6 @@ export default function HablaBeat() {
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("coins")}>
                 <Coins className="h-6 w-6" />
                 <span className="text-xs font-bold">Bank</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("leaderboard")}>
-                <span style={{ fontSize: 22 }}>🏆</span>
-                <span className="text-xs font-semibold">Ranks</span>
               </Button>
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
                 <Sparkles className="h-6 w-6" />
@@ -3980,21 +4012,10 @@ export default function HablaBeat() {
                       <span className="star-twinkle-slow absolute text-white" style={{ top:"5%", right:"8%", fontSize:"11px", animationDuration:"3.5s", animationDelay:"0.8s" }}>✧</span>
                     </div>
 
-                    {/* Planet orb */}
-                    <div style={{
-                      width: "40px", height: "40px", borderRadius: "50%", flexShrink: 0,
-                      background: `radial-gradient(circle at 35% 35%, ${catAccent[2]}, ${catAccent[0]} 50%, ${catAccent[1]})`,
-                      boxShadow: `0 0 12px ${catAccent[0]}88`,
-                      border: "2px solid rgba(255,255,255,0.2)",
-                      position: "relative",
-                    }}>
-                      <div style={{ position:"absolute", top:"12%", left:"18%", width:"28%", height:"18%", background:"radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%)", borderRadius:"50%", transform:"rotate(-20deg)" }} />
-                    </div>
-
                     {/* Title */}
-                    <div className="flex-1 text-left">
-                      <p className="text-white font-black text-lg leading-tight drop-shadow">{category.title}</p>
-                      <p className="font-semibold text-xs mt-0.5" style={{ color: catAccent[0] }}>{category.sections.length} worlds · {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs</p>
+                    <div className="flex-1 text-left pl-1">
+                      <p className="text-white text-[13px] leading-tight drop-shadow"><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-normal"> {(category as any).titleSub}</span> : null}</p>
+                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: catAccent[0], opacity: 0.8 }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
                     </div>
 
                     {/* Chevron */}
@@ -4004,11 +4025,39 @@ export default function HablaBeat() {
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
                     <div className="galaxy-worlds-in px-2 pt-1 pb-4" style={{ overflow: "visible" }}>
-                      <div className="grid grid-cols-3 gap-3" style={{ overflow: "visible" }}>
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-5 relative" style={{ overflow: "visible" }}>
+                        {/* Diagonal connectors — behind the circles */}
+                        <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
+                          <defs>
+                            <filter id={`path-glow-${category.id}`} x="-50%" y="-50%" width="200%" height="200%">
+                              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+                              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                          </defs>
+                          {[0, 1].map(row => {
+                            const lastIdx = Math.min(row * 3 + 2, category.sections.length - 1)
+                            const nextIdx = (row + 1) * 3
+                            if (nextIdx >= category.sections.length) return null
+                            const x1 = (lastIdx % 3) * 100 + 50
+                            const y1 = row * 100 + 50
+                            const x2 = (nextIdx % 3) * 100 + 50
+                            const y2 = (row + 1) * 100 + 50
+                            return (
+                              <path key={`diag-${row}`} fill="none"
+                                d={`M ${x1} ${y1 + 44} C ${x1 - 15} ${y2 - 15}, ${x2 + 15} ${y1 + 15}, ${x2} ${y2 - 44}`}
+                                stroke="rgba(255,255,255,0.5)" strokeWidth="2"
+                                strokeDasharray="6 4" strokeLinecap="round"
+                                filter={`url(#path-glow-${category.id})`}
+                              />
+                            )
+                          })}
+                        </svg>
                         {category.sections.map((section, sectionIdx) => {
+                          const countryName = (section as any).country ?? ""
+                          const flagData = COUNTRY_FLAG[countryName]
                           const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #a78bfa, #7c3aed)"
                           return (
-                            <div key={section.id} className="world-float aspect-square" style={{ animationDelay: `${(sectionIdx * 0.4) % 3}s` }}>
+                            <div key={section.id} className="world-float aspect-square relative" style={{ zIndex: 10, animationDelay: `${(sectionIdx * 0.4) % 3}s` }}>
                             <button
                               onClick={(e) => {
                                 playWorldClick()
@@ -4021,7 +4070,14 @@ export default function HablaBeat() {
                               onMouseEnter={playWorldHover}
                               onTouchStart={playWorldHover}
                               className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
-                              style={{ background: sectionGradient, border: "2px solid rgba(255,255,255,0.5)", boxShadow: "0 2px 10px rgba(0,0,0,0.3)" }}
+                              style={{
+                                ...(flagData
+                                  ? { backgroundImage: `url(${flagData.url})`, backgroundPosition: flagData.pos, backgroundSize: flagData.size, backgroundRepeat: "no-repeat" }
+                                  : { background: sectionGradient }
+                                ),
+                                border: "2px solid rgba(255,255,255,0.5)",
+                                boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+                              }}
                             >
                               {isSectionBadgeUnlocked(section) && (
                                 <div className="absolute top-1 right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white shadow-sm z-10" />
@@ -4036,9 +4092,8 @@ export default function HablaBeat() {
                                       : section.icon}
                               </span>
                               {(() => {
-                                const words = section.title.split(" ")
-                                const topText = words.slice(0, -1).join(" ")
-                                const botText = words[words.length - 1]
+                                const topText = section.title
+                                const botText = (section as any).country ?? ""
                                 const r = 38, cx = 50
                                 const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
                                 const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
@@ -4067,6 +4122,20 @@ export default function HablaBeat() {
                             </div>
                           )
                         })}
+                        {/* Horizontal dashed lines across each row — on top of circles */}
+                        <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 5, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
+                          {[0, 1, 2].map(row => {
+                            const itemsInRow = Math.min(3, category.sections.length - row * 3)
+                            if (itemsInRow <= 1) return null
+                            const y = row * 100 + 50
+                            return (
+                              <line key={`hrow-${row}`} x1={50} y1={y} x2={(itemsInRow - 1) * 100 + 50} y2={y}
+                                stroke="rgba(255,255,255,0.45)" strokeWidth="2.5"
+                                strokeDasharray="8 5" strokeLinecap="round"
+                              />
+                            )
+                          })}
+                        </svg>
                       </div>
                     </div>
                   )}
@@ -4088,10 +4157,6 @@ export default function HablaBeat() {
                 <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
                   <Coins className="h-6 w-6" />
                   <span className="text-xs font-semibold">Bank</span>
-                </Button>
-                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("leaderboard")}>
-                  <span style={{ fontSize: 22 }}>🏆</span>
-                  <span className="text-xs font-semibold">Ranks</span>
                 </Button>
                 <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
                   <Sparkles className="h-6 w-6" />
@@ -4119,10 +4184,6 @@ export default function HablaBeat() {
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
                 <Coins className="h-6 w-6" />
                 <span className="text-xs font-semibold">Bank</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("leaderboard")}>
-                <span style={{ fontSize: 22 }}>🏆</span>
-                <span className="text-xs font-semibold">Ranks</span>
               </Button>
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#111", backgroundColor: "rgba(0,0,0,0.07)" }} onClick={() => setCurrentView("visualizer")}>
                 <Sparkles className="h-6 w-6" />

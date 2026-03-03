@@ -724,21 +724,51 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     if (!gameContainer) return
     const cfg = getPointer(activePointer)
     const color = cfg.palette[0] ?? "#ffffff"
+    const isHot = currentCombo >= 20
+    const duration = isHot ? 1000 : 720
 
-    // Full-area color wash
+    // Full-area color wash — more intense at high combos
     const wash = document.createElement("div")
     wash.className = "absolute inset-0 pointer-events-none rounded-2xl"
-    wash.style.cssText = `background:radial-gradient(circle at center,${color}55 0%,${color}22 55%,transparent 100%);animation:streakPulse 0.72s ease-out forwards;z-index:50;`
+    wash.style.cssText = isHot
+      ? `background:radial-gradient(circle at center,${color}88 0%,${color}44 40%,rgba(255,80,0,0.15) 70%,transparent 100%);animation:streakPulse ${duration}ms ease-out forwards;z-index:50;`
+      : `background:radial-gradient(circle at center,${color}55 0%,${color}22 55%,transparent 100%);animation:streakPulse ${duration}ms ease-out forwards;z-index:50;`
     gameContainer.appendChild(wash)
-    setTimeout(() => wash.remove(), 740)
+    setTimeout(() => wash.remove(), duration)
 
     // Big combo number overlay
     const overlay = document.createElement("div")
     overlay.className = "absolute inset-0 flex items-center justify-center pointer-events-none"
     overlay.style.cssText = "z-index:51;"
-    overlay.innerHTML = `<div style="text-align:center;animation:streakPulse 0.72s ease-out forwards"><div style="font-size:clamp(4rem,12vw,6.5rem);font-weight:900;color:${color};text-shadow:0 0 28px ${color},0 0 56px ${color}88;font-family:'Impact','Arial Black',sans-serif;letter-spacing:-2px;line-height:1">${currentCombo}</div><div style="font-size:1.1rem;font-weight:900;color:white;opacity:.9;letter-spacing:.3em;text-transform:uppercase;margin-top:-.2rem;font-family:'Impact','Arial Black',sans-serif">🔥 streak 🔥</div></div>`
+    const fontSize = isHot ? "clamp(5rem,15vw,8rem)" : "clamp(4rem,12vw,6.5rem)"
+    const numGlow = isHot
+      ? `0 0 40px ${color},0 0 80px ${color}aa,0 0 120px rgba(255,80,0,0.5)`
+      : `0 0 28px ${color},0 0 56px ${color}88`
+    overlay.innerHTML = `<div style="text-align:center;animation:streakPulse ${duration}ms ease-out forwards"><div style="font-size:${fontSize};font-weight:900;color:${color};text-shadow:${numGlow};font-family:'Impact','Arial Black',sans-serif;letter-spacing:-2px;line-height:1">${currentCombo}</div><div style="font-size:${isHot ? "1.3rem" : "1.1rem"};font-weight:900;color:white;opacity:.9;letter-spacing:.3em;text-transform:uppercase;margin-top:-.2rem;font-family:'Impact','Arial Black',sans-serif">🔥 streak 🔥</div></div>`
     gameContainer.appendChild(overlay)
-    setTimeout(() => overlay.remove(), 740)
+    setTimeout(() => overlay.remove(), duration)
+
+    // Fire particle burst at 20+ combo
+    if (isHot) {
+      const fireEmojis = ["🔥","🔥","🔥","💥","⚡","✨","🔥","🔥"]
+      const count = currentCombo >= 30 ? 8 : 5
+      for (let i = 0; i < count; i++) {
+        const spark = document.createElement("div")
+        spark.className = "absolute pointer-events-none"
+        const x = 20 + Math.random() * 60
+        const startY = 40 + Math.random() * 20
+        const tx = (Math.random() - 0.5) * 120
+        const ty = -(40 + Math.random() * 80)
+        spark.style.cssText = `left:${x}%;top:${startY}%;font-size:${20 + Math.random() * 16}px;z-index:52;opacity:1;transition:none;`
+        spark.textContent = fireEmojis[i % fireEmojis.length]
+        spark.animate([
+          { transform: "translate(0,0) scale(1)", opacity: 1 },
+          { transform: `translate(${tx}px,${ty}px) scale(0.3)`, opacity: 0 },
+        ], { duration: 600 + Math.random() * 400, easing: "ease-out", fill: "forwards" })
+        gameContainer.appendChild(spark)
+        setTimeout(() => spark.remove(), 1100)
+      }
+    }
   }
 
   const showHitEffect = (lane: number, judgment: string, color: string, isJustPerfect = false) => {
@@ -1639,6 +1669,37 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             ))}
           </div>
 
+          {/* Fire edge glow at high combos */}
+          {combo >= 10 && (
+            <div className="absolute inset-0 pointer-events-none z-[4]" style={{
+              boxShadow: combo >= 30
+                ? "inset 0 0 80px rgba(255,50,0,0.35), inset 0 0 160px rgba(255,100,0,0.15)"
+                : combo >= 20
+                ? "inset 0 0 60px rgba(255,80,0,0.25), inset 0 0 120px rgba(255,120,0,0.10)"
+                : "inset 0 0 40px rgba(255,120,30,0.18), inset 0 0 80px rgba(255,150,50,0.08)",
+              transition: "box-shadow 0.5s ease",
+              animation: combo >= 20 ? "fireEdgePulse 1.2s ease-in-out infinite" : "none",
+            }} />
+          )}
+
+          {/* Side fire emitters at 15+ combo */}
+          {combo >= 15 && (
+            <>
+              <div className="absolute left-0 bottom-0 w-8 pointer-events-none z-[4]" style={{
+                height: combo >= 30 ? "60%" : combo >= 20 ? "40%" : "25%",
+                background: "linear-gradient(to top, rgba(255,80,0,0.4), rgba(255,150,0,0.15), transparent)",
+                animation: "fireFlicker 0.6s ease-in-out infinite alternate",
+                transition: "height 0.5s ease",
+              }} />
+              <div className="absolute right-0 bottom-0 w-8 pointer-events-none z-[4]" style={{
+                height: combo >= 30 ? "60%" : combo >= 20 ? "40%" : "25%",
+                background: "linear-gradient(to top, rgba(255,80,0,0.4), rgba(255,150,0,0.15), transparent)",
+                animation: "fireFlicker 0.6s ease-in-out 0.3s infinite alternate",
+                transition: "height 0.5s ease",
+              }} />
+            </>
+          )}
+
           {/* Dashed tap line — sits exactly at carrot tops using fixed px + % offset */}
           <div
             className="absolute left-0 right-0 pointer-events-none z-[6]"
@@ -1650,19 +1711,60 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             }}
           />
 
-          {/* Flow counter centered behind bubbles */}
-          {combo >= 2 && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5]">
-              <div className="text-center">
-                <div className="text-8xl md:text-9xl font-black text-white/40" style={{ textShadow: "0 0 60px rgba(255,255,255,0.25), 0 4px 8px rgba(0,0,0,0.5)", fontFamily: "'Impact', 'Arial Black', sans-serif", letterSpacing: "-2px" }}>
-                  {combo}
-                </div>
-                <div className="text-2xl md:text-3xl font-black text-white/45 -mt-3 tracking-[0.3em] uppercase" style={{ textShadow: "0 0 30px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.5)", fontFamily: "'Impact', 'Arial Black', sans-serif" }}>
-                  flow
+          {/* Flow counter centered behind bubbles — intensifies with combo */}
+          {combo >= 2 && (() => {
+            const tier = combo >= 30 ? 4 : combo >= 20 ? 3 : combo >= 10 ? 2 : combo >= 5 ? 1 : 0
+            const numColor = [
+              "rgba(255,255,255,0.40)",  // 2-4: calm white
+              "rgba(255,200,100,0.55)",  // 5-9: warm amber
+              "rgba(255,140,50,0.70)",   // 10-19: hot orange
+              "rgba(255,80,30,0.85)",    // 20-29: fire red-orange
+              "rgba(255,50,50,0.95)",    // 30+: blazing red
+            ][tier]
+            const labelColor = [
+              "rgba(255,255,255,0.45)",
+              "rgba(255,200,100,0.60)",
+              "rgba(255,140,50,0.75)",
+              "rgba(255,80,30,0.85)",
+              "rgba(255,50,50,0.95)",
+            ][tier]
+            const glow = [
+              "0 0 60px rgba(255,255,255,0.25), 0 4px 8px rgba(0,0,0,0.5)",
+              "0 0 60px rgba(255,180,50,0.35), 0 4px 8px rgba(0,0,0,0.5)",
+              "0 0 80px rgba(255,120,20,0.50), 0 0 30px rgba(255,80,0,0.3), 0 4px 8px rgba(0,0,0,0.5)",
+              "0 0 100px rgba(255,60,10,0.60), 0 0 50px rgba(255,40,0,0.4), 0 4px 8px rgba(0,0,0,0.5)",
+              "0 0 120px rgba(255,30,0,0.70), 0 0 60px rgba(255,0,0,0.5), 0 0 30px rgba(255,200,0,0.3), 0 4px 8px rgba(0,0,0,0.5)",
+            ][tier]
+            const scaleVal = [1, 1.02, 1.06, 1.1, 1.15][tier]
+            const fireLabel = tier >= 2 ? "🔥 flow 🔥" : "flow"
+            return (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5]">
+                <div className="text-center" style={{
+                  transform: `scale(${scaleVal})`,
+                  transition: "transform 0.4s ease",
+                  animation: tier >= 3 ? "flowPulse 0.8s ease-in-out infinite" : "none",
+                }}>
+                  <div className="text-8xl md:text-9xl font-black" style={{
+                    color: numColor,
+                    textShadow: glow,
+                    fontFamily: "'Impact', 'Arial Black', sans-serif",
+                    letterSpacing: "-2px",
+                    transition: "color 0.4s ease, text-shadow 0.4s ease",
+                  }}>
+                    {combo}
+                  </div>
+                  <div className="text-2xl md:text-3xl font-black -mt-3 tracking-[0.3em] uppercase" style={{
+                    color: labelColor,
+                    textShadow: `0 0 30px ${labelColor}, 0 2px 4px rgba(0,0,0,0.5)`,
+                    fontFamily: "'Impact', 'Arial Black', sans-serif",
+                    transition: "color 0.4s ease",
+                  }}>
+                    {fireLabel}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* Falling notes rendered here */}
           <div ref={fallingRef} className="absolute inset-0 pointer-events-none" style={{ transformStyle: "preserve-3d" }} />
@@ -1726,6 +1828,18 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           0% { transform: translateY(0) scale(1.2); opacity: 1; }
           30% { transform: translateY(20px) scale(1); opacity: 1; }
           100% { transform: translateY(80px) scale(0.6) rotate(15deg); opacity: 0; }
+        }
+        @keyframes flowPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.06); }
+        }
+        @keyframes fireEdgePulse {
+          0%, 100% { opacity: 0.7; }
+          50% { opacity: 1; }
+        }
+        @keyframes fireFlicker {
+          0% { opacity: 0.5; transform: scaleY(1) scaleX(0.9); }
+          100% { opacity: 0.9; transform: scaleY(1.08) scaleX(1.1); }
         }
         ${POINTER_KEYFRAMES}
       `}</style>
