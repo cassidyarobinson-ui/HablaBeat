@@ -2353,7 +2353,7 @@ export default function HablaBeat() {
 
         {/* Logo text — blue with black outline + yellow glow behind */}
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
-          <div style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", width: "600px", height: "160px", background: "radial-gradient(ellipse 110% 80%, rgba(251,191,36,0.3) 0%, rgba(251,191,36,0.18) 35%, rgba(251,191,36,0.08) 60%, transparent 85%)", pointerEvents: "none", zIndex: -1 }} />
+          <div style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", width: "340px", height: "160px", background: "radial-gradient(circle, rgba(251,191,36,0.32) 0%, rgba(251,191,36,0.18) 30%, rgba(251,191,36,0.08) 55%, transparent 80%)", pointerEvents: "none", zIndex: -1 }} />
           <p style={{
             fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.08em",
             color: "#aed8ef",
@@ -3433,7 +3433,7 @@ export default function HablaBeat() {
           <div style={{ background: "#4a7cdb" }}>
             {/* Top bar: bunny + title + profile */}
             <div className="flex items-center px-4 pt-10 pb-2 gap-3">
-              <div className="w-10 h-10 flex-shrink-0">
+              <div className="w-14 h-14 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" />
               </div>
@@ -3452,23 +3452,35 @@ export default function HablaBeat() {
                 )}
               </button>
             </div>
-            {/* Stats row — inline like Duolingo */}
-            <div className="flex items-center justify-center gap-6 px-4 pb-3">
-              <div className="flex items-center gap-1.5">
-                <span className="emoji-fire text-lg">🔥</span>
-                <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+            {/* Stats row — inline with labels */}
+            <div className="flex items-center justify-center gap-5 px-4 pb-3">
+              <div className="flex flex-col items-center gap-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="emoji-fire text-lg">🔥</span>
+                  <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+                </div>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Streak</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="emoji-swords text-lg">⚔️</span>
-                <span className="text-white font-black text-sm">{challengesWon}</span>
+              <div className="flex flex-col items-center gap-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="emoji-swords text-lg">⚔️</span>
+                  <span className="text-white font-black text-sm">{challengesWon}</span>
+                </div>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Challenges</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="emoji-lightning text-lg">⚡</span>
-                <span className="text-white font-black text-sm">{bestFlow}</span>
+              <div className="flex flex-col items-center gap-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="emoji-lightning text-lg">⚡</span>
+                  <span className="text-white font-black text-sm">{bestFlow}</span>
+                </div>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Flow</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-lg">💰</span>
-                <span className="text-white font-black text-sm">{totalVocabBank}</span>
+              <div className="flex flex-col items-center gap-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="text-lg">💰</span>
+                  <span className="text-white font-black text-sm">{totalVocabBank}</span>
+                </div>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Bank</span>
               </div>
             </div>
           </div>
