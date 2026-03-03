@@ -1045,9 +1045,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
     return (
       <div className="min-h-screen relative overflow-hidden flex flex-col" style={{
-        background: "linear-gradient(135deg, #e0fdf4 0%, #dbeeff 25%, #e0fdf4 50%, #cff3ff 75%, #e0fdf4 100%)",
-        backgroundSize: "400% 400%",
-        animation: "setupSwirlBg 12s ease-in-out infinite"
+        background: "linear-gradient(180deg, #edf2fa 0%, #f5f7fb 40%, #fafafa 100%)",
       }}>
         <style jsx global>{`
           @keyframes setupSwirlBg {
@@ -1155,15 +1153,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             const desc = songDescriptions[songNumber] ?? "Vocabulary and grammar"
             return (
               <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
-                background: "linear-gradient(90deg, #fbbf24 0%, #a855f7 30%, #3b82f6 60%, #06b6d4 80%, #34d399 100%)",
-                border: "2px solid rgba(255,255,255,0.35)"
+                background: "#4a7cdb",
+                border: "2px solid rgba(255,255,255,0.25)"
               }}>
-                <div className="absolute inset-0 pointer-events-none" style={{
-                  background: "linear-gradient(120deg, rgba(255,255,255,0.18) 0%, transparent 50%)"
-                }} />
-                <span className="absolute top-3 left-8 text-white/40 text-base select-none">✦</span>
-                <span className="absolute top-5 right-12 text-white/25 text-sm select-none">✦</span>
-                <span className="absolute bottom-3 right-8 text-white/20 text-base select-none">✦</span>
                 <div className="px-5 py-5 relative">
                   <div className="flex items-center justify-between mb-3">
                     <button
@@ -1190,8 +1182,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             backdropFilter: "blur(20px)",
             border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
-            <p className="font-black text-blue-700 mb-2 text-base">🎯 Your Mission:</p>
-            <p className="text-blue-900 text-base leading-relaxed font-medium">Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
+            <p className="font-black mb-2 text-base" style={{ color: "#4a7cdb" }}>🎯 Your Mission:</p>
+            <p className="text-base leading-relaxed font-medium" style={{ color: "#18181b" }}>Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
           </div>
 
           {/* Speed card — frosted glass with pill buttons matching home style */}
@@ -1212,9 +1204,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 onClick={() => setSpeed("slower")}
                 className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
                 style={speed === "slower" ? {
-                  background: "linear-gradient(135deg, #0ea5e9, #6366f1)",
+                  background: "#4a7cdb",
                   color: "#fff",
-                  boxShadow: "0 3px 12px rgba(14,165,233,0.45)",
+                  boxShadow: "0 3px 12px rgba(74,124,219,0.4)",
                   border: "2px solid rgba(255,255,255,0.3)",
                 } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
               >
@@ -1224,9 +1216,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 onClick={() => setSpeed("normal")}
                 className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
                 style={speed === "normal" ? {
-                  background: "linear-gradient(135deg, #f97316, #ef4444)",
+                  background: "#4a7cdb",
                   color: "#fff",
-                  boxShadow: "0 3px 12px rgba(249,115,22,0.45)",
+                  boxShadow: "0 3px 12px rgba(74,124,219,0.4)",
                   border: "2px solid rgba(255,255,255,0.3)",
                 } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
               >
@@ -1236,9 +1228,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 onClick={() => setSpeed("keywords")}
                 className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
                 style={speed === "keywords" ? {
-                  background: "linear-gradient(135deg, #10b981, #059669)",
+                  background: "#4a7cdb",
                   color: "#fff",
-                  boxShadow: "0 3px 12px rgba(16,185,129,0.45)",
+                  boxShadow: "0 3px 12px rgba(74,124,219,0.4)",
                   border: "2px solid rgba(255,255,255,0.3)",
                 } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
               >
@@ -1251,13 +1243,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           {/* Start button — teal→green gradient with glow + outer ring */}
           <div className="rounded-full p-[3px] shadow-2xl mt-1" style={{
             background: "linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.1))",
-            boxShadow: "0 0 0 3px rgba(255,255,255,0.35), 0 8px 32px rgba(52,211,153,0.45)"
+            boxShadow: "0 0 0 3px rgba(255,255,255,0.35), 0 8px 32px rgba(74,124,219,0.4)"
           }}>
             <button
               onClick={startGame}
               className="w-full py-5 rounded-full font-black text-2xl text-white transition-all active:scale-95 flex items-center justify-center gap-3"
               style={{
-                background: "linear-gradient(135deg, #2dd4bf, #22d3ee, #86efac)",
+                background: "linear-gradient(135deg, #5b9be6, #4a7cdb, #3d6bc4)",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4)"
               }}
             >
