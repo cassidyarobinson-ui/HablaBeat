@@ -3437,7 +3437,14 @@ export default function HablaBeat() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" />
               </div>
-              <h1 className="text-2xl font-black tracking-wide text-white flex-1">HablaBeat</h1>
+              <h1 className="flex-1" style={{
+                fontSize: "1.6rem", fontWeight: 900, letterSpacing: "0.08em",
+                color: "#aed8ef",
+                lineHeight: 1,
+                WebkitTextStroke: "2px #1a1a2e",
+                paintOrder: "stroke fill",
+                textTransform: "uppercase" as const,
+              }}>HablaBeat</h1>
               <button
                 onClick={() => setShowProfileModal(true)}
                 className="w-9 h-9 rounded-full overflow-hidden border-2 hover:opacity-90 transition-opacity flex-shrink-0"
