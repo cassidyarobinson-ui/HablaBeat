@@ -3447,16 +3447,11 @@ export default function HablaBeat() {
               }}>HablaBeat</h1>
               <button
                 onClick={() => setShowProfileModal(true)}
-                className="w-9 h-9 rounded-full overflow-hidden border-2 hover:opacity-90 transition-opacity flex-shrink-0"
-                style={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.2)" }}
+                className="w-20 h-20 flex-shrink-0 hover:opacity-90 transition-opacity"
                 title="Edit profile"
               >
-                {userPhoto ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="flex items-center justify-center w-full h-full text-lg">🐰</span>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/super-bunny-heart.gif" alt="Profile" className="w-full h-full object-contain" style={{ transform: "scaleX(-1)" }} />
               </button>
             </div>
             {/* Stats row — inline with labels */}
