@@ -3432,13 +3432,13 @@ export default function HablaBeat() {
           {/* ── HEADER — Duolingo-style solid blue bar ── */}
           <div style={{ background: "#4a7cdb" }}>
             {/* Top bar: bunny + title + profile */}
-            <div className="flex items-center px-4 pt-10 pb-2 gap-3">
-              <div className="w-14 h-14 flex-shrink-0">
+            <div className="flex items-center px-4 pt-4 pb-2 gap-3">
+              <div className="w-20 h-20 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" />
               </div>
               <h1 className="flex-1" style={{
-                fontSize: "1.6rem", fontWeight: 900, letterSpacing: "0.08em",
+                fontSize: "2rem", fontWeight: 900, letterSpacing: "0.08em",
                 color: "#aed8ef",
                 lineHeight: 1,
                 WebkitTextStroke: "2px #1a1a2e",
