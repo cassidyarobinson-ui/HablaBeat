@@ -3535,74 +3535,8 @@ export default function HablaBeat() {
                       )}
                     </div>
                   </div>
-                  {/* Loadout bar — shows active pointer, tap to open drawer */}
-                  {(() => {
-                    const activePointerItem = STORE_CATALOG.find(i => i.id === activePointer)
-                    return (
-                      <div className="px-3 pb-2">
-                        <div className="flex gap-2 items-center">
-                          <span className="text-xs font-bold tracking-wide uppercase shrink-0" style={{ color: "#a1a1aa" }}>Loadout</span>
-                          <div className="flex gap-1.5 flex-1">
-                            {/* Pointer chip */}
-                            <button
-                              onClick={() => setLoadoutOpen(loadoutOpen === "pointer" ? null : "pointer")}
-                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-black transition-all active:scale-90"
-                              style={{
-                                background: loadoutOpen === "pointer" ? "#f0f4ff" : "#ffffff",
-                                border: loadoutOpen === "pointer" ? "1.5px solid #bdd0ef" : "1.5px solid #e5e7eb",
-                                color: "#18181b",
-                              }}
-                            >
-                              <span>{activePointerItem?.emoji ?? "🥕"}</span>
-                              <span className="opacity-80">{activePointerItem?.name?.split(" ")[0] ?? "Carrot"}</span>
-                              <span className="opacity-50">⚙️</span>
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Quick-swap drawer */}
-                        {loadoutOpen && (
-                          <div className="mt-2 rounded-2xl overflow-hidden" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-                            <div className="flex gap-2 overflow-x-auto px-3 py-2.5" style={{ scrollbarWidth: "none" }}>
-                              {STORE_CATALOG.filter(i => i.id.startsWith("pointer-") && storeOwned.includes(i.id)).map(item => {
-                                const isActive = activePointer === item.id
-                                return (
-                                  <button
-                                    key={item.id}
-                                    onClick={() => {
-                                      setActivePointer(item.id)
-                                      setLoadoutOpen(null)
-                                    }}
-                                    className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl transition-all active:scale-90"
-                                    style={{
-                                      background: isActive ? "#f0f4ff" : "#f9fafb",
-                                      border: isActive ? "1.5px solid #bdd0ef" : "1.5px solid #e5e7eb",
-                                      minWidth: "56px",
-                                    }}
-                                  >
-                                    <span style={{ fontSize: "22px" }}>{item.emoji}</span>
-                                    <span className="text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px", color: "#18181b" }}>{item.name.split(" ")[0]}</span>
-                                    {isActive && <span className="text-[9px] font-black" style={{ color: "#4a7cdb" }}>✓ ON</span>}
-                                  </button>
-                                )
-                              })}
-                              {STORE_CATALOG.filter(i => i.id.startsWith("pointer-") && !storeOwned.includes(i.id)).map(item => (
-                                <button key={item.id} className="flex flex-col items-center gap-1 shrink-0 px-3 py-2 rounded-xl opacity-40" style={{ minWidth: "56px", cursor: "default", background: "#f9fafb", border: "1.5px solid #e5e7eb" }}>
-                                  <span style={{ fontSize: "22px", filter: "grayscale(1)" }}>{item.emoji}</span>
-                                  <span className="text-[10px] font-bold text-center leading-tight" style={{ maxWidth: "52px", color: "#71717a" }}>{item.name.split(" ")[0]}</span>
-                                  <span className="text-[9px]" style={{ color: "#a1a1aa" }}>🔒</span>
-                                </button>
-                              ))}
-                            </div>
-                            <p className="text-center text-[10px] pb-2" style={{ color: "#a1a1aa" }}>Unlock more in the Shop 👛</p>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })()}
-
                   {/* Song list */}
-                  <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: "120px" }}>
+                  <div className="flex-1 overflow-y-auto px-3 pt-3" style={{ paddingBottom: "120px" }}>
                     <div className="rounded-2xl overflow-hidden" style={{ background: "#ffffff", border: "1px solid #e5e7eb" }}>
                       {openSection.songs.map((song, idx) => {
                         const isClickable = song.youtubeId && song.youtubeId !== ""
