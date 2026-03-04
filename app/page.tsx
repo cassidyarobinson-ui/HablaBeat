@@ -2904,7 +2904,7 @@ export default function HablaBeat() {
             <div className="flex gap-5 px-4 pb-3">
               <div className="flex items-center gap-1.5">
                 <span className="text-white font-black text-lg">{totalVocabBank.toLocaleString()}</span>
-                <span className="text-white/60 text-xs font-bold">vocab coins</span>
+                <span className="text-white/60 text-xs font-bold">coins</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-white font-black text-lg">{storeOwned.length}</span>
@@ -2927,9 +2927,15 @@ export default function HablaBeat() {
                 const rarityInfo = item.category === "pointer" ? POINTER_RARITY[item.id] : null
                 return (
                   <div
-                    className="bg-white rounded-xl p-2 shadow-sm flex flex-col items-center gap-1 transition-all active:scale-[0.97]"
+                    className="bg-white rounded-xl p-2 shadow-sm flex flex-col items-center gap-1 transition-all active:scale-[0.97] relative"
                     style={{ border: isActive ? "2px solid #34d399" : rarityInfo && rarityInfo.label !== "Common" ? `1.5px solid ${rarityInfo.color}40` : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : rarityInfo ? rarityInfo.glow : undefined }}
                   >
+                    {/* Cost badge top-right */}
+                    {!isOwned && !isFree && (
+                      <div className="absolute -top-1.5 -right-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-black" style={{ background: canAfford ? "#fbbf24" : "#e5e7eb", color: canAfford ? "#78350f" : "#9ca3af", border: "1.5px solid white" }}>
+                        {item.cost} <CoinDot size={10} />
+                      </div>
+                    )}
                     {/* Preview area */}
                     {item.previewBg ? (
                       <div className="w-full h-14 rounded-xl overflow-hidden relative" style={{ background: item.previewBg }}>
@@ -2986,15 +2992,13 @@ export default function HablaBeat() {
                     {isActive ? (
                       <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">✓ Active</span>
                     ) : isOwned ? (
-                      <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Equip</button>
+                      <button onClick={() => handleStoreEquip(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "#4a7cdb", color: "white" }}>Equip</button>
                     ) : isFree ? (
-                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "linear-gradient(135deg,#2dd4bf,#22d3ee)", color: "white" }}>Get Free</button>
+                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "#4a7cdb", color: "white" }}>Get Free</button>
                     ) : canAfford ? (
-                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "linear-gradient(135deg,#a855f7,#6366f1)", color: "white" }}>
-                        <span style={{ display:"inline-flex", alignItems:"center", gap:3, justifyContent:"center" }}>Buy — {item.cost} <CoinDot size={12} /></span>
-                      </button>
+                      <button onClick={() => handleStorePurchase(item)} className="w-full py-1.5 rounded-full text-xs font-black active:scale-95" style={{ background: "#4a7cdb", color: "white" }}>Buy</button>
                     ) : (
-                      <span className="text-xs text-gray-400 font-semibold" style={{ display:"inline-flex", alignItems:"center", gap:3, justifyContent:"center" }}>Need {item.cost} <CoinDot size={11} /></span>
+                      <span className="text-[10px] text-gray-400 font-bold">🔒</span>
                     )}
                   </div>
                 )
@@ -3004,7 +3008,7 @@ export default function HablaBeat() {
                 <div className="space-y-5">
                   {/* Pointer arrows grid */}
                   <div>
-                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">🪄 Pointer Arrows</p>
+                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Your Gear</p>
                     <div className="grid grid-cols-3 gap-2">
                       {STORE_CATALOG.filter(item => item.id.startsWith("pointer-")).map(item => (
                         <StoreCard key={item.id} item={item} isActive={activePointer === item.id} canAfford={totalVocabBank >= item.cost} />
