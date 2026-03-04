@@ -3456,35 +3456,27 @@ export default function HablaBeat() {
                 <img src="/images/super-bunny-heart.gif" alt="Profile" className="w-full h-full object-contain" style={{ transform: "scaleX(-1)" }} />
               </button>
             </div>
-            {/* Stats row — inline with labels */}
+            {/* Stats row — icon, label, number inline */}
             <div className="grid grid-cols-4 px-2 pb-3">
-              <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center justify-center gap-1 w-full">
-                  <span className="emoji-fire text-lg">🔥</span>
-                  <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
-                </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Streak</span>
+              <div className="flex items-center justify-center gap-1">
+                <span className="emoji-fire text-base">🔥</span>
+                <span className="text-white/70 text-[11px] font-bold uppercase">Streak</span>
+                <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
               </div>
-              <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center justify-center gap-1 w-full">
-                  <span className="emoji-swords text-lg">⚔️</span>
-                  <span className="text-white font-black text-sm">{challengesWon}</span>
-                </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Challenges</span>
+              <div className="flex items-center justify-center gap-1">
+                <span className="emoji-swords text-base">⚔️</span>
+                <span className="text-white/70 text-[11px] font-bold uppercase">Challenges</span>
+                <span className="text-white font-black text-sm">{challengesWon}</span>
               </div>
-              <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center justify-center gap-1 w-full">
-                  <span className="emoji-lightning text-lg">⚡</span>
-                  <span className="text-white font-black text-sm">{bestFlow}</span>
-                </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Flow</span>
+              <div className="flex items-center justify-center gap-1">
+                <span className="emoji-lightning text-base">⚡</span>
+                <span className="text-white/70 text-[11px] font-bold uppercase">Flow</span>
+                <span className="text-white font-black text-sm">{bestFlow}</span>
               </div>
-              <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center justify-center gap-1 w-full">
-                  <span className="text-lg">💰</span>
-                  <span className="text-white font-black text-sm">{totalVocabBank}</span>
-                </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Bank</span>
+              <div className="flex items-center justify-center gap-1">
+                <span className="text-base">💰</span>
+                <span className="text-white/70 text-[11px] font-bold uppercase">Bank</span>
+                <span className="text-white font-black text-sm">{totalVocabBank}</span>
               </div>
             </div>
           </div>
