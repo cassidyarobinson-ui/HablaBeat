@@ -2917,33 +2917,11 @@ export default function HablaBeat() {
             </div>
           </div>
 
-          {/* ── Worlds / Items toggle + content ── */}
+          {/* ── Worlds + Items combined ── */}
           <div className="px-4 pt-4 pb-32">
 
-            {/* Toggle */}
-            <div className="flex gap-2 bg-gray-100 p-1 rounded-2xl mb-5">
-              <button
-                onClick={() => setBankTab("worlds")}
-                className="flex-1 py-2.5 rounded-xl text-sm font-black transition-all"
-                style={bankTab === "worlds" ? {
-                  background: "#4a7cdb",
-                  color: "white",
-                  boxShadow: "0 2px 8px rgba(74,124,219,0.3)"
-                } : { color: "#6b7280" }}
-              >🌍 Worlds</button>
-              <button
-                onClick={() => setBankTab("items")}
-                className="flex-1 py-2.5 rounded-xl text-sm font-black transition-all"
-                style={bankTab === "items" ? {
-                  background: "#4a7cdb",
-                  color: "white",
-                  boxShadow: "0 2px 8px rgba(74,124,219,0.3)"
-                } : { color: "#6b7280" }}
-              >👛 Items</button>
-            </div>
-
-            {/* ── WORLDS TAB ── */}
-            {bankTab === "worlds" && (
+            {/* ── WORLDS ── */}
+            {(
               <div className="space-y-6">
                 {/* Earned worlds */}
                 {earnedCoins.length === 0 ? (
@@ -3091,8 +3069,8 @@ export default function HablaBeat() {
               </div>
             )}
 
-            {/* ── ITEMS TAB ── */}
-            {bankTab === "items" && (() => {
+            {/* ── ITEMS ── */}
+            {(() => {
               // Reusable coin SVG
               const CoinDot = ({ size = 14 }: { size?: number }) => (
                 <span style={{ display:"inline-block", width:size, height:size, borderRadius:"50%", background:"conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)", border:"1.5px solid #92400E", verticalAlign:"middle", flexShrink:0 }} />
@@ -3178,16 +3156,7 @@ export default function HablaBeat() {
               }
 
               return (
-                <div className="space-y-5">
-                  {/* Balance pill */}
-                  <div className="flex items-center gap-2">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full shadow-sm" style={{ background: "linear-gradient(135deg, #fbbf24, #f59e0b)", border: "2px solid rgba(255,255,255,0.6)" }}>
-                      <span style={{ fontSize: "16px" }}>💰</span>
-                      <span className="text-white font-black text-lg">{totalVocabBank.toLocaleString()}</span>
-                      <span className="text-white/80 font-semibold text-sm">vocab coins</span>
-                    </div>
-                  </div>
-
+                <div className="space-y-5 mt-6">
                   {/* Pointer arrows grid */}
                   <div>
                     <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">🪄 Pointer Arrows</p>
