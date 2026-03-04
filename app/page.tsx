@@ -2904,11 +2904,7 @@ export default function HablaBeat() {
             <div className="flex gap-5 px-4 pb-3">
               <div className="flex items-center gap-1.5">
                 <span className="text-white font-black text-lg">{totalVocabBank.toLocaleString()}</span>
-                <span className="text-white/60 text-xs font-bold">vocab</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-white font-black text-lg">{earnedCoins.length}</span>
-                <span className="text-white/60 text-xs font-bold">worlds</span>
+                <span className="text-white/60 text-xs font-bold">vocab coins</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-white font-black text-lg">{storeOwned.length}</span>
@@ -2917,159 +2913,8 @@ export default function HablaBeat() {
             </div>
           </div>
 
-          {/* ── Worlds + Items combined ── */}
+          {/* ── Pointer Arrows ── */}
           <div className="px-4 pt-4 pb-32">
-
-            {/* ── WORLDS ── */}
-            {(
-              <div className="space-y-6">
-                {/* Earned worlds */}
-                {earnedCoins.length === 0 ? (
-                  <div className="text-center py-8">
-                    <span style={{ fontSize: "52px" }}>🌍</span>
-                    <p className="text-gray-500 mt-3">No worlds collected yet!</p>
-                    <p className="text-gray-400 text-sm mt-1">Beat a friend in a challenge to collect worlds 🏆</p>
-                  </div>
-                ) : (
-                  <>
-                    <div>
-                      <h3 className="text-base font-black text-gray-800 mb-3">Collected ✅</h3>
-                      <div className="grid grid-cols-3 gap-4">
-                        {earnedCoins.map((coin) => {
-                          // Find the matching section to get its gradient + icon
-                          const matchSection = curriculumData.flatMap(c => c.sections).find(s => s.id === coin.id.replace("-coin",""))
-                          const sectionGradient = matchSection ? (SECTION_GRADIENTS[matchSection.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)") : "linear-gradient(135deg, #fbbf24, #f59e0b)"
-                          const displayIcon = matchSection?.icon ?? coin.icon
-                          const words = coin.name.split(" ")
-                          const topText = words.slice(0, -1).join(" ")
-                          const botText = words[words.length - 1]
-                          const r = 38, cx = 50
-                          const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
-                          const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
-                          return (
-                            <div key={coin.id} className="flex flex-col items-center">
-                              <div
-                                className="relative flex items-center justify-center rounded-full overflow-hidden world-float"
-                                style={{
-                                  width: "80px", height: "80px",
-                                  background: sectionGradient,
-                                  border: "2.5px solid rgba(255,255,255,0.6)",
-                                  boxShadow: "0 3px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3)",
-                                  animationDelay: `${(earnedCoins.indexOf(coin) * 0.4) % 3}s`,
-                                }}
-                              >
-                                <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "52px", lineHeight: 1 }}>
-                                  {matchSection?.id === "ar-verbs"
-                                    ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }}>A</span>
-                                    : matchSection?.id === "er-verbs"
-                                      ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }}>E</span>
-                                      : matchSection?.id === "ir-verbs"
-                                        ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" }}>I</span>
-                                        : displayIcon}
-                                </span>
-                                <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
-                                  <defs>
-                                    <path id={`earned-top-${coin.id}`} d={topArc} />
-                                    <path id={`earned-bot-${coin.id}`} d={botArc} />
-                                    <filter id={`earned-outline-${coin.id}`} x="-20%" y="-20%" width="140%" height="140%">
-                                      <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
-                                      <feFlood floodColor="#000" result="color"/>
-                                      <feComposite in="color" in2="expanded" operator="in" result="outline"/>
-                                      <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                    </filter>
-                                  </defs>
-                                  {topText && (
-                                    <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#earned-outline-${coin.id})`}>
-                                      <textPath href={`#earned-top-${coin.id}`} startOffset="50%">{topText}</textPath>
-                                    </text>
-                                  )}
-                                  <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#earned-outline-${coin.id})`} dy="-2">
-                                    <textPath href={`#earned-bot-${coin.id}`} startOffset="50%">{botText}</textPath>
-                                  </text>
-                                </svg>
-                                {/* Sheen */}
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent pointer-events-none rounded-full" />
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Worlds to earn */}
-                {notYetCollected.length > 0 && (
-                  <div>
-                    <h3 className="text-base font-black text-gray-800 mb-1">Worlds to Earn 🔒</h3>
-                    <p className="text-xs text-gray-400 mb-3 italic">Beat a friend in a challenge to unlock 🏆</p>
-                    <div className="grid grid-cols-3 gap-4">
-                      {notYetCollected.map((section, sectionIdx) => {
-                        const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)"
-                        const words = section.title.split(" ")
-                        const topText = words.slice(0, -1).join(" ")
-                        const botText = words[words.length - 1]
-                        const r = 38, cx = 50
-                        const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
-                        const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
-                        return (
-                          <div key={section.id} className="flex flex-col items-center">
-                            <div
-                              className="relative flex items-center justify-center rounded-full aspect-square overflow-hidden"
-                              style={{
-                                width: "80px", height: "80px",
-                                background: sectionGradient,
-                                border: "2px solid rgba(255,255,255,0.3)",
-                                boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-                                filter: "grayscale(1) brightness(0.55)",
-                              }}
-                            >
-                              {/* Big emoji centered */}
-                              <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "52px", lineHeight: 1 }}>
-                                {section.id === "ar-verbs"
-                                  ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }}>A</span>
-                                  : section.id === "er-verbs"
-                                    ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }}>E</span>
-                                    : section.id === "ir-verbs"
-                                      ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "38px", width: "52px", height: "52px", background: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" }}>I</span>
-                                      : section.icon}
-                              </span>
-                              {/* Curved text label */}
-                              <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
-                                <defs>
-                                  <path id={`locked-top-${section.id}`} d={topArc} />
-                                  <path id={`locked-bot-${section.id}`} d={botArc} />
-                                  <filter id={`locked-outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
-                                    <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
-                                    <feFlood floodColor="#000" result="color"/>
-                                    <feComposite in="color" in2="expanded" operator="in" result="outline"/>
-                                    <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                  </filter>
-                                </defs>
-                                {topText && (
-                                  <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#locked-outline-${section.id})`}>
-                                    <textPath href={`#locked-top-${section.id}`} startOffset="50%">{topText}</textPath>
-                                  </text>
-                                )}
-                                <text fontSize="10" fontWeight="900" fill="white" textAnchor="middle" filter={`url(#locked-outline-${section.id})`} dy="-2">
-                                  <textPath href={`#locked-bot-${section.id}`} startOffset="50%">{botText}</textPath>
-                                </text>
-                              </svg>
-                              {/* Lock overlay */}
-                              <div className="absolute inset-0 flex items-center justify-center z-20" style={{ background: "rgba(0,0,0,0.15)" }}>
-                                <span style={{ fontSize: "22px", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.5))" }}>🔒</span>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ── ITEMS ── */}
             {(() => {
               // Reusable coin SVG
               const CoinDot = ({ size = 14 }: { size?: number }) => (
@@ -3082,7 +2927,7 @@ export default function HablaBeat() {
                 const rarityInfo = item.category === "pointer" ? POINTER_RARITY[item.id] : null
                 return (
                   <div
-                    className="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-1.5 transition-all active:scale-[0.97]"
+                    className="bg-white rounded-xl p-2 shadow-sm flex flex-col items-center gap-1 transition-all active:scale-[0.97]"
                     style={{ border: isActive ? "2px solid #34d399" : rarityInfo && rarityInfo.label !== "Common" ? `1.5px solid ${rarityInfo.color}40` : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : rarityInfo ? rarityInfo.glow : undefined }}
                   >
                     {/* Preview area */}
@@ -3156,11 +3001,11 @@ export default function HablaBeat() {
               }
 
               return (
-                <div className="space-y-5 mt-6">
+                <div className="space-y-5">
                   {/* Pointer arrows grid */}
                   <div>
                     <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">🪄 Pointer Arrows</p>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-3 gap-2">
                       {STORE_CATALOG.filter(item => item.id.startsWith("pointer-")).map(item => (
                         <StoreCard key={item.id} item={item} isActive={activePointer === item.id} canAfford={totalVocabBank >= item.cost} />
                       ))}
