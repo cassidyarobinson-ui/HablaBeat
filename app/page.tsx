@@ -3299,6 +3299,16 @@ export default function HablaBeat() {
             const sectionGradient = SECTION_GRADIENTS[openSection.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)"
             const countryName = (openSection as any).country ?? ""
             const flagBg = COUNTRY_FLAG[countryName]
+            // Figure out which country number this is (1-indexed)
+            const allSectionsOrdered = curriculumData.flatMap(c => c.sections)
+            const sectionIdx = allSectionsOrdered.findIndex(s => s.id === openSection!.id) + 1
+            const ordinalSuffix = (n: number) => {
+              const s = ["th","st","nd","rd"]; const v = n % 100
+              return n + (s[(v - 20) % 10] || s[v] || s[0])
+            }
+            const countryLabel = countryName === "Puerto Rico / DR"
+              ? `(${ordinalSuffix(sectionIdx)} Country)`
+              : countryName ? `(${ordinalSuffix(sectionIdx)} Country)` : ""
             const closeWorld = () => {
               setWorldClosing(true)
               setTimeout(() => { setOpenSectionId(""); setWorldClosing(false) }, 450)
@@ -3325,7 +3335,7 @@ export default function HablaBeat() {
                       <span className="text-2xl flex-shrink-0">{openSection.icon}</span>
                       <div className="flex-1 min-w-0">
                         <h2 className="font-black text-lg leading-tight text-white">{openSection.title}</h2>
-                        <p className="text-xs font-semibold text-white/70">{openSection.songs.length} songs · {countryName}</p>
+                        <p className="text-xs font-semibold text-white/70">{openSection.songs.length} songs · {countryName} {countryLabel}</p>
                       </div>
                       {flagBg && (
                         <div className="w-10 h-7 rounded-md overflow-hidden flex-shrink-0" style={{ border: "2px solid rgba(255,255,255,0.4)" }}>
