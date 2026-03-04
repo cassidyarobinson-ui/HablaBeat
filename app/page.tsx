@@ -3433,7 +3433,7 @@ export default function HablaBeat() {
           {/* ── HEADER — Duolingo-style solid blue bar ── */}
           <div style={{ background: "#4a7cdb" }}>
             {/* Top bar: bunny + title + profile */}
-            <div className="flex items-center px-4 pt-4 pb-2 gap-3">
+            <div className="flex items-center px-4 pt-4 pb-1 gap-3">
               <div className="w-20 h-20 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" />
@@ -3457,7 +3457,7 @@ export default function HablaBeat() {
               </button>
             </div>
             {/* Stats row — icon, label, number inline */}
-            <div className="grid grid-cols-3 px-2 pb-3">
+            <div className="grid grid-cols-3 px-2 pb-2">
               <div className="flex items-center justify-center gap-1">
                 <span className="emoji-fire text-base">🔥</span>
                 <span className="text-white/70 text-[11px] font-bold uppercase">Streak</span>
