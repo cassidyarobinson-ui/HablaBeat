@@ -3427,19 +3427,32 @@ export default function HablaBeat() {
                     </div>
 
                     {/* Boss Battle button — appears after every 3rd world */}
-                    {["roles-world","numbers","colors-feelings","ir-verbs","futuro","advanced"].includes(openSection.id) && (
-                      <button
-                        onClick={() => {/* TODO: launch boss battle */}}
-                        className="w-full mt-4 py-4 rounded-2xl font-black text-lg text-white transition-all active:scale-95"
-                        style={{
-                          background: "linear-gradient(135deg, #e74c3c, #c0392b)",
-                          boxShadow: "0 4px 16px rgba(231,76,60,0.4)",
-                          border: "2px solid rgba(255,255,255,0.15)",
-                        }}
-                      >
-                        ⚔️ Battle the Boss
-                      </button>
-                    )}
+                    {(() => {
+                      const bossVillains: Record<string, { name: string; emoji: string }> = {
+                        "roles-world":    { name: "Coyote",                    emoji: "🐺" },
+                        "numbers":        { name: "Capuchin Monkey",           emoji: "🐒" },
+                        "colors-feelings":{ name: "Coquí Frog",               emoji: "🐸" },
+                        "ir-verbs":       { name: "Galápagos Giant Tortoise",  emoji: "🐢" },
+                        "futuro":         { name: "Wolf",                      emoji: "🐺" },
+                        "advanced":       { name: "Condor",                    emoji: "🦅" },
+                      }
+                      const boss = bossVillains[openSection.id]
+                      if (!boss) return null
+                      return (
+                        <button
+                          onClick={() => {/* TODO: launch boss battle */}}
+                          className="w-full mt-4 py-4 rounded-2xl font-black text-white transition-all active:scale-95"
+                          style={{
+                            background: "linear-gradient(135deg, #e74c3c, #c0392b)",
+                            boxShadow: "0 4px 16px rgba(231,76,60,0.4)",
+                            border: "2px solid rgba(255,255,255,0.15)",
+                          }}
+                        >
+                          <div className="text-lg">⚔️ Battle the Boss</div>
+                          <div className="text-sm font-bold opacity-80 mt-0.5">{boss.emoji} {boss.name}</div>
+                        </button>
+                      )
+                    })()}
 
                   </div>
 
