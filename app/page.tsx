@@ -3351,7 +3351,7 @@ export default function HablaBeat() {
                     </div>
                   </div>
                   {/* Song list */}
-                  <div className="flex-1 overflow-y-auto px-3 pt-3" style={{ paddingBottom: "120px" }}>
+                  <div className="flex-1 overflow-y-auto px-3 pt-3" style={{ paddingBottom: "24px" }}>
                     <div className="rounded-2xl overflow-hidden" style={{ background: "#ffffff", border: "1px solid #e5e7eb" }}>
                       {openSection.songs.map((song, idx) => {
                         const isClickable = song.youtubeId && song.youtubeId !== ""
@@ -3429,7 +3429,7 @@ export default function HablaBeat() {
                     {/* Boss Battle button — appears after every 3rd world */}
                     {(() => {
                       const bossVillains: Record<string, { name: string; emoji: string }> = {
-                        "roles-world":    { name: "Coyote",                    emoji: "🐺" },
+                        "roles-world":    { name: "Iguana",                    emoji: "🦎" },
                         "numbers":        { name: "Capuchin Monkey",           emoji: "🐒" },
                         "colors-feelings":{ name: "Coquí Frog",               emoji: "🐸" },
                         "ir-verbs":       { name: "Galápagos Giant Tortoise",  emoji: "🐢" },
@@ -3441,41 +3441,19 @@ export default function HablaBeat() {
                       return (
                         <button
                           onClick={() => {/* TODO: launch boss battle */}}
-                          className="w-full mt-4 py-4 rounded-2xl font-black text-white transition-all active:scale-95"
+                          className="w-full mt-4 py-4 rounded-2xl font-black text-lg text-white transition-all active:scale-95"
                           style={{
-                            background: "linear-gradient(135deg, #e74c3c, #c0392b)",
-                            boxShadow: "0 4px 16px rgba(231,76,60,0.4)",
-                            border: "2px solid rgba(255,255,255,0.15)",
+                            background: "#4a7cdb",
+                            boxShadow: "0 4px 16px rgba(74,124,219,0.4)",
                           }}
                         >
-                          <div className="text-lg">⚔️ Battle the Boss</div>
-                          <div className="text-sm font-bold opacity-80 mt-0.5">{boss.emoji} {boss.name}</div>
+                          <span style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.8))" }}>⚔️</span>  Battle {boss.name} <span style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.8))" }}>{boss.emoji}</span>
                         </button>
                       )
                     })()}
 
                   </div>
 
-                  {/* Bottom bar — next world + vocab bank */}
-                  {(() => {
-                    const allSections = curriculumData.flatMap(cat => cat.sections)
-                    const currentIdx = allSections.findIndex(s => s.id === openSection!.id)
-                    const nextSection = allSections[currentIdx + 1]
-                    return (
-                      <div className="absolute bottom-0 left-0 right-0 px-4 pb-5 pt-3" style={{ background: "linear-gradient(0deg, #fafafa 60%, transparent 100%)" }}>
-                        <div className="flex items-center justify-between rounded-2xl px-4 py-3 max-w-md mx-auto" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-                          <div>
-                            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "#a1a1aa" }}>Next World</p>
-                            <p className="font-black text-sm leading-tight" style={{ color: "#18181b" }}>{nextSection ? nextSection.title : "🏆 All worlds complete!"}</p>
-                          </div>
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "#f0f4ff", border: "1px solid #bdd0ef" }}>
-                            <span style={{ fontSize: "15px" }}>💰</span>
-                            <span className="font-black text-sm" style={{ color: "#4a7cdb" }}>{totalVocabBank.toLocaleString()}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })()}
                 </div>
               </div>
             )
