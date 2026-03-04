@@ -3457,7 +3457,7 @@ export default function HablaBeat() {
               </button>
             </div>
             {/* Stats row — inline with labels */}
-            <div className="flex items-center justify-center gap-5 px-4 pb-3">
+            <div className="flex items-center justify-evenly px-2 pb-3">
               <div className="flex flex-col items-center gap-0.5">
                 <div className="flex items-center gap-1">
                   <span className="emoji-fire text-lg">🔥</span>
