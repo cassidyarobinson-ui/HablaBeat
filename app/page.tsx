@@ -2924,12 +2924,12 @@ export default function HablaBeat() {
                 const rarityInfo = item.category === "pointer" ? POINTER_RARITY[item.id] : null
                 return (
                   <div
-                    className="bg-white rounded-xl p-2 shadow-sm flex flex-col items-center gap-1 transition-all active:scale-[0.97]"
+                    className="bg-white rounded-xl p-2 shadow-sm flex flex-col items-center gap-1 transition-all active:scale-[0.97] relative"
                     style={{ border: isActive ? "2px solid #34d399" : rarityInfo && rarityInfo.label !== "Common" ? `1.5px solid ${rarityInfo.color}40` : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : rarityInfo ? rarityInfo.glow : undefined }}
                   >
-                    {/* Cost badge */}
+                    {/* Cost badge — top right inside card */}
                     {!isOwned && !isFree && (
-                      <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-black self-end" style={{ background: canAfford ? "#fbbf24" : "#e5e7eb", color: canAfford ? "#78350f" : "#9ca3af" }}>
+                      <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-black z-10" style={{ background: canAfford ? "#fbbf24" : "#e5e7eb", color: canAfford ? "#78350f" : "#9ca3af" }}>
                         {item.cost} <CoinDot size={10} />
                       </div>
                     )}
