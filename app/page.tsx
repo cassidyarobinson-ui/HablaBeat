@@ -2355,13 +2355,13 @@ export default function HablaBeat() {
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
           <div style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", width: "340px", height: "160px", background: "radial-gradient(circle, rgba(251,191,36,0.32) 0%, rgba(251,191,36,0.18) 30%, rgba(251,191,36,0.08) 55%, transparent 80%)", pointerEvents: "none", zIndex: -1 }} />
           <p style={{
-            fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.08em",
+            fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.06em",
             color: "#ffffff",
             lineHeight: 1, margin: 0,
-            WebkitTextStroke: "3px #1a1a2e",
+            WebkitTextStroke: "2.5px #2d3748",
             paintOrder: "stroke fill",
             textTransform: "uppercase" as const,
-            textShadow: "3px 3px 0 #888, 4px 4px 0 #999, 5px 5px 0 #aaa, 6px 6px 0 #bbb, 7px 7px 0 #ccc",
+            textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 8px rgba(0,0,0,0.1)",
           }}>HablaBeat</p>
           <p style={{ color: "rgba(0,0,0,0.35)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
@@ -3439,13 +3439,13 @@ export default function HablaBeat() {
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" />
               </div>
               <h1 className="flex-1" style={{
-                fontSize: "2rem", fontWeight: 900, letterSpacing: "0.08em",
+                fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
                 color: "#ffffff",
                 lineHeight: 1,
-                WebkitTextStroke: "2px #1a1a2e",
+                WebkitTextStroke: "2px #2d3748",
                 paintOrder: "stroke fill",
                 textTransform: "uppercase" as const,
-                textShadow: "2px 2px 0 #888, 3px 3px 0 #999, 4px 4px 0 #aaa, 5px 5px 0 #bbb",
+                textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 6px rgba(0,0,0,0.1)",
               }}>HablaBeat</h1>
               <button
                 onClick={() => setShowProfileModal(true)}
