@@ -10,6 +10,7 @@ const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 const SongFly      = dynamic(() => import("@/components/song-fly"),      { ssr: false })
+const BattleIguana = dynamic(() => import("@/components/battle-iguana"), { ssr: false })
 import {
   Play,
   BookOpen,
@@ -1582,6 +1583,7 @@ export default function HablaBeat() {
 
   // Fly game state — which song's fly game is open (null = closed)
   const [flySongNumber, setFlySongNumber] = useState<number | null>(null)
+  const [activeBattle, setActiveBattle] = useState<string | null>(null)
 
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
@@ -2267,7 +2269,7 @@ export default function HablaBeat() {
       <div
         style={{
           position: "fixed", inset: 0, zIndex: 9999,
-          background: "#fafafa",
+          background: "#4a7cdb",
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           opacity: splashFading ? 0 : 1,
           transition: "opacity 0.5s ease",
@@ -2345,7 +2347,7 @@ export default function HablaBeat() {
         {/* Bunny centered */}
         <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "-4px" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain" }} />
+          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(74,124,219,0.3)) drop-shadow(0 0 16px rgba(74,124,219,0.15))" }} />
         </div>
 
         {/* Logo text — blue with black outline + yellow glow behind */}
@@ -2360,9 +2362,21 @@ export default function HablaBeat() {
             textTransform: "uppercase" as const,
             textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 8px rgba(0,0,0,0.1)",
           }}>HablaBeat</p>
-          <p style={{ color: "rgba(0,0,0,0.35)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
+    )
+  }
+
+  // Battle Game View
+  if (activeBattle === "iguana") {
+    return (
+      <BattleIguana
+        coins={challengeCoins}
+        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
+        onClose={() => setActiveBattle(null)}
+        onGameEnd={(score) => {/* future: track battles won */}}
+      />
     )
   }
 
@@ -3159,7 +3173,7 @@ export default function HablaBeat() {
             <div className="flex items-center px-4 pt-4 pb-1 gap-3">
               <div className="w-20 h-20 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" style={{ filter: "drop-shadow(0 0 6px rgba(74,124,219,0.25)) drop-shadow(0 0 12px rgba(74,124,219,0.12))" }} />
               </div>
               <h1 className="flex-1" style={{
                 fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
@@ -3172,7 +3186,7 @@ export default function HablaBeat() {
               }}>HablaBeat</h1>
               <div className="w-20 h-20 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-full h-full object-contain" style={{ transform: "scaleX(-1)" }} />
+                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-full h-full object-contain" style={{ transform: "scaleX(-1)", filter: "drop-shadow(0 0 6px rgba(74,124,219,0.25)) drop-shadow(0 0 12px rgba(74,124,219,0.12))" }} />
               </div>
             </div>
             {/* Stats row — icon, label, number inline */}
@@ -3350,7 +3364,7 @@ export default function HablaBeat() {
                       if (!boss) return null
                       return (
                         <button
-                          onClick={() => {/* TODO: launch boss battle */}}
+                          onClick={() => { if (boss.name === "Iguana") setActiveBattle("iguana") }}
                           className="w-full mt-4 py-4 rounded-2xl font-black text-lg text-white transition-all active:scale-95"
                           style={{
                             background: "#4a7cdb",

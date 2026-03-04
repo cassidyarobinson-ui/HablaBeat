@@ -153,6 +153,47 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
 }
 
 export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer }: DDRGameProps) {
+  // Sound effects for interactive coins/carrots
+  const playCoinSound = () => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.type = "sine"
+      osc.frequency.setValueAtTime(1200, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.05)
+      osc.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.1)
+      gain.gain.setValueAtTime(0.15, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2)
+      osc.start(ctx.currentTime)
+      osc.stop(ctx.currentTime + 0.2)
+    } catch {}
+  }
+  const playCarrotSound = () => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const bufferSize = ctx.sampleRate * 0.08
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+      const data = buffer.getChannelData(0)
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3)
+      const src = ctx.createBufferSource()
+      src.buffer = buffer
+      const filter = ctx.createBiquadFilter()
+      filter.type = "bandpass"
+      filter.frequency.value = 3000
+      filter.Q.value = 1.5
+      const gain = ctx.createGain()
+      gain.gain.setValueAtTime(0.25, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08)
+      src.connect(filter)
+      filter.connect(gain)
+      gain.connect(ctx.destination)
+      src.start(ctx.currentTime)
+    } catch {}
+  }
+
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
@@ -1070,10 +1111,77 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             40%      { transform: translateX(4px) scale(1.15); }
             70%      { transform: translateX(2px) scale(1.05); }
           }
+          @keyframes setupCoinFall {
+            0%   { transform: translateY(30vh) rotate(var(--r)); opacity: 0; }
+            5%   { opacity: 0; }
+            10%  { opacity: 0.85; }
+            70%  { opacity: 0.85; }
+            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)); opacity: 0; }
+          }
+          @keyframes setupCarrotFall {
+            0%   { transform: translateY(25vh) rotate(var(--r)) scale(0.8); opacity: 0; }
+            5%   { opacity: 0; }
+            12%  { opacity: 0.9; transform: translateY(35vh) rotate(var(--r)) scale(1); }
+            70%  { opacity: 0.9; }
+            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)) scale(0.9); opacity: 0; }
+          }
           .emoji-turtle    { display:inline-block; font-size: 1.7em; animation: turtleWaddle 1.6s ease-in-out infinite; }
           .emoji-setup-zap { display:inline-block; font-size: 1.7em; animation: setupLightning 1.8s ease-in-out infinite; }
           .emoji-play-btn  { display:inline-block; animation: playPulse 1.2s ease-in-out infinite; }
         `}</style>
+
+        {/* Falling gold coins — interactive */}
+        {[
+          { left: "5%",  size: 32, duration: "6s",  delay: "0s",    rotate: 15 },
+          { left: "15%", size: 24, duration: "7s",  delay: "1.2s",  rotate: -20 },
+          { left: "25%", size: 28, duration: "5.5s", delay: "0.5s", rotate: 35 },
+          { left: "38%", size: 20, duration: "8s",  delay: "2s",    rotate: -10 },
+          { left: "52%", size: 30, duration: "6.5s", delay: "0.8s", rotate: 25 },
+          { left: "65%", size: 22, duration: "7.5s", delay: "1.5s", rotate: -30 },
+          { left: "75%", size: 26, duration: "5.8s", delay: "3s",   rotate: 40 },
+          { left: "88%", size: 34, duration: "6.2s", delay: "0.3s", rotate: -15 },
+          { left: "45%", size: 18, duration: "9s",  delay: "4s",    rotate: 20 },
+          { left: "92%", size: 22, duration: "7s",  delay: "2.5s",  rotate: -25 },
+        ].map((c, i) => (
+          <div key={`setup-coin-${i}`} onClick={playCoinSound} onMouseEnter={playCoinSound} style={{
+            position: "absolute",
+            left: c.left,
+            top: "-60px",
+            width: `${c.size}px`,
+            height: `${c.size}px`,
+            borderRadius: "50%",
+            background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+            border: `${c.size > 30 ? 2 : 1.5}px solid #92400E`,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
+            animation: `setupCoinFall ${c.duration} ${c.delay} ease-in infinite`,
+            ["--r" as any]: `${c.rotate}deg`,
+            zIndex: 1,
+            cursor: "pointer",
+          }}>
+            <div style={{ position: "absolute", top: "15%", left: "20%", width: "30%", height: "18%", background: "radial-gradient(ellipse,rgba(255,255,255,0.55),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
+          </div>
+        ))}
+
+        {/* Falling carrots — interactive */}
+        {[
+          { left: "10%", size: 22, duration: "7.5s", delay: "1s",   rotate: 20 },
+          { left: "30%", size: 18, duration: "6s",   delay: "3s",   rotate: -15 },
+          { left: "55%", size: 20, duration: "8s",   delay: "2s",   rotate: 30 },
+          { left: "70%", size: 16, duration: "7s",   delay: "4.5s", rotate: -25 },
+          { left: "85%", size: 22, duration: "6.5s", delay: "0.5s", rotate: 10 },
+        ].map((c, i) => (
+          <div key={`setup-carrot-${i}`} onClick={playCarrotSound} onMouseEnter={playCarrotSound} style={{
+            position: "absolute",
+            left: c.left,
+            top: "-50px",
+            fontSize: `${c.size}px`,
+            animation: `setupCarrotFall ${c.duration} ${c.delay} ease-in infinite`,
+            ["--r" as any]: `${c.rotate}deg`,
+            zIndex: 1,
+            cursor: "pointer",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
+          }}>🥕</div>
+        ))}
 
         {/* Iridescent bubble decorations */}
         {bubbles.map((b, i) => (
@@ -1191,7 +1299,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             backdropFilter: "blur(20px)",
             border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
-            <p className="font-black text-gray-800 mb-3">Play Mode</p>
+            <p className="font-black text-gray-800 mb-3">Speed</p>
             <style>{`
               @keyframes btnBounce {
                 0%, 100% { transform: translateY(0px); }
@@ -1201,37 +1309,37 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <div className="flex gap-2">
               <button
                 onClick={() => setSpeed("slower")}
-                className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                className="flex-1 py-3.5 px-5 rounded-full font-black text-sm transition-all active:scale-90 flex items-center justify-center gap-1.5 whitespace-nowrap"
                 style={speed === "slower" ? {
-                  background: "#4a7cdb",
-                  color: "#fff",
-                  boxShadow: "0 3px 12px rgba(74,124,219,0.4)",
-                  border: "2px solid rgba(255,255,255,0.3)",
-                } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
+                  background: "#dbe6f8",
+                  color: "#4a7cdb",
+                  boxShadow: "0 2px 8px rgba(74,124,219,0.2)",
+                  border: "2px solid #4a7cdb",
+                } : { background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef", boxShadow: "0 1px 2px rgba(74,124,219,0.08)" }}
               >
                 Slower
               </button>
               <button
                 onClick={() => setSpeed("normal")}
-                className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                className="flex-1 py-3.5 px-5 rounded-full font-black text-sm transition-all active:scale-90 flex items-center justify-center gap-1.5 whitespace-nowrap"
                 style={speed === "normal" ? {
-                  background: "#4a7cdb",
-                  color: "#fff",
-                  boxShadow: "0 3px 12px rgba(74,124,219,0.4)",
-                  border: "2px solid rgba(255,255,255,0.3)",
-                } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
+                  background: "#dbe6f8",
+                  color: "#4a7cdb",
+                  boxShadow: "0 2px 8px rgba(74,124,219,0.2)",
+                  border: "2px solid #4a7cdb",
+                } : { background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef", boxShadow: "0 1px 2px rgba(74,124,219,0.08)" }}
               >
                 Normal
               </button>
               <button
                 onClick={() => setSpeed("keywords")}
-                className="flex-1 py-3.5 px-5 rounded-full font-black text-base transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                className="flex-1 py-3.5 px-5 rounded-full font-black text-sm transition-all active:scale-90 flex items-center justify-center gap-1.5 whitespace-nowrap"
                 style={speed === "keywords" ? {
-                  background: "#4a7cdb",
-                  color: "#fff",
-                  boxShadow: "0 3px 12px rgba(74,124,219,0.4)",
-                  border: "2px solid rgba(255,255,255,0.3)",
-                } : { background: "#fff", color: "#000", border: "2px solid #e5e7eb" }}
+                  background: "#dbe6f8",
+                  color: "#4a7cdb",
+                  boxShadow: "0 2px 8px rgba(74,124,219,0.2)",
+                  border: "2px solid #4a7cdb",
+                } : { background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef", boxShadow: "0 1px 2px rgba(74,124,219,0.08)" }}
               >
                 Key Words
               </button>
@@ -1295,57 +1403,73 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   if (gameState === "ended") {
     const { grade, color: gradeColor } = getGrade()
     return (
-      <div className="h-[100dvh] text-white flex items-center justify-center relative overflow-hidden" style={{
-        background: "linear-gradient(160deg, #1e1b4b 0%, #312e81 20%, #4c1d95 40%, #6d28d9 60%, #7c3aed 80%, #a855f7 100%)"
+      <div className="h-[100dvh] text-gray-800 flex items-center justify-center relative overflow-hidden" style={{
+        background: "linear-gradient(160deg, #e8f0fe 0%, #dbe6f8 20%, #c9d9f2 40%, #b8cded 60%, #a7c1e8 80%, #96b5e3 100%)"
       }}>
-        {/* Falling coin bubbles background animation */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {Array.from({ length: 25 }).map((_, i) => {
-            const size = 60
-            const delay = Math.random() * 4
-            const duration = 3.5 + Math.random() * 3
-            const leftPos = Math.random() * 95
-            const wobble = Math.random() > 0.4
-            return (
-              <div
-                key={i}
-                className="absolute rounded-full"
-                style={{
-                  left: `${leftPos}%`,
-                  top: `-8%`,
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  animation: `endCoinFall ${duration}s linear ${delay}s infinite${wobble ? `, coinWobble ${0.8 + Math.random() * 0.6}s ease-in-out ${delay}s infinite` : ""}`,
-                  background: "radial-gradient(circle at 35% 30%, #FDE68A, #FBBF24 45%, #D97706)",
-                  border: "2.5px solid #B45309",
-                  boxShadow: "0 0 18px rgba(251,191,36,0.4), inset 0 -6px 12px rgba(146,64,14,0.25), inset 4px 4px 12px rgba(254,243,199,0.5)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  className="absolute rounded-full"
-                  style={{
-                    top: "8%", left: "18%", width: "35%", height: "25%",
-                    background: "radial-gradient(ellipse, rgba(255,255,255,0.7), rgba(255,255,255,0) 70%)",
-                    transform: "rotate(-15deg)",
-                  }}
-                />
-                <span style={{ fontSize: "28px", fontWeight: 900, color: "#78350F", textShadow: "0 1px 2px rgba(0,0,0,0.15)", lineHeight: 1, position: "relative", zIndex: 1 }}>$</span>
-              </div>
-            )
-          })}
+        {/* Falling gold coins — interactive, matching setup page */}
+        <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+          {[
+            { left: "3%",  size: 30, duration: "6s",   delay: "0s",   rotate: 15 },
+            { left: "12%", size: 22, duration: "7.5s", delay: "1.5s", rotate: -20 },
+            { left: "22%", size: 26, duration: "5.5s", delay: "0.5s", rotate: 35 },
+            { left: "33%", size: 18, duration: "8s",   delay: "2.5s", rotate: -10 },
+            { left: "43%", size: 28, duration: "6.5s", delay: "0.8s", rotate: 25 },
+            { left: "55%", size: 20, duration: "7s",   delay: "1.8s", rotate: -30 },
+            { left: "65%", size: 24, duration: "5.8s", delay: "3s",   rotate: 40 },
+            { left: "76%", size: 32, duration: "6.2s", delay: "0.3s", rotate: -15 },
+            { left: "86%", size: 20, duration: "9s",   delay: "4s",   rotate: 20 },
+            { left: "94%", size: 26, duration: "7s",   delay: "2s",   rotate: -25 },
+            { left: "8%",  size: 16, duration: "8.5s", delay: "3.5s", rotate: 30 },
+            { left: "48%", size: 22, duration: "6.8s", delay: "1s",   rotate: -35 },
+          ].map((c, i) => (
+            <div key={`end-coin-${i}`} onClick={playCoinSound} onMouseEnter={playCoinSound} style={{
+              position: "absolute",
+              left: c.left,
+              top: "-60px",
+              width: `${c.size}px`,
+              height: `${c.size}px`,
+              borderRadius: "50%",
+              background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+              border: `${c.size > 30 ? 2 : 1.5}px solid #92400E`,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
+              animation: `endCoinFall ${c.duration} ${c.delay} ease-in infinite`,
+              ["--r" as any]: `${c.rotate}deg`,
+              cursor: "pointer",
+            }}>
+              <div style={{ position: "absolute", top: "15%", left: "20%", width: "30%", height: "18%", background: "radial-gradient(ellipse,rgba(255,255,255,0.55),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
+            </div>
+          ))}
+
+          {/* Falling carrots — interactive */}
+          {[
+            { left: "7%",  size: 20, duration: "7.5s", delay: "1s",   rotate: 20 },
+            { left: "28%", size: 16, duration: "6s",   delay: "3s",   rotate: -15 },
+            { left: "50%", size: 18, duration: "8s",   delay: "2s",   rotate: 30 },
+            { left: "68%", size: 14, duration: "7s",   delay: "4.5s", rotate: -25 },
+            { left: "82%", size: 20, duration: "6.5s", delay: "0.5s", rotate: 10 },
+            { left: "38%", size: 16, duration: "7.2s", delay: "3.8s", rotate: -20 },
+            { left: "90%", size: 18, duration: "8.5s", delay: "1.5s", rotate: 35 },
+          ].map((c, i) => (
+            <div key={`end-carrot-${i}`} onClick={playCarrotSound} onMouseEnter={playCarrotSound} style={{
+              position: "absolute",
+              left: c.left,
+              top: "-50px",
+              fontSize: `${c.size}px`,
+              animation: `endCarrotFall ${c.duration} ${c.delay} ease-in infinite`,
+              ["--r" as any]: `${c.rotate}deg`,
+              cursor: "pointer",
+              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
+            }}>🥕</div>
+          ))}
         </div>
 
         {/* Rainbow ribbon header */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 pointer-events-none" style={{ background: "linear-gradient(90deg, #fbbf24, #a855f7, #3b82f6, #06b6d4, #34d399)" }} />
+        <div className="absolute top-0 left-0 right-0 h-1.5 pointer-events-none" style={{ background: "linear-gradient(90deg, #fbbf24, #4a7cdb, #3b82f6, #06b6d4, #34d399)" }} />
 
         <div className="max-w-md mx-auto px-4 py-4 text-center relative z-10 flex flex-col items-center w-full overflow-y-auto" style={{ maxHeight: "100dvh" }}>
 
           {/* Song title pill */}
-          <div className="mb-3 px-4 py-1.5 rounded-full text-xs font-black tracking-wider uppercase" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(10px)" }}>
+          <div className="mb-3 px-4 py-1.5 rounded-full text-xs font-black tracking-wider uppercase" style={{ background: "rgba(255,255,255,0.6)", border: "1px solid rgba(74,124,219,0.25)", color: "#4a7cdb" }}>
             {songTitle}
           </div>
 
@@ -1360,7 +1484,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             />
             {/* Grade overlaid inside the trophy cup */}
             <div className="absolute top-[18%] left-1/2 -translate-x-1/2 flex items-center justify-center">
-              <span className={`text-4xl md:text-5xl font-black ${gradeColor} drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]`} style={{ textShadow: "0 0 20px currentColor" }}>
+              <span className="text-4xl md:text-5xl font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" style={{ color: "#1a1a1a", textShadow: "0 1px 2px rgba(255,255,255,0.4)" }}>
                 {grade}
               </span>
             </div>
@@ -1374,56 +1498,52 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
           {/* Stats row - frosted glass cards */}
           <div className="flex gap-3 w-full mb-4">
-            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.2)", backdropFilter: "blur(12px)" }}>
+            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
               <div className="flex flex-col items-center gap-0.5">
                 <span className="text-2xl">🔥</span>
-                <span className="text-white/70 text-xs font-bold uppercase tracking-wider">Flow</span>
-                <span className="font-black text-white text-2xl">{maxCombo}</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Flow</span>
+                <span className="font-black text-gray-800 text-2xl">{maxCombo}</span>
               </div>
             </div>
-            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.2)", backdropFilter: "blur(12px)" }}>
+            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
               <div className="flex flex-col items-center gap-0.5">
                 <span className="text-2xl">💰</span>
-                <span className="text-white/70 text-xs font-bold uppercase tracking-wider">Bank</span>
-                <span className="font-black text-white text-2xl">{score}</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Bank</span>
+                <span className="font-black text-gray-800 text-2xl">{score}</span>
               </div>
             </div>
           </div>
 
           <div className="space-y-2.5 w-full mb-3">
-            {/* Play Again — orange/red gradient */}
-            <div className="rounded-full p-[2px]" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", boxShadow: "0 0 0 2px rgba(255,255,255,0.2), 0 6px 20px rgba(249,115,22,0.4)" }}>
-              <button
-                onClick={resetGame}
-                className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
-                style={{ background: "linear-gradient(135deg, #f97316, #ef4444)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }}
-              >
-                <span style={{ display: "inline-block", animation: "btnBounce 0.7s ease-in-out infinite" }}>🥕</span> Play Again!
-              </button>
-            </div>
+            {/* Play Again */}
+            <button
+              onClick={resetGame}
+              className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+              style={{ background: "#4a7cdb", boxShadow: "0 4px 14px rgba(74,124,219,0.35)" }}
+            >
+              <span style={{ display: "inline-block", animation: "btnBounce 0.7s ease-in-out infinite" }}>🥕</span> Play Again!
+            </button>
 
-            {/* Challenge a Friend — teal/blue gradient */}
-            <div className="rounded-full p-[2px]" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", boxShadow: "0 0 0 2px rgba(255,255,255,0.2), 0 6px 20px rgba(14,165,233,0.4)" }}>
-              <button
-                onClick={handleChallenge}
-                className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
-                style={linkCopied
-                  ? { background: "linear-gradient(135deg, #16a34a, #15803d)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }
-                  : { background: "linear-gradient(135deg, #0ea5e9, #06b6d4)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }
-                }
-              >
-                <span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>{linkCopied ? "✅" : "⚔️"}</span>
-                {linkCopied ? "Link Copied!" : "Challenge a Friend"}
-              </button>
-              <p className="text-center text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>Win and earn 2x points!</p>
-            </div>
+            {/* Challenge a Friend */}
+            <button
+              onClick={handleChallenge}
+              className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+              style={linkCopied
+                ? { background: "#16a34a", boxShadow: "0 4px 14px rgba(22,163,74,0.35)" }
+                : { background: "#4a7cdb", boxShadow: "0 4px 14px rgba(74,124,219,0.35)" }
+              }
+            >
+              <span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>{linkCopied ? "✅" : "⚔️"}</span>
+              {linkCopied ? "Link Copied!" : "Challenge a Friend"}
+            </button>
+            <p className="text-center text-xs font-bold -mt-1" style={{ color: "#d97706" }}>Win and earn 2x points!</p>
 
             {/* Back / Next Song row */}
             <div className="flex gap-2 w-full">
               <button
                 onClick={onBack}
-                className="flex-1 py-3 rounded-full font-bold text-white/80 text-sm transition-all active:scale-95"
-                style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.2)", backdropFilter: "blur(10px)" }}
+                className="flex-1 py-3 rounded-full font-bold text-gray-600 text-sm transition-all active:scale-95"
+                style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.25)" }}
               >
                 ← Songs
               </button>
@@ -1431,9 +1551,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 <button
                   onClick={onNextSong}
                   className="flex-1 py-3 rounded-full font-black text-white text-sm transition-all active:scale-95"
-                  style={{ background: "linear-gradient(135deg, #34d399, #059669)", boxShadow: "0 4px 14px rgba(52,211,153,0.4)" }}
+                  style={{ background: "#4a7cdb", boxShadow: "0 4px 14px rgba(74,124,219,0.35)" }}
                 >
-                  Next World →
+                  Next Song →
                 </button>
               )}
             </div>
@@ -1446,10 +1566,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               <img
                 src="/images/super-bunny-heart.gif"
                 alt="HablaBeat Bunny"
-                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]"
+                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(74,124,219,0.35)]"
               />
             </div>
-            <p className="text-white/50 text-xs italic mt-1">
+            <p className="text-gray-400 text-xs italic mt-1">
               {showTranslations ? "Blue Bunny celebrates your victory!" : "¡Conejito Azul celebra tu victoria!"}
             </p>
           </div>
@@ -1458,16 +1578,20 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         {/* End screen animations */}
         <style jsx>{`
           @keyframes endCoinFall {
-            0% { transform: translateY(-20px) scale(0.8); opacity: 0; }
-            5% { opacity: 0.95; transform: translateY(0) scale(1); }
-            50% { opacity: 0.9; transform: translateY(50vh) scale(1.02); }
-            90% { opacity: 0.7; }
-            100% { transform: translateY(110vh) scale(0.95); opacity: 0; }
+            0% { transform: translateY(30vh) scale(0.8); opacity: 0; }
+            10% { opacity: 0; }
+            15% { opacity: 0.85; transform: translateY(40vh) scale(1); }
+            60% { opacity: 0.8; transform: translateY(70vh) scale(1.02); }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(115vh) scale(0.95); opacity: 0; }
           }
-          @keyframes coinWobble {
-            0%, 100% { transform: translateX(0) rotate(0deg); }
-            25% { transform: translateX(-10px) rotate(-5deg); }
-            75% { transform: translateX(10px) rotate(5deg); }
+          @keyframes endCarrotFall {
+            0% { transform: translateY(25vh) rotate(var(--r)) scale(0.8); opacity: 0; }
+            10% { opacity: 0; }
+            15% { opacity: 0.85; transform: translateY(35vh) rotate(var(--r)) scale(1); }
+            60% { opacity: 0.8; transform: translateY(65vh) rotate(calc(var(--r) + 180deg)) scale(1); }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(115vh) rotate(calc(var(--r) + 360deg)) scale(0.9); opacity: 0; }
           }
           @keyframes bunnyBounce {
             0%, 100% { transform: translateY(0) scale(1); }
