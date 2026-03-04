@@ -71,7 +71,6 @@ const GAME_CATALOG = [
   { id: "pointer-rainbow",   name: "Rainbow Laser",    emoji: "🌈", category: "pointer" },
   { id: "pointer-rocket",    name: "Rocket Launcher",  emoji: "🚀", category: "pointer" },
   { id: "pointer-star",      name: "Star Shooter",     emoji: "⭐", category: "pointer" },
-  { id: "pointer-dragon",    name: "Dragon Breath",    emoji: "🐉", category: "pointer" },
 ]
 
 // Constants
