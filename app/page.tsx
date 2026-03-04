@@ -3306,9 +3306,14 @@ export default function HablaBeat() {
               const s = ["th","st","nd","rd"]; const v = n % 100
               return n + (s[(v - 20) % 10] || s[v] || s[0])
             }
+            // Puerto Rico / DR counts as 2 countries (9th & 10th), so offset everything after by +1
+            const prdrIdx = allSectionsOrdered.findIndex(s => (s as any).country === "Puerto Rico / DR")
+            const adjustedIdx = countryName === "Puerto Rico / DR"
+              ? sectionIdx
+              : (prdrIdx !== -1 && sectionIdx > prdrIdx + 1) ? sectionIdx + 1 : sectionIdx
             const countryLabel = countryName === "Puerto Rico / DR"
-              ? `(${ordinalSuffix(sectionIdx)} Country)`
-              : countryName ? `(${ordinalSuffix(sectionIdx)} Country)` : ""
+              ? `(${ordinalSuffix(adjustedIdx)} and ${ordinalSuffix(adjustedIdx + 1)} Country)`
+              : countryName ? `(${ordinalSuffix(adjustedIdx)} Country)` : ""
             const closeWorld = () => {
               setWorldClosing(true)
               setTimeout(() => { setOpenSectionId(""); setWorldClosing(false) }, 450)
@@ -3420,6 +3425,21 @@ export default function HablaBeat() {
                         )
                       })}
                     </div>
+
+                    {/* Boss Battle button — appears after every 3rd world */}
+                    {["roles-world","numbers","colors-feelings","ir-verbs","futuro","advanced"].includes(openSection.id) && (
+                      <button
+                        onClick={() => {/* TODO: launch boss battle */}}
+                        className="w-full mt-4 py-4 rounded-2xl font-black text-lg text-white transition-all active:scale-95"
+                        style={{
+                          background: "linear-gradient(135deg, #e74c3c, #c0392b)",
+                          boxShadow: "0 4px 16px rgba(231,76,60,0.4)",
+                          border: "2px solid rgba(255,255,255,0.15)",
+                        }}
+                      >
+                        ⚔️ Battle the Boss
+                      </button>
+                    )}
 
                   </div>
 
