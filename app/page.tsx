@@ -3459,32 +3459,32 @@ export default function HablaBeat() {
             {/* Stats row — inline with labels */}
             <div className="flex items-center justify-evenly px-2 pb-3">
               <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1">
                   <span className="emoji-fire text-lg">🔥</span>
                   <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
                 </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Streak</span>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider text-center">Streak</span>
               </div>
               <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1">
                   <span className="emoji-swords text-lg">⚔️</span>
                   <span className="text-white font-black text-sm">{challengesWon}</span>
                 </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Challenges</span>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider text-center">Challenges</span>
               </div>
               <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1">
                   <span className="emoji-lightning text-lg">⚡</span>
                   <span className="text-white font-black text-sm">{bestFlow}</span>
                 </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Flow</span>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider text-center">Flow</span>
               </div>
               <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1">
                   <span className="text-lg">💰</span>
                   <span className="text-white font-black text-sm">{totalVocabBank}</span>
                 </div>
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Bank</span>
+                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider text-center">Bank</span>
               </div>
             </div>
           </div>
