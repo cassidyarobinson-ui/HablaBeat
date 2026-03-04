@@ -107,8 +107,6 @@ const STORE_CATALOG: StoreItem[] = [
   { id: "pointer-rainbow",   name: "Rainbow Laser",   emoji: "🌈", cost: 3500, category: "pointer", description: "Combo meter fills slightly faster",         previewEmoji: "🌈" },
   { id: "pointer-rocket",    name: "Rocket Launcher", emoji: "🚀", cost: 5000, category: "pointer", description: "Splash radius. High impact, play patient",  previewEmoji: "🚀" },
   { id: "pointer-star",      name: "Star Shooter",    emoji: "⭐", cost: 6500, category: "pointer", description: "+10% coins per hit. Pure grind tool",       previewEmoji: "⭐" },
-  // 🟡 Legendary
-  { id: "pointer-dragon",    name: "Dragon Breath",   emoji: "🐉", cost: 10000, category: "pointer", description: "One miss per song won't break your combo",  previewEmoji: "🐉" },
 ]
 
 // Rarity metadata for pointer store cards
@@ -122,7 +120,6 @@ const POINTER_RARITY: Record<string, { label: string; color: string; bg: string;
   "pointer-rainbow":   { label: "Epic",      color: "#a855f7", bg: "linear-gradient(135deg,#ef4444,#f97316,#22c55e,#3b82f6,#a855f7)", glow: "0 0 12px rgba(168,85,247,0.5)" },
   "pointer-rocket":    { label: "Epic",      color: "#a855f7", bg: "linear-gradient(135deg,#0f0c29,#302b63)",   glow: "0 0 12px rgba(168,85,247,0.5)" },
   "pointer-star":      { label: "Epic",      color: "#a855f7", bg: "linear-gradient(135deg,#1a1200,#4a3800)",   glow: "0 0 12px rgba(168,85,247,0.5)" },
-  "pointer-dragon":    { label: "Legendary", color: "#f59e0b", bg: "linear-gradient(135deg,#1a0000,#4a0000,#7f1d1d)", glow: "0 0 16px rgba(245,158,11,0.6), 0 0 32px rgba(245,158,11,0.25)" },
 }
 
 const THEME_GRADIENTS: Record<string, string> = {
