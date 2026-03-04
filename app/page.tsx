@@ -2927,12 +2927,12 @@ export default function HablaBeat() {
                 const rarityInfo = item.category === "pointer" ? POINTER_RARITY[item.id] : null
                 return (
                   <div
-                    className="bg-white rounded-xl p-2 shadow-sm flex flex-col items-center gap-1 transition-all active:scale-[0.97] relative"
+                    className="bg-white rounded-xl p-2 shadow-sm flex flex-col items-center gap-1 transition-all active:scale-[0.97]"
                     style={{ border: isActive ? "2px solid #34d399" : rarityInfo && rarityInfo.label !== "Common" ? `1.5px solid ${rarityInfo.color}40` : "1px solid #f3f4f6", boxShadow: isActive ? "0 0 0 3px rgba(52,211,153,0.15)" : rarityInfo ? rarityInfo.glow : undefined }}
                   >
-                    {/* Cost badge top-right */}
+                    {/* Cost badge */}
                     {!isOwned && !isFree && (
-                      <div className="absolute -top-1.5 -right-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-black" style={{ background: canAfford ? "#fbbf24" : "#e5e7eb", color: canAfford ? "#78350f" : "#9ca3af", border: "1.5px solid white" }}>
+                      <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-black self-end" style={{ background: canAfford ? "#fbbf24" : "#e5e7eb", color: canAfford ? "#78350f" : "#9ca3af" }}>
                         {item.cost} <CoinDot size={10} />
                       </div>
                     )}
@@ -2980,12 +2980,6 @@ export default function HablaBeat() {
                     ) : null}
 
                     <p className="font-bold text-gray-900 text-xs text-center leading-tight mt-0.5">{item.name}</p>
-                    {/* Rarity badge for pointers */}
-                    {rarityInfo && (
-                      <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ color: rarityInfo.color, background: `${rarityInfo.color}18`, border: `1px solid ${rarityInfo.color}40`, fontSize: 9 }}>
-                        {rarityInfo.label === "Legendary" ? "✦ " : ""}{rarityInfo.label}
-                      </span>
-                    )}
                     <p className="text-xs text-gray-400 text-center leading-tight" style={{ fontSize:10 }}>{item.description}</p>
 
                     {/* Action button */}
