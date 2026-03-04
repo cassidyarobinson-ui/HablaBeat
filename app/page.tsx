@@ -3152,92 +3152,6 @@ export default function HablaBeat() {
             }}
           />
 
-          {/* Profile Modal */}
-          {showProfileModal && (
-            <div
-              className="fixed inset-0 bg-black/60 z-50 flex items-end justify-center pb-16"
-              onClick={() => setShowProfileModal(false)}
-            >
-              <div
-                className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl mx-4"
-                onClick={e => e.stopPropagation()}
-              >
-                {/* Drag handle */}
-                <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5" />
-
-                {/* Avatar + name row */}
-                <div className="flex items-center gap-4 mb-5">
-                  <button
-                    onClick={() => profilePhotoInputRef.current?.click()}
-                    className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-blue-300 shadow-lg hover:opacity-90 transition-opacity flex-shrink-0"
-                    style={{ backgroundColor: "#e0f2fe" }}
-                  >
-                    {userPhoto ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={userPhoto} alt="Your photo" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="flex items-center justify-center w-full h-full text-4xl">🐰</span>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs py-0.5 text-center">
-                      {userPhoto ? "Change" : "Add Photo"}
-                    </div>
-                  </button>
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      placeholder="Your name (e.g. Cassidy)"
-                      value={userName}
-                      onChange={e => setUserName(e.target.value)}
-                      maxLength={24}
-                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-base font-medium focus:outline-none focus:border-blue-400"
-                    />
-                    {userName && (
-                      <p className="text-xs text-gray-400 mt-1 px-1">Your Name 🥕</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Stats grid */}
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                  {/* Best Flow — sky blue */}
-                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                    background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
-                    border: "2px solid rgba(255,255,255,0.5)"
-                  }}>
-                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-lightning">⚡</span> {bestFlow}</p>
-                    <p className="text-white/90 font-bold text-xs mt-1">Best Flow</p>
-                  </div>
-                  {/* Challenges Won — purple */}
-                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                    background: "linear-gradient(135deg, #a855f7, #7c3aed)",
-                    border: "2px solid rgba(255,255,255,0.5)"
-                  }}>
-                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-swords">⚔️</span> {challengesWon}</p>
-                    <p className="text-white/90 font-bold text-xs mt-1">Challenges Won</p>
-                  </div>
-                  {/* Day Streak — orange */}
-                  <div className="relative overflow-hidden rounded-2xl p-3 shadow-md" style={{
-                    background: "linear-gradient(135deg, #fbbf24, #f97316)",
-                    border: "2px solid rgba(255,255,255,0.5)"
-                  }}>
-                    <span className="absolute top-1 right-2 text-white/40 text-xs select-none">✦</span>
-                    <p className="text-white text-2xl font-black leading-none"><span className="emoji-fire">🔥</span> {dailyStreak > 0 ? dailyStreak : "0"}</p>
-                    <p className="text-white/90 font-bold text-xs mt-1">Day Streak</p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setShowProfileModal(false)}
-                  className="w-full py-3 rounded-xl font-bold text-white text-lg"
-                  style={{ backgroundColor: "#6A9FC0" }}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* ── HEADER — Duolingo-style solid blue bar ── */}
           <div style={{ background: "#4a7cdb" }}>
@@ -3256,14 +3170,10 @@ export default function HablaBeat() {
                 textTransform: "uppercase" as const,
                 textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 6px rgba(0,0,0,0.1)",
               }}>HablaBeat</h1>
-              <button
-                onClick={() => setShowProfileModal(true)}
-                className="w-20 h-20 flex-shrink-0 hover:opacity-90 transition-opacity"
-                title="Edit profile"
-              >
+              <div className="w-20 h-20 flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="Profile" className="w-full h-full object-contain" style={{ transform: "scaleX(-1)" }} />
-              </button>
+                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-full h-full object-contain" style={{ transform: "scaleX(-1)" }} />
+              </div>
             </div>
             {/* Stats row — icon, label, number inline */}
             <div className="grid grid-cols-3 px-2 pb-2">
