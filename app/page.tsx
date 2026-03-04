@@ -96,7 +96,7 @@ const SECTION_GRADIENTS: Record<string, string> = {
 const STORE_CATALOG: StoreItem[] = [
   // ── Pointer Arrows ──
   // 🟢 Common (easy to unlock early)
-  { id: "pointer-carrot",    name: "Carrot",          emoji: "🥕", cost: 0,    category: "pointer", description: "The original HablaBeat arrow",              previewEmoji: "🥕" },
+  { id: "pointer-carrot",    name: "Carrot",          emoji: "🥕", cost: 0,    category: "pointer", description: "Default arrow",              previewEmoji: "🥕" },
   { id: "pointer-red-laser", name: "Red Laser",       emoji: "🔴", cost: 250,  category: "pointer", description: "Precision beam. Feels sharp, not stronger", previewEmoji: "🔴" },
   { id: "pointer-banana",    name: "Banana Blaster",  emoji: "🍌", cost: 500,  category: "pointer", description: "Visible spinning banana. Playful chaos",    previewEmoji: "🍌" },
   { id: "pointer-water",     name: "Water Cannon",    emoji: "💧", cost: 750,  category: "pointer", description: "Splash burst. Micro slow on next bubble",   previewEmoji: "💧" },
