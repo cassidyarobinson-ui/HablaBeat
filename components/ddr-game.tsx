@@ -428,7 +428,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               const innerBubble = document.createElement("div")
               innerBubble.style.cssText = `
                 width: 100%;
-                max-width: 110px;
+                max-width: 150px;
                 aspect-ratio: 1;
                 border-radius: 50%;
                 display: flex;
@@ -898,7 +898,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       }
     }
 
-    // Coin dropping out of the popped bubble
+    // Coin dropping out of the popped bubble — shows English above Spanish
     const coin = document.createElement("div")
     coin.className = "absolute pointer-events-none"
     coin.style.cssText = `
@@ -906,7 +906,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       display: flex; justify-content: center; z-index: 95;
       animation: coinDrop 0.8s ease-in forwards;
     `
-    const coinText = `<div style="font-size:14px;font-weight:900;color:#3D1D00;line-height:1.1;max-width:90%;text-align:center;text-shadow:0 0.5px 0 rgba(255,255,255,0.3)">${noteText}</div>`
+    const englishOnCoin = noteEnglish && noteEnglish.toLowerCase() !== noteText.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
+      ? `<div style="font-size:10px;font-weight:700;color:#5C3000;line-height:1;margin-bottom:1px;text-align:center;max-width:90%;text-shadow:0 0.5px 0 rgba(255,255,255,0.3)">${noteEnglish}</div>`
+      : ""
+    const coinText = `${englishOnCoin}<div style="font-size:${englishOnCoin ? "12" : "14"}px;font-weight:900;color:#3D1D00;line-height:1.1;max-width:90%;text-align:center;text-shadow:0 0.5px 0 rgba(255,255,255,0.3)">${noteText}</div>`
     coin.innerHTML = `
       <div style="width:56px;height:56px;border-radius:50%;background:conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706);border:3px solid #92400E;box-shadow:0 3px 10px rgba(0,0,0,0.5),inset 0 -3px 6px rgba(120,53,0,0.4),inset 2px 2px 6px rgba(254,243,199,0.5),0 0 12px rgba(251,191,36,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:2px;position:relative">
         <div style="position:absolute;inset:3px;border-radius:50%;border:2px solid rgba(254,243,199,0.4);pointer-events:none"></div>
@@ -918,18 +921,27 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     container.appendChild(coin)
     setTimeout(() => coin.remove(), 800)
 
-    // English word judgment text — large, bright, stays visible
+    // English word burst — large, bright text that pops out of the bubble
     const el = document.createElement("div")
-    el.className = `absolute font-black pointer-events-none`
+    el.className = `absolute pointer-events-none`
     el.style.cssText = `
-      left: ${lane * 25}%; width: 25%; bottom: 24%; text-align: center;
-      font-size: clamp(1.2rem, 3vw, 2rem);
-      color: #ffffff;
-      text-shadow: 0 0 12px rgba(59,130,246,0.9), 0 0 24px rgba(59,130,246,0.6), 2px 2px 4px rgba(0,0,0,0.9);
+      left: ${lane * 25 - 8}%; width: 41%; bottom: 28%; text-align: center;
+      display: flex; justify-content: center;
       animation: ddrJudgmentPop 2.5s ease-out forwards; z-index: 100;
-      line-height: 1.1;
     `
-    el.textContent = judgment
+    el.innerHTML = `<span style="
+      font-size: clamp(1.4rem, 4.5vw, 2.8rem);
+      font-weight: 900;
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(99,102,241,0.85));
+      padding: 4px 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.5);
+      box-shadow: 0 0 20px rgba(59,130,246,0.8), 0 4px 12px rgba(0,0,0,0.5);
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+      line-height: 1.2;
+      white-space: nowrap;
+    ">${judgment}</span>`
     container.appendChild(el)
     setTimeout(() => el.remove(), 2500)
   }
@@ -1721,7 +1733,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         </div>
       )}
 
-      <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto h-full flex flex-col">
+      <div className="max-w-lg md:max-w-none mx-auto h-full flex flex-col">
         {/* Top bar: back arrow + loadout button */}
         <div className="flex items-center justify-between p-1 px-2 flex-shrink-0">
           <button onClick={onBack} className="text-white bg-black/40 rounded-full p-1.5 active:scale-90 transition-all">
@@ -1757,8 +1769,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {[0, 1, 2, 3].map((lane) => (
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
-                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "10%", width: "min(90%, 100px)", aspectRatio: "1" }} />
-                <div className={`ddr-arrow absolute left-1/2 -translate-x-1/2 flex justify-center transition-all duration-100`} style={{ bottom: "4%", width: "min(90%, 100px)", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
+                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "10%", width: "min(90%, 140px)", aspectRatio: "1" }} />
+                <div className={`ddr-arrow absolute left-1/2 -translate-x-1/2 flex justify-center transition-all duration-100`} style={{ bottom: "4%", width: "min(90%, 140px)", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
               </div>
             ))}
           </div>
@@ -1888,12 +1900,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       {/* DDR-specific animations */}
       <style jsx global>{`
         @keyframes ddrJudgmentPop {
-          0% { transform: scale(0.3) translateY(0); opacity: 0; }
-          10% { transform: scale(1.5) translateY(0); opacity: 1; }
-          20% { transform: scale(1) translateY(0); opacity: 1; }
-          70% { transform: scale(1) translateY(-20px); opacity: 1; }
-          85% { transform: scale(1) translateY(-30px); opacity: 0.8; }
-          100% { transform: scale(0.9) translateY(-50px); opacity: 0; }
+          0% { transform: scale(0) translateY(0); opacity: 0; }
+          8% { transform: scale(1.8) translateY(0); opacity: 1; }
+          18% { transform: scale(1.1) translateY(0); opacity: 1; }
+          65% { transform: scale(1.1) translateY(-25px); opacity: 1; }
+          80% { transform: scale(1.05) translateY(-35px); opacity: 0.9; }
+          100% { transform: scale(0.9) translateY(-55px); opacity: 0; }
         }
         @keyframes ddrEncouragementBounce {
           0% { transform: scale(0); opacity: 0; }

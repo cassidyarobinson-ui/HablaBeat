@@ -2261,6 +2261,250 @@ export const spanishToEnglish: Record<string, string> = {
   "esto": "this",
   "Facil": "easy",
   "rola": "song",
+
+  // === PATCH: Missing common words across multiple songs ===
+  "al": "to the",
+  "así": "like this",
+  "cómo": "how",
+  "quién": "who",
+  "ese": "that",
+  "estos": "these",
+  "esos": "those",
+  "estas": "these",
+  "pues": "well",
+  "ay": "oh",
+  "escúchame": "listen to me",
+  "meses": "months",
+  "muchos": "many",
+  "rojas": "red",
+  "total": "total",
+  "claros": "clear",
+  "tomas": "you take",
+  "brillar": "to shine",
+  "repites": "you repeat",
+  "traer": "to bring",
+  "cuál": "which",
+  "según": "according to",
+  "escucha": "listen",
+  "e": "and",
+
+  // === PATCH: Letter names (Song 2) ===
+  "ch": "ch",
+  "rr": "rr",
+  "ll": "ll",
+
+  // === PATCH: Verb ending fragments (Songs 25-38) ===
+  "ar": "-AR",
+  "er": "-ER",
+  "ir": "-IR",
+  "as": "you (ending)",
+  "amos": "we (ending)",
+  "an": "they (ending)",
+  "terminan": "they end",
+  "él/ella": "he/she",
+  "emos": "we (ending)",
+  "imos": "we (ending)",
+  "preterito": "preterite",
+
+  // === PATCH: Preterite endings (Songs 35-37) ===
+  "é": "I (past)",
+  "aste": "you (past)",
+  "ó": "he/she (past)",
+  "aron": "they (past)",
+  "í": "I (past)",
+  "iste": "you (past)",
+  "ió": "he/she (past)",
+  "ieron": "they (past)",
+  "recuérdo": "I remember",
+
+  // === PATCH: Imperfect endings (Song 38) ===
+  "aba": "I/he used to",
+  "abas": "you used to",
+  "ábamos": "we used to",
+  "aban": "they used to",
+  "ía": "I/he used to",
+  "ías": "you used to",
+  "íamos": "we used to",
+  "ían": "they used to",
+
+  // === PATCH: Song 41 — Future tense ===
+  "terminación": "ending",
+  "ás": "you (future)",
+  "á": "he/she (future)",
+  "án": "they (future)",
+  "añadir": "to add",
+  "cantaré": "I will sing",
+  "cantarás": "you will sing",
+  "cantará": "he/she will sing",
+  "cantarán": "they will sing",
+  "comeré": "I will eat",
+  "comerás": "you will eat",
+  "comerá": "he/she will eat",
+  "comerán": "they will eat",
+  "viviré": "I will live",
+  "vivirás": "you will live",
+  "vivirá": "he/she will live",
+  "vivirán": "they will live",
+  "vendrá": "he/she will come",
+  "brillarán": "they will shine",
+  "revés": "reverse",
+  "sabrás": "you will know",
+  "harás": "you will do",
+  "verán": "they will see",
+  "quizás": "perhaps",
+
+  // === PATCH: Song 42 — Irregular future ===
+  "raíz": "root/stem",
+  "lección": "lesson",
+  "tendr": "will have (stem)",
+  "tendrás": "you will have",
+  "tendrán": "they will have",
+  "pondr": "will put (stem)",
+  "pondré": "I will put",
+  "pondrás": "you will put",
+  "pondrá": "he/she will put",
+  "pondrán": "they will put",
+  "saldr": "will leave (stem)",
+  "saldré": "I will leave",
+  "saldrás": "you will leave",
+  "saldrá": "he/she will leave",
+  "saldrán": "they will leave",
+  "vendr": "will come (stem)",
+  "vendrás": "you will come",
+  "vendrán": "they will come",
+  "podr": "will be able (stem)",
+  "podrás": "you will be able",
+  "podrá": "he/she will be able",
+  "podrán": "they will be able",
+  "sabr": "will know (stem)",
+  "sabré": "I will know",
+  "sabrá": "he/she will know",
+  "sabrán": "they will know",
+  "querr": "will want (stem)",
+  "querré": "I will want",
+  "querrás": "you will want",
+  "querrá": "he/she will want",
+  "querrán": "they will want",
+  "haber": "to have (aux)",
+  "habr": "will have (stem)",
+  "habré": "I will have",
+  "habrás": "you will have",
+  "habrá": "there will be",
+  "habrán": "they will have",
+  "dir": "will say (stem)",
+  "dirás": "you will say",
+  "dirá": "he/she will say",
+  "dirán": "they will say",
+  "har": "will do (stem)",
+  "harán": "they will do",
+  "caber": "to fit",
+  "cabr": "will fit (stem)",
+  "cabré": "I will fit",
+  "cabrás": "you will fit",
+  "cabrá": "it will fit",
+  "cabrán": "they will fit",
+  "valer": "to be worth",
+  "valdr": "will be worth (stem)",
+  "valdré": "I will be worth",
+  "valdrás": "you will be worth",
+  "valdrá": "it will be worth",
+  "valdrán": "they will be worth",
+
+  // === PATCH: Song 43 — Conditional ===
+  "cantaría": "I would sing",
+  "cantarías": "you would sing",
+  "cantaríamos": "we would sing",
+  "cantarían": "they would sing",
+  "comería": "I would eat",
+  "comerías": "you would eat",
+  "comeríamos": "we would eat",
+  "comerían": "they would eat",
+  "viviría": "I would live",
+  "vivirías": "you would live",
+  "viviríamos": "we would live",
+  "vivirían": "they would live",
+  "harías": "you would do",
+
+  // === PATCH: Song 44 — Irregular conditional ===
+  "saldría": "I would leave",
+  "vendría": "I would come",
+  "querría": "I would want",
+  "sabría": "I would know",
+  "pondría": "I would put",
+  "habría": "there would be",
+  "valdría": "it would be worth",
+  "aprendí": "I learned",
+  "estaría": "I would be",
+  "practícalos": "practice them",
+  "brillarás": "you will shine",
+
+  // === PATCH: Song 45 — Pronouns ===
+  "salió": "he/she left",
+  "teléfono": "phone",
+  "empezó": "he/she started",
+  "laváis": "you all wash",
+  "usarás": "you will use",
+  "pasión": "passion",
+
+  // === PATCH: Song 46 — Object pronouns ===
+  "pon": "put",
+  "enviará": "he/she will send",
+  "repetirás": "you will repeat",
+  "construcción": "construction",
+
+  // === PATCH: Song 47 — Commands ===
+  "fáciles": "easy",
+  "prácticos": "practical",
+  "acércate": "come closer",
+  "sonríe": "smile",
+  "interés": "interest",
+  "lávate": "wash yourself",
+  "campeón": "champion",
+
+  // === PATCH: Song 48 — Por vs Para ===
+  "explicación": "explanation",
+  "propósito": "purpose",
+  "méxico": "Mexico",
+  "México": "Mexico",
+  "soñar": "to dream",
+  "duración": "duration",
+  "entender": "to understand",
+  "salí": "I left",
+  "esperé": "I waited",
+  "josé": "José",
+  "José": "José",
+  "compré": "I bought",
+  "oy": "hey",
+  "repítelas": "repeat them",
+  "estrés": "stress",
+
+  // === PATCH: Song 49 — Subjunctive ===
+  "ojalá": "hopefully",
+  "Ojalá": "hopefully",
+  "estés": "you are (subj.)",
+  "hablarás": "you will speak",
+
+  // === PATCH: Song 50 — Fun phrases ===
+  "pasándola": "having a time",
+  "agárrate": "hold on",
+  "órale": "right on",
+  "wow": "wow",
+  "venezuela": "Venezuela",
+  "Venezuela": "Venezuela",
+  "chévere": "cool/awesome",
+  "ajá": "aha",
+  "levanté": "I got up",
+  "tómate": "take (for yourself)",
+  "jaja": "haha",
+  "tráfico": "traffic",
+  "ahí": "there",
+  "bacán": "awesome",
+  "libro": "book",
+  "serio": "serious",
+  "perú": "Peru",
+  "Perú": "Peru",
+  "cancún": "Cancún",
+  "Cancún": "Cancún",
 }
 
 /**
@@ -2276,14 +2520,24 @@ export function translateWord(spanishWord: string): string {
   const lower = spanishToEnglish[spanishWord.toLowerCase()]
   if (lower) return lower
 
-  // Strip punctuation and try again
-  const cleaned = spanishWord.replace(/[¡!¿?,.:;()\u201C\u201D\u2018\u2019\xAB\xBB\-\u2013\u2014]/g, "").trim()
+  // Strip punctuation (including curly quotes, ellipsis, colons, slashes) and try again
+  const cleaned = spanishWord.replace(/[¡!¿?,.:;()\u201C\u201D\u2018\u2019\xAB\xBB\-\u2013\u2014\u2026"'…/]/g, "").trim()
   if (cleaned) {
     const cleanExact = spanishToEnglish[cleaned]
     if (cleanExact) return cleanExact
 
     const cleanLower = spanishToEnglish[cleaned.toLowerCase()]
     if (cleanLower) return cleanLower
+  }
+
+  // Try stripping leading/trailing non-letter chars as a last resort
+  const aggressive = spanishWord.replace(/^[^a-záéíóúüñ]+|[^a-záéíóúüñ]+$/gi, "").trim()
+  if (aggressive && aggressive !== cleaned) {
+    const aggExact = spanishToEnglish[aggressive]
+    if (aggExact) return aggExact
+
+    const aggLower = spanishToEnglish[aggressive.toLowerCase()]
+    if (aggLower) return aggLower
   }
 
   // No translation found
