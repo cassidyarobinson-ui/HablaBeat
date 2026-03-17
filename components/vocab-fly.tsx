@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import Image from "next/image"
+import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // EXPORTED TYPES (used by wrapper components)
@@ -384,6 +385,14 @@ export default function VocabFly({
     window.addEventListener("keyup",   up)
     return () => { window.removeEventListener("keydown", dn); window.removeEventListener("keyup", up) }
   }, [gamePhase, startHold, stopHold])
+
+  // ── Gamepad / dance mat ─────────────────────────────────────────────────
+  const padDirs: PadButton[] = ["up", "down", "left", "right"]
+  useGamepad({
+    enabled: gamePhase === "playing",
+    onPress: (btn) => { if (padDirs.includes(btn)) startHold(btn as "up"|"down"|"left"|"right") },
+    onRelease: (btn) => { if (padDirs.includes(btn)) stopHold(btn as "up"|"down"|"left"|"right") },
+  })
 
   // ── Spawn helpers ─────────────────────────────────────────────────────────
   const spawnWave = useCallback((targetSpanish: string, pool: FlyWord[], speedBase: number, speedVariance: number) => {

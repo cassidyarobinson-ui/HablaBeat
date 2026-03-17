@@ -6,6 +6,7 @@ import { ChevronLeft, Play, Pause } from "lucide-react"
 import { translateWord } from "@/lib/spanish-dictionary"
 import Image from "next/image"
 import { getPointer, firePointerEffect, POINTER_KEYFRAMES } from "@/lib/pointers"
+import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
 
 // Types
 interface KaraokeWord {
@@ -410,14 +411,25 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               // Round blue bubble with coin inside
               noteEl.style.cssText = `
                 position: absolute;
-                left: ${note.lane * 25 + 1}%;
-                width: 23%;
+                left: ${note.lane * 25}%;
+                width: 25%;
                 top: ${yPosition}%;
                 transform: translateY(-50%) scale(${scale}) rotateX(${rotateX}deg);
                 transform-origin: center center;
                 z-index: ${Math.floor(progress * 20) + 10};
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0;
+                background: none;
+                border: none;
+                box-shadow: none;
+              `;
+              const innerBubble = document.createElement("div")
+              innerBubble.style.cssText = `
+                width: 100%;
+                max-width: 110px;
                 aspect-ratio: 1;
-                max-height: 110px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -436,7 +448,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 : ""
               const coinContent = `${englishLabel}<div style="font-size:16px;font-weight:900;color:#451A03;line-height:1.1;max-width:90%;text-align:center">${note.text}</div>`
 
-              noteEl.innerHTML = `
+              innerBubble.innerHTML = `
                 <div style="position:absolute;top:5%;left:12%;width:30%;height:18%;background:radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-20deg);pointer-events:none;z-index:2"></div>
                 <div style="position:absolute;bottom:12%;right:10%;width:20%;height:8%;background:radial-gradient(ellipse,rgba(255,255,255,0.25),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(15deg);pointer-events:none;z-index:2"></div>
                 <div style="width:82%;height:82%;border-radius:50%;background:conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706);border:3px solid #92400E;box-shadow:0 2px 8px rgba(0,0,0,0.35),inset 0 -4px 8px rgba(120,53,0,0.3),inset 3px 3px 10px rgba(254,243,199,0.5),0 0 10px rgba(251,191,36,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:2px;position:relative">
@@ -446,6 +458,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                   ${coinContent}
                 </div>`
 
+              noteEl.appendChild(innerBubble)
               container.appendChild(noteEl)
             }
           }
@@ -525,6 +538,65 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     }
   }, [gameState, showTranslations])
 
+  // Shared hit-detection logic for keyboard, touch, and gamepad
+  const handleLaneHit = useCallback((lane: number) => {
+    showLanePress(lane)
+
+    const audio = audioRef.current
+    if (!audio) return
+    const currentTime = audio.currentTime
+
+    const mod = getPointer(activePointer).gameplayModifier
+    const effectiveMissWindow = HIT_WINDOWS.MISS * mod.hitRadiusMultiplier
+    const candidates = notesRef.current.filter(
+      (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= effectiveMissWindow
+    )
+
+    if (candidates.length === 0) return
+
+    const closest = candidates.reduce((a, b) =>
+      Math.abs(a.timestamp - currentTime) < Math.abs(b.timestamp - currentTime) ? a : b
+    )
+
+    const timeDelta = Math.abs(closest.timestamp - currentTime)
+    let judgment: string
+    let points: number
+    let judgmentColor: string
+    let isPerfect = false
+
+    if (timeDelta <= HIT_WINDOWS.PERFECT) {
+      isPerfect = true
+      points = Math.round(mod.coinMultiplier)
+      judgmentColor = "text-yellow-300"
+    } else if (timeDelta <= HIT_WINDOWS.GOOD) {
+      points = 1
+      judgmentColor = "text-green-300"
+    } else {
+      points = 1
+      judgmentColor = "text-blue-300"
+    }
+
+    const englishWord = closest.english && closest.english.toLowerCase() !== closest.text.toLowerCase()
+      ? closest.english
+      : closest.text
+    judgment = englishWord
+
+    closest.hit = true
+    scoreRef.current += points
+    comboRef.current += 1
+    const c = comboRef.current
+    if (c % 10 === 0 || (c >= 20 && c % 5 === 0)) triggerStreakPulse(c)
+    totalHitsRef.current += 1
+    maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
+    setScore(scoreRef.current)
+    setCombo(comboRef.current)
+    setMaxCombo(maxComboRef.current)
+    setTotalHits(totalHitsRef.current)
+
+    showHitEffect(lane, judgment, judgmentColor, isPerfect)
+    checkEncouragement(comboRef.current)
+  }, [activePointer, showTranslations])
+
   // Keyboard input
   useEffect(() => {
     if (gameState !== "playing") return
@@ -537,7 +609,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     }
 
     const handleKey = (e: KeyboardEvent) => {
-      // Space bar to pause/resume
       if (e.key === " " || e.key === "Escape") {
         e.preventDefault()
         togglePause()
@@ -547,69 +618,23 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       const lane = laneMap[e.key]
       if (lane === undefined) return
       e.preventDefault()
-
-      // Visual feedback
-      showLanePress(lane)
-
-      const audio = audioRef.current
-      if (!audio) return
-      const currentTime = audio.currentTime
-
-      // Find closest unhit note in this lane
-      const mod = getPointer(activePointer).gameplayModifier
-      const effectiveMissWindow = HIT_WINDOWS.MISS * mod.hitRadiusMultiplier
-      const candidates = notesRef.current.filter(
-        (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= effectiveMissWindow
-      )
-
-      if (candidates.length === 0) return
-
-      const closest = candidates.reduce((a, b) =>
-        Math.abs(a.timestamp - currentTime) < Math.abs(b.timestamp - currentTime) ? a : b
-      )
-
-      const timeDelta = Math.abs(closest.timestamp - currentTime)
-      let judgment: string
-      let points: number
-      let judgmentColor: string
-      let isPerfect = false
-
-      if (timeDelta <= HIT_WINDOWS.PERFECT) {
-        isPerfect = true
-        points = Math.round(mod.coinMultiplier)   // coinMultiplier on perfect
-        judgmentColor = "text-yellow-300"
-      } else if (timeDelta <= HIT_WINDOWS.GOOD) {
-        points = 1
-        judgmentColor = "text-green-300"
-      } else {
-        points = 1
-        judgmentColor = "text-blue-300"
-      }
-
-      // Show English translation as the judgment text
-      const englishWord = closest.english && closest.english.toLowerCase() !== closest.text.toLowerCase()
-        ? closest.english
-        : closest.text
-      judgment = englishWord
-
-      closest.hit = true
-      scoreRef.current += points
-      comboRef.current += 1
-      if (comboRef.current % 10 === 0) triggerStreakPulse(comboRef.current)
-      totalHitsRef.current += 1
-      maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
-      setScore(scoreRef.current)
-      setCombo(comboRef.current)
-      setMaxCombo(maxComboRef.current)
-      setTotalHits(totalHitsRef.current)
-
-      showHitEffect(lane, judgment, judgmentColor, isPerfect)
-      checkEncouragement(comboRef.current)
+      handleLaneHit(lane)
     }
 
     window.addEventListener("keydown", handleKey)
     return () => window.removeEventListener("keydown", handleKey)
-  }, [gameState, showTranslations])
+  }, [gameState, handleLaneHit])
+
+  // Gamepad / dance mat input
+  const padLaneMap: Record<string, number> = { left: 0, down: 1, up: 2, right: 3 }
+  useGamepad({
+    enabled: gameState === "playing",
+    onPress: (btn: PadButton) => {
+      if (btn === "start") { togglePause(); return }
+      const lane = padLaneMap[btn]
+      if (lane !== undefined) handleLaneHit(lane)
+    },
+  })
 
   // Touch input for mobile
   useEffect(() => {
@@ -628,61 +653,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         if (lane < 0 || lane > 3) continue
 
         e.preventDefault()
-        showLanePress(lane)
-
-        const audio = audioRef.current
-        if (!audio) return
-        const currentTime = audio.currentTime
-
-        const mod = getPointer(activePointer).gameplayModifier
-        const effectiveMissWindow = HIT_WINDOWS.MISS * mod.hitRadiusMultiplier
-        const candidates = notesRef.current.filter(
-          (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= effectiveMissWindow
-        )
-
-        if (candidates.length === 0) continue
-
-        const closest = candidates.reduce((a, b) =>
-          Math.abs(a.timestamp - currentTime) < Math.abs(b.timestamp - currentTime) ? a : b
-        )
-
-        const timeDelta = Math.abs(closest.timestamp - currentTime)
-        let judgment: string
-        let points: number
-        let judgmentColor: string
-        let isPerfect = false
-
-        if (timeDelta <= HIT_WINDOWS.PERFECT) {
-          isPerfect = true
-          points = Math.round(mod.coinMultiplier)   // coinMultiplier on perfect
-          judgmentColor = "text-yellow-300"
-        } else if (timeDelta <= HIT_WINDOWS.GOOD) {
-          points = 1
-          judgmentColor = "text-green-300"
-        } else {
-          points = 1
-          judgmentColor = "text-blue-300"
-        }
-
-        // Show English translation as the judgment text
-        const englishWord = closest.english && closest.english.toLowerCase() !== closest.text.toLowerCase()
-          ? closest.english
-          : closest.text
-        judgment = englishWord
-
-        closest.hit = true
-        scoreRef.current += points
-        comboRef.current += 1
-        if (comboRef.current % 10 === 0) triggerStreakPulse(comboRef.current)
-        totalHitsRef.current += 1
-        maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
-        setScore(scoreRef.current)
-        setCombo(comboRef.current)
-        setMaxCombo(maxComboRef.current)
-        setTotalHits(totalHitsRef.current)
-
-        showHitEffect(lane, judgment, judgmentColor, isPerfect)
-        checkEncouragement(comboRef.current)
+        handleLaneHit(lane)
       }
     }
 
@@ -691,7 +662,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       container.addEventListener("touchstart", handleTouch, { passive: false })
       return () => container.removeEventListener("touchstart", handleTouch)
     }
-  }, [gameState, showTranslations])
+  }, [gameState, handleLaneHit])
 
   // Cleanup audio on unmount
   useEffect(() => {
@@ -765,7 +736,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const cfg = getPointer(activePointer)
     const color = cfg.palette[0] ?? "#ffffff"
     const isHot = currentCombo >= 20
-    const duration = isHot ? 1000 : 720
+    const duration = currentCombo >= 30 ? 1400 : isHot ? 1100 : 720
 
     // Full-area color wash — more intense at high combos
     const wash = document.createElement("div")
@@ -986,7 +957,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
     if (msg) {
       setEncouragement(msg)
-      setTimeout(() => setEncouragement(null), 2000)
+      // Higher combos = stickier encouragement (stays longer on screen)
+      const duration = currentCombo >= 30 ? 4000 : currentCombo >= 20 ? 3500 : currentCombo >= 10 ? 3000 : 2500
+      setTimeout(() => setEncouragement(null), duration)
     }
   }
 
@@ -1643,26 +1616,21 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
       {/* Loadout overlay — shown when gear button tapped */}
       {showLoadout && (
-        <div className="absolute inset-0 z-[999] flex flex-col items-center justify-end" style={{ background: "rgba(0,0,0,0.75)" }} onClick={() => { setShowLoadout(false); togglePause() }}>
-          {/* Bottom sheet panel */}
+        <div className="absolute inset-0 z-[999] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.75)" }} onClick={() => { setShowLoadout(false); togglePause() }}>
+          {/* Centered modal panel */}
           <div
-            className="w-full max-w-md flex flex-col rounded-t-3xl overflow-hidden"
+            className="w-full max-w-md flex flex-col rounded-3xl overflow-hidden mx-4"
             style={{
               background: "linear-gradient(180deg, #1a0d2e 0%, #0f0520 100%)",
               border: "1.5px solid rgba(168,85,247,0.35)",
-              borderBottom: "none",
-              boxShadow: "0 -8px 40px rgba(0,0,0,0.7)",
+              boxShadow: "0 0 60px rgba(168,85,247,0.25), 0 8px 40px rgba(0,0,0,0.7)",
               maxHeight: "80dvh",
+              animation: "loadoutModalIn 0.3s ease-out",
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-              <div className="w-10 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.25)" }} />
-            </div>
-
             {/* Header row */}
-            <div className="flex items-center justify-between px-5 pt-1 pb-3 flex-shrink-0">
+            <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
               <div>
                 <p className="text-white text-xl font-black">⚙️ Loadout</p>
                 <p className="text-white/50 text-xs mt-0.5">Tap an item to equip it</p>
@@ -1727,22 +1695,30 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         </div>
       )}
 
-      {/* Encouragement overlay - at top of screen to avoid overlap with flow counter */}
+      {/* Encouragement overlay - centered on screen for maximum impact */}
       {encouragement && (
-        <div className="fixed top-16 left-0 right-0 flex justify-center pointer-events-none z-40">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
           <div
-            className={`${encouragement.color} text-4xl md:text-6xl font-black px-6 py-2`}
+            className={`${encouragement.color} text-5xl md:text-7xl lg:text-8xl font-black px-8 py-4`}
             style={{
-              textShadow: "3px 3px 6px rgba(0,0,0,0.9), 0 0 30px currentColor",
-              animation: "ddrEncouragementBounce 0.6s ease-out",
+              textShadow: "3px 3px 6px rgba(0,0,0,0.9), 0 0 30px currentColor, 0 0 60px currentColor",
+              animation: "streakBannerIn 0.5s ease-out, streakGlow 1.5s ease-in-out 0.5s infinite, streakShake 0.6s ease-in-out 0.5s",
+              letterSpacing: "0.02em",
+              fontFamily: "'Impact','Arial Black',sans-serif",
             }}
           >
             {encouragement.text}
           </div>
+          {/* Combo number below the text */}
+          <div className="absolute" style={{ top: "58%", animation: "streakBannerIn 0.6s ease-out 0.15s both" }}>
+            <div className="text-white/80 text-xl md:text-2xl font-black text-center" style={{ letterSpacing: "0.2em", fontFamily: "'Impact','Arial Black',sans-serif" }}>
+              🔥 {combo} COMBO 🔥
+            </div>
+          </div>
         </div>
       )}
 
-      <div className="max-w-lg mx-auto h-full flex flex-col">
+      <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto h-full flex flex-col">
         {/* Top bar: back arrow + loadout button */}
         <div className="flex items-center justify-between p-1 px-2 flex-shrink-0">
           <button onClick={onBack} className="text-white bg-black/40 rounded-full p-1.5 active:scale-90 transition-all">
@@ -1778,8 +1754,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {[0, 1, 2, 3].map((lane) => (
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
-                <div className="ddr-hit-zone absolute left-1 right-1 transition-all duration-150" style={{ bottom: "10%", aspectRatio: "1" }} />
-                <div className={`ddr-arrow absolute left-0 right-0 flex justify-center transition-all duration-100`} style={{ bottom: "4%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
+                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "10%", width: "min(90%, 100px)", aspectRatio: "1" }} />
+                <div className={`ddr-arrow absolute left-1/2 -translate-x-1/2 flex justify-center transition-all duration-100`} style={{ bottom: "4%", width: "min(90%, 100px)", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
               </div>
             ))}
           </div>
@@ -1955,6 +1931,28 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         @keyframes fireFlicker {
           0% { opacity: 0.5; transform: scaleY(1) scaleX(0.9); }
           100% { opacity: 0.9; transform: scaleY(1.08) scaleX(1.1); }
+        }
+        @keyframes loadoutModalIn {
+          0% { transform: scale(0.8); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes streakBannerIn {
+          0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+          50% { transform: scale(1.2) rotate(2deg); }
+          70% { transform: scale(0.95) rotate(-1deg); }
+          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes streakGlow {
+          0%, 100% { text-shadow: 0 0 20px rgba(251,191,36,0.8), 0 0 40px rgba(251,191,36,0.4); }
+          50% { text-shadow: 0 0 30px rgba(251,191,36,1), 0 0 60px rgba(251,191,36,0.6), 0 0 90px rgba(234,179,8,0.3); }
+        }
+        @keyframes streakShake {
+          0%, 100% { transform: translateX(0); }
+          10% { transform: translateX(-3px) rotate(-1deg); }
+          20% { transform: translateX(3px) rotate(1deg); }
+          30% { transform: translateX(-3px) rotate(-1deg); }
+          40% { transform: translateX(3px) rotate(1deg); }
+          50% { transform: translateX(0); }
         }
         ${POINTER_KEYFRAMES}
       `}</style>

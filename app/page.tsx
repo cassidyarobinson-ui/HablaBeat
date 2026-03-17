@@ -1,10 +1,11 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
 import { LYRIC_TRANSLATIONS } from "@/lib/lyric-translations"
 import { SONG_FLY_DATA } from "@/lib/song-fly-data"
+import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
@@ -1609,6 +1610,29 @@ export default function HablaBeat() {
   const lyricCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const lyricAnimRef = useRef<number | null>(null)
 
+  // ── Gamepad / dance mat navigation on hub screens ──
+  const navViews = ["songs", "coins", "visualizer"] as const
+  const isOnHub = navViews.includes(currentView as any)
+  useGamepad({
+    enabled: isOnHub,
+    onPress: useCallback((btn: PadButton) => {
+      if (btn === "left" || btn === "right") {
+        // Cycle between bottom-nav tabs
+        setCurrentView(prev => {
+          const views: typeof navViews[number][] = ["songs", "coins", "visualizer"]
+          const idx = views.indexOf(prev as any)
+          if (idx === -1) return prev
+          const next = btn === "right" ? (idx + 1) % views.length : (idx - 1 + views.length) % views.length
+          return views[next]
+        })
+      } else if (btn === "up") {
+        window.scrollBy({ top: -300, behavior: "smooth" })
+      } else if (btn === "down") {
+        window.scrollBy({ top: 300, behavior: "smooth" })
+      }
+    }, []),
+  })
+
   // Load persisted stats on mount
   useEffect(() => {
     setBestFlow(loadPersisted("hablabeat-best-flow", 0))
@@ -2347,7 +2371,7 @@ export default function HablaBeat() {
         {/* Bunny centered */}
         <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "-4px" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(74,124,219,0.3)) drop-shadow(0 0 16px rgba(74,124,219,0.15))" }} />
+          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain" }} />
         </div>
 
         {/* Logo text — blue with black outline + yellow glow behind */}
@@ -2476,7 +2500,7 @@ export default function HablaBeat() {
   if (currentView === "player_legacy" && currentSong) {
     return (
       <div className="min-h-screen bg-white text-gray-900">
-        <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto bg-gray-50 min-h-screen">
           {/* Header */}
           <div className="flex items-center justify-between p-4 pt-8">
             <Button
@@ -2665,7 +2689,7 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => { stopMic(); setCurrentView("songs") }}>
                 <Music className="h-6 w-6" />
@@ -2713,7 +2737,7 @@ export default function HablaBeat() {
           }
           .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
         `}</style>
-        <div className="max-w-md mx-auto min-h-screen pb-24">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen pb-24">
 
           {/* Header — solid blue bar */}
           <div style={{ background: "#4a7cdb" }}>
@@ -2874,7 +2898,7 @@ export default function HablaBeat() {
         </div>
 
         {/* Bottom nav */}
-        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
           <div className="flex justify-around">
             <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
               <Music className="h-6 w-6" />
@@ -2905,7 +2929,7 @@ export default function HablaBeat() {
 
     return (
       <div className="min-h-screen swirl-bg">
-        <div className="max-w-md mx-auto min-h-screen">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen">
 
           {/* Header — solid blue bar */}
           <div style={{ background: "#4a7cdb" }}>
@@ -3026,7 +3050,7 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
                 <Music className="h-6 w-6" />
@@ -3146,7 +3170,7 @@ export default function HablaBeat() {
           .shooting-star-b { animation: shootingStarB linear infinite; }
           .alien-float { animation: alienFloat ease-in-out infinite; }
         `}</style>
-        <div className="max-w-md mx-auto min-h-screen">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen">
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
@@ -3171,9 +3195,9 @@ export default function HablaBeat() {
           <div style={{ background: "#4a7cdb" }}>
             {/* Top bar: bunny + title + profile */}
             <div className="flex items-center px-4 pt-4 pb-1 gap-3">
-              <div className="w-20 h-20 flex-shrink-0">
+              <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-full h-full object-contain" style={{ filter: "drop-shadow(0 0 6px rgba(74,124,219,0.25)) drop-shadow(0 0 12px rgba(74,124,219,0.12))" }} />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" style={{ background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
               </div>
               <h1 className="flex-1" style={{
                 fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
@@ -3184,9 +3208,9 @@ export default function HablaBeat() {
                 textTransform: "uppercase" as const,
                 textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 6px rgba(0,0,0,0.1)",
               }}>HablaBeat</h1>
-              <div className="w-20 h-20 flex-shrink-0">
+              <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-full h-full object-contain" style={{ transform: "scaleX(-1)", filter: "drop-shadow(0 0 6px rgba(74,124,219,0.25)) drop-shadow(0 0 12px rgba(74,124,219,0.12))" }} />
+                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)", background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
               </div>
             </div>
             {/* Stats row — icon, label, number inline */}
@@ -3252,7 +3276,7 @@ export default function HablaBeat() {
                 } as React.CSSProperties}
               >
                 {/* Content */}
-                <div className="world-content-in flex flex-col h-full max-w-md mx-auto">
+                <div className="world-content-in flex flex-col h-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto">
                   {/* Header — solid blue bar like Duolingo */}
                   <div style={{ background: "#4a7cdb" }}>
                     <div className="flex items-center gap-3 px-4 pt-10 pb-3">
@@ -3449,32 +3473,48 @@ export default function HablaBeat() {
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
                     <div className="galaxy-worlds-in px-2 pt-1 pb-4" style={{ overflow: "visible" }}>
-                      <div className="grid grid-cols-3 gap-x-3 gap-y-5 relative" style={{ overflow: "visible" }}>
-                        {/* Diagonal connectors — behind the circles */}
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-5 relative mx-auto" style={{ overflow: "visible", maxWidth: "460px" }}>
+                        {/* Dashed map-trail connectors — masked behind the circles */}
                         <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
                           <defs>
-                            <filter id={`path-glow-${category.id}`} x="-50%" y="-50%" width="200%" height="200%">
-                              <feGaussianBlur stdDeviation="1.5" result="blur"/>
-                              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                            </filter>
+                            <mask id={`bubble-mask-${category.id}`}>
+                              <rect x="0" y="0" width="300" height="300" fill="white"/>
+                              {category.sections.map((_, i) => (
+                                <ellipse key={i} cx={(i % 3) * 100 + 50} cy={Math.floor(i / 3) * 100 + 50} rx="38" ry="48" fill="black"/>
+                              ))}
+                            </mask>
                           </defs>
-                          {[0, 1].map(row => {
-                            const lastIdx = Math.min(row * 3 + 2, category.sections.length - 1)
-                            const nextIdx = (row + 1) * 3
-                            if (nextIdx >= category.sections.length) return null
-                            const x1 = (lastIdx % 3) * 100 + 50
-                            const y1 = row * 100 + 50
-                            const x2 = (nextIdx % 3) * 100 + 50
-                            const y2 = (row + 1) * 100 + 50
-                            return (
-                              <path key={`diag-${row}`} fill="none"
-                                d={`M ${x1} ${y1 + 44} C ${x1 - 15} ${y2 - 15}, ${x2 + 15} ${y1 + 15}, ${x2} ${y2 - 44}`}
-                                stroke="rgba(0,0,0,0.12)" strokeWidth="2"
-                                strokeDasharray="6 4" strokeLinecap="round"
-                                filter={`url(#path-glow-${category.id})`}
-                              />
-                            )
-                          })}
+                          <g mask={`url(#bubble-mask-${category.id})`}>
+                            {/* Horizontal lines through center of each row */}
+                            {[0, 1, 2].map(row => {
+                              const itemsInRow = Math.min(3, category.sections.length - row * 3)
+                              if (itemsInRow <= 1) return null
+                              const y = row * 100 + 50
+                              return (
+                                <line key={`hrow-${row}`} x1={20} y1={y} x2={(itemsInRow - 1) * 100 + 80} y2={y}
+                                  stroke="rgba(74,124,219,0.3)" strokeWidth="2"
+                                  strokeDasharray="7 5" strokeLinecap="round"
+                                />
+                              )
+                            })}
+                            {/* Diagonal connectors between rows */}
+                            {[0, 1].map(row => {
+                              const lastIdx = Math.min(row * 3 + 2, category.sections.length - 1)
+                              const nextIdx = (row + 1) * 3
+                              if (nextIdx >= category.sections.length) return null
+                              const x1 = (lastIdx % 3) * 100 + 50
+                              const y1 = row * 100 + 50
+                              const x2 = (nextIdx % 3) * 100 + 50
+                              const y2 = (row + 1) * 100 + 50
+                              return (
+                                <path key={`diag-${row}`} fill="none"
+                                  d={`M ${x1} ${y1} C ${x1 - 20} ${y2 - 20}, ${x2 + 20} ${y1 + 20}, ${x2} ${y2}`}
+                                  stroke="rgba(74,124,219,0.35)" strokeWidth="2.5"
+                                  strokeDasharray="7 5" strokeLinecap="round"
+                                />
+                              )
+                            })}
+                          </g>
                         </svg>
                         {category.sections.map((section, sectionIdx) => {
                           const countryName = (section as any).country ?? ""
@@ -3543,20 +3583,6 @@ export default function HablaBeat() {
                             </div>
                           )
                         })}
-                        {/* Horizontal dashed lines across each row — on top of circles */}
-                        <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 5, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
-                          {[0, 1, 2].map(row => {
-                            const itemsInRow = Math.min(3, category.sections.length - row * 3)
-                            if (itemsInRow <= 1) return null
-                            const y = row * 100 + 50
-                            return (
-                              <line key={`hrow-${row}`} x1={50} y1={y} x2={(itemsInRow - 1) * 100 + 50} y2={y}
-                                stroke="rgba(0,0,0,0.1)" strokeWidth="2.5"
-                                strokeDasharray="8 5" strokeLinecap="round"
-                              />
-                            )
-                          })}
-                        </svg>
                       </div>
                     </div>
                   )}
@@ -3569,7 +3595,7 @@ export default function HablaBeat() {
             <MiniPlayer />
 
             {/* Bottom Navigation */}
-            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
               <div className="flex justify-around">
                 <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => setCurrentView("songs")}>
                   <Music className="h-6 w-6" />
@@ -3593,10 +3619,10 @@ export default function HablaBeat() {
   if (currentView === "visualizer") {
     return (
       <div className="min-h-screen bg-black">
-        <div className="max-w-md mx-auto min-h-screen flex flex-col">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen flex flex-col">
           <VisualizerView onBack={() => setCurrentView("songs")} />
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
                 <Music className="h-6 w-6" />
