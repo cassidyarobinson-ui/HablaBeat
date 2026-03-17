@@ -444,9 +444,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
               // Coin inside the bubble — English (small) above Spanish
               const englishLabel = note.english && note.english.toLowerCase() !== note.text.toLowerCase()
-                ? `<div style="font-size:9px;font-weight:700;color:#7A3800;opacity:0.75;line-height:1;margin-bottom:2px;text-align:center;max-width:90%">${note.english}</div>`
+                ? `<div style="font-size:11px;font-weight:700;color:#7A3800;opacity:0.85;line-height:1;margin-bottom:1px;text-align:center;max-width:92%">${note.english}</div>`
                 : ""
-              const coinContent = `${englishLabel}<div style="font-size:16px;font-weight:900;color:#451A03;line-height:1.1;max-width:90%;text-align:center">${note.text}</div>`
+              const coinContent = `${englishLabel}<div style="font-size:14px;font-weight:900;color:#451A03;line-height:1.1;max-width:92%;text-align:center">${note.text}</div>`
 
               innerBubble.innerHTML = `
                 <div style="position:absolute;top:5%;left:12%;width:30%;height:18%;background:radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-20deg);pointer-events:none;z-index:2"></div>
@@ -918,17 +918,20 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     container.appendChild(coin)
     setTimeout(() => coin.remove(), 800)
 
-    // English word judgment text - stays visible longer
+    // English word judgment text — large, bright, stays visible
     const el = document.createElement("div")
-    el.className = `absolute ${color} font-black text-2xl pointer-events-none`
+    el.className = `absolute font-black pointer-events-none`
     el.style.cssText = `
-      left: ${lane * 25 + 1}%; width: 23%; bottom: 22%; text-align: center;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px currentColor;
-      animation: ddrJudgmentPop 1.8s ease-out forwards; z-index: 100;
+      left: ${lane * 25}%; width: 25%; bottom: 24%; text-align: center;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(59,130,246,0.9), 0 0 24px rgba(59,130,246,0.6), 2px 2px 4px rgba(0,0,0,0.9);
+      animation: ddrJudgmentPop 2.5s ease-out forwards; z-index: 100;
+      line-height: 1.1;
     `
     el.textContent = judgment
     container.appendChild(el)
-    setTimeout(() => el.remove(), 1800)
+    setTimeout(() => el.remove(), 2500)
   }
 
   const checkEncouragement = (currentCombo: number) => {
@@ -1885,11 +1888,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       {/* DDR-specific animations */}
       <style jsx global>{`
         @keyframes ddrJudgmentPop {
-          0% { transform: scale(0.3); opacity: 0; }
-          15% { transform: scale(1.4); opacity: 1; }
-          25% { transform: scale(1); opacity: 1; }
-          70% { transform: translateY(-15px) scale(1); opacity: 1; }
-          100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+          0% { transform: scale(0.3) translateY(0); opacity: 0; }
+          10% { transform: scale(1.5) translateY(0); opacity: 1; }
+          20% { transform: scale(1) translateY(0); opacity: 1; }
+          70% { transform: scale(1) translateY(-20px); opacity: 1; }
+          85% { transform: scale(1) translateY(-30px); opacity: 0.8; }
+          100% { transform: scale(0.9) translateY(-50px); opacity: 0; }
         }
         @keyframes ddrEncouragementBounce {
           0% { transform: scale(0); opacity: 0; }
