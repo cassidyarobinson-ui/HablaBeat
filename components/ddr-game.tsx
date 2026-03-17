@@ -1844,7 +1844,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             const scaleVal = [1, 1.02, 1.06, 1.1, 1.15][tier]
             const fireLabel = tier >= 2 ? "🔥 flow 🔥" : "flow"
             return (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5]">
+              <div className="absolute inset-0 flex items-start justify-center pointer-events-none z-[5]" style={{ paddingTop: "8%" }}>
                 <div className="text-center" style={{
                   transform: `scale(${scaleVal})`,
                   transition: "transform 0.4s ease",
