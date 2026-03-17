@@ -428,7 +428,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               const innerBubble = document.createElement("div")
               innerBubble.style.cssText = `
                 width: 100%;
-                max-width: 150px;
+                max-width: 220px;
                 aspect-ratio: 1;
                 border-radius: 50%;
                 display: flex;
@@ -444,9 +444,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
               // Coin inside the bubble — English (small) above Spanish
               const englishLabel = note.english && note.english.toLowerCase() !== note.text.toLowerCase()
-                ? `<div style="font-size:11px;font-weight:700;color:#7A3800;opacity:0.85;line-height:1;margin-bottom:1px;text-align:center;max-width:92%">${note.english}</div>`
+                ? `<div style="font-size:13px;font-weight:700;color:#7A3800;opacity:0.85;line-height:1;margin-bottom:2px;text-align:center;max-width:92%">${note.english}</div>`
                 : ""
-              const coinContent = `${englishLabel}<div style="font-size:14px;font-weight:900;color:#451A03;line-height:1.1;max-width:92%;text-align:center">${note.text}</div>`
+              const coinContent = `${englishLabel}<div style="font-size:17px;font-weight:900;color:#451A03;line-height:1.1;max-width:92%;text-align:center">${note.text}</div>`
 
               innerBubble.innerHTML = `
                 <div style="position:absolute;top:5%;left:12%;width:30%;height:18%;background:radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-20deg);pointer-events:none;z-index:2"></div>
@@ -930,14 +930,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       animation: ddrJudgmentPop 2.5s ease-out forwards; z-index: 100;
     `
     el.innerHTML = `<span style="
-      font-size: clamp(1.4rem, 4.5vw, 2.8rem);
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
       font-weight: 900;
       color: #ffffff;
-      background: linear-gradient(135deg, rgba(59,130,246,0.85), rgba(99,102,241,0.85));
-      padding: 4px 14px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.9), rgba(99,102,241,0.9));
+      padding: 6px 18px;
       border-radius: 999px;
-      border: 2px solid rgba(255,255,255,0.5);
-      box-shadow: 0 0 20px rgba(59,130,246,0.8), 0 4px 12px rgba(0,0,0,0.5);
+      border: 3px solid rgba(255,255,255,0.6);
+      box-shadow: 0 0 30px rgba(59,130,246,0.9), 0 0 60px rgba(99,102,241,0.4), 0 4px 12px rgba(0,0,0,0.5);
       text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
       line-height: 1.2;
       white-space: nowrap;
@@ -1769,8 +1769,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {[0, 1, 2, 3].map((lane) => (
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
-                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "10%", width: "min(90%, 140px)", aspectRatio: "1" }} />
-                <div className={`ddr-arrow absolute left-1/2 -translate-x-1/2 flex justify-center transition-all duration-100`} style={{ bottom: "4%", width: "min(90%, 140px)", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
+                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "10%", width: "min(90%, 180px)", aspectRatio: "1" }} />
+                <div className={`ddr-arrow absolute left-1/2 -translate-x-1/2 flex justify-center transition-all duration-100`} style={{ bottom: "4%", width: "min(90%, 180px)", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
               </div>
             ))}
           </div>
