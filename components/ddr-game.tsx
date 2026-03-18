@@ -444,9 +444,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
               // Coin inside the bubble — English (small) above Spanish
               const englishLabel = note.english && note.english.toLowerCase() !== note.text.toLowerCase()
-                ? `<div style="font-size:13px;font-weight:700;color:#7A3800;opacity:0.85;line-height:1;margin-bottom:2px;text-align:center;max-width:92%">${note.english}</div>`
+                ? `<div style="font-size:15px;font-weight:700;color:#7A3800;opacity:0.85;line-height:1;margin-bottom:2px;text-align:center;max-width:92%">${note.english}</div>`
                 : ""
-              const coinContent = `${englishLabel}<div style="font-size:17px;font-weight:900;color:#451A03;line-height:1.1;max-width:92%;text-align:center">${note.text}</div>`
+              const coinContent = `${englishLabel}<div style="font-size:22px;font-weight:900;color:#451A03;line-height:1.1;max-width:92%;text-align:center">${note.text}</div>`
 
               innerBubble.innerHTML = `
                 <div style="position:absolute;top:5%;left:12%;width:30%;height:18%;background:radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-20deg);pointer-events:none;z-index:2"></div>
@@ -1769,8 +1769,26 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {[0, 1, 2, 3].map((lane) => (
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
-                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "10%", width: "min(90%, 180px)", aspectRatio: "1" }} />
-                <div className={`ddr-arrow absolute left-1/2 -translate-x-1/2 flex justify-center transition-all duration-100`} style={{ bottom: "4%", width: "min(90%, 180px)", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
+                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "6%", width: "min(85%, 160px)", aspectRatio: "1" }} />
+                {/* Target bubble with carrot arrow inside */}
+                <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "3%", width: "min(85%, 160px)", aspectRatio: "1" }}>
+                  <div style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, rgba(173,216,255,0.08) 30%, rgba(100,180,255,0.04) 60%, rgba(59,130,246,0.06) 100%)",
+                    border: "2px solid rgba(180,210,255,0.35)",
+                    boxShadow: "0 0 15px rgba(59,130,246,0.15), inset 0 -6px 12px rgba(59,130,246,0.08), inset 3px 3px 8px rgba(255,255,255,0.15)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0.7,
+                    position: "relative",
+                  }}>
+                    {/* Carrot arrow centered inside bubble */}
+                    <div style={{ width: "55%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -1806,11 +1824,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </>
           )}
 
-          {/* Dashed tap line — sits exactly at carrot tops using fixed px + % offset */}
+          {/* Dashed tap line — sits at the center of target bubbles */}
           <div
             className="absolute left-0 right-0 pointer-events-none z-[6]"
             style={{
-              bottom: "calc(4% + 52px)",
+              bottom: "calc(3% + 80px)",
               height: "2px",
               background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 12px, transparent 12px, transparent 22px)",
               boxShadow: "0 0 6px rgba(255,255,255,0.25)",
