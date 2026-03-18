@@ -1769,9 +1769,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {[0, 1, 2, 3].map((lane) => (
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
-                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "6%", width: "min(85%, 160px)", aspectRatio: "1" }} />
-                {/* Target bubble with carrot arrow inside */}
-                <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "3%", width: "min(85%, 160px)", aspectRatio: "1" }}>
+                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "2%", width: "min(90%, 220px)", aspectRatio: "1" }} />
+                {/* Target bubble with carrot arrow inside — same size as falling bubbles (220px) */}
+                <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "1%", width: "min(90%, 220px)", aspectRatio: "1" }}>
                   <div style={{
                     width: "100%",
                     height: "100%",
@@ -1828,7 +1828,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           <div
             className="absolute left-0 right-0 pointer-events-none z-[6]"
             style={{
-              bottom: "calc(3% + 80px)",
+              bottom: "calc(1% + 110px)",
               height: "2px",
               background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 12px, transparent 12px, transparent 22px)",
               boxShadow: "0 0 6px rgba(255,255,255,0.25)",
