@@ -824,7 +824,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const laneWidth = 23
 
     // ── POINTER ANIMATIONS: delegated to effect engine ────────────────────
-    firePointerEffect(activePointerConfig, {
+    firePointerEffect(getPointer(activePointer), {
       container,
       lane,
       laneLeft,
