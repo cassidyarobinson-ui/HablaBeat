@@ -398,8 +398,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             if (yPosition >= 0 && yPosition <= 115) {
               // 3D perspective: bubbles start small/angled at top, grow as they approach
               const scale = note.missed
-                ? 1.0  // Stay full size when missed
-                : 0.45 + progress * 0.55 // 0.45 at top → 1.0 at hit line
+                ? 1.3  // Stay full size when missed
+                : 0.45 + progress * 0.85 // 0.45 at top → 1.3 at hit line
               const rotateX = note.missed
                 ? 0  // No tilt when missed
                 : (1 - progress) * 35 // 35deg tilt at top → 0 at hit line
