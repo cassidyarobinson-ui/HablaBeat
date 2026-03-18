@@ -1712,7 +1712,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
       {/* Encouragement overlay - centered on screen for maximum impact */}
       {encouragement && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
+        <div className="absolute inset-0 flex items-start justify-center pointer-events-none z-40" style={{ paddingTop: "5%" }}>
           <div
             className={`${encouragement.color} text-5xl md:text-7xl lg:text-8xl font-black px-8 py-4`}
             style={{
@@ -1725,7 +1725,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {encouragement.text}
           </div>
           {/* Combo number below the text */}
-          <div className="absolute" style={{ top: "58%", animation: "streakBannerIn 0.6s ease-out 0.15s both" }}>
+          <div className="absolute" style={{ top: "18%", animation: "streakBannerIn 0.6s ease-out 0.15s both" }}>
             <div className="text-white/80 text-xl md:text-2xl font-black text-center" style={{ letterSpacing: "0.2em", fontFamily: "'Impact','Arial Black',sans-serif" }}>
               🔥 {combo} COMBO 🔥
             </div>
