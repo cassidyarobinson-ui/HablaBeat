@@ -625,14 +625,19 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     return () => window.removeEventListener("keydown", handleKey)
   }, [gameState, handleLaneHit])
 
-  // Gamepad / dance mat input
+  // Gamepad / dance mat input — always polling so pad is detected immediately
   const padLaneMap: Record<string, number> = { left: 0, down: 1, up: 2, right: 3 }
   useGamepad({
-    enabled: gameState === "playing",
+    enabled: true,
+    debug: true,
     onPress: (btn: PadButton) => {
-      if (btn === "start") { togglePause(); return }
-      const lane = padLaneMap[btn]
-      if (lane !== undefined) handleLaneHit(lane)
+      if (gameState === "playing") {
+        if (btn === "start") { togglePause(); return }
+        const lane = padLaneMap[btn]
+        if (lane !== undefined) handleLaneHit(lane)
+      } else if (gameState === "paused" && btn === "start") {
+        togglePause()
+      }
     },
   })
 
