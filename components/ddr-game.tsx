@@ -1811,8 +1811,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                     opacity: 0.7,
                     position: "relative",
                   }}>
-                    {/* Carrot arrow centered inside bubble */}
-                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "45%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
+                    {/* Carrot arrow centered inside bubble — strip fixed width/height so SVG fills container */}
+                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "45%", height: "45%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane].replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"') }} />
                   </div>
                 </div>
               </div>
