@@ -1,13 +1,12 @@
 "use client"
-import { useEffect, useRef, useCallback } from "react"
+import { useEffect, useRef } from "react"
 
 export type PadDirection = "up" | "down" | "left" | "right"
 export type PadButton = PadDirection | "start" | "select"
 
 /**
  * Maps common DDR dance mat button layouts.
- * USB dance mats vary wildly — we check buttons, axes, and log raw data
- * so the user can tell us what their specific pad sends.
+ * USB dance mats vary wildly — we check buttons, axes, and log raw data.
  */
 
 let debugLogTimer = 0
@@ -53,14 +52,14 @@ function readPadState(gp: Gamepad, debug: boolean = false): Record<PadButton, bo
   const axisUp    = (axes[1] ?? 0) < -0.5
   const axisDown  = (axes[1] ?? 0) > 0.5
 
-  // Axis-based secondary (some mats use axes[2]/axes[5] or axes[9])
+  // Axis-based secondary (some mats use axes[2]/axes[5])
   const axisLeft2  = (axes[2] ?? 0) < -0.5
   const axisRight2 = (axes[2] ?? 0) > 0.5
   const axisUp2    = (axes[5] ?? 0) < -0.5
   const axisDown2  = (axes[5] ?? 0) > 0.5
 
   // Axis 9 (used by some dance mats for d-pad as hat switch)
-  const ax9 = axes[9] ?? 2 // default to neutral
+  const ax9 = axes[9] ?? 2
   const ax9Up    = ax9 > -1.1 && ax9 < -0.9
   const ax9Right = ax9 > -0.5 && ax9 < -0.3
   const ax9Down  = ax9 > 0.1 && ax9 < 0.3
@@ -77,15 +76,10 @@ function readPadState(gp: Gamepad, debug: boolean = false): Record<PadButton, bo
 }
 
 interface UseGamepadOptions {
-  /** Called on button-down edge (rising edge). Good for menu navigation & DDR hits. */
   onPress?: (button: PadButton) => void
-  /** Called on button-up edge (falling edge). */
   onRelease?: (button: PadButton) => void
-  /** Called every frame with current held state. Good for fly game continuous movement. */
   onHeld?: (held: Record<PadButton, boolean>) => void
-  /** Set false to disable polling (e.g. when component is unmounted or paused) */
   enabled?: boolean
-  /** Enable debug logging to console */
   debug?: boolean
 }
 
@@ -93,35 +87,45 @@ export function useGamepad({ onPress, onRelease, onHeld, enabled = true, debug =
   const prevState = useRef<Record<PadButton, boolean>>({
     up: false, down: false, left: false, right: false, start: false, select: false,
   })
-  const rafId = useRef<number>(0)
   const onPressRef = useRef(onPress)
   const onReleaseRef = useRef(onRelease)
   const onHeldRef = useRef(onHeld)
-  const hasLoggedConnection = useRef(false)
+  const debugRef = useRef(debug)
 
-  // Keep callback refs fresh without re-triggering effect
   onPressRef.current = onPress
   onReleaseRef.current = onRelease
   onHeldRef.current = onHeld
+  debugRef.current = debug
 
+  // Listen for gamepad connect/disconnect events
+  useEffect(() => {
+    const onConnect = (e: GamepadEvent) => {
+      console.log(`🎮 Dance pad CONNECTED: "${e.gamepad.id}" | ${e.gamepad.buttons.length} buttons, ${e.gamepad.axes.length} axes`)
+    }
+    const onDisconnect = (e: GamepadEvent) => {
+      console.log(`🎮 Dance pad DISCONNECTED: "${e.gamepad.id}"`)
+    }
+    window.addEventListener("gamepadconnected", onConnect)
+    window.addEventListener("gamepaddisconnected", onDisconnect)
+    return () => {
+      window.removeEventListener("gamepadconnected", onConnect)
+      window.removeEventListener("gamepaddisconnected", onDisconnect)
+    }
+  }, [])
+
+  // Poll using BOTH requestAnimationFrame AND setInterval as fallback
+  // rAF pauses when tab is backgrounded; setInterval keeps running
   useEffect(() => {
     if (!enabled) return
 
     const poll = () => {
       const gamepads = navigator.getGamepads?.() ?? []
-      // Merge state from all connected gamepads (user might have multiple)
       const merged: Record<PadButton, boolean> = {
         up: false, down: false, left: false, right: false, start: false, select: false,
       }
-      let foundGamepad = false
       for (const gp of gamepads) {
         if (!gp) continue
-        foundGamepad = true
-        if (!hasLoggedConnection.current) {
-          console.log(`🎮 Dance pad connected: "${gp.id}" | ${gp.buttons.length} buttons, ${gp.axes.length} axes`)
-          hasLoggedConnection.current = true
-        }
-        const state = readPadState(gp, debug)
+        const state = readPadState(gp, debugRef.current)
         for (const key of Object.keys(state) as PadButton[]) {
           if (state[key]) merged[key] = true
         }
@@ -132,7 +136,7 @@ export function useGamepad({ onPress, onRelease, onHeld, enabled = true, debug =
 
       for (const btn of buttons) {
         if (merged[btn] && !prev[btn]) {
-          if (debug) console.log(`🎮 PRESS: ${btn}`)
+          if (debugRef.current) console.log(`🎮 PRESS: ${btn}`)
           onPressRef.current?.(btn)
         }
         if (!merged[btn] && prev[btn]) {
@@ -141,11 +145,23 @@ export function useGamepad({ onPress, onRelease, onHeld, enabled = true, debug =
       }
 
       onHeldRef.current?.(merged)
-      prevState.current = merged
-      rafId.current = requestAnimationFrame(poll)
+      prevState.current = { ...merged }
     }
 
-    rafId.current = requestAnimationFrame(poll)
-    return () => cancelAnimationFrame(rafId.current)
-  }, [enabled, debug])
+    // Primary: requestAnimationFrame for low-latency in-game polling
+    let rafId = 0
+    const rafLoop = () => {
+      poll()
+      rafId = requestAnimationFrame(rafLoop)
+    }
+    rafId = requestAnimationFrame(rafLoop)
+
+    // Fallback: setInterval at ~60fps to catch inputs if rAF stalls
+    const intervalId = setInterval(poll, 16)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      clearInterval(intervalId)
+    }
+  }, [enabled])
 }
