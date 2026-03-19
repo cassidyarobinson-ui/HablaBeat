@@ -2500,7 +2500,7 @@ export default function HablaBeat() {
   if (currentView === "player_legacy" && currentSong) {
     return (
       <div className="min-h-screen bg-white text-gray-900">
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto bg-gray-50 min-h-screen">
+        <div className="max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto bg-gray-50 min-h-screen">
           {/* Header */}
           <div className="flex items-center justify-between p-4 pt-8">
             <Button
@@ -2689,7 +2689,7 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => { stopMic(); setCurrentView("songs") }}>
                 <Music className="h-6 w-6" />
@@ -2737,7 +2737,7 @@ export default function HablaBeat() {
           }
           .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
         `}</style>
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen pb-24">
+        <div className="max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto min-h-screen pb-24">
 
           {/* Header — solid blue bar */}
           <div style={{ background: "#4a7cdb" }}>
@@ -2898,7 +2898,7 @@ export default function HablaBeat() {
         </div>
 
         {/* Bottom nav */}
-        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
           <div className="flex justify-around">
             <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
               <Music className="h-6 w-6" />
@@ -2929,7 +2929,7 @@ export default function HablaBeat() {
 
     return (
       <div className="min-h-screen swirl-bg">
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen">
+        <div className="max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto min-h-screen">
 
           {/* Header — solid blue bar */}
           <div style={{ background: "#4a7cdb" }}>
@@ -3050,7 +3050,7 @@ export default function HablaBeat() {
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
                 <Music className="h-6 w-6" />
@@ -3170,7 +3170,7 @@ export default function HablaBeat() {
           .shooting-star-b { animation: shootingStarB linear infinite; }
           .alien-float { animation: alienFloat ease-in-out infinite; }
         `}</style>
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen">
+        <div className="max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto min-h-screen">
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
@@ -3276,7 +3276,7 @@ export default function HablaBeat() {
                 } as React.CSSProperties}
               >
                 {/* Content */}
-                <div className="world-content-in flex flex-col h-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto">
+                <div className="world-content-in flex flex-col h-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto">
                   {/* Header — solid blue bar like Duolingo */}
                   <div style={{ background: "#4a7cdb" }}>
                     <div className="flex items-center gap-3 px-4 pt-10 pb-3">
@@ -3473,7 +3473,7 @@ export default function HablaBeat() {
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
                     <div className="galaxy-worlds-in px-2 pt-1 pb-4" style={{ overflow: "visible" }}>
-                      <div className="grid grid-cols-3 gap-x-3 gap-y-5 relative mx-auto" style={{ overflow: "visible", maxWidth: "460px" }}>
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-5 lg:gap-x-6 lg:gap-y-8 relative mx-auto" style={{ overflow: "visible", maxWidth: "680px" }}>
                         {/* Dashed map-trail connectors — masked behind the circles */}
                         <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
                           <defs>
@@ -3595,7 +3595,7 @@ export default function HablaBeat() {
             <MiniPlayer />
 
             {/* Bottom Navigation */}
-            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
               <div className="flex justify-around">
                 <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => setCurrentView("songs")}>
                   <Music className="h-6 w-6" />
@@ -3619,10 +3619,10 @@ export default function HablaBeat() {
   if (currentView === "visualizer") {
     return (
       <div className="min-h-screen bg-black">
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen flex flex-col">
+        <div className="max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto min-h-screen flex flex-col">
           <VisualizerView onBack={() => setCurrentView("songs")} />
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-4xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
             <div className="flex justify-around">
               <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
                 <Music className="h-6 w-6" />
