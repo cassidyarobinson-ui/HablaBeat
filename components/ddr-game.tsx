@@ -644,8 +644,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         togglePause()
       }
     },
-    onHeld: (held) => {
-      // Track connection status
+    onRawInput: (info) => {
+      setPadDebug(info)
       setPadConnected(true)
     },
   })
@@ -1633,14 +1633,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   return (
     <div className="h-[100dvh] text-white relative" style={{ background: gameBg, backgroundColor: "#1a0a2e" }}>
       {/* Gamepad debug overlay — shows pad status + last button pressed */}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] text-lg font-bold px-6 py-3 rounded-xl" style={{
-        background: padConnected ? "rgba(34,197,94,0.9)" : "rgba(239,68,68,0.9)",
-        color: "white",
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] font-mono px-6 py-3 rounded-xl max-w-[90vw]" style={{
+        background: "rgba(0,0,0,0.9)",
+        color: padDebug ? "#4ade80" : "#f87171",
         pointerEvents: "none",
         boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
-        border: "2px solid white",
+        border: `2px solid ${padDebug ? "#4ade80" : "#f87171"}`,
+        fontSize: "14px",
+        whiteSpace: "nowrap",
       }}>
-        {padConnected ? `🎮 PAD OK ${padDebug}` : "🎮 NO PAD"}
+        {padDebug || (padConnected ? "🎮 PAD CONNECTED — step on arrows" : "🎮 NO PAD")}
       </div>
       {/* Simple pause indicator (no loadout) */}
       {isPaused && !showLoadout && (

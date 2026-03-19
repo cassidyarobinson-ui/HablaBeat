@@ -79,22 +79,26 @@ interface UseGamepadOptions {
   onPress?: (button: PadButton) => void
   onRelease?: (button: PadButton) => void
   onHeld?: (held: Record<PadButton, boolean>) => void
+  /** Called with raw button/axis info string whenever any input is detected */
+  onRawInput?: (info: string) => void
   enabled?: boolean
   debug?: boolean
 }
 
-export function useGamepad({ onPress, onRelease, onHeld, enabled = true, debug = false }: UseGamepadOptions) {
+export function useGamepad({ onPress, onRelease, onHeld, onRawInput, enabled = true, debug = false }: UseGamepadOptions) {
   const prevState = useRef<Record<PadButton, boolean>>({
     up: false, down: false, left: false, right: false, start: false, select: false,
   })
   const onPressRef = useRef(onPress)
   const onReleaseRef = useRef(onRelease)
   const onHeldRef = useRef(onHeld)
+  const onRawInputRef = useRef(onRawInput)
   const debugRef = useRef(debug)
 
   onPressRef.current = onPress
   onReleaseRef.current = onRelease
   onHeldRef.current = onHeld
+  onRawInputRef.current = onRawInput
   debugRef.current = debug
 
   // Listen for gamepad connect/disconnect events
@@ -125,6 +129,13 @@ export function useGamepad({ onPress, onRelease, onHeld, enabled = true, debug =
       }
       for (const gp of gamepads) {
         if (!gp) continue
+        // Report raw button/axis data for debugging
+        const pressed = gp.buttons.map((btn, i) => btn.pressed ? i : null).filter(i => i !== null)
+        const values = gp.buttons.map((btn, i) => btn.value > 0.1 ? `b${i}=${btn.value.toFixed(1)}` : null).filter(Boolean)
+        const activeAxes = gp.axes.map((v, i) => Math.abs(v) > 0.1 ? `a${i}=${v.toFixed(2)}` : null).filter(Boolean)
+        if (pressed.length > 0 || values.length > 0 || activeAxes.length > 0) {
+          onRawInputRef.current?.(`BTN:[${pressed.join(',')}] VAL:[${values.join(',')}] AX:[${activeAxes.join(',')}]`)
+        }
         const state = readPadState(gp, debugRef.current)
         for (const key of Object.keys(state) as PadButton[]) {
           if (state[key]) merged[key] = true
