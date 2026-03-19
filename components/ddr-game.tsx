@@ -1791,7 +1791,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                     position: "relative",
                   }}>
                     {/* Carrot arrow centered inside bubble */}
-                    <div style={{ width: "55%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
+                    <div style={{ width: "55%", height: "55%", display: "flex", alignItems: "center", justifyContent: "center", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane] }} />
                   </div>
                 </div>
               </div>
