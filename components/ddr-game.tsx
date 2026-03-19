@@ -225,6 +225,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const fallingRef = useRef<HTMLDivElement>(null)
   /** Tracks if the Dragon Breath combo-shield has been used this song */
   const comboShieldUsedRef = useRef(false)
+  const [padDebug, setPadDebug] = useState("")
+  const [padConnected, setPadConnected] = useState(false)
 
   // Rainbow colors that cycle on each hit
   const RAINBOW_COLORS = [
@@ -631,6 +633,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     enabled: true,
     debug: true,
     onPress: (btn: PadButton) => {
+      setPadDebug(`🎮 ${btn.toUpperCase()}`)
+      setPadConnected(true)
+      setTimeout(() => setPadDebug(""), 800)
       if (gameState === "playing") {
         if (btn === "start") { togglePause(); return }
         const lane = padLaneMap[btn]
@@ -638,6 +643,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       } else if (gameState === "paused" && btn === "start") {
         togglePause()
       }
+    },
+    onHeld: (held) => {
+      // Track connection status
+      setPadConnected(true)
     },
   })
 
@@ -1623,6 +1632,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   return (
     <div className="h-[100dvh] text-white relative" style={{ background: gameBg, backgroundColor: "#1a0a2e" }}>
+      {/* Gamepad debug overlay — shows pad status + last button pressed */}
+      <div className="fixed top-2 right-2 z-[9999] text-xs font-mono px-3 py-1.5 rounded-full" style={{
+        background: padConnected ? "rgba(34,197,94,0.8)" : "rgba(239,68,68,0.8)",
+        color: "white",
+        pointerEvents: "none",
+      }}>
+        {padConnected ? `🎮 PAD OK ${padDebug}` : "🎮 NO PAD"}
+      </div>
       {/* Simple pause indicator (no loadout) */}
       {isPaused && !showLoadout && (
         <div className="absolute inset-0 z-[998] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.6)" }} onClick={togglePause}>
