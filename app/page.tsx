@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
+const AmericasMap = dynamic(() => import("@/components/americas-map"), { ssr: false })
 import { LYRIC_TRANSLATIONS } from "@/lib/lyric-translations"
 import { SONG_FLY_DATA } from "@/lib/song-fly-data"
 import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
@@ -3521,8 +3522,6 @@ export default function HablaBeat() {
                     <span className="text-white font-black text-xs">{totalVocabBank}</span>
                   </div>
                 </div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" style={{ transform: "scaleX(-1)" }} />
               </div>
             ) : (
               <>
@@ -3804,199 +3803,17 @@ export default function HablaBeat() {
               }
             `}</style>
             {/* ── Desktop: Americas Map  |  Mobile: Accordion + Grid ── */}
-            {isDesktop ? (() => {
-              /* Flatten all sections across both categories with map positions */
-              const MAP_POSITIONS: Record<string, { left: string; top: string }> = {
-                "alphabet-vowels": { left: "18%", top: "6%" },
-                "body-world":      { left: "22%", top: "17%" },
-                "roles-world":     { left: "16%", top: "26%" },
-                "pets-syllables":  { left: "29%", top: "20%" },
-                "places":          { left: "25%", top: "33%" },
-                "numbers":         { left: "32%", top: "39%" },
-                "numbers-time":    { left: "40%", top: "44%" },
-                "colors-feelings": { left: "65%", top: "11%" },
-                "foods":           { left: "49%", top: "6%" },
-                "ar-verbs":        { left: "40%", top: "54%" },
-                "er-verbs":        { left: "58%", top: "49%" },
-                "ir-verbs":        { left: "30%", top: "60%" },
-                "preterite":       { left: "26%", top: "70%" },
-                "imperfecto":      { left: "44%", top: "68%" },
-                "futuro":          { left: "56%", top: "76%" },
-                "conditional":     { left: "58%", top: "87%" },
-                "pronouns":        { left: "36%", top: "85%" },
-                "advanced":        { left: "48%", top: "94%" },
-              }
-              const allSections = curriculumData.flatMap(c => c.sections)
-
-              /* Trail path: connect all 18 worlds with a smooth bezier */
-              const trailPoints = allSections.map(s => {
-                const pos = MAP_POSITIONS[s.id]
-                if (!pos) return null
-                return { x: parseFloat(pos.left) * 10, y: parseFloat(pos.top) * 10 }
-              }).filter(Boolean) as { x: number; y: number }[]
-              let trailD = ""
-              if (trailPoints.length > 1) {
-                trailD = `M ${trailPoints[0].x} ${trailPoints[0].y}`
-                for (let i = 1; i < trailPoints.length; i++) {
-                  const prev = trailPoints[i - 1]
-                  const curr = trailPoints[i]
-                  const cpx1 = prev.x + (curr.x - prev.x) * 0.4
-                  const cpy1 = prev.y + (curr.y - prev.y) * 0.1
-                  const cpx2 = curr.x - (curr.x - prev.x) * 0.4
-                  const cpy2 = curr.y - (curr.y - prev.y) * 0.1
-                  trailD += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr.x} ${curr.y}`
-                }
-              }
-
-              return (
-                <div className="relative w-full" style={{ height: "calc(100vh - 55px)" }}>
-                  {/* Real map background — local SVG with country shapes */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/images/americas-map.svg"
-                    alt=""
-                    className="absolute pointer-events-none select-none"
-                    style={{
-                      top: "50%", left: "38%",
-                      transform: "translate(-50%, -50%)",
-                      height: "98%",
-                      opacity: 0.12,
-                    }}
-                  />
-                  {/* Section labels — left side */}
-                  <div className="absolute pointer-events-none" style={{ left: "2%", top: "3%", textAlign: "left" }}>
-                    <span className="font-black text-base tracking-wider" style={{ color: "#4a7cdb" }}>NOUNS</span>
-                    <br />
-                    <span className="text-[11px] font-semibold" style={{ color: "#9ca3af" }}>North, Central America &amp; Caribbean</span>
-                  </div>
-                  <div className="absolute pointer-events-none" style={{ left: "2%", top: "48%", textAlign: "left" }}>
-                    <span className="font-black text-base tracking-wider" style={{ color: "#4a7cdb" }}>VERBS</span>
-                    <br />
-                    <span className="text-[11px] font-semibold" style={{ color: "#9ca3af" }}>South America</span>
-                  </div>
-
-                  {/* SVG Americas outline + trail */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
-                    {/* ── Mexico ── */}
-                    <path d="M 90 20 C 90 20, 130 10, 180 15 C 230 20, 260 5, 300 10 L 340 30 L 360 55 C 360 55, 340 65, 320 60 L 290 65 L 260 80 L 240 100 L 225 125 L 210 155 L 195 185 L 180 215 L 175 240 L 185 260 L 200 275 L 220 290 L 250 310 L 270 325 L 295 340 L 320 355 L 345 365 L 370 380 L 385 395 C 385 395, 370 400, 350 390 L 320 375 L 290 360 L 260 345 L 230 325 L 200 305 L 175 280 L 155 250 L 140 215 L 125 175 L 115 140 L 105 100 L 95 60 Z"
-                      fill="rgba(74,124,219,0.06)" stroke="rgba(74,124,219,0.18)" strokeWidth="1.5" />
-                    {/* Baja California */}
-                    <path d="M 75 55 Q 60 90, 50 130 Q 42 170, 48 210 Q 55 240, 70 260"
-                      fill="none" stroke="rgba(74,124,219,0.15)" strokeWidth="1.5" />
-                    {/* Yucatan peninsula */}
-                    <path d="M 295 340 Q 310 315, 330 310 Q 350 305, 360 315 Q 365 325, 355 340"
-                      fill="rgba(74,124,219,0.04)" stroke="rgba(74,124,219,0.15)" strokeWidth="1" />
-
-                    {/* ── Central America ── */}
-                    <path d="M 200 275 Q 215 295, 230 315 Q 245 335, 265 350 Q 285 365, 310 380 Q 335 395, 355 405 Q 375 415, 395 425 Q 405 430, 415 440 Q 420 445, 410 448 Q 395 440, 375 430 Q 345 415, 315 400 Q 285 385, 260 365 Q 235 345, 215 325 Q 195 305, 185 280"
-                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.15)" strokeWidth="1.5" />
-
-                    {/* ── Cuba ── */}
-                    <path d="M 430 75 Q 460 60, 500 58 Q 540 56, 560 65 Q 575 72, 565 80 Q 545 88, 510 90 Q 475 92, 445 85 Q 430 80, 430 75 Z"
-                      fill="rgba(74,124,219,0.06)" stroke="rgba(74,124,219,0.18)" strokeWidth="1.5" />
-                    {/* Hispaniola */}
-                    <path d="M 580 95 Q 600 85, 630 88 Q 650 90, 645 100 Q 635 108, 610 108 Q 590 106, 580 100 Z"
-                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.15)" strokeWidth="1" />
-                    {/* Puerto Rico */}
-                    <path d="M 655 100 Q 670 95, 685 98 Q 695 102, 690 108 Q 678 112, 660 110 Q 652 106, 655 100 Z"
-                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.15)" strokeWidth="1" />
-                    {/* Jamaica */}
-                    <ellipse cx="530" cy="115" rx="15" ry="6" fill="rgba(74,124,219,0.04)" stroke="rgba(74,124,219,0.12)" strokeWidth="1" />
-
-                    {/* ── South America ── */}
-                    <path d="M 360 470 Q 380 455, 420 445 Q 460 438, 510 442 Q 560 448, 600 460 Q 640 475, 665 500 Q 685 525, 690 555 Q 695 590, 680 630 Q 665 670, 645 710 Q 625 750, 610 790 Q 595 830, 575 865 Q 555 895, 530 920 Q 510 940, 490 952 Q 472 960, 458 958 Q 445 952, 438 938 Q 425 915, 405 885 Q 385 855, 365 820 Q 345 785, 330 745 Q 318 710, 310 675 Q 302 640, 300 605 Q 298 570, 310 540 Q 322 515, 340 495 Q 355 478, 360 470 Z"
-                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.18)" strokeWidth="1.8" />
-
-                    {/* Country borders (subtle internal lines) */}
-                    {/* Colombia-Venezuela border */}
-                    <path d="M 440 445 Q 460 485, 465 520" fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
-                    {/* Ecuador-Peru border */}
-                    <path d="M 310 570 Q 345 565, 380 580" fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
-                    {/* Peru-Bolivia border */}
-                    <path d="M 380 620 Q 410 615, 440 640" fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
-                    {/* Chile-Argentina border (the Andes) */}
-                    <path d="M 380 680 Q 370 720, 365 760 Q 360 800, 370 840 Q 380 875, 400 910 Q 420 935, 445 952"
-                      fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
-
-                    {/* Dotted trail connecting worlds in order */}
-                    {trailD && (
-                      <path d={trailD} fill="none" stroke="rgba(74,124,219,0.25)" strokeWidth="2.5" strokeDasharray="8 5" strokeLinecap="round" />
-                    )}
-                  </svg>
-
-                  {/* World bubbles — absolutely positioned */}
-                  {allSections.map((section, sectionIdx) => {
-                    const pos = MAP_POSITIONS[section.id]
-                    if (!pos) return null
-                    const countryName = (section as any).country ?? ""
-                    const flagData = COUNTRY_FLAG[countryName]
-                    const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)"
-                    return (
-                      <div key={section.id} className="absolute" style={{ left: pos.left, top: pos.top, width: "110px", height: "110px", transform: "translate(-50%, -50%)", zIndex: 10 }}>
-                        <button
-                          onClick={(e) => {
-                            playWorldClick()
-                            const rect = e.currentTarget.getBoundingClientRect()
-                            const cx = ((rect.left + rect.width / 2) / window.innerWidth * 100).toFixed(1) + "%"
-                            const cy = ((rect.top + rect.height / 2) / window.innerHeight * 100).toFixed(1) + "%"
-                            setWorldZoomOrigin({ x: cx, y: cy })
-                            setOpenSectionId(section.id)
-                          }}
-                          onMouseEnter={playWorldHover}
-                          onTouchStart={playWorldHover}
-                          className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
-                          style={{
-                            background: "linear-gradient(180deg, #5b9be6 0%, #4a7cdb 50%, #3d6bc4 100%)",
-                            border: "3px solid rgba(255,255,255,0.6)",
-                            boxShadow: "0 3px 12px rgba(74,124,219,0.3)",
-                          }}
-                        >
-                          {isSectionBadgeUnlocked(section) && (
-                            <div className="absolute top-1 right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-sm z-10" />
-                          )}
-                          <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "48px", lineHeight: 1 }}>
-                            {section.id === "ar-verbs"
-                              ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "36px", width: "52px", height: "52px", background: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>A</span>
-                              : section.id === "er-verbs"
-                                ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "36px", width: "52px", height: "52px", background: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>E</span>
-                                : section.id === "ir-verbs"
-                                  ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "36px", width: "52px", height: "52px", background: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>I</span>
-                                  : section.icon}
-                          </span>
-                          {(() => {
-                            const topText = section.title
-                            const botText = (section as any).country ?? ""
-                            const r = 38, cx = 50
-                            const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
-                            const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
-                            return (
-                              <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
-                                <defs>
-                                  <path id={`g-top-${section.id}`} d={topArc} />
-                                  <path id={`g-bot-${section.id}`} d={botArc} />
-                                  <filter id={`g-outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
-                                    <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
-                                    <feFlood floodColor="#000" result="color"/>
-                                    <feComposite in="color" in2="expanded" operator="in" result="outline"/>
-                                    <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                  </filter>
-                                </defs>
-                                <text fill="white" fontSize="12" fontWeight="900" textAnchor="middle" filter={`url(#g-outline-${section.id})`} style={{ fontFamily: "inherit" }}>
-                                  <textPath href={`#g-top-${section.id}`} startOffset="50%">{topText}</textPath>
-                                </text>
-                                <text fill="white" fontSize="12" fontWeight="900" textAnchor="middle" filter={`url(#g-outline-${section.id})`} style={{ fontFamily: "inherit" }}>
-                                  <textPath href={`#g-bot-${section.id}`} startOffset="50%">{botText}</textPath>
-                                </text>
-                              </svg>
-                            )
-                          })()}
-                        </button>
-                      </div>
-                    )
-                  })}
-                </div>
-              )
-            })() : curriculumData.map((category, catIdx) => {
+            {isDesktop ? (
+              <div className="w-full" style={{ height: "calc(100vh - 55px)" }}>
+                <AmericasMap
+                  onSelectSection={(sectionId, cx, cy) => {
+                    setWorldZoomOrigin({ x: cx, y: cy })
+                    setOpenSectionId(sectionId)
+                  }}
+                  isSectionBadgeUnlocked={isSectionBadgeUnlocked}
+                />
+              </div>
+            ) : curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id
               const catGradient = "#ffffff"
               const catGlow = "0 1px 3px rgba(0,0,0,0.04)"
