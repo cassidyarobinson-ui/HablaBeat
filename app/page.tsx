@@ -1537,6 +1537,7 @@ export default function HablaBeat() {
 
   const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "dance" | "leaderboard">("songs")
   const [danceSelectedIndex, setDanceSelectedIndex] = useState(0)
+  const [launchedFromDance, setLaunchedFromDance] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
@@ -2235,6 +2236,7 @@ export default function HablaBeat() {
   useEffect(() => {
     if (danceLaunchPending) {
       setDanceLaunchPending(false)
+      setLaunchedFromDance(true)
       const song = allSongs[danceSelectedIndex]
       if (song) {
         handlePlayDDR(song.id, song.categoryId, song.sectionId)
@@ -2510,7 +2512,7 @@ export default function HablaBeat() {
         totalVocabBank={totalVocabBank}
         bestFlow={bestFlow}
         initialChallengePhone={friendPhone}
-        onBack={() => { setCurrentView("songs"); setFriendPhone("") }}
+        onBack={() => { setCurrentView(launchedFromDance ? "dance" : "songs"); setFriendPhone(""); setLaunchedFromDance(false) }}
         onNextSong={currentSongIndex < allSongs.length - 1 ? () => {
           handleNextSong()
           setCurrentView("ddr")
@@ -2522,6 +2524,7 @@ export default function HablaBeat() {
         storeOwned={storeOwned}
         onEquipTheme={setActiveTheme}
         onEquipPointer={setActivePointer}
+        danceMode={launchedFromDance}
       />
     )
   }
@@ -3719,6 +3722,7 @@ export default function HablaBeat() {
                     }}
                     onClick={() => {
                       if (offset === 0) {
+                        setLaunchedFromDance(true)
                         handlePlayDDR(song.id, song.categoryId, song.sectionId)
                       } else {
                         setDanceSelectedIndex(idx)
@@ -3770,7 +3774,7 @@ export default function HablaBeat() {
                 Song {selectedSong.number} of {allSongs.length}
               </div>
               <button
-                onClick={() => handlePlayDDR(selectedSong.id, selectedSong.categoryId, selectedSong.sectionId)}
+                onClick={() => { setLaunchedFromDance(true); handlePlayDDR(selectedSong.id, selectedSong.categoryId, selectedSong.sectionId) }}
                 className="px-10 py-3 rounded-full font-black text-xl text-white transition-all hover:scale-105 active:scale-95"
                 style={{
                   background: "linear-gradient(135deg, #4a7cdb, #6366f1)",

@@ -7,6 +7,7 @@ import { translateWord } from "@/lib/spanish-dictionary"
 import Image from "next/image"
 import { getPointer, firePointerEffect, POINTER_KEYFRAMES } from "@/lib/pointers"
 import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
+import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
 
 // Types
 interface KaraokeWord {
@@ -59,6 +60,7 @@ interface DDRGameProps {
   storeOwned?: string[]
   onEquipTheme?: (id: string) => void
   onEquipPointer?: (id: string) => void
+  danceMode?: boolean
 }
 
 // Mini catalog for in-game loadout UI (pointers only)
@@ -153,7 +155,7 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","modo","comido","gordo"]),
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer, danceMode = false }: DDRGameProps) {
   // Sound effects for interactive coins/carrots
   const playCoinSound = () => {
     try {
@@ -650,6 +652,38 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     },
   })
 
+  // Setup screen pad/keyboard navigation (dance mode)
+  const speeds = ["slower", "normal", "keywords"] as const
+  const handleSetupNav = useCallback((btn: PadButton) => {
+    if (gameState !== "setup") return
+    if (btn === "left") {
+      setSpeed(prev => {
+        const idx = speeds.indexOf(prev as any)
+        return speeds[Math.max(0, idx - 1)]
+      })
+    } else if (btn === "right") {
+      setSpeed(prev => {
+        const idx = speeds.indexOf(prev as any)
+        return speeds[Math.min(speeds.length - 1, idx + 1)]
+      })
+    } else if (btn === "start") {
+      startGame()
+    } else if (btn === "select") {
+      onBack()
+    }
+  }, [gameState])
+
+  useKeyboardNav({
+    enabled: gameState === "setup",
+    onPress: handleSetupNav,
+  })
+
+  // Also use gamepad for setup screen
+  useGamepad({
+    enabled: gameState === "setup",
+    onPress: handleSetupNav,
+  })
+
   // Touch input for mobile
   useEffect(() => {
     if (gameState !== "playing") return
@@ -1086,8 +1120,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     ]
 
     return (
-      <div className="min-h-screen relative overflow-hidden flex flex-col" style={{
-        background: "linear-gradient(180deg, #edf2fa 0%, #f5f7fb 40%, #fafafa 100%)",
+      <div className={`relative overflow-hidden flex flex-col ${danceMode ? "h-[100dvh] items-center justify-center" : "min-h-screen"}`} style={{
+        background: danceMode
+          ? "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)"
+          : "linear-gradient(180deg, #edf2fa 0%, #f5f7fb 40%, #fafafa 100%)",
       }}>
         <style jsx global>{`
           @keyframes setupSwirlBg {
@@ -1203,7 +1239,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           />
         ))}
 
-        <div className="max-w-md mx-auto w-full p-4 flex flex-col gap-3 pt-6 pb-12 relative z-10">
+        <div className={`mx-auto w-full p-4 flex flex-col gap-3 relative z-10 ${danceMode ? "max-w-2xl pt-0 pb-4" : "max-w-md pt-6 pb-12"}`}>
 
           {/* Header card — yellow→purple→blue→teal→green gradient (matches HablaBeat ribbon) */}
           {(() => {
