@@ -3668,9 +3668,9 @@ export default function HablaBeat() {
         {/* Main content — vertically centered with equal padding top and bottom */}
         <div className="flex-1 flex flex-col items-center justify-center pb-16">
 
-          {/* Title sitting right above the cards */}
+          {/* Title sitting above the cards with clear gap */}
           {selectedSong && (
-            <div className="text-center mb-4">
+            <div className="text-center mb-8">
               <div className="text-5xl md:text-6xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
                 {selectedSong.title}
               </div>
@@ -3762,7 +3762,7 @@ export default function HablaBeat() {
 
           {/* Song info below carousel */}
           {selectedSong && (
-            <div className="text-center mt-3">
+            <div className="text-center mt-8">
               <div className="text-lg text-white/60 font-medium mb-1">
                 {({1:"The Spanish alphabet letters",2:"The special letters in Spanish",3:"Spanish vowel sounds",4:"Body parts and face vocab",5:"Clothing words in Spanish",6:"Family members in Spanish",7:"Jobs and careers vocab",8:"Vowels with a unicorn twist",9:"Pets and animals vocab",10:"Animal habitats and homes",11:"Rooms in your house",12:"Where is it? location words",13:"Giving and following directions",14:"Numbers one through twenty",15:"Counting by tens to one hundred",16:"Days, months, and seasons",17:"Telling time in Spanish",18:"Colors in Spanish",19:"Feelings and emotions",20:"Hunger and thirst expressions",21:"Fruit names in Spanish",22:"Vegetable names in Spanish",23:"Breakfast, lunch, and dinner",24:"Ordering and asking for things",25:"AR verbs conjugation",26:"Gustar — to like something",27:"Estar — to be (temporary)",28:"ER verbs conjugation",29:"Tener — to have",30:"Ser — to be (permanent)",31:"IR verbs conjugation",32:"IR — to go places",33:"Decir — to say or tell",34:"When to use preterite tense",35:"AR verbs in the past",36:"ER and IR verbs in the past",37:"Irregular past tense verbs",38:"Imperfect tense for the past",39:"Irregular imperfect verbs",40:"Imperfect vs preterite tense",41:"Future tense in Spanish",42:"Irregular future tense verbs",43:"Conditional — would do something",44:"Irregular conditional verbs",45:"Personal and reflexive pronouns",46:"Direct and indirect object pronouns",47:"Commands and instructions",48:"Por vs para — tricky prepositions",49:"Subjunctive mood basics",50:"Fun phrases and expressions"} as Record<number, string>)[selectedSong.number] ?? "Vocabulary and grammar"}
               </div>
