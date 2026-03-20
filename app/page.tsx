@@ -1612,9 +1612,25 @@ export default function HablaBeat() {
   const lyricCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const lyricAnimRef = useRef<number | null>(null)
 
+  // allSongs — flattened list of all songs (needed early for gamepad nav)
+  const allSongs = curriculumData.flatMap((category) =>
+    category.sections.flatMap((section) =>
+      section.songs.map((song) => ({
+        ...song,
+        category: category.title,
+        section: section.title,
+        categoryId: category.id,
+        sectionId: section.id,
+        sectionIcon: section.icon,
+      })),
+    ),
+  )
+
   // ── Gamepad / dance mat navigation on hub screens ──
   const navViews = ["songs", "coins", "dance"] as const
   const isOnHub = navViews.includes(currentView as any)
+
+  const [danceLaunchPending, setDanceLaunchPending] = useState(false)
 
   const handleHubNav = useCallback((btn: PadButton) => {
     if (currentView === "dance") {
@@ -1624,11 +1640,8 @@ export default function HablaBeat() {
       } else if (btn === "right") {
         setDanceSelectedIndex(prev => Math.min(allSongs.length - 1, prev + 1))
       } else if (btn === "start") {
-        // Launch Pop game for selected song
-        const song = allSongs[danceSelectedIndex]
-        if (song) {
-          handlePlayDDR(song.id, song.categoryId, song.sectionId)
-        }
+        // Flag to launch — handled after handlePlayDDR is defined
+        setDanceLaunchPending(true)
       } else if (btn === "select") {
         setCurrentView("songs")
       }
@@ -1648,7 +1661,7 @@ export default function HablaBeat() {
         window.scrollBy({ top: 300, behavior: "smooth" })
       }
     }
-  }, [currentView, danceSelectedIndex, allSongs])
+  }, [currentView, allSongs])
 
   useGamepad({
     enabled: isOnHub,
@@ -2151,20 +2164,6 @@ export default function HablaBeat() {
     setLeaderboardNameInput(userName || "")
   }
 
-  // Update allSongs calculation to use current language
-  const allSongs = curriculumData.flatMap((category) =>
-    category.sections.flatMap((section) =>
-      section.songs.map((song) => ({
-        ...song,
-        category: category.title,
-        section: section.title,
-        categoryId: category.id,
-        sectionId: section.id,
-        sectionIcon: section.icon,
-      })),
-    ),
-  )
-
   const handleLanguageChange = (language) => {
     setSelectedLanguage(language)
     setCurriculumData(languages[language].curriculum)
@@ -2226,6 +2225,17 @@ export default function HablaBeat() {
       setCurrentView("ddr")
     }
   }
+
+  // Handle dance mode pad launch (deferred to after handlePlayDDR is defined)
+  useEffect(() => {
+    if (danceLaunchPending) {
+      setDanceLaunchPending(false)
+      const song = allSongs[danceSelectedIndex]
+      if (song) {
+        handlePlayDDR(song.id, song.categoryId, song.sectionId)
+      }
+    }
+  }, [danceLaunchPending])
 
   // Challenge flow — show friend picker first, then start DDR with pre-filled phone
   const handleChallengeSong = (songId: string, categoryId: string, sectionId: string) => {
