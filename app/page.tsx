@@ -3743,24 +3743,6 @@ export default function HablaBeat() {
                       />
                     </div>
 
-                    {/* Reflection */}
-                    <div style={{
-                      width: coverSize,
-                      height: "30%",
-                      borderRadius: "0 0 16px 16px",
-                      overflow: "hidden",
-                      transform: "scaleY(-1) translateY(-2px)",
-                      opacity: 0.2,
-                      maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 75%)",
-                      WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 75%)",
-                    }}>
-                      <img
-                        src={`/images/backgrounds/song-${song.number}.jpg`}
-                        alt=""
-                        style={{ width: "100%", height: coverSize, objectFit: "cover" }}
-                        draggable={false}
-                      />
-                    </div>
                   </div>
                 )
               })}
