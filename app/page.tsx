@@ -3468,7 +3468,7 @@ export default function HablaBeat() {
           .shooting-star-b { animation: shootingStarB linear infinite; }
           .alien-float { animation: alienFloat ease-in-out infinite; }
         `}</style>
-        <div className="max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto min-h-screen">
+        <div className={isDesktop ? "w-full h-screen" : "max-w-md md:max-w-2xl mx-auto min-h-screen"}>
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
@@ -3849,7 +3849,21 @@ export default function HablaBeat() {
               }
 
               return (
-                <div className="relative w-full" style={{ height: "calc(100vh - 110px)" }}>
+                <div className="relative w-full" style={{ height: "calc(100vh - 55px)" }}>
+                  {/* Real map background — free stock map with low opacity */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Latin_America_%28orthographic_projection%29.svg/800px-Latin_America_%28orthographic_projection%29.svg.png"
+                    alt=""
+                    className="absolute pointer-events-none select-none"
+                    style={{
+                      top: "48%", left: "40%",
+                      transform: "translate(-50%, -50%)",
+                      height: "92%",
+                      opacity: 0.07,
+                      filter: "saturate(0) contrast(1.3)",
+                    }}
+                  />
                   {/* Section labels — left side */}
                   <div className="absolute pointer-events-none" style={{ left: "2%", top: "3%", textAlign: "left" }}>
                     <span className="font-black text-base tracking-wider" style={{ color: "#4a7cdb" }}>NOUNS</span>
