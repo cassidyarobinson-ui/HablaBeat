@@ -3668,13 +3668,13 @@ export default function HablaBeat() {
           <div className="w-16" />
         </div>
 
-        {/* Carousel + title + info — all tightly packed */}
-        <div className="flex-1 flex flex-col items-center justify-center relative" style={{ perspective: "1800px" }}>
+        {/* Centered carousel with title above and info below */}
+        <div className="flex-1 flex flex-col items-center justify-center relative">
 
-          {/* Song title tight above */}
+          {/* Title tight above carousel */}
           {selectedSong && (
-            <div className="text-center mb-2 z-20">
-              <div className="text-4xl md:text-5xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
+            <div className="text-center z-20 flex-shrink-0" style={{ marginBottom: "-10px" }}>
+              <div className="text-5xl md:text-6xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
                 {selectedSong.title}
               </div>
               <div className="text-lg text-white/40 font-semibold">
@@ -3683,8 +3683,8 @@ export default function HablaBeat() {
             </div>
           )}
 
-          {/* Carousel row */}
-          <div className="relative w-full flex-1 flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
+          {/* Carousel */}
+          <div className="relative w-full flex items-center justify-center" style={{ perspective: "1800px", height: "min(65vh, 65vw)" }}>
             {/* Left arrow */}
             {danceSelectedIndex > 0 && (
               <button onClick={() => setDanceSelectedIndex(prev => Math.max(0, prev - 1))} className="absolute left-4 z-20 text-white/40 hover:text-white/80 transition-colors">
@@ -3692,76 +3692,78 @@ export default function HablaBeat() {
               </button>
             )}
 
-            {allSongs.map((song, idx) => {
-              const offset = idx - danceSelectedIndex
-              if (Math.abs(offset) > visibleRange) return null
+            <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
+              {allSongs.map((song, idx) => {
+                const offset = idx - danceSelectedIndex
+                if (Math.abs(offset) > visibleRange) return null
 
-              const coverSize = "min(55vh, 55vw)"
-              const translateX = offset * 380
-              const translateZ = -Math.abs(offset) * 280
-              const rotateY = offset * -35
-              const scale = offset === 0 ? 1 : Math.max(0.3, 1 - Math.abs(offset) * 0.25)
-              const opacity = offset === 0 ? 1 : Math.max(0.1, 1 - Math.abs(offset) * 0.35)
-              const zIndex = 10 - Math.abs(offset)
+                const coverSize = "min(60vh, 60vw)"
+                const translateX = offset * 400
+                const translateZ = -Math.abs(offset) * 300
+                const rotateY = offset * -35
+                const scale = offset === 0 ? 1 : Math.max(0.3, 1 - Math.abs(offset) * 0.25)
+                const opacity = offset === 0 ? 1 : Math.max(0.1, 1 - Math.abs(offset) * 0.35)
+                const zIndex = 10 - Math.abs(offset)
 
-              return (
-                <div
-                  key={song.id}
-                  className="absolute"
-                  style={{
-                    transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
-                    opacity,
-                    zIndex,
-                    transition: "all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)",
-                    cursor: offset === 0 ? "pointer" : "default",
-                  }}
-                  onClick={() => {
-                    if (offset === 0) {
-                      handlePlayDDR(song.id, song.categoryId, song.sectionId)
-                    } else {
-                      setDanceSelectedIndex(idx)
-                    }
-                  }}
-                >
-                  <div style={{
-                    width: coverSize,
-                    height: coverSize,
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    boxShadow: offset === 0
-                      ? "0 0 100px rgba(74,124,219,0.5), 0 30px 80px rgba(0,0,0,0.8)"
-                      : "0 10px 40px rgba(0,0,0,0.6)",
-                    border: offset === 0 ? "3px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
-                  }}>
-                    <img
-                      src={`/images/backgrounds/song-${song.number}.jpg`}
-                      alt={song.title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      draggable={false}
-                    />
+                return (
+                  <div
+                    key={song.id}
+                    className="absolute"
+                    style={{
+                      transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+                      opacity,
+                      zIndex,
+                      transition: "all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)",
+                      cursor: offset === 0 ? "pointer" : "default",
+                    }}
+                    onClick={() => {
+                      if (offset === 0) {
+                        handlePlayDDR(song.id, song.categoryId, song.sectionId)
+                      } else {
+                        setDanceSelectedIndex(idx)
+                      }
+                    }}
+                  >
+                    <div style={{
+                      width: coverSize,
+                      height: coverSize,
+                      borderRadius: "16px",
+                      overflow: "hidden",
+                      boxShadow: offset === 0
+                        ? "0 0 100px rgba(74,124,219,0.5), 0 30px 80px rgba(0,0,0,0.8)"
+                        : "0 10px 40px rgba(0,0,0,0.6)",
+                      border: offset === 0 ? "3px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
+                    }}>
+                      <img
+                        src={`/images/backgrounds/song-${song.number}.jpg`}
+                        alt={song.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        draggable={false}
+                      />
+                    </div>
+
+                    {/* Reflection */}
+                    <div style={{
+                      width: coverSize,
+                      height: "30%",
+                      borderRadius: "0 0 16px 16px",
+                      overflow: "hidden",
+                      transform: "scaleY(-1) translateY(-2px)",
+                      opacity: 0.2,
+                      maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 75%)",
+                      WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 75%)",
+                    }}>
+                      <img
+                        src={`/images/backgrounds/song-${song.number}.jpg`}
+                        alt=""
+                        style={{ width: "100%", height: coverSize, objectFit: "cover" }}
+                        draggable={false}
+                      />
+                    </div>
                   </div>
-
-                  {/* Reflection */}
-                  <div style={{
-                    width: coverSize,
-                    height: "30%",
-                    borderRadius: "0 0 16px 16px",
-                    overflow: "hidden",
-                    transform: "scaleY(-1) translateY(-2px)",
-                    opacity: 0.2,
-                    maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 75%)",
-                    WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 75%)",
-                  }}>
-                    <img
-                      src={`/images/backgrounds/song-${song.number}.jpg`}
-                      alt=""
-                      style={{ width: "100%", height: coverSize, objectFit: "cover" }}
-                      draggable={false}
-                    />
-                  </div>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
 
             {/* Right arrow */}
             {danceSelectedIndex < allSongs.length - 1 && (
@@ -3771,9 +3773,12 @@ export default function HablaBeat() {
             )}
           </div>
 
-          {/* Song number + play tight below */}
+          {/* Song info tight below carousel */}
           {selectedSong && (
-            <div className="text-center mt-2 z-20">
+            <div className="text-center z-20 flex-shrink-0" style={{ marginTop: "-10px" }}>
+              <div className="text-lg text-white/60 font-medium mb-1">
+                {({1:"The Spanish alphabet letters",2:"The special letters in Spanish",3:"Spanish vowel sounds",4:"Body parts and face vocab",5:"Clothing words in Spanish",6:"Family members in Spanish",7:"Jobs and careers vocab",8:"Vowels with a unicorn twist",9:"Pets and animals vocab",10:"Animal habitats and homes",11:"Rooms in your house",12:"Where is it? location words",13:"Giving and following directions",14:"Numbers one through twenty",15:"Counting by tens to one hundred",16:"Days, months, and seasons",17:"Telling time in Spanish",18:"Colors in Spanish",19:"Feelings and emotions",20:"Hunger and thirst expressions",21:"Fruit names in Spanish",22:"Vegetable names in Spanish",23:"Breakfast, lunch, and dinner",24:"Ordering and asking for things",25:"AR verbs conjugation",26:"Gustar — to like something",27:"Estar — to be (temporary)",28:"ER verbs conjugation",29:"Tener — to have",30:"Ser — to be (permanent)",31:"IR verbs conjugation",32:"IR — to go places",33:"Decir — to say or tell",34:"When to use preterite tense",35:"AR verbs in the past",36:"ER and IR verbs in the past",37:"Irregular past tense verbs",38:"Imperfect tense for the past",39:"Irregular imperfect verbs",40:"Imperfect vs preterite tense",41:"Future tense in Spanish",42:"Irregular future tense verbs",43:"Conditional — would do something",44:"Irregular conditional verbs",45:"Personal and reflexive pronouns",46:"Direct and indirect object pronouns",47:"Commands and instructions",48:"Por vs para — tricky prepositions",49:"Subjunctive mood basics",50:"Fun phrases and expressions"} as Record<number, string>)[selectedSong.number] ?? "Vocabulary and grammar"}
+              </div>
               <div className="text-xl text-white/50 font-bold mb-2">
                 Song {selectedSong.number} of {allSongs.length}
               </div>
