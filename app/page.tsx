@@ -3791,9 +3791,9 @@ export default function HablaBeat() {
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
                     <div className="galaxy-worlds-in px-2 pt-1 pb-4" style={{ overflow: "visible" }}>
-                      <div className="grid grid-cols-3 gap-x-3 gap-y-5 lg:gap-x-6 lg:gap-y-8 relative mx-auto" style={{ overflow: "visible", maxWidth: "680px" }}>
-                        {/* Dashed map-trail connectors — masked behind the circles */}
-                        <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
+                      <div className="grid grid-cols-3 lg:grid-cols-5 gap-x-3 gap-y-5 lg:gap-x-6 lg:gap-y-8 relative mx-auto" style={{ overflow: "visible", maxWidth: "1100px" }}>
+                        {/* Dashed map-trail connectors — masked behind the circles (hidden on 5-col desktop) */}
+                        <svg className="absolute inset-0 pointer-events-none lg:hidden" style={{ zIndex: 0, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
                           <defs>
                             <mask id={`bubble-mask-${category.id}`}>
                               <rect x="0" y="0" width="300" height="300" fill="white"/>
