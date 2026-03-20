@@ -3663,14 +3663,14 @@ export default function HablaBeat() {
     const visibleRange = 6 // how many covers on each side
 
     return (
-      <div className="h-[100dvh] overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)" }}>
+      <div className="h-[100dvh] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)" }}>
 
-        {/* Everything centered as one block */}
-        <div className="flex flex-col items-center">
+        {/* Main content — vertically centered with equal padding top and bottom */}
+        <div className="flex-1 flex flex-col items-center justify-center pb-16">
 
-          {/* Title above carousel */}
+          {/* Title sitting right above the cards */}
           {selectedSong && (
-            <div className="text-center mb-3">
+            <div className="text-center mb-1">
               <div className="text-5xl md:text-6xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
                 {selectedSong.title}
               </div>
@@ -3680,14 +3680,14 @@ export default function HablaBeat() {
             </div>
           )}
 
-          {/* Carousel */}
-          <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(50vh, 50vw)" }}>
-            {/* Left arrow indicator — lights up on press */}
+          {/* Carousel with arrows on screen edges */}
+          <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(45vh, 45vw)" }}>
+            {/* Left arrow — on the edge of the screen */}
             {danceSelectedIndex > 0 && (
-              <div className="absolute left-6 z-20 transition-all duration-200" style={{
-                color: danceArrowFlash === "left" ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.2)",
-                filter: danceArrowFlash === "left" ? "drop-shadow(0 0 20px rgba(74,124,219,0.8))" : "none",
-                transform: danceArrowFlash === "left" ? "scale(1.2)" : "scale(1)",
+              <div className="fixed left-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200" style={{
+                color: danceArrowFlash === "left" ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.25)",
+                filter: danceArrowFlash === "left" ? "drop-shadow(0 0 25px rgba(74,124,219,0.9))" : "none",
+                transform: `translateY(-50%) ${danceArrowFlash === "left" ? "scale(1.3)" : "scale(1)"}`,
               }}>
                 <ChevronLeft className="h-20 w-20" />
               </div>
@@ -3766,12 +3766,12 @@ export default function HablaBeat() {
               })}
             </div>
 
-            {/* Right arrow indicator — lights up on press */}
+            {/* Right arrow — on the edge of the screen */}
             {danceSelectedIndex < allSongs.length - 1 && (
-              <div className="absolute right-6 z-20 transition-all duration-200" style={{
-                color: danceArrowFlash === "right" ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.2)",
-                filter: danceArrowFlash === "right" ? "drop-shadow(0 0 20px rgba(74,124,219,0.8))" : "none",
-                transform: danceArrowFlash === "right" ? "scale(1.2)" : "scale(1)",
+              <div className="fixed right-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200" style={{
+                color: danceArrowFlash === "right" ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.25)",
+                filter: danceArrowFlash === "right" ? "drop-shadow(0 0 25px rgba(74,124,219,0.9))" : "none",
+                transform: `translateY(-50%) ${danceArrowFlash === "right" ? "scale(1.3)" : "scale(1)"}`,
               }}>
                 <ChevronRight className="h-20 w-20" />
               </div>
@@ -3804,8 +3804,8 @@ export default function HablaBeat() {
           )}
         </div>
 
-        {/* Bottom Navigation */}
-        <div className="flex-shrink-0 bg-white/5 backdrop-blur border-t border-white/10 p-3">
+        {/* Bottom Navigation — fixed at bottom */}
+        <div className="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur border-t border-white/10 p-3 z-50">
           <div className="flex justify-around max-w-md mx-auto">
             <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
               <Music className="h-6 w-6" />
