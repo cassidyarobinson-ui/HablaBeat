@@ -3850,18 +3850,17 @@ export default function HablaBeat() {
 
               return (
                 <div className="relative w-full" style={{ height: "calc(100vh - 55px)" }}>
-                  {/* Real map background — free stock map with low opacity */}
+                  {/* Real map background — local SVG with country shapes */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Latin_America_%28orthographic_projection%29.svg/800px-Latin_America_%28orthographic_projection%29.svg.png"
+                    src="/images/americas-map.svg"
                     alt=""
                     className="absolute pointer-events-none select-none"
                     style={{
-                      top: "48%", left: "40%",
+                      top: "50%", left: "38%",
                       transform: "translate(-50%, -50%)",
-                      height: "92%",
-                      opacity: 0.07,
-                      filter: "saturate(0) contrast(1.3)",
+                      height: "98%",
+                      opacity: 0.12,
                     }}
                   />
                   {/* Section labels — left side */}
