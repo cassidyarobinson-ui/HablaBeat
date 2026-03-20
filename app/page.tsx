@@ -137,6 +137,65 @@ const THEME_GRADIENTS: Record<string, string> = {
   "theme-anime":    "linear-gradient(135deg, #ffe0f0 0%, #e0d4ff 50%, #c8e8ff 100%)",
 }
 
+// Song descriptions for Song Page + Dance carousel
+const SONG_DESCRIPTIONS: Record<number, string> = {
+  1:"The Spanish alphabet letters",2:"The special letters in Spanish",3:"Spanish vowel sounds",4:"Body parts and face vocab",5:"Clothing words in Spanish",6:"Family members in Spanish",7:"Jobs and careers vocab",8:"Vowels with a unicorn twist",9:"Pets and animals vocab",10:"Animal habitats and homes",11:"Rooms in your house",12:"Where is it? location words",13:"Giving and following directions",14:"Numbers one through twenty",15:"Counting by tens to one hundred",16:"Days, months, and seasons",17:"Telling time in Spanish",18:"Colors in Spanish",19:"Feelings and emotions",20:"Hunger and thirst expressions",21:"Fruit names in Spanish",22:"Vegetable names in Spanish",23:"Breakfast, lunch, and dinner",24:"Ordering and asking for things",25:"AR verbs conjugation",26:"Gustar — to like something",27:"Estar — to be (temporary)",28:"ER verbs conjugation",29:"Tener — to have",30:"Ser — to be (permanent)",31:"IR verbs conjugation",32:"IR — to go places",33:"Decir — to say or tell",34:"When to use preterite tense",35:"AR verbs in the past",36:"ER and IR verbs in the past",37:"Irregular past tense verbs",38:"Imperfect tense for the past",39:"Irregular imperfect verbs",40:"Imperfect vs preterite tense",41:"Future tense in Spanish",42:"Irregular future tense verbs",43:"Conditional — would do something",44:"Irregular conditional verbs",45:"Personal and reflexive pronouns",46:"Direct and indirect object pronouns",47:"Commands and instructions",48:"Por vs para — tricky prepositions",49:"Subjunctive mood basics",50:"Fun phrases and expressions",
+}
+
+// Song keywords for display on Song Page (same data as in ddr-game.tsx)
+const SONG_KEYWORDS_DISPLAY: Record<number, string[]> = {
+  1:["a","b","c","d","e","f","g","abecedario"],
+  2:["ñ","ch","rr","ll","niño","churro","perro","letras"],
+  3:["a","e","i","o","u","vocales"],
+  4:["cuerpo","cara","cabeza","ojos","nariz","boca","manos","pierna"],
+  5:["ropa","camisa","pantalón","zapatos","falda","vestido"],
+  6:["familia","papá","mamá","hermano","hermana","abuelo","abuela"],
+  7:["doctor","bombero","maestra","chef","policía","trabajos"],
+  8:["araña","elefante","iguana","oso","unicornio","animales"],
+  9:["perro","gato","conejo","pato","caballo","mascotas"],
+  10:["agua","cielo","bosque","pez","pájaro","animales"],
+  11:["casa","cocina","baño","cuarto","mesa","cama"],
+  12:["dónde","baño","escuela","playa","parque","lugares"],
+  13:["izquierda","derecha","arriba","abajo","direcciones"],
+  14:["uno","dos","tres","cuatro","cinco","números"],
+  15:["diez","veinte","treinta","cuarenta","cien","números"],
+  16:["lunes","enero","primavera","verano","días","meses"],
+  17:["hora","reloj","cuarto","media","menos"],
+  18:["rojo","azul","verde","amarillo","colores"],
+  19:["feliz","triste","enojado","nervioso","sentimientos"],
+  20:["sed","hambre","frío","calor","sueño","tengo"],
+  21:["frutas","manzana","naranja","banana","piña"],
+  22:["verduras","tomate","zanahoria","maíz","lechuga"],
+  23:["desayuno","almuerzo","cena","leche","pan","comidas"],
+  24:["pedir","favor","tenedor","cuchillo","plato","gracias"],
+  25:["hablar","bailar","cantar","estudiar","jugar"],
+  26:["gustar","gusta","cantar","bailar","comer"],
+  27:["estoy","estás","está","estar","feliz"],
+  28:["beber","comer","leer","aprender","correr"],
+  29:["tengo","tienes","tiene","tener","leer"],
+  30:["soy","eres","es","somos","ser"],
+  31:["vivir","escribir","abrir","asistir","decidir"],
+  32:["voy","vas","va","ir","parque","escuela"],
+  33:["digo","dices","dice","decir","hola"],
+  34:["ayer","anoche","hablé","pretérito"],
+  35:["hablar","caminar","cocinar","hablé","caminó"],
+  36:["comer","beber","escribir","comí","bebiste"],
+  37:["estar","poder","poner","saber","tener"],
+  38:["era","iba","veía","imperfecto"],
+  39:["era","eras","iba","ibas","veía"],
+  40:["era","fue","imperfecto","pretérito"],
+  41:["cantaré","comeré","viviré","futuro"],
+  42:["tendré","diré","haré","saldré","vendré"],
+  43:["cantaría","comerías","condicional"],
+  44:["tendría","diría","haría","saldría"],
+  45:["despertarse","irse","lavarse","reflexivo"],
+  46:["dar","mandar","lo","la","le","les"],
+  47:["ven","habla","escribe","come","mandato"],
+  48:["por","para","gracias"],
+  49:["quiero","espero","ojalá","subjuntivo"],
+  50:["onda","padre","órale","chévere","vale"],
+}
+
 // Latino-inspired color palette
 const latinoColors = {
   orange: "bg-orange-400", // Warm orange
@@ -353,6 +412,26 @@ const languages = {
             ],
           },
           {
+            id: "colors-feelings",
+            title: "Feelings Color",
+            country: "Puerto Rico / DR",
+            icon: "🌈",
+            color: latinoColors.orange,
+            badgeUnlocked: false,
+            songs: [
+              { id: "colores", title: "Colores", number: 18, playCount: 0, completed: false, youtubeId: "rlLf4YlGMf0" },
+              {
+                id: "feliz",
+                title: "Estoy Feliz",
+                number: 19,
+                playCount: 0,
+                completed: false,
+                youtubeId: "ncDUEJR03d0",
+              },
+              { id: "sed", title: "Tengo Sed", number: 20, playCount: 0, completed: false, youtubeId: "Ip3KgS0rDno" },
+            ],
+          },
+          {
             id: "foods",
             title: "Food",
             country: "Cuba",
@@ -377,26 +456,6 @@ const languages = {
                 completed: false,
                 youtubeId: "266J5zFf8cI",
               },
-            ],
-          },
-          {
-            id: "colors-feelings",
-            title: "Feelings Color",
-            country: "Puerto Rico / DR",
-            icon: "🌈",
-            color: latinoColors.orange,
-            badgeUnlocked: false,
-            songs: [
-              { id: "colores", title: "Colores", number: 18, playCount: 0, completed: false, youtubeId: "rlLf4YlGMf0" },
-              {
-                id: "feliz",
-                title: "Estoy Feliz",
-                number: 19,
-                playCount: 0,
-                completed: false,
-                youtubeId: "ncDUEJR03d0",
-              },
-              { id: "sed", title: "Tengo Sed", number: 20, playCount: 0, completed: false, youtubeId: "Ip3KgS0rDno" },
             ],
           },
         ],
@@ -1535,9 +1594,11 @@ export default function HablaBeat() {
     return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
   }, [])
 
-  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "dance" | "leaderboard">("songs")
+  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "dance" | "leaderboard" | "song">("songs")
   const [danceSelectedIndex, setDanceSelectedIndex] = useState(0)
   const [launchedFromDance, setLaunchedFromDance] = useState(false)
+  const [songPageSource, setSongPageSource] = useState<"songs" | "dance">("songs")
+  const [songPageHighlightedMode, setSongPageHighlightedMode] = useState<0 | 1 | 2>(1) // 0=Sing, 1=Pop, 2=Fly
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
@@ -1628,14 +1689,28 @@ export default function HablaBeat() {
   )
 
   // ── Gamepad / dance mat navigation on hub screens ──
-  const navViews = ["songs", "coins", "dance"] as const
+  const navViews = ["songs", "coins", "dance", "song"] as const
   const isOnHub = navViews.includes(currentView as any)
 
   const [danceLaunchPending, setDanceLaunchPending] = useState(false)
   const [danceArrowFlash, setDanceArrowFlash] = useState<"left" | "right" | null>(null)
+  const [songPageLaunchMode, setSongPageLaunchMode] = useState<"sing" | "pop" | "fly" | null>(null)
 
   const handleHubNav = useCallback((btn: PadButton) => {
-    if (currentView === "dance") {
+    if (currentView === "song") {
+      // Song Page navigation: left/right to pick mode, start to launch, select to go back
+      if (btn === "left") {
+        setSongPageHighlightedMode(prev => Math.max(0, prev - 1) as 0 | 1 | 2)
+      } else if (btn === "right") {
+        setSongPageHighlightedMode(prev => Math.min(2, prev + 1) as 0 | 1 | 2)
+      } else if (btn === "start") {
+        // Defer launch — will be handled in useEffect after handlers are defined
+        const modes = ["sing", "pop", "fly"] as const
+        setSongPageLaunchMode(modes[songPageHighlightedMode])
+      } else if (btn === "select") {
+        setCurrentView(songPageSource)
+      }
+    } else if (currentView === "dance") {
       // Dance carousel navigation
       if (btn === "left") {
         setDanceSelectedIndex(prev => Math.max(0, prev - 1))
@@ -1646,7 +1721,7 @@ export default function HablaBeat() {
         setDanceArrowFlash("right")
         setTimeout(() => setDanceArrowFlash(null), 300)
       } else if (btn === "start") {
-        // Flag to launch — handled after handlePlayDDR is defined
+        // Open Song Page for the selected song
         setDanceLaunchPending(true)
       } else if (btn === "select") {
         setCurrentView("songs")
@@ -1655,7 +1730,7 @@ export default function HablaBeat() {
       // Hub/Bank tab navigation
       if (btn === "left" || btn === "right") {
         setCurrentView(prev => {
-          const views: typeof navViews[number][] = ["songs", "coins", "dance"]
+          const views = ["songs", "coins", "dance"] as const
           const idx = views.indexOf(prev as any)
           if (idx === -1) return prev
           const next = btn === "right" ? (idx + 1) % views.length : (idx - 1 + views.length) % views.length
@@ -1667,7 +1742,7 @@ export default function HablaBeat() {
         window.scrollBy({ top: 300, behavior: "smooth" })
       }
     }
-  }, [currentView, allSongs])
+  }, [currentView, allSongs, songPageHighlightedMode, songPageSource])
 
   useGamepad({
     enabled: isOnHub,
@@ -2232,17 +2307,53 @@ export default function HablaBeat() {
     }
   }
 
-  // Handle dance mode pad launch (deferred to after handlePlayDDR is defined)
+  // Open the unified Song Page
+  const handleOpenSongPage = (songId: string, categoryId: string, sectionId: string, source: "songs" | "dance" = "songs") => {
+    const category = curriculumData.find((c) => c.id === categoryId)
+    const section = category?.sections.find((s) => s.id === sectionId)
+    const song = section?.songs.find((s) => s.id === songId)
+    if (song) {
+      setCurrentSong({
+        ...song,
+        categoryTitle: category?.title,
+        sectionTitle: section?.title,
+        sectionColor: section?.color,
+        sectionIcon: section?.icon,
+        categoryId: categoryId,
+        sectionId: sectionId,
+      })
+      setSongPageSource(source)
+      setSongPageHighlightedMode(1) // default to Pop
+      setCurrentView("song")
+    }
+  }
+
+  // Handle dance mode pad launch — open Song Page instead of DDR directly
   useEffect(() => {
     if (danceLaunchPending) {
       setDanceLaunchPending(false)
-      setLaunchedFromDance(true)
       const song = allSongs[danceSelectedIndex]
       if (song) {
-        handlePlayDDR(song.id, song.categoryId, song.sectionId)
+        handleOpenSongPage(song.id, song.categoryId, song.sectionId, "dance")
       }
     }
   }, [danceLaunchPending])
+
+  // Handle Song Page pad launch (deferred to after handlers are defined)
+  useEffect(() => {
+    if (songPageLaunchMode && currentSong) {
+      const mode = songPageLaunchMode
+      setSongPageLaunchMode(null)
+      if (mode === "sing") {
+        handlePlaySong(currentSong.id, currentSong.categoryId, currentSong.sectionId)
+      } else if (mode === "pop") {
+        setLaunchedFromDance(songPageSource === "dance")
+        handlePlayDDR(currentSong.id, currentSong.categoryId, currentSong.sectionId)
+      } else if (mode === "fly") {
+        setFlySongNumber(currentSong.number)
+      }
+    }
+  }, [songPageLaunchMode])
 
   // Challenge flow — show friend picker first, then start DDR with pre-filled phone
   const handleChallengeSong = (songId: string, categoryId: string, sectionId: string) => {
@@ -2498,6 +2609,141 @@ export default function HablaBeat() {
     )
   }
 
+  // ── Song Page View ──
+  if (currentView === "song" && currentSong) {
+    const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[currentSong.number]
+    const hasPop = selectedLanguage === "spanish"
+    const hasSing = currentSong.youtubeId && currentSong.youtubeId !== ""
+    const keywords = SONG_KEYWORDS_DISPLAY[currentSong.number] ?? []
+    const description = SONG_DESCRIPTIONS[currentSong.number] ?? "Vocabulary and grammar"
+
+    const modes = [
+      { key: "sing", label: "Sing", icon: "🎤", available: hasSing, score: null as number | null, color: "#8b5cf6" },
+      { key: "pop", label: "Pop", icon: "🥕", available: hasPop, score: popHighScores[currentSong.number] > 0 ? popHighScores[currentSong.number] : null, color: "#4a7cdb" },
+      { key: "fly", label: "Fly", icon: "☁️", available: hasFly, score: flyHighScores[currentSong.number] > 0 ? flyHighScores[currentSong.number] : null, color: "#06b6d4" },
+    ]
+
+    return (
+      <div className="h-[100dvh] flex flex-col overflow-hidden relative" style={{ background: "#0a0a0a" }}>
+        {/* Background image with dark overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={`/images/backgrounds/song-${currentSong.number}.jpg`}
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ opacity: 0.25, filter: "blur(20px) saturate(1.4)" }}
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.8) 100%)" }} />
+        </div>
+
+        {/* Back button */}
+        <div className="relative z-10 p-4 pt-8">
+          <button
+            onClick={() => setCurrentView(songPageSource)}
+            className="flex items-center gap-1 text-white/60 hover:text-white transition-colors"
+          >
+            <ChevronLeft className="h-6 w-6" />
+            <span className="font-semibold text-sm">Back</span>
+          </button>
+        </div>
+
+        {/* Main content — centered */}
+        <div className="flex-1 flex flex-col items-center justify-center relative z-10 px-6 -mt-8">
+          {/* Album art */}
+          <div style={{
+            width: "min(200px, 40vw)",
+            height: "min(200px, 40vw)",
+            borderRadius: "20px",
+            overflow: "hidden",
+            boxShadow: "0 0 80px rgba(74,124,219,0.3), 0 20px 60px rgba(0,0,0,0.6)",
+            border: "2px solid rgba(255,255,255,0.15)",
+          }}>
+            <img
+              src={`/images/backgrounds/song-${currentSong.number}.jpg`}
+              alt={currentSong.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Song info */}
+          <div className="text-center mt-5">
+            <h1 className="text-2xl md:text-3xl font-black text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
+              {currentSong.title}
+            </h1>
+            <div className="text-sm text-white/50 font-semibold mt-1">
+              {currentSong.sectionIcon} {currentSong.sectionTitle} &middot; Song {currentSong.number}
+            </div>
+            <div className="text-xs text-white/35 mt-0.5">{description}</div>
+          </div>
+
+          {/* Mode cards */}
+          <div className="flex gap-4 mt-8">
+            {modes.map((mode, i) => {
+              if (!mode.available) return null
+              const isHighlighted = songPageHighlightedMode === i
+              return (
+                <button
+                  key={mode.key}
+                  onClick={() => {
+                    setSongPageHighlightedMode(i as 0 | 1 | 2)
+                    if (mode.key === "sing") {
+                      handlePlaySong(currentSong.id, currentSong.categoryId, currentSong.sectionId)
+                    } else if (mode.key === "pop") {
+                      setLaunchedFromDance(songPageSource === "dance")
+                      handlePlayDDR(currentSong.id, currentSong.categoryId, currentSong.sectionId)
+                    } else if (mode.key === "fly") {
+                      setFlySongNumber(currentSong.number)
+                    }
+                  }}
+                  className="flex flex-col items-center transition-all duration-200"
+                  style={{
+                    background: isHighlighted ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.05)",
+                    border: isHighlighted ? `2px solid ${mode.color}` : "2px solid rgba(255,255,255,0.08)",
+                    borderRadius: "20px",
+                    padding: "20px 28px",
+                    transform: isHighlighted ? "scale(1.08)" : "scale(1)",
+                    boxShadow: isHighlighted ? `0 0 30px ${mode.color}40, 0 8px 32px rgba(0,0,0,0.4)` : "0 4px 16px rgba(0,0,0,0.3)",
+                    minWidth: "100px",
+                  }}
+                >
+                  <span className="text-3xl">{mode.icon}</span>
+                  <span className="text-white font-black text-base mt-2">{mode.label}</span>
+                  {mode.score !== null && (
+                    <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {mode.score}</span>
+                  )}
+                  {bestGrades[currentSong.number] && mode.key === "pop" && (
+                    <span className="text-xs font-black mt-0.5 px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#93b5f0" }}>
+                      {bestGrades[currentSong.number]}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Keyboard hint */}
+          <div className="text-xs text-white/25 mt-4">
+            ← → to pick mode &middot; Enter to play &middot; Esc to go back
+          </div>
+
+          {/* Key vocabulary */}
+          {keywords.length > 0 && (
+            <div className="mt-6 max-w-sm">
+              <div className="text-xs text-white/30 font-semibold uppercase tracking-wider mb-2 text-center">Key Vocabulary</div>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {keywords.map((word, i) => (
+                  <span key={i} className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    {word}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   // DDR Game View
   if (currentView === "ddr" && currentSong && selectedLanguage === "spanish") {
     return (
@@ -2512,7 +2758,7 @@ export default function HablaBeat() {
         totalVocabBank={totalVocabBank}
         bestFlow={bestFlow}
         initialChallengePhone={friendPhone}
-        onBack={() => { setCurrentView(launchedFromDance ? "dance" : "songs"); setFriendPhone(""); setLaunchedFromDance(false) }}
+        onBack={() => { setCurrentView("song"); setFriendPhone(""); setLaunchedFromDance(false) }}
         onNextSong={currentSongIndex < allSongs.length - 1 ? () => {
           handleNextSong()
           setCurrentView("ddr")
@@ -2535,7 +2781,7 @@ export default function HablaBeat() {
         song={currentSong}
         lyricLines={lyricLines}
         audioUrl={currentAudioUrl}
-        onBack={() => setCurrentView("songs")}
+        onBack={() => setCurrentView("song")}
         onNext={currentSongIndex < allSongs.length - 1 ? handleNextSong : undefined}
         onPrev={currentSongIndex > 0 ? handlePreviousSong : undefined}
       />
@@ -3347,13 +3593,13 @@ export default function HablaBeat() {
                   <div className="flex-1 overflow-y-auto px-3 pt-3" style={{ paddingBottom: "24px" }}>
                     <div className="rounded-2xl overflow-hidden" style={{ background: "#ffffff", border: "1px solid #e5e7eb" }}>
                       {openSection.songs.map((song, idx) => {
-                        const isClickable = song.youtubeId && song.youtubeId !== ""
                         const songBestGrade = bestGrades[song.number]
                         return (
                           <div
                             key={song.id}
-                            className="px-4 py-4 transition-all active:scale-[0.99]"
+                            className="px-4 py-4 transition-all active:scale-[0.99] cursor-pointer hover:bg-gray-50"
                             style={{ borderBottom: idx < openSection!.songs.length - 1 ? "1px solid #f4f4f5" : "none" }}
+                            onClick={() => handleOpenSongPage(song.id, openCategory!.id, openSection!.id, "songs")}
                           >
                             <div className="flex items-center gap-2.5">
                               <span className="text-xs font-bold w-5 text-center flex-shrink-0" style={{ color: "#a1a1aa" }}>{song.number}</span>
@@ -3366,53 +3612,18 @@ export default function HablaBeat() {
                                   }} />
                                 </div>
                               </div>
-                              {songBestGrade && (
-                                <span className="text-xs font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "#f0f4ff", color: "#4a7cdb", border: "1px solid #d6e4f5" }}>
-                                  {songBestGrade}
-                                </span>
-                              )}
-                            </div>
-                            {/* Sing · Pop · Fly — pill buttons with high scores */}
-                            <div className="flex flex-wrap gap-2 mt-2.5 ml-7">
-                              {isClickable && (
-                                <div className="flex flex-col items-center">
-                                  <button
-                                    onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                    className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
-                                    style={{ background: "#f0f4ff", color: "#4a7cdb", boxShadow: "0 1px 2px rgba(74,124,219,0.08)", border: "1.5px solid #bdd0ef" }}
-                                  >
-                                    🎤 Sing
-                                  </button>
-                                </div>
-                              )}
-                              {selectedLanguage === "spanish" && (
-                                <div className="flex flex-col items-center">
-                                  <button
-                                    onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                                    className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
-                                    style={{ background: "#f0f4ff", color: "#4a7cdb", boxShadow: "0 1px 2px rgba(74,124,219,0.08)", border: "1.5px solid #bdd0ef" }}
-                                  >
-                                    🥕 Pop
-                                  </button>
-                                  {popHighScores[song.number] > 0 && (
-                                    <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {popHighScores[song.number]}</span>
-                                  )}
-                                </div>
-                              )}
-                              {selectedLanguage === "spanish" && SONG_FLY_DATA[song.number] && (
-                                <div className="flex flex-col items-center">
-                                  <button
-                                    onClick={() => setFlySongNumber(song.number)}
-                                    className="mode-btn px-4 py-2 rounded-full font-black text-sm active:scale-90"
-                                    style={{ background: "#f0f4ff", color: "#4a7cdb", boxShadow: "0 1px 2px rgba(74,124,219,0.08)", border: "1.5px solid #bdd0ef" }}
-                                  >
-                                    ☁️ Fly
-                                  </button>
-                                  {flyHighScores[song.number] > 0 && (
-                                    <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {flyHighScores[song.number]}</span>
-                                  )}
-                                </div>
-                              )}
+                              {/* Mode indicators + grade */}
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                {popHighScores[song.number] > 0 && (
+                                  <span className="text-xs font-bold" style={{ color: "#fbbf24" }}>💰 {popHighScores[song.number]}</span>
+                                )}
+                                {songBestGrade && (
+                                  <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ background: "#f0f4ff", color: "#4a7cdb", border: "1px solid #d6e4f5" }}>
+                                    {songBestGrade}
+                                  </span>
+                                )}
+                                <ChevronRight className="h-4 w-4 text-gray-300" />
+                              </div>
                             </div>
                           </div>
                         )
@@ -3722,8 +3933,7 @@ export default function HablaBeat() {
                     }}
                     onClick={() => {
                       if (offset === 0) {
-                        setLaunchedFromDance(true)
-                        handlePlayDDR(song.id, song.categoryId, song.sectionId)
+                        handleOpenSongPage(song.id, song.categoryId, song.sectionId, "dance")
                       } else {
                         setDanceSelectedIndex(idx)
                       }
@@ -3768,20 +3978,20 @@ export default function HablaBeat() {
           {selectedSong && (
             <div className="text-center mt-8">
               <div className="text-lg text-white/60 font-medium mb-1">
-                {({1:"The Spanish alphabet letters",2:"The special letters in Spanish",3:"Spanish vowel sounds",4:"Body parts and face vocab",5:"Clothing words in Spanish",6:"Family members in Spanish",7:"Jobs and careers vocab",8:"Vowels with a unicorn twist",9:"Pets and animals vocab",10:"Animal habitats and homes",11:"Rooms in your house",12:"Where is it? location words",13:"Giving and following directions",14:"Numbers one through twenty",15:"Counting by tens to one hundred",16:"Days, months, and seasons",17:"Telling time in Spanish",18:"Colors in Spanish",19:"Feelings and emotions",20:"Hunger and thirst expressions",21:"Fruit names in Spanish",22:"Vegetable names in Spanish",23:"Breakfast, lunch, and dinner",24:"Ordering and asking for things",25:"AR verbs conjugation",26:"Gustar — to like something",27:"Estar — to be (temporary)",28:"ER verbs conjugation",29:"Tener — to have",30:"Ser — to be (permanent)",31:"IR verbs conjugation",32:"IR — to go places",33:"Decir — to say or tell",34:"When to use preterite tense",35:"AR verbs in the past",36:"ER and IR verbs in the past",37:"Irregular past tense verbs",38:"Imperfect tense for the past",39:"Irregular imperfect verbs",40:"Imperfect vs preterite tense",41:"Future tense in Spanish",42:"Irregular future tense verbs",43:"Conditional — would do something",44:"Irregular conditional verbs",45:"Personal and reflexive pronouns",46:"Direct and indirect object pronouns",47:"Commands and instructions",48:"Por vs para — tricky prepositions",49:"Subjunctive mood basics",50:"Fun phrases and expressions"} as Record<number, string>)[selectedSong.number] ?? "Vocabulary and grammar"}
+                {SONG_DESCRIPTIONS[selectedSong.number] ?? "Vocabulary and grammar"}
               </div>
               <div className="text-xl text-white/50 font-bold mb-2">
                 Song {selectedSong.number} of {allSongs.length}
               </div>
               <button
-                onClick={() => { setLaunchedFromDance(true); handlePlayDDR(selectedSong.id, selectedSong.categoryId, selectedSong.sectionId) }}
+                onClick={() => handleOpenSongPage(selectedSong.id, selectedSong.categoryId, selectedSong.sectionId, "dance")}
                 className="px-10 py-3 rounded-full font-black text-xl text-white transition-all hover:scale-105 active:scale-95"
                 style={{
                   background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
                   boxShadow: "0 4px 25px rgba(74,124,219,0.5)",
                 }}
               >
-                🥕 Play Pop!
+                🎵 Play
               </button>
               <div className="text-sm text-white/30 mt-1">
                 ← → to browse &middot; Enter to play
