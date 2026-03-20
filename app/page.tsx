@@ -3670,11 +3670,11 @@ export default function HablaBeat() {
 
           {/* Title sitting right above the cards */}
           {selectedSong && (
-            <div className="text-center mb-1">
+            <div className="text-center mb-4">
               <div className="text-5xl md:text-6xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
                 {selectedSong.title}
               </div>
-              <div className="text-lg text-white/40 font-semibold">
+              <div className="text-lg text-white/40 font-semibold mt-1">
                 {selectedSong.section}
               </div>
             </div>
