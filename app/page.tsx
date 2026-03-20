@@ -1620,6 +1620,13 @@ export default function HablaBeat() {
   const [worldZoomOrigin, setWorldZoomOrigin] = useState({ x: "50%", y: "50%" })
   const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "pointer" | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
+  const [isDesktop, setIsDesktop] = useState(false)
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
   const [popHighScores, setPopHighScores] = useState<Record<number, number>>({})
@@ -3763,7 +3770,7 @@ export default function HablaBeat() {
               }
             `}</style>
             {curriculumData.map((category, catIdx) => {
-              const isOpen = openCategoryId === category.id
+              const isOpen = isDesktop ? true : openCategoryId === category.id
               const catGradient = "#ffffff"
               const catGlow = "0 1px 3px rgba(0,0,0,0.04)"
               const catAccent = ["#4a7cdb","#7ba3e8","#5b7fbf"]
