@@ -3660,7 +3660,7 @@ export default function HablaBeat() {
 
   if (currentView === "dance") {
     const selectedSong = allSongs[danceSelectedIndex]
-    const visibleRange = 4 // how many covers on each side
+    const visibleRange = 6 // how many covers on each side
 
     return (
       <div className="h-[100dvh] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)" }}>
@@ -3682,7 +3682,7 @@ export default function HablaBeat() {
           )}
 
           {/* Carousel */}
-          <div className="relative w-full flex items-center justify-center" style={{ perspective: "1800px", height: "min(65vh, 65vw)" }}>
+          <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(70vh, 70vw)" }}>
             {/* Left arrow indicator — lights up on press */}
             {danceSelectedIndex > 0 && (
               <div className="absolute left-6 z-20 transition-all duration-200" style={{
@@ -3699,12 +3699,12 @@ export default function HablaBeat() {
                 const offset = idx - danceSelectedIndex
                 if (Math.abs(offset) > visibleRange) return null
 
-                const coverSize = "min(60vh, 60vw)"
-                const translateX = offset * 400
-                const translateZ = -Math.abs(offset) * 300
-                const rotateY = offset * -35
-                const scale = offset === 0 ? 1 : Math.max(0.3, 1 - Math.abs(offset) * 0.25)
-                const opacity = offset === 0 ? 1 : Math.max(0.1, 1 - Math.abs(offset) * 0.35)
+                const coverSize = "min(68vh, 68vw)"
+                const translateX = offset * 320
+                const translateZ = -Math.abs(offset) * 200
+                const rotateY = offset * -30
+                const scale = offset === 0 ? 1 : Math.max(0.4, 1 - Math.abs(offset) * 0.18)
+                const opacity = offset === 0 ? 1 : Math.max(0.2, 1 - Math.abs(offset) * 0.25)
                 const zIndex = 10 - Math.abs(offset)
 
                 return (
