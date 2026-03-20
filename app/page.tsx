@@ -3769,8 +3769,161 @@ export default function HablaBeat() {
                 50% { transform: translateY(-3px); }
               }
             `}</style>
-            {curriculumData.map((category, catIdx) => {
-              const isOpen = isDesktop ? true : openCategoryId === category.id
+            {/* ── Desktop: Americas Map  |  Mobile: Accordion + Grid ── */}
+            {isDesktop ? (() => {
+              /* Flatten all sections across both categories with map positions */
+              const MAP_POSITIONS: Record<string, { left: string; top: string }> = {
+                "alphabet-vowels": { left: "15%", top: "8%" },
+                "body-world":      { left: "20%", top: "20%" },
+                "roles-world":     { left: "15%", top: "28%" },
+                "pets-syllables":  { left: "27%", top: "22%" },
+                "places":          { left: "23%", top: "32%" },
+                "numbers":         { left: "30%", top: "38%" },
+                "numbers-time":    { left: "38%", top: "42%" },
+                "colors-feelings": { left: "62%", top: "14%" },
+                "foods":           { left: "48%", top: "8%" },
+                "ar-verbs":        { left: "38%", top: "54%" },
+                "er-verbs":        { left: "56%", top: "50%" },
+                "ir-verbs":        { left: "28%", top: "62%" },
+                "preterite":       { left: "24%", top: "72%" },
+                "imperfecto":      { left: "42%", top: "70%" },
+                "futuro":          { left: "55%", top: "78%" },
+                "conditional":     { left: "58%", top: "88%" },
+                "pronouns":        { left: "34%", top: "86%" },
+                "advanced":        { left: "48%", top: "92%" },
+              }
+              const allSections = curriculumData.flatMap(c => c.sections)
+
+              /* Trail path: connect all 18 worlds with a smooth bezier */
+              const trailPoints = allSections.map(s => {
+                const pos = MAP_POSITIONS[s.id]
+                if (!pos) return null
+                return { x: parseFloat(pos.left) * 10, y: parseFloat(pos.top) * 10 }
+              }).filter(Boolean) as { x: number; y: number }[]
+              let trailD = ""
+              if (trailPoints.length > 1) {
+                trailD = `M ${trailPoints[0].x} ${trailPoints[0].y}`
+                for (let i = 1; i < trailPoints.length; i++) {
+                  const prev = trailPoints[i - 1]
+                  const curr = trailPoints[i]
+                  const cpx1 = prev.x + (curr.x - prev.x) * 0.4
+                  const cpy1 = prev.y + (curr.y - prev.y) * 0.1
+                  const cpx2 = curr.x - (curr.x - prev.x) * 0.4
+                  const cpy2 = curr.y - (curr.y - prev.y) * 0.1
+                  trailD += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr.x} ${curr.y}`
+                }
+              }
+
+              return (
+                <div className="relative mx-auto" style={{ maxWidth: "1200px", minHeight: "1000px" }}>
+                  {/* Section labels */}
+                  <div className="absolute pointer-events-none" style={{ left: "68%", top: "2%", textAlign: "left" }}>
+                    <span className="font-black text-sm tracking-wider" style={{ color: "#4a7cdb" }}>NOUNS</span>
+                    <br />
+                    <span className="text-xs font-semibold" style={{ color: "#9ca3af" }}>North, Central America &amp; Caribbean</span>
+                  </div>
+                  <div className="absolute pointer-events-none" style={{ left: "64%", top: "48%", textAlign: "left" }}>
+                    <span className="font-black text-sm tracking-wider" style={{ color: "#4a7cdb" }}>VERBS</span>
+                    <br />
+                    <span className="text-xs font-semibold" style={{ color: "#9ca3af" }}>South America</span>
+                  </div>
+
+                  {/* SVG Americas outline + trail */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+                    {/* Simplified North America / Mexico / Baja */}
+                    <path d="M 80 30 L 200 20 L 320 40 L 380 80 L 350 100 L 300 90 L 250 110 L 220 150 L 180 200 L 160 250 L 170 280 L 200 300 L 240 320 L 280 350 L 320 380 L 360 400 L 400 420 L 380 430 L 340 410 L 300 390 L 260 370 L 220 350 L 180 330 L 150 300 L 130 260 L 110 200 L 90 140 L 70 80 Z" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="2" />
+                    {/* Baja California */}
+                    <path d="M 65 80 L 55 120 L 50 170 L 55 210 L 65 240" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
+                    {/* Central America strip */}
+                    <path d="M 200 300 L 220 320 L 240 340 L 270 360 L 310 380 L 350 400 L 390 420 L 400 440" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="2" />
+                    {/* Cuba (oval) */}
+                    <ellipse cx="480" cy="90" rx="55" ry="14" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
+                    {/* Puerto Rico / Hispaniola */}
+                    <ellipse cx="600" cy="130" rx="30" ry="12" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
+                    <ellipse cx="640" cy="145" rx="12" ry="7" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
+                    {/* South America outline */}
+                    <path d="M 350 480 L 400 460 L 460 450 L 530 460 L 590 470 L 640 490 L 660 520 L 650 560 L 630 600 L 610 650 L 600 700 L 590 750 L 570 800 L 540 850 L 500 890 L 470 920 L 450 950 L 430 960 L 410 940 L 380 900 L 350 860 L 320 820 L 290 770 L 270 720 L 250 670 L 240 620 L 250 580 L 280 540 L 310 510 L 340 490 Z" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="2" />
+
+                    {/* Dotted trail connecting worlds in order */}
+                    {trailD && (
+                      <path d={trailD} fill="none" stroke="rgba(74,124,219,0.3)" strokeWidth="2" strokeDasharray="8 5" strokeLinecap="round" />
+                    )}
+                  </svg>
+
+                  {/* World bubbles — absolutely positioned */}
+                  {allSections.map((section, sectionIdx) => {
+                    const pos = MAP_POSITIONS[section.id]
+                    if (!pos) return null
+                    const countryName = (section as any).country ?? ""
+                    const flagData = COUNTRY_FLAG[countryName]
+                    const sectionGradient = SECTION_GRADIENTS[section.id] ?? "linear-gradient(135deg, #7ba3e8, #4a7cdb)"
+                    return (
+                      <div key={section.id} className="absolute" style={{ left: pos.left, top: pos.top, width: "110px", height: "110px", transform: "translate(-50%, -50%)", zIndex: 10 }}>
+                        <button
+                          onClick={(e) => {
+                            playWorldClick()
+                            const rect = e.currentTarget.getBoundingClientRect()
+                            const cx = ((rect.left + rect.width / 2) / window.innerWidth * 100).toFixed(1) + "%"
+                            const cy = ((rect.top + rect.height / 2) / window.innerHeight * 100).toFixed(1) + "%"
+                            setWorldZoomOrigin({ x: cx, y: cy })
+                            setOpenSectionId(section.id)
+                          }}
+                          onMouseEnter={playWorldHover}
+                          onTouchStart={playWorldHover}
+                          className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
+                          style={{
+                            background: "linear-gradient(180deg, #5b9be6 0%, #4a7cdb 50%, #3d6bc4 100%)",
+                            border: "3px solid rgba(255,255,255,0.6)",
+                            boxShadow: "0 3px 12px rgba(74,124,219,0.3)",
+                          }}
+                        >
+                          {isSectionBadgeUnlocked(section) && (
+                            <div className="absolute top-1 right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-sm z-10" />
+                          )}
+                          <span className="absolute inset-0 flex items-center justify-center select-none" style={{ fontSize: "48px", lineHeight: 1 }}>
+                            {section.id === "ar-verbs"
+                              ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "36px", width: "52px", height: "52px", background: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>A</span>
+                              : section.id === "er-verbs"
+                                ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "36px", width: "52px", height: "52px", background: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>E</span>
+                                : section.id === "ir-verbs"
+                                  ? <span className="flex items-center justify-center font-black rounded-2xl" style={{ fontSize: "36px", width: "52px", height: "52px", background: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>I</span>
+                                  : section.icon}
+                          </span>
+                          {(() => {
+                            const topText = section.title
+                            const botText = (section as any).country ?? ""
+                            const r = 38, cx = 50
+                            const topArc = `M ${cx - r} 52 A ${r} ${r} 0 0 1 ${cx + r} 52`
+                            const botArc = `M ${cx - r} 55 A ${r} ${r} 0 0 0 ${cx + r} 55`
+                            return (
+                              <svg className="absolute inset-0 z-10 pointer-events-none" viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                                <defs>
+                                  <path id={`g-top-${section.id}`} d={topArc} />
+                                  <path id={`g-bot-${section.id}`} d={botArc} />
+                                  <filter id={`g-outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
+                                    <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
+                                    <feFlood floodColor="#000" result="color"/>
+                                    <feComposite in="color" in2="expanded" operator="in" result="outline"/>
+                                    <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                  </filter>
+                                </defs>
+                                <text fill="white" fontSize="12" fontWeight="900" textAnchor="middle" filter={`url(#g-outline-${section.id})`} style={{ fontFamily: "inherit" }}>
+                                  <textPath href={`#g-top-${section.id}`} startOffset="50%">{topText}</textPath>
+                                </text>
+                                <text fill="white" fontSize="12" fontWeight="900" textAnchor="middle" filter={`url(#g-outline-${section.id})`} style={{ fontFamily: "inherit" }}>
+                                  <textPath href={`#g-bot-${section.id}`} startOffset="50%">{botText}</textPath>
+                                </text>
+                              </svg>
+                            )
+                          })()}
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })() : curriculumData.map((category, catIdx) => {
+              const isOpen = openCategoryId === category.id
               const catGradient = "#ffffff"
               const catGlow = "0 1px 3px rgba(0,0,0,0.04)"
               const catAccent = ["#4a7cdb","#7ba3e8","#5b7fbf"]
@@ -3798,9 +3951,9 @@ export default function HablaBeat() {
                   {/* ── World grid — only when open ── */}
                   {isOpen && (
                     <div className="galaxy-worlds-in px-2 pt-1 pb-4" style={{ overflow: "visible" }}>
-                      <div className="grid grid-cols-3 lg:grid-cols-5 gap-x-3 gap-y-5 lg:gap-x-6 lg:gap-y-8 relative mx-auto" style={{ overflow: "visible", maxWidth: "1100px" }}>
-                        {/* Dashed map-trail connectors — masked behind the circles (hidden on 5-col desktop) */}
-                        <svg className="absolute inset-0 pointer-events-none lg:hidden" style={{ zIndex: 0, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-5 relative mx-auto" style={{ overflow: "visible" }}>
+                        {/* Dashed map-trail connectors — masked behind the circles */}
+                        <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0, width: "100%", height: "100%" }} viewBox="0 0 300 300" preserveAspectRatio="none">
                           <defs>
                             <mask id={`bubble-mask-${category.id}`}>
                               <rect x="0" y="0" width="300" height="300" fill="white"/>
