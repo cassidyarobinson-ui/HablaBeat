@@ -3773,24 +3773,24 @@ export default function HablaBeat() {
             {isDesktop ? (() => {
               /* Flatten all sections across both categories with map positions */
               const MAP_POSITIONS: Record<string, { left: string; top: string }> = {
-                "alphabet-vowels": { left: "15%", top: "8%" },
-                "body-world":      { left: "20%", top: "20%" },
-                "roles-world":     { left: "15%", top: "28%" },
-                "pets-syllables":  { left: "27%", top: "22%" },
-                "places":          { left: "23%", top: "32%" },
-                "numbers":         { left: "30%", top: "38%" },
-                "numbers-time":    { left: "38%", top: "42%" },
-                "colors-feelings": { left: "62%", top: "14%" },
-                "foods":           { left: "48%", top: "8%" },
-                "ar-verbs":        { left: "38%", top: "54%" },
-                "er-verbs":        { left: "56%", top: "50%" },
-                "ir-verbs":        { left: "28%", top: "62%" },
-                "preterite":       { left: "24%", top: "72%" },
-                "imperfecto":      { left: "42%", top: "70%" },
-                "futuro":          { left: "55%", top: "78%" },
-                "conditional":     { left: "58%", top: "88%" },
-                "pronouns":        { left: "34%", top: "86%" },
-                "advanced":        { left: "48%", top: "92%" },
+                "alphabet-vowels": { left: "18%", top: "6%" },
+                "body-world":      { left: "22%", top: "17%" },
+                "roles-world":     { left: "16%", top: "26%" },
+                "pets-syllables":  { left: "29%", top: "20%" },
+                "places":          { left: "25%", top: "33%" },
+                "numbers":         { left: "32%", top: "39%" },
+                "numbers-time":    { left: "40%", top: "44%" },
+                "colors-feelings": { left: "65%", top: "11%" },
+                "foods":           { left: "49%", top: "6%" },
+                "ar-verbs":        { left: "40%", top: "54%" },
+                "er-verbs":        { left: "58%", top: "49%" },
+                "ir-verbs":        { left: "30%", top: "60%" },
+                "preterite":       { left: "26%", top: "70%" },
+                "imperfecto":      { left: "44%", top: "68%" },
+                "futuro":          { left: "56%", top: "76%" },
+                "conditional":     { left: "58%", top: "87%" },
+                "pronouns":        { left: "36%", top: "85%" },
+                "advanced":        { left: "48%", top: "94%" },
               }
               const allSections = curriculumData.flatMap(c => c.sections)
 
@@ -3815,38 +3815,65 @@ export default function HablaBeat() {
               }
 
               return (
-                <div className="relative mx-auto" style={{ maxWidth: "1200px", minHeight: "1000px" }}>
+                <div className="relative mx-auto" style={{ maxWidth: "100%", height: "calc(100vh - 180px)", minHeight: "700px" }}>
                   {/* Section labels */}
-                  <div className="absolute pointer-events-none" style={{ left: "68%", top: "2%", textAlign: "left" }}>
-                    <span className="font-black text-sm tracking-wider" style={{ color: "#4a7cdb" }}>NOUNS</span>
+                  <div className="absolute pointer-events-none" style={{ right: "4%", top: "3%", textAlign: "right" }}>
+                    <span className="font-black text-base tracking-wider" style={{ color: "#4a7cdb" }}>NOUNS</span>
                     <br />
                     <span className="text-xs font-semibold" style={{ color: "#9ca3af" }}>North, Central America &amp; Caribbean</span>
                   </div>
-                  <div className="absolute pointer-events-none" style={{ left: "64%", top: "48%", textAlign: "left" }}>
-                    <span className="font-black text-sm tracking-wider" style={{ color: "#4a7cdb" }}>VERBS</span>
+                  <div className="absolute pointer-events-none" style={{ right: "4%", top: "48%", textAlign: "right" }}>
+                    <span className="font-black text-base tracking-wider" style={{ color: "#4a7cdb" }}>VERBS</span>
                     <br />
                     <span className="text-xs font-semibold" style={{ color: "#9ca3af" }}>South America</span>
                   </div>
 
                   {/* SVG Americas outline + trail */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 1000" preserveAspectRatio="none">
-                    {/* Simplified North America / Mexico / Baja */}
-                    <path d="M 80 30 L 200 20 L 320 40 L 380 80 L 350 100 L 300 90 L 250 110 L 220 150 L 180 200 L 160 250 L 170 280 L 200 300 L 240 320 L 280 350 L 320 380 L 360 400 L 400 420 L 380 430 L 340 410 L 300 390 L 260 370 L 220 350 L 180 330 L 150 300 L 130 260 L 110 200 L 90 140 L 70 80 Z" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="2" />
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+                    {/* ── Mexico ── */}
+                    <path d="M 90 20 C 90 20, 130 10, 180 15 C 230 20, 260 5, 300 10 L 340 30 L 360 55 C 360 55, 340 65, 320 60 L 290 65 L 260 80 L 240 100 L 225 125 L 210 155 L 195 185 L 180 215 L 175 240 L 185 260 L 200 275 L 220 290 L 250 310 L 270 325 L 295 340 L 320 355 L 345 365 L 370 380 L 385 395 C 385 395, 370 400, 350 390 L 320 375 L 290 360 L 260 345 L 230 325 L 200 305 L 175 280 L 155 250 L 140 215 L 125 175 L 115 140 L 105 100 L 95 60 Z"
+                      fill="rgba(74,124,219,0.06)" stroke="rgba(74,124,219,0.18)" strokeWidth="1.5" />
                     {/* Baja California */}
-                    <path d="M 65 80 L 55 120 L 50 170 L 55 210 L 65 240" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
-                    {/* Central America strip */}
-                    <path d="M 200 300 L 220 320 L 240 340 L 270 360 L 310 380 L 350 400 L 390 420 L 400 440" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="2" />
-                    {/* Cuba (oval) */}
-                    <ellipse cx="480" cy="90" rx="55" ry="14" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
-                    {/* Puerto Rico / Hispaniola */}
-                    <ellipse cx="600" cy="130" rx="30" ry="12" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
-                    <ellipse cx="640" cy="145" rx="12" ry="7" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="1.5" />
-                    {/* South America outline */}
-                    <path d="M 350 480 L 400 460 L 460 450 L 530 460 L 590 470 L 640 490 L 660 520 L 650 560 L 630 600 L 610 650 L 600 700 L 590 750 L 570 800 L 540 850 L 500 890 L 470 920 L 450 950 L 430 960 L 410 940 L 380 900 L 350 860 L 320 820 L 290 770 L 270 720 L 250 670 L 240 620 L 250 580 L 280 540 L 310 510 L 340 490 Z" fill="none" stroke="rgba(74,124,219,0.10)" strokeWidth="2" />
+                    <path d="M 75 55 Q 60 90, 50 130 Q 42 170, 48 210 Q 55 240, 70 260"
+                      fill="none" stroke="rgba(74,124,219,0.15)" strokeWidth="1.5" />
+                    {/* Yucatan peninsula */}
+                    <path d="M 295 340 Q 310 315, 330 310 Q 350 305, 360 315 Q 365 325, 355 340"
+                      fill="rgba(74,124,219,0.04)" stroke="rgba(74,124,219,0.15)" strokeWidth="1" />
+
+                    {/* ── Central America ── */}
+                    <path d="M 200 275 Q 215 295, 230 315 Q 245 335, 265 350 Q 285 365, 310 380 Q 335 395, 355 405 Q 375 415, 395 425 Q 405 430, 415 440 Q 420 445, 410 448 Q 395 440, 375 430 Q 345 415, 315 400 Q 285 385, 260 365 Q 235 345, 215 325 Q 195 305, 185 280"
+                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.15)" strokeWidth="1.5" />
+
+                    {/* ── Cuba ── */}
+                    <path d="M 430 75 Q 460 60, 500 58 Q 540 56, 560 65 Q 575 72, 565 80 Q 545 88, 510 90 Q 475 92, 445 85 Q 430 80, 430 75 Z"
+                      fill="rgba(74,124,219,0.06)" stroke="rgba(74,124,219,0.18)" strokeWidth="1.5" />
+                    {/* Hispaniola */}
+                    <path d="M 580 95 Q 600 85, 630 88 Q 650 90, 645 100 Q 635 108, 610 108 Q 590 106, 580 100 Z"
+                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.15)" strokeWidth="1" />
+                    {/* Puerto Rico */}
+                    <path d="M 655 100 Q 670 95, 685 98 Q 695 102, 690 108 Q 678 112, 660 110 Q 652 106, 655 100 Z"
+                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.15)" strokeWidth="1" />
+                    {/* Jamaica */}
+                    <ellipse cx="530" cy="115" rx="15" ry="6" fill="rgba(74,124,219,0.04)" stroke="rgba(74,124,219,0.12)" strokeWidth="1" />
+
+                    {/* ── South America ── */}
+                    <path d="M 360 470 Q 380 455, 420 445 Q 460 438, 510 442 Q 560 448, 600 460 Q 640 475, 665 500 Q 685 525, 690 555 Q 695 590, 680 630 Q 665 670, 645 710 Q 625 750, 610 790 Q 595 830, 575 865 Q 555 895, 530 920 Q 510 940, 490 952 Q 472 960, 458 958 Q 445 952, 438 938 Q 425 915, 405 885 Q 385 855, 365 820 Q 345 785, 330 745 Q 318 710, 310 675 Q 302 640, 300 605 Q 298 570, 310 540 Q 322 515, 340 495 Q 355 478, 360 470 Z"
+                      fill="rgba(74,124,219,0.05)" stroke="rgba(74,124,219,0.18)" strokeWidth="1.8" />
+
+                    {/* Country borders (subtle internal lines) */}
+                    {/* Colombia-Venezuela border */}
+                    <path d="M 440 445 Q 460 485, 465 520" fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
+                    {/* Ecuador-Peru border */}
+                    <path d="M 310 570 Q 345 565, 380 580" fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
+                    {/* Peru-Bolivia border */}
+                    <path d="M 380 620 Q 410 615, 440 640" fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
+                    {/* Chile-Argentina border (the Andes) */}
+                    <path d="M 380 680 Q 370 720, 365 760 Q 360 800, 370 840 Q 380 875, 400 910 Q 420 935, 445 952"
+                      fill="none" stroke="rgba(74,124,219,0.08)" strokeWidth="0.8" strokeDasharray="4 3" />
 
                     {/* Dotted trail connecting worlds in order */}
                     {trailD && (
-                      <path d={trailD} fill="none" stroke="rgba(74,124,219,0.3)" strokeWidth="2" strokeDasharray="8 5" strokeLinecap="round" />
+                      <path d={trailD} fill="none" stroke="rgba(74,124,219,0.25)" strokeWidth="2.5" strokeDasharray="8 5" strokeLinecap="round" />
                     )}
                   </svg>
 
@@ -4073,8 +4100,8 @@ export default function HablaBeat() {
             <MiniPlayer />
 
             {/* Bottom Navigation */}
-            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
-              <div className="flex justify-around">
+            <div className="fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 p-3 shadow-lg z-50">
+              <div className="flex justify-around max-w-md md:max-w-2xl lg:max-w-none mx-auto">
                 <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => setCurrentView("songs")}>
                   <Music className="h-6 w-6" />
                   <span className="text-xs font-bold">Songs</span>
