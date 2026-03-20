@@ -6,6 +6,7 @@ import dynamic from "next/dynamic"
 import { LYRIC_TRANSLATIONS } from "@/lib/lyric-translations"
 import { SONG_FLY_DATA } from "@/lib/song-fly-data"
 import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
+import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
@@ -1534,7 +1535,8 @@ export default function HablaBeat() {
     return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
   }, [])
 
-  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "visualizer" | "leaderboard">("songs")
+  const [currentView, setCurrentView] = useState<"songs" | "player" | "coins" | "ddr" | "dance" | "leaderboard">("songs")
+  const [danceSelectedIndex, setDanceSelectedIndex] = useState(0)
   const [selectedLanguage, setSelectedLanguage] = useState("spanish")
   const [curriculumData, setCurriculumData] = useState(languages[selectedLanguage].curriculum)
   const [totalPlayCount, setTotalPlayCount] = useState(35)
@@ -1611,15 +1613,30 @@ export default function HablaBeat() {
   const lyricAnimRef = useRef<number | null>(null)
 
   // ── Gamepad / dance mat navigation on hub screens ──
-  const navViews = ["songs", "coins", "visualizer"] as const
+  const navViews = ["songs", "coins", "dance"] as const
   const isOnHub = navViews.includes(currentView as any)
-  useGamepad({
-    enabled: isOnHub,
-    onPress: useCallback((btn: PadButton) => {
+
+  const handleHubNav = useCallback((btn: PadButton) => {
+    if (currentView === "dance") {
+      // Dance carousel navigation
+      if (btn === "left") {
+        setDanceSelectedIndex(prev => Math.max(0, prev - 1))
+      } else if (btn === "right") {
+        setDanceSelectedIndex(prev => Math.min(allSongs.length - 1, prev + 1))
+      } else if (btn === "start") {
+        // Launch Pop game for selected song
+        const song = allSongs[danceSelectedIndex]
+        if (song) {
+          handlePlayDDR(song.id, song.categoryId, song.sectionId)
+        }
+      } else if (btn === "select") {
+        setCurrentView("songs")
+      }
+    } else {
+      // Hub/Bank tab navigation
       if (btn === "left" || btn === "right") {
-        // Cycle between bottom-nav tabs
         setCurrentView(prev => {
-          const views: typeof navViews[number][] = ["songs", "coins", "visualizer"]
+          const views: typeof navViews[number][] = ["songs", "coins", "dance"]
           const idx = views.indexOf(prev as any)
           if (idx === -1) return prev
           const next = btn === "right" ? (idx + 1) % views.length : (idx - 1 + views.length) % views.length
@@ -1630,7 +1647,17 @@ export default function HablaBeat() {
       } else if (btn === "down") {
         window.scrollBy({ top: 300, behavior: "smooth" })
       }
-    }, []),
+    }
+  }, [currentView, danceSelectedIndex, allSongs])
+
+  useGamepad({
+    enabled: isOnHub,
+    onPress: handleHubNav,
+  })
+
+  useKeyboardNav({
+    enabled: isOnHub,
+    onPress: handleHubNav,
   })
 
   // Load persisted stats on mount
@@ -2699,9 +2726,9 @@ export default function HablaBeat() {
                 <Coins className="h-6 w-6" />
                 <span className="text-xs font-semibold">Bank</span>
               </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => { stopMic(); setCurrentView("visualizer") }}>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => { stopMic(); setCurrentView("dance") }}>
                 <Sparkles className="h-6 w-6" />
-                <span className="text-xs font-semibold">Visualizer</span>
+                <span className="text-xs font-semibold">Dance</span>
               </Button>
             </div>
           </div>
@@ -2908,9 +2935,9 @@ export default function HablaBeat() {
               <Coins className="h-6 w-6" />
               <span className="text-xs font-semibold">Bank</span>
             </Button>
-            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("dance")}>
               <Sparkles className="h-6 w-6" />
-              <span className="text-xs font-semibold">Visualizer</span>
+              <span className="text-xs font-semibold">Dance</span>
             </Button>
           </div>
         </div>
@@ -3060,9 +3087,9 @@ export default function HablaBeat() {
                 <Coins className="h-6 w-6" />
                 <span className="text-xs font-bold">Bank</span>
               </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("dance")}>
                 <Sparkles className="h-6 w-6" />
-                <span className="text-xs font-semibold">Visualizer</span>
+                <span className="text-xs font-semibold">Dance</span>
               </Button>
             </div>
           </div>
@@ -3605,9 +3632,9 @@ export default function HablaBeat() {
                   <Coins className="h-6 w-6" />
                   <span className="text-xs font-semibold">Bank</span>
                 </Button>
-                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("visualizer")}>
+                <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("dance")}>
                   <Sparkles className="h-6 w-6" />
-                  <span className="text-xs font-semibold">Visualizer</span>
+                  <span className="text-xs font-semibold">Dance</span>
                 </Button>
               </div>
             </div>
@@ -3616,27 +3643,153 @@ export default function HablaBeat() {
     )
   }
 
-  if (currentView === "visualizer") {
+  if (currentView === "dance") {
+    const selectedSong = allSongs[danceSelectedIndex]
+    const visibleRange = 4 // how many covers on each side
+
     return (
-      <div className="min-h-screen bg-black">
-        <div className="max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto min-h-screen flex flex-col">
-          <VisualizerView onBack={() => setCurrentView("songs")} />
-          {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl bg-white border-t border-gray-200 p-3 shadow-lg z-50">
-            <div className="flex justify-around">
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
-                <Music className="h-6 w-6" />
-                <span className="text-xs font-semibold">Songs</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
-                <Coins className="h-6 w-6" />
-                <span className="text-xs font-semibold">Bank</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#4a7cdb", backgroundColor: "#f0f4ff" }} onClick={() => setCurrentView("visualizer")}>
-                <Sparkles className="h-6 w-6" />
-                <span className="text-xs font-bold">Visualizer</span>
-              </Button>
+      <div className="h-[100dvh] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)" }}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-2 flex-shrink-0">
+          <button onClick={() => setCurrentView("songs")} className="text-white/60 hover:text-white text-sm flex items-center gap-2">
+            <ChevronLeft className="h-5 w-5" /> Back
+          </button>
+          <h1 className="text-2xl font-black text-white tracking-wider">🎶 DANCE MODE</h1>
+          <div className="w-16" />
+        </div>
+
+        {/* 3D Carousel */}
+        <div className="flex-1 flex items-center justify-center relative" style={{ perspective: "1200px" }}>
+          {/* Left arrow indicator */}
+          {danceSelectedIndex > 0 && (
+            <button onClick={() => setDanceSelectedIndex(prev => Math.max(0, prev - 1))} className="absolute left-4 z-20 text-white/40 hover:text-white/80 transition-colors">
+              <ChevronLeft className="h-12 w-12" />
+            </button>
+          )}
+
+          {/* Carousel container */}
+          <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
+            {allSongs.map((song, idx) => {
+              const offset = idx - danceSelectedIndex
+              if (Math.abs(offset) > visibleRange) return null
+
+              // Calculate 3D transforms
+              const translateX = offset * 260
+              const translateZ = -Math.abs(offset) * 200
+              const rotateY = offset * -35
+              const scale = offset === 0 ? 1 : Math.max(0.4, 1 - Math.abs(offset) * 0.2)
+              const opacity = offset === 0 ? 1 : Math.max(0.15, 1 - Math.abs(offset) * 0.3)
+              const zIndex = 10 - Math.abs(offset)
+
+              return (
+                <div
+                  key={song.id}
+                  className="absolute"
+                  style={{
+                    transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+                    opacity,
+                    zIndex,
+                    transition: "all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)",
+                    cursor: offset === 0 ? "pointer" : "default",
+                  }}
+                  onClick={() => {
+                    if (offset === 0) {
+                      handlePlayDDR(song.id, song.categoryId, song.sectionId)
+                    } else {
+                      setDanceSelectedIndex(idx)
+                    }
+                  }}
+                >
+                  {/* Album cover */}
+                  <div style={{
+                    width: "280px",
+                    height: "280px",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: offset === 0
+                      ? "0 0 60px rgba(74,124,219,0.4), 0 20px 60px rgba(0,0,0,0.8)"
+                      : "0 10px 40px rgba(0,0,0,0.6)",
+                    border: offset === 0 ? "3px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
+                  }}>
+                    <img
+                      src={`/images/backgrounds/song-${song.number}.jpg`}
+                      alt={song.title}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      draggable={false}
+                    />
+                  </div>
+
+                  {/* Reflection */}
+                  <div style={{
+                    width: "280px",
+                    height: "120px",
+                    borderRadius: "0 0 12px 12px",
+                    overflow: "hidden",
+                    transform: "scaleY(-1) translateY(-2px)",
+                    opacity: 0.25,
+                    maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 80%)",
+                    WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 80%)",
+                  }}>
+                    <img
+                      src={`/images/backgrounds/song-${song.number}.jpg`}
+                      alt=""
+                      style={{ width: "100%", height: "280px", objectFit: "cover" }}
+                      draggable={false}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Right arrow indicator */}
+          {danceSelectedIndex < allSongs.length - 1 && (
+            <button onClick={() => setDanceSelectedIndex(prev => Math.min(allSongs.length - 1, prev + 1))} className="absolute right-4 z-20 text-white/40 hover:text-white/80 transition-colors">
+              <ChevronRight className="h-12 w-12" />
+            </button>
+          )}
+        </div>
+
+        {/* Song info below carousel */}
+        {selectedSong && (
+          <div className="flex-shrink-0 text-center pb-4 px-4">
+            <div className="text-3xl md:text-4xl font-black text-white mb-1" style={{ textShadow: "0 2px 20px rgba(74,124,219,0.5)" }}>
+              {selectedSong.title}
             </div>
+            <div className="text-lg text-white/50 font-semibold mb-3">
+              {selectedSong.section} &middot; Song {selectedSong.number}
+            </div>
+            <button
+              onClick={() => handlePlayDDR(selectedSong.id, selectedSong.categoryId, selectedSong.sectionId)}
+              className="px-8 py-3 rounded-full font-black text-lg text-white transition-all hover:scale-105 active:scale-95"
+              style={{
+                background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
+                boxShadow: "0 4px 20px rgba(74,124,219,0.4)",
+              }}
+            >
+              🥕 Play Pop!
+            </button>
+            <div className="text-sm text-white/30 mt-2">
+              ← → to browse &middot; Enter to play
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Navigation */}
+        <div className="flex-shrink-0 bg-white/5 backdrop-blur border-t border-white/10 p-3">
+          <div className="flex justify-around max-w-md mx-auto">
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("songs")}>
+              <Music className="h-6 w-6" />
+              <span className="text-xs font-semibold">Songs</span>
+            </Button>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl text-gray-400" onClick={() => setCurrentView("coins")}>
+              <Coins className="h-6 w-6" />
+              <span className="text-xs font-semibold">Bank</span>
+            </Button>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 pt-2 px-4 rounded-2xl" style={{ color: "#818cf8", backgroundColor: "rgba(129,140,248,0.15)" }}>
+              <Sparkles className="h-6 w-6" />
+              <span className="text-xs font-bold">Dance</span>
+            </Button>
           </div>
         </div>
       </div>
