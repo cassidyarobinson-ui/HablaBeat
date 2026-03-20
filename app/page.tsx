@@ -3682,7 +3682,7 @@ export default function HablaBeat() {
           )}
 
           {/* Carousel */}
-          <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(70vh, 70vw)" }}>
+          <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(50vh, 50vw)" }}>
             {/* Left arrow indicator — lights up on press */}
             {danceSelectedIndex > 0 && (
               <div className="absolute left-6 z-20 transition-all duration-200" style={{
@@ -3699,7 +3699,7 @@ export default function HablaBeat() {
                 const offset = idx - danceSelectedIndex
                 if (Math.abs(offset) > visibleRange) return null
 
-                const coverSize = "min(68vh, 68vw)"
+                const coverSize = "min(48vh, 48vw)"
                 const translateX = offset * 320
                 const translateZ = -Math.abs(offset) * 200
                 const rotateY = offset * -30
@@ -3781,7 +3781,7 @@ export default function HablaBeat() {
 
           {/* Song info tight below carousel */}
           {selectedSong && (
-            <div className="text-center z-20 flex-shrink-0" style={{ marginTop: "-10px" }}>
+            <div className="text-center z-20 flex-shrink-0" style={{ marginTop: "8px" }}>
               <div className="text-lg text-white/60 font-medium mb-1">
                 {({1:"The Spanish alphabet letters",2:"The special letters in Spanish",3:"Spanish vowel sounds",4:"Body parts and face vocab",5:"Clothing words in Spanish",6:"Family members in Spanish",7:"Jobs and careers vocab",8:"Vowels with a unicorn twist",9:"Pets and animals vocab",10:"Animal habitats and homes",11:"Rooms in your house",12:"Where is it? location words",13:"Giving and following directions",14:"Numbers one through twenty",15:"Counting by tens to one hundred",16:"Days, months, and seasons",17:"Telling time in Spanish",18:"Colors in Spanish",19:"Feelings and emotions",20:"Hunger and thirst expressions",21:"Fruit names in Spanish",22:"Vegetable names in Spanish",23:"Breakfast, lunch, and dinner",24:"Ordering and asking for things",25:"AR verbs conjugation",26:"Gustar — to like something",27:"Estar — to be (temporary)",28:"ER verbs conjugation",29:"Tener — to have",30:"Ser — to be (permanent)",31:"IR verbs conjugation",32:"IR — to go places",33:"Decir — to say or tell",34:"When to use preterite tense",35:"AR verbs in the past",36:"ER and IR verbs in the past",37:"Irregular past tense verbs",38:"Imperfect tense for the past",39:"Irregular imperfect verbs",40:"Imperfect vs preterite tense",41:"Future tense in Spanish",42:"Irregular future tense verbs",43:"Conditional — would do something",44:"Irregular conditional verbs",45:"Personal and reflexive pronouns",46:"Direct and indirect object pronouns",47:"Commands and instructions",48:"Por vs para — tricky prepositions",49:"Subjunctive mood basics",50:"Fun phrases and expressions"} as Record<number, string>)[selectedSong.number] ?? "Vocabulary and grammar"}
               </div>
