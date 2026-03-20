@@ -3371,7 +3371,7 @@ export default function HablaBeat() {
 
   if (currentView === "songs") {
     return (
-      <div className="min-h-screen swirl-bg">
+      <div className={`swirl-bg ${isDesktop ? "h-screen overflow-hidden" : "min-h-screen"}`}>
         {/* Animated swirl background styles */}
         <style>{`
           .swirl-bg {
@@ -3489,46 +3489,80 @@ export default function HablaBeat() {
           />
 
 
-          {/* ── HEADER — Duolingo-style solid blue bar ── */}
+          {/* ── HEADER — compact single-line bar (desktop) / stacked (mobile) ── */}
           <div style={{ background: "#4a7cdb" }}>
-            {/* Top bar: bunny + title + profile */}
-            <div className="flex items-center px-4 pt-4 pb-1 gap-3">
-              <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+            {/* Desktop: single compact row */}
+            {isDesktop ? (
+              <div className="flex items-center px-4 py-1.5 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" style={{ background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
-              </div>
-              <h1 className="flex-1" style={{
-                fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
-                color: "#ffffff",
-                lineHeight: 1,
-                WebkitTextStroke: "2px #2d3748",
-                paintOrder: "stroke fill",
-                textTransform: "uppercase" as const,
-                textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 6px rgba(0,0,0,0.1)",
-              }}>HablaBeat</h1>
-              <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
+                <h1 style={{
+                  fontSize: "1.4rem", fontWeight: 900, letterSpacing: "0.06em",
+                  color: "#ffffff", lineHeight: 1,
+                  WebkitTextStroke: "1.5px #2d3748", paintOrder: "stroke fill",
+                  textTransform: "uppercase" as const,
+                  textShadow: "1px 2px 0 rgba(0,0,0,0.25)",
+                }}>HablaBeat</h1>
+                <div className="flex-1" />
+                <div className="flex items-center gap-5">
+                  <div className="flex items-center gap-1">
+                    <span className="emoji-fire text-sm">🔥</span>
+                    <span className="text-white/70 text-[10px] font-bold uppercase">Streak</span>
+                    <span className="text-white font-black text-xs">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="emoji-lightning text-sm">⚡</span>
+                    <span className="text-white/70 text-[10px] font-bold uppercase">Flow</span>
+                    <span className="text-white font-black text-xs">{bestFlow}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm">💰</span>
+                    <span className="text-white/70 text-[10px] font-bold uppercase">Bank</span>
+                    <span className="text-white font-black text-xs">{totalVocabBank}</span>
+                  </div>
+                </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)", background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
+                <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" style={{ transform: "scaleX(-1)" }} />
               </div>
-            </div>
-            {/* Stats row — icon, label, number inline */}
-            <div className="grid grid-cols-3 px-2 pb-2">
-              <div className="flex items-center justify-center gap-1">
-                <span className="emoji-fire text-base">🔥</span>
-                <span className="text-white/70 text-[11px] font-bold uppercase">Streak</span>
-                <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
-              </div>
-              <div className="flex items-center justify-center gap-1">
-                <span className="emoji-lightning text-base">⚡</span>
-                <span className="text-white/70 text-[11px] font-bold uppercase">Flow</span>
-                <span className="text-white font-black text-sm">{bestFlow}</span>
-              </div>
-              <div className="flex items-center justify-center gap-1">
-                <span className="text-base">💰</span>
-                <span className="text-white/70 text-[11px] font-bold uppercase">Bank</span>
-                <span className="text-white font-black text-sm">{totalVocabBank}</span>
-              </div>
-            </div>
+            ) : (
+              <>
+                {/* Mobile: stacked layout (original) */}
+                <div className="flex items-center px-4 pt-4 pb-1 gap-3">
+                  <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" style={{ background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
+                  </div>
+                  <h1 className="flex-1" style={{
+                    fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
+                    color: "#ffffff", lineHeight: 1,
+                    WebkitTextStroke: "2px #2d3748", paintOrder: "stroke fill",
+                    textTransform: "uppercase" as const,
+                    textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 6px rgba(0,0,0,0.1)",
+                  }}>HablaBeat</h1>
+                  <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)", background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 px-2 pb-2">
+                  <div className="flex items-center justify-center gap-1">
+                    <span className="emoji-fire text-base">🔥</span>
+                    <span className="text-white/70 text-[11px] font-bold uppercase">Streak</span>
+                    <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <span className="emoji-lightning text-base">⚡</span>
+                    <span className="text-white/70 text-[11px] font-bold uppercase">Flow</span>
+                    <span className="text-white font-black text-sm">{bestFlow}</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <span className="text-base">💰</span>
+                    <span className="text-white/70 text-[11px] font-bold uppercase">Bank</span>
+                    <span className="text-white font-black text-sm">{totalVocabBank}</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* ✨ World overlay — zooms in when a world is tapped */}
@@ -3733,7 +3767,7 @@ export default function HablaBeat() {
           })()}
 
           {/* ── GALAXY MAP — stacked, one always open ── */}
-          <div className="px-3 pt-4 pb-[88px] space-y-4">
+          <div className={isDesktop ? "px-0 pt-0 pb-0 overflow-hidden" : "px-3 pt-4 pb-[88px] space-y-4"}>
             <style>{`
               @keyframes galaxyOpen {
                 from { opacity: 0; transform: scaleY(0.9); }
@@ -3815,17 +3849,17 @@ export default function HablaBeat() {
               }
 
               return (
-                <div className="relative mx-auto" style={{ maxWidth: "100%", height: "calc(100vh - 180px)", minHeight: "700px" }}>
-                  {/* Section labels */}
-                  <div className="absolute pointer-events-none" style={{ right: "4%", top: "3%", textAlign: "right" }}>
+                <div className="relative w-full" style={{ height: "calc(100vh - 110px)" }}>
+                  {/* Section labels — left side */}
+                  <div className="absolute pointer-events-none" style={{ left: "2%", top: "3%", textAlign: "left" }}>
                     <span className="font-black text-base tracking-wider" style={{ color: "#4a7cdb" }}>NOUNS</span>
                     <br />
-                    <span className="text-xs font-semibold" style={{ color: "#9ca3af" }}>North, Central America &amp; Caribbean</span>
+                    <span className="text-[11px] font-semibold" style={{ color: "#9ca3af" }}>North, Central America &amp; Caribbean</span>
                   </div>
-                  <div className="absolute pointer-events-none" style={{ right: "4%", top: "48%", textAlign: "right" }}>
+                  <div className="absolute pointer-events-none" style={{ left: "2%", top: "48%", textAlign: "left" }}>
                     <span className="font-black text-base tracking-wider" style={{ color: "#4a7cdb" }}>VERBS</span>
                     <br />
-                    <span className="text-xs font-semibold" style={{ color: "#9ca3af" }}>South America</span>
+                    <span className="text-[11px] font-semibold" style={{ color: "#9ca3af" }}>South America</span>
                   </div>
 
                   {/* SVG Americas outline + trail */}
