@@ -1631,14 +1631,19 @@ export default function HablaBeat() {
   const isOnHub = navViews.includes(currentView as any)
 
   const [danceLaunchPending, setDanceLaunchPending] = useState(false)
+  const [danceArrowFlash, setDanceArrowFlash] = useState<"left" | "right" | null>(null)
 
   const handleHubNav = useCallback((btn: PadButton) => {
     if (currentView === "dance") {
       // Dance carousel navigation
       if (btn === "left") {
         setDanceSelectedIndex(prev => Math.max(0, prev - 1))
+        setDanceArrowFlash("left")
+        setTimeout(() => setDanceArrowFlash(null), 300)
       } else if (btn === "right") {
         setDanceSelectedIndex(prev => Math.min(allSongs.length - 1, prev + 1))
+        setDanceArrowFlash("right")
+        setTimeout(() => setDanceArrowFlash(null), 300)
       } else if (btn === "start") {
         // Flag to launch — handled after handlePlayDDR is defined
         setDanceLaunchPending(true)
@@ -3659,14 +3664,7 @@ export default function HablaBeat() {
 
     return (
       <div className="h-[100dvh] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)" }}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-2 flex-shrink-0">
-          <button onClick={() => setCurrentView("songs")} className="text-white/60 hover:text-white text-sm flex items-center gap-2">
-            <ChevronLeft className="h-5 w-5" /> Back
-          </button>
-          <h1 className="text-2xl font-black text-white tracking-wider">🎶 DANCE MODE</h1>
-          <div className="w-16" />
-        </div>
+        {/* No header — clean full-screen experience */}
 
         {/* Centered carousel with title above and info below */}
         <div className="flex-1 flex flex-col items-center justify-center relative">
@@ -3685,11 +3683,15 @@ export default function HablaBeat() {
 
           {/* Carousel */}
           <div className="relative w-full flex items-center justify-center" style={{ perspective: "1800px", height: "min(65vh, 65vw)" }}>
-            {/* Left arrow */}
+            {/* Left arrow indicator — lights up on press */}
             {danceSelectedIndex > 0 && (
-              <button onClick={() => setDanceSelectedIndex(prev => Math.max(0, prev - 1))} className="absolute left-4 z-20 text-white/40 hover:text-white/80 transition-colors">
-                <ChevronLeft className="h-14 w-14" />
-              </button>
+              <div className="absolute left-6 z-20 transition-all duration-200" style={{
+                color: danceArrowFlash === "left" ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.2)",
+                filter: danceArrowFlash === "left" ? "drop-shadow(0 0 20px rgba(74,124,219,0.8))" : "none",
+                transform: danceArrowFlash === "left" ? "scale(1.2)" : "scale(1)",
+              }}>
+                <ChevronLeft className="h-20 w-20" />
+              </div>
             )}
 
             <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
@@ -3765,11 +3767,15 @@ export default function HablaBeat() {
               })}
             </div>
 
-            {/* Right arrow */}
+            {/* Right arrow indicator — lights up on press */}
             {danceSelectedIndex < allSongs.length - 1 && (
-              <button onClick={() => setDanceSelectedIndex(prev => Math.min(allSongs.length - 1, prev + 1))} className="absolute right-4 z-20 text-white/40 hover:text-white/80 transition-colors">
-                <ChevronRight className="h-14 w-14" />
-              </button>
+              <div className="absolute right-6 z-20 transition-all duration-200" style={{
+                color: danceArrowFlash === "right" ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.2)",
+                filter: danceArrowFlash === "right" ? "drop-shadow(0 0 20px rgba(74,124,219,0.8))" : "none",
+                transform: danceArrowFlash === "right" ? "scale(1.2)" : "scale(1)",
+              }}>
+                <ChevronRight className="h-20 w-20" />
+              </div>
             )}
           </div>
 
