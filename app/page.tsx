@@ -3668,39 +3668,40 @@ export default function HablaBeat() {
           <div className="w-16" />
         </div>
 
-        {/* Song title ABOVE carousel */}
-        {selectedSong && (
-          <div className="flex-shrink-0 text-center px-4 pt-2 pb-4">
-            <div className="text-4xl md:text-5xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
-              {selectedSong.title}
-            </div>
-            <div className="text-xl text-white/40 font-semibold mt-1">
-              {selectedSong.section}
-            </div>
-          </div>
-        )}
+        {/* Carousel + title + info — all tightly packed */}
+        <div className="flex-1 flex flex-col items-center justify-center relative" style={{ perspective: "1800px" }}>
 
-        {/* 3D Carousel */}
-        <div className="flex-1 flex items-center justify-center relative" style={{ perspective: "1400px" }}>
-          {/* Left arrow indicator */}
-          {danceSelectedIndex > 0 && (
-            <button onClick={() => setDanceSelectedIndex(prev => Math.max(0, prev - 1))} className="absolute left-4 z-20 text-white/40 hover:text-white/80 transition-colors">
-              <ChevronLeft className="h-14 w-14" />
-            </button>
+          {/* Song title tight above */}
+          {selectedSong && (
+            <div className="text-center mb-2 z-20">
+              <div className="text-4xl md:text-5xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
+                {selectedSong.title}
+              </div>
+              <div className="text-lg text-white/40 font-semibold">
+                {selectedSong.section}
+              </div>
+            </div>
           )}
 
-          {/* Carousel container */}
-          <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
+          {/* Carousel row */}
+          <div className="relative w-full flex-1 flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
+            {/* Left arrow */}
+            {danceSelectedIndex > 0 && (
+              <button onClick={() => setDanceSelectedIndex(prev => Math.max(0, prev - 1))} className="absolute left-4 z-20 text-white/40 hover:text-white/80 transition-colors">
+                <ChevronLeft className="h-14 w-14" />
+              </button>
+            )}
+
             {allSongs.map((song, idx) => {
               const offset = idx - danceSelectedIndex
               if (Math.abs(offset) > visibleRange) return null
 
-              // Calculate 3D transforms — bigger covers, more spacing
-              const translateX = offset * 360
-              const translateZ = -Math.abs(offset) * 250
+              const coverSize = "min(55vh, 55vw)"
+              const translateX = offset * 380
+              const translateZ = -Math.abs(offset) * 280
               const rotateY = offset * -35
-              const scale = offset === 0 ? 1 : Math.max(0.35, 1 - Math.abs(offset) * 0.22)
-              const opacity = offset === 0 ? 1 : Math.max(0.12, 1 - Math.abs(offset) * 0.3)
+              const scale = offset === 0 ? 1 : Math.max(0.3, 1 - Math.abs(offset) * 0.25)
+              const opacity = offset === 0 ? 1 : Math.max(0.1, 1 - Math.abs(offset) * 0.35)
               const zIndex = 10 - Math.abs(offset)
 
               return (
@@ -3722,14 +3723,13 @@ export default function HablaBeat() {
                     }
                   }}
                 >
-                  {/* Album cover — large */}
                   <div style={{
-                    width: "420px",
-                    height: "420px",
+                    width: coverSize,
+                    height: coverSize,
                     borderRadius: "16px",
                     overflow: "hidden",
                     boxShadow: offset === 0
-                      ? "0 0 80px rgba(74,124,219,0.5), 0 25px 80px rgba(0,0,0,0.8)"
+                      ? "0 0 100px rgba(74,124,219,0.5), 0 30px 80px rgba(0,0,0,0.8)"
                       : "0 10px 40px rgba(0,0,0,0.6)",
                     border: offset === 0 ? "3px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
                   }}>
@@ -3743,8 +3743,8 @@ export default function HablaBeat() {
 
                   {/* Reflection */}
                   <div style={{
-                    width: "420px",
-                    height: "160px",
+                    width: coverSize,
+                    height: "30%",
                     borderRadius: "0 0 16px 16px",
                     overflow: "hidden",
                     transform: "scaleY(-1) translateY(-2px)",
@@ -3755,44 +3755,44 @@ export default function HablaBeat() {
                     <img
                       src={`/images/backgrounds/song-${song.number}.jpg`}
                       alt=""
-                      style={{ width: "100%", height: "420px", objectFit: "cover" }}
+                      style={{ width: "100%", height: coverSize, objectFit: "cover" }}
                       draggable={false}
                     />
                   </div>
                 </div>
               )
             })}
+
+            {/* Right arrow */}
+            {danceSelectedIndex < allSongs.length - 1 && (
+              <button onClick={() => setDanceSelectedIndex(prev => Math.min(allSongs.length - 1, prev + 1))} className="absolute right-4 z-20 text-white/40 hover:text-white/80 transition-colors">
+                <ChevronRight className="h-14 w-14" />
+              </button>
+            )}
           </div>
 
-          {/* Right arrow indicator */}
-          {danceSelectedIndex < allSongs.length - 1 && (
-            <button onClick={() => setDanceSelectedIndex(prev => Math.min(allSongs.length - 1, prev + 1))} className="absolute right-4 z-20 text-white/40 hover:text-white/80 transition-colors">
-              <ChevronRight className="h-14 w-14" />
-            </button>
+          {/* Song number + play tight below */}
+          {selectedSong && (
+            <div className="text-center mt-2 z-20">
+              <div className="text-xl text-white/50 font-bold mb-2">
+                Song {selectedSong.number} of {allSongs.length}
+              </div>
+              <button
+                onClick={() => handlePlayDDR(selectedSong.id, selectedSong.categoryId, selectedSong.sectionId)}
+                className="px-10 py-3 rounded-full font-black text-xl text-white transition-all hover:scale-105 active:scale-95"
+                style={{
+                  background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
+                  boxShadow: "0 4px 25px rgba(74,124,219,0.5)",
+                }}
+              >
+                🥕 Play Pop!
+              </button>
+              <div className="text-sm text-white/30 mt-1">
+                ← → to browse &middot; Enter to play
+              </div>
+            </div>
           )}
         </div>
-
-        {/* Song number + Play button BELOW carousel */}
-        {selectedSong && (
-          <div className="flex-shrink-0 text-center pb-4 px-4">
-            <div className="text-2xl text-white/50 font-bold mb-3">
-              Song {selectedSong.number} of {allSongs.length}
-            </div>
-            <button
-              onClick={() => handlePlayDDR(selectedSong.id, selectedSong.categoryId, selectedSong.sectionId)}
-              className="px-10 py-4 rounded-full font-black text-xl text-white transition-all hover:scale-105 active:scale-95"
-              style={{
-                background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
-                boxShadow: "0 4px 25px rgba(74,124,219,0.5)",
-              }}
-            >
-              🥕 Play Pop!
-            </button>
-            <div className="text-sm text-white/30 mt-2">
-              ← → to browse &middot; Enter to play
-            </div>
-          </div>
-        )}
 
         {/* Bottom Navigation */}
         <div className="flex-shrink-0 bg-white/5 backdrop-blur border-t border-white/10 p-3">
