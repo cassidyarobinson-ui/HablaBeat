@@ -114,11 +114,11 @@ function readPadState(gp: Gamepad, debug: boolean = false, mapping: PadMapping |
   const stdLeft  = b[14]?.pressed ?? false
   const stdRight = b[15]?.pressed ?? false
 
-  // Alt mapping A (buttons 0-3, standard DDR mat: left=0, down=1, up=2, right=3)
-  const altLeft  = b[0]?.pressed ?? false
+  // Alt mapping A (buttons 0-3, DDR mat: up=0, down=1, right=2, left=3)
+  const altUp    = b[0]?.pressed ?? false
   const altDown  = b[1]?.pressed ?? false
-  const altUp    = b[2]?.pressed ?? false
-  const altRight = b[3]?.pressed ?? false
+  const altRight = b[2]?.pressed ?? false
+  const altLeft  = b[3]?.pressed ?? false
 
   // Alt mapping B (some mats use 4-7, same order: left=4, down=5, up=6, right=7)
   const alt2Left  = b[4]?.pressed ?? false
