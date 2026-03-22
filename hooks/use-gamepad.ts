@@ -126,30 +126,21 @@ function readPadState(gp: Gamepad, debug: boolean = false, mapping: PadMapping |
   const alt2Up    = b[6]?.pressed ?? false
   const alt2Right = b[7]?.pressed ?? false
 
-  // Axis-based (some mats use analog axes for d-pad)
-  const axisLeft  = (axes[0] ?? 0) < -0.5
-  const axisRight = (axes[0] ?? 0) > 0.5
-  const axisUp    = (axes[1] ?? 0) < -0.5
-  const axisDown  = (axes[1] ?? 0) > 0.5
+  // If buttons 0-3 are active, skip axis fallbacks to avoid conflicts
+  const hasButtonInput = altUp || altDown || altLeft || altRight
+  const hasAlt2Input = alt2Up || alt2Down || alt2Left || alt2Right
 
-  // Axis-based secondary (some mats use axes[2]/axes[5])
-  const axisLeft2  = (axes[2] ?? 0) < -0.5
-  const axisRight2 = (axes[2] ?? 0) > 0.5
-  const axisUp2    = (axes[5] ?? 0) < -0.5
-  const axisDown2  = (axes[5] ?? 0) > 0.5
-
-  // Axis 9 (used by some dance mats for d-pad as hat switch)
-  const ax9 = axes[9] ?? 2
-  const ax9Up    = ax9 > -1.1 && ax9 < -0.9
-  const ax9Right = ax9 > -0.5 && ax9 < -0.3
-  const ax9Down  = ax9 > 0.1 && ax9 < 0.3
-  const ax9Left  = ax9 > 0.6 && ax9 < 0.8
+  // Axis-based fallback (only used when no button input detected)
+  const axisLeft  = !hasButtonInput && !hasAlt2Input && (axes[0] ?? 0) < -0.5
+  const axisRight = !hasButtonInput && !hasAlt2Input && (axes[0] ?? 0) > 0.5
+  const axisUp    = !hasButtonInput && !hasAlt2Input && (axes[1] ?? 0) < -0.5
+  const axisDown  = !hasButtonInput && !hasAlt2Input && (axes[1] ?? 0) > 0.5
 
   return {
-    up:     stdUp    || altUp    || alt2Up    || axisUp    || axisUp2    || ax9Up,
-    down:   stdDown  || altDown  || alt2Down  || axisDown  || axisDown2  || ax9Down,
-    left:   stdLeft  || altLeft  || alt2Left  || axisLeft  || axisLeft2  || ax9Left,
-    right:  stdRight || altRight || alt2Right || axisRight || axisRight2 || ax9Right,
+    up:     stdUp    || altUp    || alt2Up    || axisUp,
+    down:   stdDown  || altDown  || alt2Down  || axisDown,
+    left:   stdLeft  || altLeft  || alt2Left  || axisLeft,
+    right:  stdRight || altRight || alt2Right || axisRight,
     start:  b[9]?.pressed ?? b[7]?.pressed ?? false,
     select: b[8]?.pressed ?? b[6]?.pressed ?? false,
   }
