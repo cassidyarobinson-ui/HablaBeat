@@ -1832,24 +1832,17 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
                 <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "1%", width: "min(95%, 280px)", aspectRatio: "1" }} />
-                {/* Target bubble with carrot arrow inside — matches falling bubbles at hit line (220px × 1.3 scale) */}
-                <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "0%", width: "min(95%, 280px)", aspectRatio: "1" }}>
-                  <div style={{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: "50%",
-                    background: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, rgba(173,216,255,0.08) 30%, rgba(100,180,255,0.04) 60%, rgba(59,130,246,0.06) 100%)",
-                    border: "2px solid rgba(180,210,255,0.35)",
-                    boxShadow: "0 0 15px rgba(59,130,246,0.15), inset 0 -6px 12px rgba(59,130,246,0.08), inset 3px 3px 8px rgba(255,255,255,0.15)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: 0.7,
-                    position: "relative",
-                  }}>
-                    {/* Carrot arrow centered inside bubble — strip fixed width/height so SVG fills container */}
-                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "45%", height: "45%", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} dangerouslySetInnerHTML={{ __html: [activeSvgs.left, activeSvgs.down, activeSvgs.up, activeSvgs.right][lane].replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"') }} />
-                  </div>
+                {/* Target arrow at hit line — clean directional chevron */}
+                <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "2%", width: "min(70%, 90px)", aspectRatio: "1" }}>
+                  <svg viewBox="0 0 48 48" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    {/* Outer glow circle */}
+                    <circle cx="24" cy="24" r="22" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
+                    {/* Arrow shape — rotated per lane: left=0, down=1, up=2, right=3 */}
+                    <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`}>
+                      {/* Up-pointing chevron arrow (default orientation) */}
+                      <path d="M24 10 L38 28 L30 28 L30 38 L18 38 L18 28 L10 28 Z" fill="rgba(255,255,255,0.85)" stroke="rgba(255,255,255,0.95)" strokeWidth="1.5" strokeLinejoin="round" />
+                    </g>
+                  </svg>
                 </div>
               </div>
             ))}
