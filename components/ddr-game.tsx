@@ -1674,6 +1674,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </div>
           </div>
 
+          {/* Encouraging message for F grade */}
+          {grade === "F" && (
+            <p className="text-center text-lg font-black mb-2" style={{ color: "#4a7cdb" }}>You'll get there! 💪</p>
+          )}
+
           {/* Stats row - frosted glass cards */}
           <div className="flex gap-3 w-full mb-4">
             <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
