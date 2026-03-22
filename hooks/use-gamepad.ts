@@ -5,17 +5,65 @@ export type PadDirection = "up" | "down" | "left" | "right"
 export type PadButton = PadDirection | "start" | "select"
 
 /**
- * Maps common DDR dance mat button layouts.
- * USB dance mats vary wildly — we check buttons, axes, and log raw data.
+ * Custom pad mapping — maps a raw input identifier to a direction.
+ * Raw input identifiers are like "b0" (button 0), "a0-" (axis 0 negative), "a9=0.71" (axis 9 hat value).
+ * Stored in localStorage so it persists across sessions.
  */
+export interface PadMapping {
+  up: string
+  down: string
+  left: string
+  right: string
+}
+
+const PAD_MAPPING_KEY = "hablabeat-pad-mapping"
+
+export function loadPadMapping(): PadMapping | null {
+  try {
+    const raw = localStorage.getItem(PAD_MAPPING_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (parsed.up && parsed.down && parsed.left && parsed.right) return parsed
+    return null
+  } catch { return null }
+}
+
+export function savePadMapping(mapping: PadMapping) {
+  localStorage.setItem(PAD_MAPPING_KEY, JSON.stringify(mapping))
+}
+
+export function clearPadMapping() {
+  localStorage.removeItem(PAD_MAPPING_KEY)
+}
 
 let debugLogTimer = 0
 
-function readPadState(gp: Gamepad, debug: boolean = false): Record<PadButton, boolean> {
+/**
+ * Get all currently-active raw input identifiers from a gamepad.
+ * Returns strings like "b0", "b3", "a0-", "a1+", "a9=0.71"
+ */
+export function getRawPressedInputs(gp: Gamepad): string[] {
+  const result: string[] = []
+  // Buttons
+  for (let i = 0; i < gp.buttons.length; i++) {
+    if (gp.buttons[i].pressed) result.push(`b${i}`)
+  }
+  // Axes
+  for (let i = 0; i < gp.axes.length; i++) {
+    const v = gp.axes[i]
+    if (v < -0.5) result.push(`a${i}-`)
+    else if (v > 0.5) result.push(`a${i}+`)
+  }
+  return result
+}
+
+/**
+ * Read pad state using a custom mapping (if available) or fall back to defaults.
+ */
+function readPadState(gp: Gamepad, debug: boolean = false, mapping: PadMapping | null = null): Record<PadButton, boolean> {
   const b = gp.buttons
   const axes = gp.axes
 
-  // Log raw data for debugging (throttled to every 500ms)
   if (debug) {
     const now = Date.now()
     if (now - debugLogTimer > 500) {
@@ -27,6 +75,38 @@ function readPadState(gp: Gamepad, debug: boolean = false): Record<PadButton, bo
       }
     }
   }
+
+  // If we have a custom mapping, use it
+  if (mapping) {
+    const check = (id: string): boolean => {
+      if (id.startsWith("b")) {
+        const idx = parseInt(id.slice(1))
+        return b[idx]?.pressed ?? false
+      }
+      if (id.startsWith("a")) {
+        const rest = id.slice(1)
+        if (rest.endsWith("-")) {
+          const idx = parseInt(rest.slice(0, -1))
+          return (axes[idx] ?? 0) < -0.5
+        }
+        if (rest.endsWith("+")) {
+          const idx = parseInt(rest.slice(0, -1))
+          return (axes[idx] ?? 0) > 0.5
+        }
+      }
+      return false
+    }
+    return {
+      up: check(mapping.up),
+      down: check(mapping.down),
+      left: check(mapping.left),
+      right: check(mapping.right),
+      start: b[9]?.pressed ?? b[7]?.pressed ?? false,
+      select: b[8]?.pressed ?? b[6]?.pressed ?? false,
+    }
+  }
+
+  // Default mappings — try all common layouts
 
   // Standard gamepad d-pad (buttons 12-15)
   const stdUp    = b[12]?.pressed ?? false
@@ -81,25 +161,34 @@ interface UseGamepadOptions {
   onHeld?: (held: Record<PadButton, boolean>) => void
   /** Called with raw button/axis info string whenever any input is detected */
   onRawInput?: (info: string) => void
+  /** Called with raw input identifiers (e.g. "b0", "a1-") on new press */
+  onRawPress?: (inputs: string[]) => void
   enabled?: boolean
   debug?: boolean
+  /** Custom pad mapping — overrides default button detection */
+  padMapping?: PadMapping | null
 }
 
-export function useGamepad({ onPress, onRelease, onHeld, onRawInput, enabled = true, debug = false }: UseGamepadOptions) {
+export function useGamepad({ onPress, onRelease, onHeld, onRawInput, onRawPress, enabled = true, debug = false, padMapping = null }: UseGamepadOptions) {
   const prevState = useRef<Record<PadButton, boolean>>({
     up: false, down: false, left: false, right: false, start: false, select: false,
   })
+  const prevRawInputs = useRef<Set<string>>(new Set())
   const onPressRef = useRef(onPress)
   const onReleaseRef = useRef(onRelease)
   const onHeldRef = useRef(onHeld)
   const onRawInputRef = useRef(onRawInput)
+  const onRawPressRef = useRef(onRawPress)
   const debugRef = useRef(debug)
+  const mappingRef = useRef(padMapping)
 
   onPressRef.current = onPress
   onReleaseRef.current = onRelease
   onHeldRef.current = onHeld
   onRawInputRef.current = onRawInput
+  onRawPressRef.current = onRawPress
   debugRef.current = debug
+  mappingRef.current = padMapping
 
   // Listen for gamepad connect/disconnect events
   useEffect(() => {
@@ -118,7 +207,6 @@ export function useGamepad({ onPress, onRelease, onHeld, onRawInput, enabled = t
   }, [])
 
   // Poll using BOTH requestAnimationFrame AND setInterval as fallback
-  // rAF pauses when tab is backgrounded; setInterval keeps running
   useEffect(() => {
     if (!enabled) return
 
@@ -127,6 +215,7 @@ export function useGamepad({ onPress, onRelease, onHeld, onRawInput, enabled = t
       const merged: Record<PadButton, boolean> = {
         up: false, down: false, left: false, right: false, start: false, select: false,
       }
+      const allRawInputs: string[] = []
       for (const gp of gamepads) {
         if (!gp) continue
         // Report raw button/axis data for debugging
@@ -136,11 +225,24 @@ export function useGamepad({ onPress, onRelease, onHeld, onRawInput, enabled = t
         if (pressed.length > 0 || values.length > 0 || activeAxes.length > 0) {
           onRawInputRef.current?.(`BTN:[${pressed.join(',')}] VAL:[${values.join(',')}] AX:[${activeAxes.join(',')}]`)
         }
-        const state = readPadState(gp, debugRef.current)
+
+        // Collect raw inputs for calibration
+        const rawInputs = getRawPressedInputs(gp)
+        allRawInputs.push(...rawInputs)
+
+        const state = readPadState(gp, debugRef.current, mappingRef.current)
         for (const key of Object.keys(state) as PadButton[]) {
           if (state[key]) merged[key] = true
         }
       }
+
+      // Detect new raw presses for calibration
+      const prevRaw = prevRawInputs.current
+      const newRaw = allRawInputs.filter(id => !prevRaw.has(id))
+      if (newRaw.length > 0) {
+        onRawPressRef.current?.(newRaw)
+      }
+      prevRawInputs.current = new Set(allRawInputs)
 
       const prev = prevState.current
       const buttons: PadButton[] = ["up", "down", "left", "right", "start", "select"]

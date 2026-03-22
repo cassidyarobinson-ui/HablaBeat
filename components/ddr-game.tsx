@@ -6,7 +6,7 @@ import { ChevronLeft, Play, Pause } from "lucide-react"
 import { translateWord } from "@/lib/spanish-dictionary"
 import Image from "next/image"
 import { getPointer, firePointerEffect, POINTER_KEYFRAMES } from "@/lib/pointers"
-import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
+import { useGamepad, type PadButton, type PadMapping, loadPadMapping, savePadMapping, clearPadMapping } from "@/hooks/use-gamepad"
 import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
 
 // Types
@@ -229,6 +229,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const comboShieldUsedRef = useRef(false)
   const [padDebug, setPadDebug] = useState("")
   const [padConnected, setPadConnected] = useState(false)
+  const [padMapping, setPadMapping] = useState<PadMapping | null>(null)
+  const [calibrating, setCalibrating] = useState(false)
+  const calibrationSteps: PadDirection[] = ["left", "down", "up", "right"]
+  const [calibrationStep, setCalibrationStep] = useState(0)
+  const [calibrationData, setCalibrationData] = useState<Partial<PadMapping>>({})
+
+  // Load saved pad mapping on mount
+  useEffect(() => {
+    setPadMapping(loadPadMapping())
+  }, [])
 
   // Rainbow colors that cycle on each hit
   const RAINBOW_COLORS = [
@@ -632,16 +642,42 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   useGamepad({
     enabled: true,
     debug: true,
+    padMapping,
     onPress: (btn: PadButton) => {
       setPadDebug(`🎮 ${btn.toUpperCase()}`)
       setPadConnected(true)
       setTimeout(() => setPadDebug(""), 800)
+      if (calibrating) return // ignore mapped presses during calibration
       if (gameState === "playing") {
         if (btn === "start") { togglePause(); return }
         const lane = padLaneMap[btn]
         if (lane !== undefined) handleLaneHit(lane)
       } else if (gameState === "paused" && btn === "start") {
         togglePause()
+      }
+    },
+    onRawPress: (inputs) => {
+      setPadConnected(true)
+      if (!calibrating) return
+      // During calibration, record the first raw input for the current step
+      if (inputs.length > 0) {
+        const direction = calibrationSteps[calibrationStep]
+        const newData = { ...calibrationData, [direction]: inputs[0] }
+        setCalibrationData(newData)
+        if (calibrationStep < calibrationSteps.length - 1) {
+          // Move to next step after a brief delay
+          setTimeout(() => setCalibrationStep(prev => prev + 1), 400)
+        } else {
+          // All steps done — save mapping
+          const mapping = newData as PadMapping
+          savePadMapping(mapping)
+          setPadMapping(mapping)
+          setTimeout(() => {
+            setCalibrating(false)
+            setCalibrationStep(0)
+            setCalibrationData({})
+          }, 500)
+        }
       }
     },
     onRawInput: (info) => {
@@ -1383,6 +1419,25 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <p className="text-center text-sm text-gray-500 mt-3">{totalNotes} vocab words</p>
           </div>
 
+          {/* Calibrate Pad button — only show when pad connected */}
+          {padConnected && (
+            <button
+              onClick={() => {
+                setCalibrating(true)
+                setCalibrationStep(0)
+                setCalibrationData({})
+              }}
+              className="w-full py-3 rounded-full font-black text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
+              style={{
+                background: padMapping ? "rgba(34,197,94,0.15)" : "rgba(251,191,36,0.15)",
+                color: padMapping ? "#16a34a" : "#d97706",
+                border: `1.5px solid ${padMapping ? "#22c55e" : "#fbbf24"}`,
+              }}
+            >
+              🎮 {padMapping ? "Pad Calibrated ✓ — Recalibrate" : "Calibrate Dance Pad"}
+            </button>
+          )}
+
           {/* Start button — teal→green gradient with glow + outer ring */}
           <div className="rounded-full p-[3px] shadow-2xl mt-1" style={{
             background: "linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.1))",
@@ -1401,6 +1456,93 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           </div>
 
         </div>
+
+        {/* Calibration overlay */}
+        {calibrating && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.85)" }}>
+            <div className="text-center p-8 rounded-3xl max-w-sm mx-4" style={{
+              background: "linear-gradient(135deg, #1e293b, #0f172a)",
+              border: "2px solid rgba(255,255,255,0.2)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+            }}>
+              <h2 className="text-2xl font-black text-white mb-2">🎮 Calibrate Pad</h2>
+              <p className="text-white/60 text-sm mb-6">Step on each arrow when prompted</p>
+
+              {/* Arrow display grid */}
+              <div className="relative w-48 h-48 mx-auto mb-6">
+                {/* Up */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-16 rounded-xl flex items-center justify-center text-3xl transition-all duration-300" style={{
+                  background: calibrationSteps[calibrationStep] === "up" ? "rgba(59,130,246,0.3)" : calibrationData.up ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.05)",
+                  border: calibrationSteps[calibrationStep] === "up" ? "3px solid #3b82f6" : calibrationData.up ? "2px solid #22c55e" : "2px solid rgba(255,255,255,0.1)",
+                  transform: calibrationSteps[calibrationStep] === "up" ? "translateX(-50%) scale(1.15)" : "translateX(-50%) scale(1)",
+                  boxShadow: calibrationSteps[calibrationStep] === "up" ? "0 0 20px rgba(59,130,246,0.4)" : "none",
+                }}>
+                  {calibrationData.up ? "✅" : "⬆️"}
+                </div>
+                {/* Down */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-16 rounded-xl flex items-center justify-center text-3xl transition-all duration-300" style={{
+                  background: calibrationSteps[calibrationStep] === "down" ? "rgba(59,130,246,0.3)" : calibrationData.down ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.05)",
+                  border: calibrationSteps[calibrationStep] === "down" ? "3px solid #3b82f6" : calibrationData.down ? "2px solid #22c55e" : "2px solid rgba(255,255,255,0.1)",
+                  transform: calibrationSteps[calibrationStep] === "down" ? "translateX(-50%) scale(1.15)" : "translateX(-50%) scale(1)",
+                  boxShadow: calibrationSteps[calibrationStep] === "down" ? "0 0 20px rgba(59,130,246,0.4)" : "none",
+                }}>
+                  {calibrationData.down ? "✅" : "⬇️"}
+                </div>
+                {/* Left */}
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-16 h-16 rounded-xl flex items-center justify-center text-3xl transition-all duration-300" style={{
+                  background: calibrationSteps[calibrationStep] === "left" ? "rgba(59,130,246,0.3)" : calibrationData.left ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.05)",
+                  border: calibrationSteps[calibrationStep] === "left" ? "3px solid #3b82f6" : calibrationData.left ? "2px solid #22c55e" : "2px solid rgba(255,255,255,0.1)",
+                  transform: calibrationSteps[calibrationStep] === "left" ? "translateY(-50%) scale(1.15)" : "translateY(-50%) scale(1)",
+                  boxShadow: calibrationSteps[calibrationStep] === "left" ? "0 0 20px rgba(59,130,246,0.4)" : "none",
+                }}>
+                  {calibrationData.left ? "✅" : "⬅️"}
+                </div>
+                {/* Right */}
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-16 h-16 rounded-xl flex items-center justify-center text-3xl transition-all duration-300" style={{
+                  background: calibrationSteps[calibrationStep] === "right" ? "rgba(59,130,246,0.3)" : calibrationData.right ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.05)",
+                  border: calibrationSteps[calibrationStep] === "right" ? "3px solid #3b82f6" : calibrationData.right ? "2px solid #22c55e" : "2px solid rgba(255,255,255,0.1)",
+                  transform: calibrationSteps[calibrationStep] === "right" ? "translateY(-50%) scale(1.15)" : "translateY(-50%) scale(1)",
+                  boxShadow: calibrationSteps[calibrationStep] === "right" ? "0 0 20px rgba(59,130,246,0.4)" : "none",
+                }}>
+                  {calibrationData.right ? "✅" : "➡️"}
+                </div>
+              </div>
+
+              <p className="text-xl font-black text-blue-400 mb-4" style={{ animation: "playPulse 1.2s ease-in-out infinite" }}>
+                Step on {calibrationSteps[calibrationStep]?.toUpperCase()} arrow!
+              </p>
+
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => {
+                    setCalibrating(false)
+                    setCalibrationStep(0)
+                    setCalibrationData({})
+                  }}
+                  className="flex-1 py-2.5 rounded-full font-bold text-sm text-white/60"
+                  style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)" }}
+                >
+                  Cancel
+                </button>
+                {padMapping && (
+                  <button
+                    onClick={() => {
+                      clearPadMapping()
+                      setPadMapping(null)
+                      setCalibrating(false)
+                      setCalibrationStep(0)
+                      setCalibrationData({})
+                    }}
+                    className="flex-1 py-2.5 rounded-full font-bold text-sm text-red-400"
+                    style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)" }}
+                  >
+                    Reset to Default
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )
   }
