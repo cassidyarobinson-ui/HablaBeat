@@ -114,17 +114,17 @@ function readPadState(gp: Gamepad, debug: boolean = false, mapping: PadMapping |
   const stdLeft  = b[14]?.pressed ?? false
   const stdRight = b[15]?.pressed ?? false
 
-  // Alt mapping A (buttons 0-3, common on cheap dance mats)
-  const altUp    = b[0]?.pressed ?? false
-  const altRight = b[1]?.pressed ?? false
-  const altDown  = b[2]?.pressed ?? false
-  const altLeft  = b[3]?.pressed ?? false
+  // Alt mapping A (buttons 0-3, standard DDR mat: left=0, down=1, up=2, right=3)
+  const altLeft  = b[0]?.pressed ?? false
+  const altDown  = b[1]?.pressed ?? false
+  const altUp    = b[2]?.pressed ?? false
+  const altRight = b[3]?.pressed ?? false
 
-  // Alt mapping B (some mats use 4-7)
-  const alt2Up    = b[4]?.pressed ?? false
-  const alt2Right = b[5]?.pressed ?? false
-  const alt2Down  = b[6]?.pressed ?? false
-  const alt2Left  = b[7]?.pressed ?? false
+  // Alt mapping B (some mats use 4-7, same order: left=4, down=5, up=6, right=7)
+  const alt2Left  = b[4]?.pressed ?? false
+  const alt2Down  = b[5]?.pressed ?? false
+  const alt2Up    = b[6]?.pressed ?? false
+  const alt2Right = b[7]?.pressed ?? false
 
   // Axis-based (some mats use analog axes for d-pad)
   const axisLeft  = (axes[0] ?? 0) < -0.5
