@@ -50,7 +50,7 @@ interface MapboxMapProps {
 
 // Region presets
 const REGIONS = {
-  nouns: { center: [-88, 20] as [number, number], zoom: 4.2, label: "🌎 NOUNS", subtitle: "North & Central America" },
+  nouns: { center: [-85, 18] as [number, number], zoom: 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
   verbs: { center: [-65, -18] as [number, number], zoom: 3.2, label: "🌍 VERBS", subtitle: "South America" },
 }
 
@@ -255,8 +255,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         const circle = document.createElement("div")
         circle.style.cssText = `
-          width: 48px;
-          height: 48px;
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -273,9 +273,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         `
 
         if (node.verbLetter) {
-          circle.innerHTML = `<span style="font-size:20px;font-weight:900;color:${node.verbStyle?.color}">${node.verbLetter}</span>`
+          circle.innerHTML = `<span style="font-size:24px;font-weight:900;color:${node.verbStyle?.color}">${node.verbLetter}</span>`
         } else {
-          circle.innerHTML = `<span style="font-size:22px;line-height:1">${node.icon}</span>`
+          circle.innerHTML = `<span style="font-size:26px;line-height:1">${node.icon}</span>`
         }
 
         if (isUnlocked) {
@@ -294,7 +294,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           backdrop-filter: blur(6px);
           border-radius: 6px;
           padding: 3px 10px;
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 700;
           color: #1e293b;
           white-space: nowrap;
@@ -323,10 +323,10 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         // Hover effects — bigger scale
         el.addEventListener("mouseenter", () => {
-          inner.style.transform = "scale(1.4)"
-          inner.style.filter = "drop-shadow(0 0 20px rgba(74,124,219,0.6))"
+          inner.style.transform = "scale(1.6)"
+          inner.style.filter = "drop-shadow(0 0 24px rgba(74,124,219,0.7))"
           circle.style.border = "4px solid #fbbf24"
-          circle.style.boxShadow = "0 0 24px rgba(251,191,36,0.5), 0 4px 12px rgba(0,0,0,0.2)"
+          circle.style.boxShadow = "0 0 28px rgba(251,191,36,0.6), 0 6px 16px rgba(0,0,0,0.25)"
           el.style.zIndex = "100"
         })
         el.addEventListener("mouseleave", () => {

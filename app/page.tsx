@@ -2627,7 +2627,7 @@ export default function HablaBeat() {
 
     const modes = [
       { key: "sing", label: "Sing", icon: "🎤", available: hasSing, score: null as number | null, color: "#8b5cf6" },
-      { key: "pop", label: "Pop", icon: "🥕", available: hasPop, score: popHighScores[currentSong.number] > 0 ? popHighScores[currentSong.number] : null, color: "#4a7cdb" },
+      { key: "pop", label: "Dance", icon: "🥕", available: hasPop, score: popHighScores[currentSong.number] > 0 ? popHighScores[currentSong.number] : null, color: "#4a7cdb" },
       { key: "fly", label: "Fly", icon: "☁️", available: hasFly, score: flyHighScores[currentSong.number] > 0 ? flyHighScores[currentSong.number] : null, color: "#06b6d4" },
     ]
 
@@ -3067,7 +3067,7 @@ export default function HablaBeat() {
               animation: "lbPulse 2s ease-in-out infinite",
             }}>
               <div className="px-5 py-4">
-                <p className="text-white font-black text-lg text-center mb-1">🎉 New {pendingLeaderboardEntry.mode === "fly" ? "Fly" : "Pop"} Score!</p>
+                <p className="text-white font-black text-lg text-center mb-1">🎉 New {pendingLeaderboardEntry.mode === "fly" ? "Fly" : "Dance"} Score!</p>
                 <div className="flex justify-center gap-4 mb-3">
                   {pendingLeaderboardEntry.mode === "fly" ? (
                     <span className="text-white/80 text-sm">💰 <span className="font-black text-yellow-300">{pendingLeaderboardEntry.bank}</span> Score</span>

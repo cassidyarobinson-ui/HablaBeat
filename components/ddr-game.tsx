@@ -1018,7 +1018,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     setIsPaused(false)
   }
 
-  // Calculate grade based on percentage of bubbles popped
+  // Calculate grade based on percentage of words hit
   const getGrade = () => {
     const total = notesRef.current.length
     if (total === 0) return { grade: "F", color: "text-red-400" }
@@ -1289,7 +1289,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             border: "1.5px solid rgba(255,255,255,0.85)"
           }}>
             <p className="font-black mb-2 text-base" style={{ color: "#4a7cdb" }}>🎯 Your Mission:</p>
-            <p className="text-base leading-relaxed font-medium" style={{ color: "#18181b" }}>Pop the bubbles with your carrot arrows to collect coins for your vocab bank!</p>
+            <p className="text-base leading-relaxed font-medium" style={{ color: "#18181b" }}>Hit the words with your arrows to collect coins for your vocab bank!</p>
           </div>
 
           {/* Speed card — frosted glass with pill buttons matching home style */}
