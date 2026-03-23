@@ -45,6 +45,7 @@ const VERB_NODES = MAP_NODES.filter(n => n.category === "verbs")
 interface MapboxMapProps {
   onSelectSection: (sectionId: string, originX: string, originY: string) => void
   isSectionBadgeUnlocked: (section: { id: string }) => boolean
+  openSectionId?: string
 }
 
 // Region presets
@@ -53,7 +54,7 @@ const REGIONS = {
   verbs: { center: [-65, -18] as [number, number], zoom: 3.2, label: "🌍 VERBS", subtitle: "South America" },
 }
 
-export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: MapboxMapProps) {
+export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<{ marker: maplibregl.Marker; inner: HTMLDivElement; circle: HTMLDivElement; category: "nouns" | "verbs"; sectionId: string }[]>([])
@@ -61,6 +62,29 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)
   const activeRegionRef = useRef<"nouns" | "verbs">("nouns")
   const selectedIndexRef = useRef<number>(-1)
+  const onSelectSectionRef = useRef(onSelectSection)
+  onSelectSectionRef.current = onSelectSection
+
+  // Zoom into country, then open the overlay
+  const zoomAndOpen = useCallback((node: typeof MAP_NODES[number]) => {
+    const map = mapRef.current
+    if (!map) {
+      onSelectSectionRef.current(node.sectionId, "50%", "50%")
+      return
+    }
+    map.flyTo({ center: [node.lng, node.lat], zoom: 6, duration: 800, essential: true })
+    setTimeout(() => {
+      const point = map.project([node.lng, node.lat])
+      const rect = containerRef.current?.getBoundingClientRect()
+      if (point && rect) {
+        const pctX = ((point.x / rect.width) * 100).toFixed(1) + "%"
+        const pctY = ((point.y / rect.height) * 100).toFixed(1) + "%"
+        onSelectSectionRef.current(node.sectionId, pctX, pctY)
+      } else {
+        onSelectSectionRef.current(node.sectionId, "50%", "50%")
+      }
+    }, 850)
+  }, [])
 
   // Keep refs in sync
   activeRegionRef.current = activeRegion
@@ -152,27 +176,26 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
       const newRegion = activeRegionRef.current === "nouns" ? "verbs" : "nouns"
       flyTo(newRegion)
     } else if (btn === "start") {
-      // Select the current marker
+      // Select the current marker — zoom in then open
       if (selectedIndexRef.current >= 0) {
         const nodes = getActiveNodes()
         const node = nodes[selectedIndexRef.current]
-        if (node) {
-          const map = mapRef.current
-          const point = map?.project([node.lng, node.lat])
-          const rect = containerRef.current?.getBoundingClientRect()
-          if (point && rect) {
-            const pctX = ((point.x / rect.width) * 100).toFixed(1) + "%"
-            const pctY = ((point.y / rect.height) * 100).toFixed(1) + "%"
-            onSelectSection(node.sectionId, pctX, pctY)
-          } else {
-            onSelectSection(node.sectionId, "50%", "50%")
-          }
-        }
+        if (node) zoomAndOpen(node)
       }
     }
-  }, [getActiveNodes, highlightMarker, flyTo, onSelectSection])
+  }, [getActiveNodes, highlightMarker, flyTo, zoomAndOpen])
 
   useGamepad({ onPress: handlePadPress, enabled: true })
+
+  // When overlay closes, fly back to region view
+  const prevOpenRef = useRef(openSectionId)
+  useEffect(() => {
+    if (prevOpenRef.current && !openSectionId && mapRef.current) {
+      const r = REGIONS[activeRegionRef.current]
+      mapRef.current.flyTo({ center: r.center, zoom: r.zoom, duration: 800, essential: true })
+    }
+    prevOpenRef.current = openSectionId
+  }, [openSectionId])
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -319,17 +342,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
           }
         })
 
-        // Click handler
+        // Click handler — zoom into country then open overlay
         el.addEventListener("click", () => {
-          const point = map.project([node.lng, node.lat])
-          const rect = containerRef.current?.getBoundingClientRect()
-          if (rect) {
-            const pctX = ((point.x / rect.width) * 100).toFixed(1) + "%"
-            const pctY = ((point.y / rect.height) * 100).toFixed(1) + "%"
-            onSelectSection(node.sectionId, pctX, pctY)
-          } else {
-            onSelectSection(node.sectionId, "50%", "50%")
-          }
+          zoomAndOpen(node)
         })
 
         const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })

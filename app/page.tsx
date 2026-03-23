@@ -3811,6 +3811,7 @@ export default function HablaBeat() {
                     setOpenSectionId(sectionId)
                   }}
                   isSectionBadgeUnlocked={isSectionBadgeUnlocked}
+                  openSectionId={openSectionId}
                 />
               </div>
             ) : curriculumData.map((category, catIdx) => {
