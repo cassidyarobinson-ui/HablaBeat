@@ -92,14 +92,17 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
         const isVerb = node.category === "verbs"
         const isUnlocked = isSectionBadgeUnlocked({ id: node.sectionId })
 
-        // Create marker element
+        // Create marker element (outer el must not have transform overridden — MapLibre uses it for positioning)
         const el = document.createElement("div")
-        el.style.cssText = `
+        el.style.cssText = `cursor: pointer;`
+
+        // Inner wrapper for hover effects (safe to transform)
+        const inner = document.createElement("div")
+        inner.style.cssText = `
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 3px;
-          cursor: pointer;
           transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), filter 0.2s;
         `
 
@@ -169,19 +172,20 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
         `
         country.textContent = node.country
 
-        el.appendChild(circle)
-        el.appendChild(label)
-        el.appendChild(country)
+        inner.appendChild(circle)
+        inner.appendChild(label)
+        inner.appendChild(country)
+        el.appendChild(inner)
 
-        // Hover effects
+        // Hover effects on inner wrapper (not el — MapLibre controls el's transform)
         el.addEventListener("mouseenter", () => {
-          el.style.transform = "scale(1.2)"
-          el.style.filter = "drop-shadow(0 0 16px rgba(74,124,219,0.5))"
+          inner.style.transform = "scale(1.2)"
+          inner.style.filter = "drop-shadow(0 0 16px rgba(74,124,219,0.5))"
           el.style.zIndex = "100"
         })
         el.addEventListener("mouseleave", () => {
-          el.style.transform = "scale(1)"
-          el.style.filter = "none"
+          inner.style.transform = "scale(1)"
+          inner.style.filter = "none"
           el.style.zIndex = "10"
         })
 
