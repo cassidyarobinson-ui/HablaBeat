@@ -50,7 +50,7 @@ interface MapboxMapProps {
 
 // Region presets
 const REGIONS = {
-  nouns: { center: [-85, 16] as [number, number], zoom: 3.5, label: "🌎 NOUNS", subtitle: "North & Central America" },
+  nouns: { center: [-88, 20] as [number, number], zoom: 4.2, label: "🌎 NOUNS", subtitle: "North & Central America" },
   verbs: { center: [-65, -18] as [number, number], zoom: 3.2, label: "🌍 VERBS", subtitle: "South America" },
 }
 

@@ -80,8 +80,10 @@ const GAME_CATALOG = [
 const NOTE_TRAVEL_TIME = 3.0
 const HIT_LINE_POSITION = 0.85
 const HIT_WINDOWS = { PERFECT: 0.08, GOOD: 0.15, MISS: 0.25 }
-const LANE_COLORS = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"]
-const LANE_TEXT_COLORS = ["text-red-500", "text-blue-500", "text-green-500", "text-yellow-500"]
+// Lane colors: left=Green, down=Red, up=Yellow, right=Purple
+const LANE_COLORS = ["bg-green-500", "bg-red-500", "bg-yellow-400", "bg-purple-500"]
+const LANE_TEXT_COLORS = ["text-green-500", "text-red-500", "text-yellow-400", "text-purple-500"]
+const LANE_HEX = ["#22c55e", "#ef4444", "#facc15", "#a855f7"]
 
 // Keywords per song for "Key Words" mode — words as they appear in the lyrics (lowercase, no punctuation)
 const SONG_KEYWORDS: Record<number, Set<string>> = {
@@ -421,56 +423,29 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 ? Math.max(0, 1 - (yPosition - HIT_LINE_POSITION * 100) / 20) // Fade out as it exits
                 : Math.min(1, 0.4 + progress * 0.6) // fade in slightly
 
+              const laneColor = LANE_HEX[note.lane] || "#ffffff"
               const noteEl = document.createElement("div")
-              // Round blue bubble with coin inside
+              // Word with colored underline — underline aligns to dashed hit line
               noteEl.style.cssText = `
                 position: absolute;
                 left: ${note.lane * 25}%;
                 width: 25%;
                 top: ${yPosition}%;
-                transform: translateY(-50%) scale(${scale}) rotateX(${rotateX}deg);
-                transform-origin: center center;
+                transform: translateY(-50%);
                 z-index: ${Math.floor(progress * 20) + 10};
                 display: flex;
+                flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                border-radius: 0;
-                background: none;
-                border: none;
-                box-shadow: none;
-              `;
-              const innerBubble = document.createElement("div")
-              innerBubble.style.cssText = `
-                width: 100%;
-                max-width: 220px;
-                aspect-ratio: 1;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                background: radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 60%, transparent 100%);
-                border: none;
-                box-shadow: none;
-                overflow: visible;
+                justify-content: flex-end;
                 opacity: ${opacity};
+                pointer-events: none;
               `
 
-              // Coin inside the bubble — English (small) above Spanish
-              const englishLabel = note.english && note.english.toLowerCase() !== note.text.toLowerCase()
-                ? `<div style="font-size:15px;font-weight:700;color:#7A3800;opacity:0.85;line-height:1;margin-bottom:2px;text-align:center;max-width:92%">${note.english}</div>`
-                : ""
-              const coinContent = `${englishLabel}<div style="font-size:22px;font-weight:900;color:#451A03;line-height:1.1;max-width:92%;text-align:center">${note.text}</div>`
+              noteEl.innerHTML = `
+                <div style="font-size:clamp(14px,3.5vw,22px);font-weight:900;color:#ffffff;text-shadow:0 2px 6px rgba(0,0,0,0.6),0 0 12px rgba(0,0,0,0.3);line-height:1.2;text-align:center;padding:0 4px;margin-bottom:4px">${note.text}</div>
+                <div style="width:80%;max-width:140px;height:4px;border-radius:2px;background:${laneColor};box-shadow:0 0 8px ${laneColor}80,0 0 16px ${laneColor}40"></div>
+              `
 
-              innerBubble.innerHTML = `
-                <div style="width:82%;height:82%;border-radius:50%;background:conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706);border:3px solid #92400E;box-shadow:0 2px 8px rgba(0,0,0,0.35),inset 0 -4px 8px rgba(120,53,0,0.3),inset 3px 3px 10px rgba(254,243,199,0.5),0 0 10px rgba(251,191,36,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:2px;position:relative">
-                  <div style="position:absolute;inset:3px;border-radius:50%;border:2px solid rgba(254,243,199,0.4);pointer-events:none"></div>
-                  <div style="position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(254,243,199,0.2);pointer-events:none"></div>
-                  <div style="position:absolute;top:8%;left:15%;width:32%;height:20%;background:radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-15deg);pointer-events:none"></div>
-                  ${coinContent}
-                </div>`
-
-              noteEl.appendChild(innerBubble)
               container.appendChild(noteEl)
             }
           }
@@ -915,93 +890,45 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       isJustPerfect,
     })
 
-    // ── BUBBLE POP HIT EFFECT ──────────────────────────────
+    // ── LINE FLASH HIT EFFECT ──────────────────────────────
     {
-      // Primary pop ring — fast expanding burst
-      const popRing1 = document.createElement("div")
-      popRing1.className = "absolute rounded-full pointer-events-none"
-      popRing1.style.cssText = `
-        left: ${laneLeft}%; width: ${laneWidth}%; bottom: 12%; aspect-ratio: 1;
-        border: 3px solid rgba(147,197,253,0.95);
-        animation: bubblePop 0.35s ease-out forwards; z-index: 90;
+      const hitLaneColor = LANE_HEX[lane] || "#ffffff"
+      // Bright line flash across the lane
+      const lineFlash = document.createElement("div")
+      lineFlash.className = "absolute pointer-events-none"
+      lineFlash.style.cssText = `
+        left: ${laneLeft}%; width: ${laneWidth}%; bottom: 14%; height: 6px;
+        background: ${hitLaneColor};
+        box-shadow: 0 0 20px ${hitLaneColor}, 0 0 40px ${hitLaneColor}80;
+        border-radius: 3px;
+        animation: linePulse 0.35s ease-out forwards; z-index: 90;
       `
-      container.appendChild(popRing1)
-      setTimeout(() => popRing1.remove(), 350)
+      container.appendChild(lineFlash)
+      setTimeout(() => lineFlash.remove(), 350)
 
-      // Secondary pop ring — slightly delayed, thinner
-      const popRing2 = document.createElement("div")
-      popRing2.className = "absolute rounded-full pointer-events-none"
-      popRing2.style.cssText = `
-        left: ${laneLeft}%; width: ${laneWidth}%; bottom: 12%; aspect-ratio: 1;
-        border: 2px solid rgba(200,230,255,0.7);
-        animation: bubblePopSlow 0.5s ease-out 0.05s forwards; z-index: 89;
-      `
-      container.appendChild(popRing2)
-      setTimeout(() => popRing2.remove(), 550)
-
-      // Bubble "skin" flash — brief full circle that pops
-      const skinFlash = document.createElement("div")
-      skinFlash.className = "absolute rounded-full pointer-events-none"
-      skinFlash.style.cssText = `
-        left: ${laneLeft + 2}%; width: ${laneWidth - 4}%; bottom: 13%; aspect-ratio: 1;
-        background: radial-gradient(circle, rgba(173,216,255,0.5), rgba(59,130,246,0.2));
-        animation: bubbleSkinPop 0.25s ease-out forwards; z-index: 88;
-      `
-      container.appendChild(skinFlash)
-      setTimeout(() => skinFlash.remove(), 250)
-
-      // Water droplet splashes — small arcs flying outward like a real bubble pop
-      for (let i = 0; i < 14; i++) {
-        const droplet = document.createElement("div")
-        const size = 3 + Math.random() * 6
-        const isLarge = size > 6
-        droplet.className = "absolute rounded-full pointer-events-none"
-        droplet.style.cssText = `
+      // Spark particles flying from the line
+      for (let i = 0; i < 8; i++) {
+        const spark = document.createElement("div")
+        const size = 2 + Math.random() * 4
+        spark.className = "absolute rounded-full pointer-events-none"
+        spark.style.cssText = `
           left: ${laneLeft + laneWidth / 2}%; bottom: 15%;
           width: ${size}px; height: ${size}px;
-          background: ${isLarge
-            ? "radial-gradient(circle at 30% 30%, rgba(200,230,255,0.95), rgba(100,180,255,0.7))"
-            : "radial-gradient(circle, rgba(147,197,253,0.9), rgba(59,130,246,0.5))"};
-          ${isLarge ? "box-shadow: inset 1px 1px 2px rgba(255,255,255,0.6);" : ""}
-          transition: all ${0.35 + Math.random() * 0.25}s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          background: ${hitLaneColor};
+          box-shadow: 0 0 6px ${hitLaneColor};
+          transition: all ${0.3 + Math.random() * 0.2}s ease-out;
           opacity: 1; z-index: 91;
         `
-        container.appendChild(droplet)
-        const angle = (i / 14) * Math.PI * 2 + (Math.random() - 0.5) * 0.4
-        const dist = 35 + Math.random() * 55
-        const gravity = 15 + Math.random() * 25
+        container.appendChild(spark)
+        const angle = (i / 8) * Math.PI * 2 + (Math.random() - 0.5) * 0.5
+        const dist = 20 + Math.random() * 40
         setTimeout(() => {
-          droplet.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist + gravity}px)`
-          droplet.style.opacity = "0"
-          droplet.style.width = "1px"
-          droplet.style.height = "1px"
+          spark.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`
+          spark.style.opacity = "0"
         }, 10)
-        setTimeout(() => droplet.remove(), 600)
+        setTimeout(() => spark.remove(), 500)
       }
     }
-
-    // Coin dropping out of the popped bubble — shows English above Spanish
-    const coin = document.createElement("div")
-    coin.className = "absolute pointer-events-none"
-    coin.style.cssText = `
-      left: ${laneLeft}%; width: ${laneWidth}%; bottom: 14%;
-      display: flex; justify-content: center; z-index: 95;
-      animation: coinDrop 0.8s ease-in forwards;
-    `
-    const englishOnCoin = noteEnglish && noteEnglish.toLowerCase() !== noteText.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
-      ? `<div style="font-size:10px;font-weight:700;color:#5C3000;line-height:1;margin-bottom:1px;text-align:center;max-width:90%;text-shadow:0 0.5px 0 rgba(255,255,255,0.3)">${noteEnglish}</div>`
-      : ""
-    const coinText = `${englishOnCoin}<div style="font-size:${englishOnCoin ? "12" : "14"}px;font-weight:900;color:#3D1D00;line-height:1.1;max-width:90%;text-align:center;text-shadow:0 0.5px 0 rgba(255,255,255,0.3)">${noteText}</div>`
-    coin.innerHTML = `
-      <div style="width:56px;height:56px;border-radius:50%;background:conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706);border:3px solid #92400E;box-shadow:0 3px 10px rgba(0,0,0,0.5),inset 0 -3px 6px rgba(120,53,0,0.4),inset 2px 2px 6px rgba(254,243,199,0.5),0 0 12px rgba(251,191,36,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:2px;position:relative">
-        <div style="position:absolute;inset:3px;border-radius:50%;border:2px solid rgba(254,243,199,0.4);pointer-events:none"></div>
-        <div style="position:absolute;inset:7px;border-radius:50%;border:1px solid rgba(254,243,199,0.2);pointer-events:none"></div>
-        <div style="position:absolute;top:8%;left:15%;width:32%;height:20%;background:radial-gradient(ellipse,rgba(255,255,255,0.5),rgba(255,255,255,0) 70%);border-radius:50%;transform:rotate(-15deg);pointer-events:none"></div>
-        ${coinText}
-      </div>
-    `
-    container.appendChild(coin)
-    setTimeout(() => coin.remove(), 800)
 
     // English word burst — large, bright text that pops out of the bubble
     const el = document.createElement("div")
@@ -1975,17 +1902,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           <div className="absolute inset-0 flex">
             {[0, 1, 2, 3].map((lane) => (
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
-                <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_COLORS[lane].replace("bg-", "") === "red-500" ? "rgb(239,68,68)" : LANE_COLORS[lane].replace("bg-", "") === "blue-500" ? "rgb(59,130,246)" : LANE_COLORS[lane].replace("bg-", "") === "green-500" ? "rgb(34,197,94)" : "rgb(234,179,8)" }} />
+                <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_HEX[lane] }} />
                 <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "1%", width: "min(95%, 280px)", aspectRatio: "1" }} />
                 {/* Target arrow at hit line — clean directional chevron */}
                 <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "2%", width: "min(70%, 90px)", aspectRatio: "1" }}>
                   <svg viewBox="0 0 48 48" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    {/* Outer glow circle */}
-                    <circle cx="24" cy="24" r="22" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
+                    {/* Outer glow circle in lane color */}
+                    <circle cx="24" cy="24" r="22" fill="none" stroke={LANE_HEX[lane]} strokeWidth="1.5" opacity="0.5" />
                     {/* Arrow shape — rotated per lane: left=0, down=1, up=2, right=3 */}
                     <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`}>
-                      {/* Up-pointing chevron arrow (default orientation) */}
-                      <path d="M24 10 L38 28 L30 28 L30 38 L18 38 L18 28 L10 28 Z" fill="rgba(255,255,255,0.85)" stroke="rgba(255,255,255,0.95)" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M24 10 L38 28 L30 28 L30 38 L18 38 L18 28 L10 28 Z" fill={LANE_HEX[lane]} stroke="rgba(255,255,255,0.6)" strokeWidth="1" strokeLinejoin="round" />
                     </g>
                   </svg>
                 </div>
@@ -2135,19 +2061,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           0%, 100% { transform: translateY(-50%) scale(1); }
           50% { transform: translateY(-50%) scale(1.04); }
         }
-        @keyframes bubblePop {
-          0% { transform: scale(1); opacity: 1; border-width: 3px; }
-          60% { opacity: 0.6; }
-          100% { transform: scale(2.8); opacity: 0; border-width: 0.5px; }
-        }
-        @keyframes bubblePopSlow {
-          0% { transform: scale(0.8); opacity: 0.7; border-width: 2px; }
-          100% { transform: scale(3.2); opacity: 0; border-width: 0.3px; }
-        }
-        @keyframes bubbleSkinPop {
-          0% { transform: scale(1); opacity: 0.6; }
-          50% { transform: scale(1.3); opacity: 0.3; }
-          100% { transform: scale(1.8); opacity: 0; }
+        @keyframes linePulse {
+          0% { transform: scaleX(1); opacity: 1; }
+          50% { transform: scaleX(1.3); opacity: 0.7; }
+          100% { transform: scaleX(1.6); opacity: 0; }
         }
         @keyframes coinDrop {
           0% { transform: translateY(0) scale(1.2); opacity: 1; }
