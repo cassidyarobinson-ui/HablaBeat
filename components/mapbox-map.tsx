@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 
@@ -43,9 +43,24 @@ interface MapboxMapProps {
   isSectionBadgeUnlocked: (section: { id: string }) => boolean
 }
 
+// Region presets
+const REGIONS = {
+  nouns: { center: [-85, 18] as [number, number], zoom: 3.8, label: "🌎 NOUNS", subtitle: "North & Central America" },
+  verbs: { center: [-65, -18] as [number, number], zoom: 3.2, label: "🌍 VERBS", subtitle: "South America" },
+}
+
 export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
+  const [activeRegion, setActiveRegion] = useState<"nouns" | "verbs">("nouns")
+
+  const flyTo = (region: "nouns" | "verbs") => {
+    const map = mapRef.current
+    if (!map) return
+    setActiveRegion(region)
+    const r = REGIONS[region]
+    map.flyTo({ center: r.center, zoom: r.zoom, duration: 1200, essential: true })
+  }
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -72,8 +87,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
           },
         ],
       },
-      center: [-75, 2],
-      zoom: 2.3,
+      center: [-85, 18],
+      zoom: 3.8,
       minZoom: 1.5,
       maxZoom: 8,
       pitchWithRotate: false,
@@ -216,6 +231,57 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
   }, [])
 
   return (
-    <div ref={containerRef} className="w-full h-full" style={{ minHeight: 400 }} />
+    <div className="relative w-full h-full" style={{ minHeight: 400 }}>
+      <div ref={containerRef} className="w-full h-full" />
+
+      {/* Region toggle buttons */}
+      <div style={{
+        position: "absolute",
+        bottom: 16,
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: "flex",
+        gap: 8,
+        zIndex: 10,
+      }}>
+        {(["nouns", "verbs"] as const).map((region) => {
+          const r = REGIONS[region]
+          const isActive = activeRegion === region
+          return (
+            <button
+              key={region}
+              onClick={() => flyTo(region)}
+              style={{
+                padding: "8px 20px",
+                borderRadius: 24,
+                border: isActive ? "2px solid white" : "2px solid rgba(255,255,255,0.5)",
+                background: isActive
+                  ? (region === "nouns"
+                    ? "linear-gradient(135deg, #3b82f6, #2563eb)"
+                    : "linear-gradient(135deg, #7c3aed, #6d28d9)")
+                  : "rgba(255,255,255,0.85)",
+                color: isActive ? "white" : "#374151",
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: "pointer",
+                boxShadow: isActive
+                  ? "0 4px 14px rgba(0,0,0,0.25)"
+                  : "0 2px 8px rgba(0,0,0,0.12)",
+                backdropFilter: "blur(8px)",
+                transition: "all 0.2s ease",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                lineHeight: 1.2,
+              }}
+            >
+              <span>{r.label}</span>
+              <span style={{ fontSize: 9, fontWeight: 500, opacity: 0.8 }}>{r.subtitle}</span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }
