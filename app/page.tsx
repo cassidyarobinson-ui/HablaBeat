@@ -1619,6 +1619,9 @@ export default function HablaBeat() {
   const [openSectionId, setOpenSectionId] = useState<string>("")
   const [worldClosing, setWorldClosing] = useState(false)
   const [worldZoomOrigin, setWorldZoomOrigin] = useState({ x: "50%", y: "50%" })
+  // World song view pad navigation: [songIndex, modeIndex (0=sing,1=dance,2=fly)]
+  const [worldSongIdx, setWorldSongIdx] = useState(0)
+  const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "pointer" | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
   const [isDesktop, setIsDesktop] = useState(false)
@@ -1755,6 +1758,48 @@ export default function HablaBeat() {
   useGamepad({
     enabled: isOnHub,
     onPress: handleHubNav,
+  })
+
+  // World song view gamepad navigation
+  useGamepad({
+    enabled: !!openSectionId && !worldClosing,
+    onPress: (btn: PadButton) => {
+      let openSection: any = null
+      let catId = ""
+      for (const cat of curriculumData) {
+        const s = cat.sections.find(s => s.id === openSectionId)
+        if (s) { openSection = s; catId = cat.id; break }
+      }
+      if (!openSection) return
+      const songs = openSection.songs
+      const songCount = songs.length
+      // Build available modes for current song
+      const idx = Math.min(worldSongIdx, songCount - 1)
+      const song = songs[idx]
+      const modes: string[] = []
+      if (song?.youtubeId && song.youtubeId !== "") modes.push("sing")
+      if (selectedLanguage === "spanish") modes.push("dance")
+      if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number]) modes.push("fly")
+
+      if (btn === "up") {
+        setWorldSongIdx(prev => Math.max(0, prev - 1))
+      } else if (btn === "down") {
+        setWorldSongIdx(prev => Math.min(songCount - 1, prev + 1))
+      } else if (btn === "left") {
+        setWorldModeIdx(prev => Math.max(0, prev - 1))
+      } else if (btn === "right") {
+        setWorldModeIdx(prev => Math.min(modes.length - 1, prev + 1))
+      } else if (btn === "start") {
+        const mode = modes[worldModeIdx]
+        if (!song) return
+        if (mode === "sing") handlePlaySong(song.id, catId, openSectionId)
+        else if (mode === "dance") handlePlayDDR(song.id, catId, openSectionId)
+        else if (mode === "fly") setFlySongNumber(song.number)
+      } else if (btn === "select") {
+        setWorldClosing(true)
+        setTimeout(() => { setOpenSectionId(""); setWorldClosing(false) }, 450)
+      }
+    },
   })
 
   useKeyboardNav({
@@ -3442,6 +3487,19 @@ export default function HablaBeat() {
             100% { opacity: 1; transform: scale(1); }
           }
           .world-content-in { animation: worldContentFadeIn 0.4s ease 0.7s both; }
+          .world-mode-btn {
+            transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, filter 0.2s, border-color 0.2s !important;
+          }
+          .world-mode-btn:hover {
+            transform: scale(1.06) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06);
+            filter: brightness(1.05);
+          }
+          .world-mode-btn.world-pad-selected {
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 0 0 3px #fbbf24, 0 6px 20px rgba(251,191,36,0.3);
+            filter: brightness(1.08);
+          }
           .world-content-in .flag-text {
             color: #fff;
             text-shadow: 0 1px 6px rgba(0,0,0,0.6);
@@ -3632,21 +3690,28 @@ export default function HablaBeat() {
                   {/* Song cards */}
                   <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-4" style={{ paddingBottom: "24px" }}>
                     <div className="space-y-4">
-                      {openSection.songs.map((song) => {
+                      {openSection.songs.map((song, songIdx) => {
                         const songBestGrade = bestGrades[song.number]
                         const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[song.number]
                         const hasPop = selectedLanguage === "spanish"
                         const hasSing = song.youtubeId && song.youtubeId !== ""
                         const description = SONG_DESCRIPTIONS[song.number] ?? ""
                         const keywords = SONG_KEYWORDS_DISPLAY[song.number] ?? []
+                        const isPadSelected = songIdx === worldSongIdx
+                        // Build mode list to determine which mode button gets highlight
+                        const modeList: string[] = []
+                        if (hasSing) modeList.push("sing")
+                        if (hasPop) modeList.push("dance")
+                        if (hasFly) modeList.push("fly")
 
                         return (
                           <div
                             key={song.id}
-                            className="rounded-2xl overflow-hidden"
+                            className="rounded-2xl overflow-hidden transition-all duration-200"
                             style={{
                               background: "#ffffff",
-                              border: "1px solid #e5e7eb",
+                              border: isPadSelected ? "2px solid #fbbf24" : "1px solid #e5e7eb",
+                              boxShadow: isPadSelected ? "0 0 0 3px rgba(251,191,36,0.3), 0 4px 16px rgba(0,0,0,0.08)" : undefined,
                               boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
                             }}
                           >
@@ -3680,7 +3745,7 @@ export default function HablaBeat() {
                               {hasSing && (
                                 <button
                                   onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                                  className="flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl font-black text-sm active:scale-95 transition-all"
+                                  className={`world-mode-btn flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl font-black text-sm active:scale-95 transition-all ${isPadSelected && modeList[worldModeIdx] === "sing" ? "world-pad-selected" : ""}`}
                                   style={{ background: "#faf5ff", color: "#7c3aed", border: "1.5px solid #e9d5ff" }}
                                 >
                                   <span className="text-lg">🎤</span>
@@ -3692,7 +3757,7 @@ export default function HablaBeat() {
                                   onClick={() => {
                                     handlePlayDDR(song.id, openCategory!.id, openSection!.id)
                                   }}
-                                  className="flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl font-black text-sm active:scale-95 transition-all"
+                                  className={`world-mode-btn flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl font-black text-sm active:scale-95 transition-all ${isPadSelected && modeList[worldModeIdx] === "dance" ? "world-pad-selected" : ""}`}
                                   style={{ background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef" }}
                                 >
                                   <span className="text-lg">🥕</span>
@@ -3705,7 +3770,7 @@ export default function HablaBeat() {
                               {hasFly && (
                                 <button
                                   onClick={() => setFlySongNumber(song.number)}
-                                  className="flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl font-black text-sm active:scale-95 transition-all"
+                                  className={`world-mode-btn flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl font-black text-sm active:scale-95 transition-all ${isPadSelected && modeList[worldModeIdx] === "fly" ? "world-pad-selected" : ""}`}
                                   style={{ background: "#f0fdfa", color: "#0891b2", border: "1.5px solid #a5f3fc" }}
                                 >
                                   <span className="text-lg">☁️</span>
@@ -3808,6 +3873,8 @@ export default function HablaBeat() {
                 <MapboxMap
                   onSelectSection={(sectionId, cx, cy) => {
                     setWorldZoomOrigin({ x: cx, y: cy })
+                    setWorldSongIdx(0)
+                    setWorldModeIdx(1) // default to Dance
                     setOpenSectionId(sectionId)
                   }}
                   isSectionBadgeUnlocked={isSectionBadgeUnlocked}
