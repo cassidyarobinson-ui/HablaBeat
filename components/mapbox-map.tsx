@@ -307,12 +307,17 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         const country = document.createElement("div")
         country.style.cssText = `
-          font-size: 9px;
-          font-weight: 600;
-          color: #64748b;
+          font-size: 11px;
+          font-weight: 700;
+          color: #1e293b;
           white-space: nowrap;
           text-align: center;
           font-family: system-ui, -apple-system, sans-serif;
+          background: rgba(255,255,255,0.85);
+          backdrop-filter: blur(4px);
+          border-radius: 4px;
+          padding: 1px 6px;
+          text-shadow: none;
         `
         country.textContent = node.country
 
