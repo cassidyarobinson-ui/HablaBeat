@@ -1905,9 +1905,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           {/* Lanes - extend full height, no top/bottom borders */}
           <div className="absolute inset-0 flex">
             {[0, 1, 2, 3].map((lane) => (
-              <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
+              <div key={lane} className="flex-1 relative" data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_HEX[lane] }} />
-                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "1%", width: "min(95%, 280px)", aspectRatio: "1" }} />
+                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "1%", width: "min(95%, 280px)", aspectRatio: "1", border: "none", outline: "none", background: "none" }} />
                 {/* Target arrow — bold triangle with glow */}
                 <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "2%", width: "min(70%, 90px)", aspectRatio: "1" }}>
                   <svg viewBox="0 0 48 48" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
