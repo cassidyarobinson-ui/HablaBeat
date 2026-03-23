@@ -78,7 +78,7 @@ const GAME_CATALOG = [
 
 // Constants
 const NOTE_TRAVEL_TIME = 3.0
-const HIT_LINE_POSITION = 0.85
+const HIT_LINE_POSITION = 0.88
 const HIT_WINDOWS = { PERFECT: 0.08, GOOD: 0.15, MISS: 0.25 }
 // Lane colors: left=Green, down=Red, up=Yellow, right=Purple
 const LANE_COLORS = ["bg-green-500", "bg-red-500", "bg-yellow-400", "bg-purple-500"]
@@ -441,7 +441,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 pointer-events: none;
               `
 
+              const englishLabel = note.english && note.english.toLowerCase() !== note.text.toLowerCase()
+                ? `<div style="font-size:clamp(11px,2.5vw,15px);font-weight:700;color:#fde68a;text-shadow:0 1px 4px rgba(0,0,0,0.7);line-height:1;text-align:center;padding:0 4px;margin-bottom:2px">${note.english}</div>`
+                : ""
               noteEl.innerHTML = `
+                ${englishLabel}
                 <div style="font-size:clamp(14px,3.5vw,22px);font-weight:900;color:#ffffff;text-shadow:0 2px 6px rgba(0,0,0,0.6),0 0 12px rgba(0,0,0,0.3);line-height:1.2;text-align:center;padding:0 4px;margin-bottom:4px">${note.text}</div>
                 <div style="width:80%;max-width:140px;height:4px;border-radius:2px;background:${laneColor};box-shadow:0 0 8px ${laneColor}80,0 0 16px ${laneColor}40"></div>
               `
@@ -1950,11 +1954,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </>
           )}
 
-          {/* Dashed tap line — sits at the center of target bubbles */}
+          {/* Dashed tap line — behind arrows at their vertical center */}
           <div
-            className="absolute left-0 right-0 pointer-events-none z-[6]"
+            className="absolute left-0 right-0 pointer-events-none z-[1]"
             style={{
-              bottom: "calc(0% + 140px)",
+              bottom: "calc(2% + 45px)",
               height: "2px",
               background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 12px, transparent 12px, transparent 22px)",
               boxShadow: "0 0 6px rgba(255,255,255,0.25)",
