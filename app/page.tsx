@@ -3630,8 +3630,8 @@ export default function HablaBeat() {
                     </div>
                   </div>
                   {/* Song cards */}
-                  <div className="flex-1 overflow-y-auto px-3 pt-4" style={{ paddingBottom: "24px" }}>
-                    <div className="space-y-4 max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+                  <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-4" style={{ paddingBottom: "24px" }}>
+                    <div className="space-y-4">
                       {openSection.songs.map((song) => {
                         const songBestGrade = bestGrades[song.number]
                         const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[song.number]
