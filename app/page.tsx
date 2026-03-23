@@ -3607,8 +3607,8 @@ export default function HablaBeat() {
                 } as React.CSSProperties}
               >
                 {/* Content */}
-                <div className="world-content-in flex flex-col h-full max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto">
-                  {/* Header — solid blue bar like Duolingo */}
+                <div className="world-content-in flex flex-col h-full">
+                  {/* Header — solid blue bar, full width */}
                   <div style={{ background: "#4a7cdb" }}>
                     <div className="flex items-center gap-3 px-4 pt-10 pb-3">
                       <button
@@ -3631,7 +3631,7 @@ export default function HablaBeat() {
                   </div>
                   {/* Song cards */}
                   <div className="flex-1 overflow-y-auto px-3 pt-4" style={{ paddingBottom: "24px" }}>
-                    <div className="space-y-4">
+                    <div className="space-y-4 max-w-md md:max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto">
                       {openSection.songs.map((song) => {
                         const songBestGrade = bestGrades[song.number]
                         const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[song.number]
@@ -3696,7 +3696,7 @@ export default function HablaBeat() {
                                   style={{ background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef" }}
                                 >
                                   <span className="text-lg">🥕</span>
-                                  <span>Pop</span>
+                                  <span>Dance</span>
                                   {popHighScores[song.number] > 0 && (
                                     <span className="text-xs font-bold" style={{ color: "#fbbf24" }}>💰 {popHighScores[song.number]}</span>
                                   )}
