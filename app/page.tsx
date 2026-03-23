@@ -3610,19 +3610,19 @@ export default function HablaBeat() {
                 <div className="world-content-in flex flex-col h-full">
                   {/* Header — solid blue bar, full width */}
                   <div style={{ background: "#4a7cdb" }}>
-                    <div className="flex items-center gap-3 px-4 pt-10 pb-3">
+                    <div className="flex items-center gap-2 px-4 py-2">
                       <button
                         onClick={closeWorld}
-                        className="w-9 h-9 rounded-full flex items-center justify-center font-black text-lg active:scale-90 transition-all flex-shrink-0"
+                        className="w-7 h-7 rounded-full flex items-center justify-center font-black text-sm active:scale-90 transition-all flex-shrink-0"
                         style={{ background: "rgba(255,255,255,0.2)", color: "#ffffff" }}
                       >←</button>
-                      <span className="text-2xl flex-shrink-0">{openSection.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <h2 className="font-black text-lg leading-tight text-white">{openSection.title}</h2>
-                        <p className="text-xs font-semibold text-white/70">{openSection.songs.length} songs · {countryName} {countryLabel}</p>
-                      </div>
+                      <span className="text-lg flex-shrink-0">{openSection.icon}</span>
+                      <h2 className="font-black text-base leading-tight text-white flex-shrink-0">{openSection.title}</h2>
+                      <span className="text-xs font-semibold text-white/70 flex-shrink-0">·</span>
+                      <p className="text-xs font-semibold text-white/70 truncate">{openSection.songs.length} songs · {countryName} {countryLabel}</p>
+                      <div className="flex-1" />
                       {flagBg && (
-                        <div className="w-10 h-7 rounded-md overflow-hidden flex-shrink-0" style={{ border: "2px solid rgba(255,255,255,0.4)" }}>
+                        <div className="w-8 h-5 rounded overflow-hidden flex-shrink-0" style={{ border: "1.5px solid rgba(255,255,255,0.4)" }}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={flagBg.url.replace("w640", "w80")} alt={countryName} className="w-full h-full object-cover" />
                         </div>
