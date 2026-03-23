@@ -28,7 +28,7 @@ const MAP_NODES: {
   { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.5, lng: -80.0, category: "nouns" },
   // Verbs — South America
   { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 4.6, lng: -74.1, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
-  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 8.0, lng: -66.9, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" } },
+  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 5.5, lng: -66.9, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" } },
   { sectionId: "ir-verbs", label: "IR Verbs", country: "Ecuador", icon: "", lat: -1.8, lng: -78.2, category: "verbs", verbLetter: "I", verbStyle: { bg: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" } },
   { sectionId: "preterite", label: "Quick Past", country: "Peru", icon: "⏪", lat: -12.0, lng: -77.0, category: "verbs" },
   { sectionId: "imperfecto", label: "Long Past", country: "Bolivia", icon: "🔄", lat: -16.5, lng: -68.2, category: "verbs" },
@@ -45,7 +45,7 @@ interface MapboxMapProps {
 
 // Region presets
 const REGIONS = {
-  nouns: { center: [-85, 18] as [number, number], zoom: 3.8, label: "🌎 NOUNS", subtitle: "North & Central America" },
+  nouns: { center: [-85, 16] as [number, number], zoom: 3.5, label: "🌎 NOUNS", subtitle: "North & Central America" },
   verbs: { center: [-65, -18] as [number, number], zoom: 3.2, label: "🌍 VERBS", subtitle: "South America" },
 }
 
@@ -87,8 +87,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
           },
         ],
       },
-      center: [-85, 18],
-      zoom: 3.8,
+      center: [-85, 16],
+      zoom: 3.5,
       minZoom: 1.5,
       maxZoom: 8,
       pitchWithRotate: false,
