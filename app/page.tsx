@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
-const AmericasMap = dynamic(() => import("@/components/americas-map"), { ssr: false })
+const MapboxMap = dynamic(() => import("@/components/mapbox-map"), { ssr: false })
 import { LYRIC_TRANSLATIONS } from "@/lib/lyric-translations"
 import { SONG_FLY_DATA } from "@/lib/song-fly-data"
 import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
@@ -3805,7 +3805,7 @@ export default function HablaBeat() {
             {/* ── Desktop: Americas Map  |  Mobile: Accordion + Grid ── */}
             {isDesktop ? (
               <div className="w-full" style={{ height: "calc(100vh - 55px)" }}>
-                <AmericasMap
+                <MapboxMap
                   onSelectSection={(sectionId, cx, cy) => {
                     setWorldZoomOrigin({ x: cx, y: cy })
                     setOpenSectionId(sectionId)
