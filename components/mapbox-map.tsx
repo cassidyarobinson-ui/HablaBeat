@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
+import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
 
 // ── World nodes with real geographic coordinates ──
 const MAP_NODES: {
@@ -38,6 +39,9 @@ const MAP_NODES: {
   { sectionId: "advanced", label: "Advanced", country: "Argentina", icon: "🎓", lat: -38.0, lng: -63.6, category: "verbs" },
 ]
 
+const NOUN_NODES = MAP_NODES.filter(n => n.category === "nouns")
+const VERB_NODES = MAP_NODES.filter(n => n.category === "verbs")
+
 interface MapboxMapProps {
   onSelectSection: (sectionId: string, originX: string, originY: string) => void
   isSectionBadgeUnlocked: (section: { id: string }) => boolean
@@ -52,10 +56,43 @@ const REGIONS = {
 export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
-  const markersRef = useRef<{ marker: maplibregl.Marker; category: "nouns" | "verbs" }[]>([])
+  const markersRef = useRef<{ marker: maplibregl.Marker; inner: HTMLDivElement; circle: HTMLDivElement; category: "nouns" | "verbs"; sectionId: string }[]>([])
   const [activeRegion, setActiveRegion] = useState<"nouns" | "verbs">("nouns")
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1)
+  const activeRegionRef = useRef<"nouns" | "verbs">("nouns")
+  const selectedIndexRef = useRef<number>(-1)
 
-  const showMarkersForRegion = (region: "nouns" | "verbs") => {
+  // Keep refs in sync
+  activeRegionRef.current = activeRegion
+  selectedIndexRef.current = selectedIndex
+
+  const getActiveNodes = useCallback(() => {
+    return activeRegionRef.current === "nouns" ? NOUN_NODES : VERB_NODES
+  }, [])
+
+  // Highlight selected marker, un-highlight others
+  const highlightMarker = useCallback((index: number) => {
+    const nodes = getActiveNodes()
+    markersRef.current.forEach(({ inner, circle, category, sectionId }) => {
+      if (category !== activeRegionRef.current) return
+      const nodeIdx = nodes.findIndex(n => n.sectionId === sectionId)
+      if (nodeIdx === index) {
+        inner.style.transform = "scale(1.5)"
+        inner.style.filter = "drop-shadow(0 0 20px rgba(74,124,219,0.6))"
+        circle.style.border = "4px solid #fbbf24"
+        circle.style.boxShadow = "0 0 24px rgba(251,191,36,0.5), 0 4px 12px rgba(0,0,0,0.2)"
+        inner.parentElement!.style.zIndex = "100"
+      } else {
+        inner.style.transform = "scale(1)"
+        inner.style.filter = "none"
+        circle.style.border = "3px solid rgba(255,255,255,0.9)"
+        circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
+        inner.parentElement!.style.zIndex = "10"
+      }
+    })
+  }, [getActiveNodes])
+
+  const showMarkersForRegion = useCallback((region: "nouns" | "verbs") => {
     markersRef.current.forEach(({ marker, category }) => {
       const el = marker.getElement()
       if (category === region) {
@@ -68,16 +105,74 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
         el.style.pointerEvents = "none"
       }
     })
-  }
+  }, [])
 
-  const flyTo = (region: "nouns" | "verbs") => {
+  const flyTo = useCallback((region: "nouns" | "verbs") => {
     const map = mapRef.current
     if (!map) return
     setActiveRegion(region)
+    activeRegionRef.current = region
+    setSelectedIndex(-1)
+    selectedIndexRef.current = -1
     showMarkersForRegion(region)
+    // Reset all highlights
+    markersRef.current.forEach(({ inner, circle }) => {
+      inner.style.transform = "scale(1)"
+      inner.style.filter = "none"
+      circle.style.border = "3px solid rgba(255,255,255,0.9)"
+      circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
+      inner.parentElement!.style.zIndex = "10"
+    })
     const r = REGIONS[region]
     map.flyTo({ center: r.center, zoom: r.zoom, duration: 1200, essential: true })
-  }
+  }, [showMarkersForRegion])
+
+  // Dance pad navigation
+  const handlePadPress = useCallback((btn: PadButton) => {
+    const nodes = getActiveNodes()
+    const count = nodes.length
+
+    if (btn === "left") {
+      const newIdx = selectedIndexRef.current <= 0 ? count - 1 : selectedIndexRef.current - 1
+      setSelectedIndex(newIdx)
+      selectedIndexRef.current = newIdx
+      highlightMarker(newIdx)
+      // Pan map to the selected node
+      const node = nodes[newIdx]
+      mapRef.current?.flyTo({ center: [node.lng, node.lat], duration: 600, essential: true })
+    } else if (btn === "right") {
+      const newIdx = selectedIndexRef.current >= count - 1 ? 0 : selectedIndexRef.current + 1
+      setSelectedIndex(newIdx)
+      selectedIndexRef.current = newIdx
+      highlightMarker(newIdx)
+      const node = nodes[newIdx]
+      mapRef.current?.flyTo({ center: [node.lng, node.lat], duration: 600, essential: true })
+    } else if (btn === "up" || btn === "down") {
+      // Up/Down toggles between Nouns and Verbs
+      const newRegion = activeRegionRef.current === "nouns" ? "verbs" : "nouns"
+      flyTo(newRegion)
+    } else if (btn === "start") {
+      // Select the current marker
+      if (selectedIndexRef.current >= 0) {
+        const nodes = getActiveNodes()
+        const node = nodes[selectedIndexRef.current]
+        if (node) {
+          const map = mapRef.current
+          const point = map?.project([node.lng, node.lat])
+          const rect = containerRef.current?.getBoundingClientRect()
+          if (point && rect) {
+            const pctX = ((point.x / rect.width) * 100).toFixed(1) + "%"
+            const pctY = ((point.y / rect.height) * 100).toFixed(1) + "%"
+            onSelectSection(node.sectionId, pctX, pctY)
+          } else {
+            onSelectSection(node.sectionId, "50%", "50%")
+          }
+        }
+      }
+    }
+  }, [getActiveNodes, highlightMarker, flyTo, onSelectSection])
+
+  useGamepad({ onPress: handlePadPress, enabled: true })
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -119,30 +214,26 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
     mapRef.current = map
 
     map.on("load", () => {
-      // Add markers once map is ready
       MAP_NODES.forEach((node) => {
         const isVerb = node.category === "verbs"
         const isUnlocked = isSectionBadgeUnlocked({ id: node.sectionId })
 
-        // Create marker element (outer el must not have transform overridden — MapLibre uses it for positioning)
         const el = document.createElement("div")
         el.style.cssText = `cursor: pointer;`
 
-        // Inner wrapper for hover effects (safe to transform)
         const inner = document.createElement("div")
         inner.style.cssText = `
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 3px;
-          transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), filter 0.2s;
+          transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), filter 0.25s, box-shadow 0.25s;
         `
 
-        // Circle with icon
         const circle = document.createElement("div")
         circle.style.cssText = `
-          width: 44px;
-          height: 44px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -155,15 +246,15 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
           border: 3px solid rgba(255,255,255,0.9);
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
           position: relative;
+          transition: border 0.2s, box-shadow 0.2s;
         `
 
         if (node.verbLetter) {
-          circle.innerHTML = `<span style="font-size:18px;font-weight:900;color:${node.verbStyle?.color}">${node.verbLetter}</span>`
+          circle.innerHTML = `<span style="font-size:20px;font-weight:900;color:${node.verbStyle?.color}">${node.verbLetter}</span>`
         } else {
-          circle.innerHTML = `<span style="font-size:20px;line-height:1">${node.icon}</span>`
+          circle.innerHTML = `<span style="font-size:22px;line-height:1">${node.icon}</span>`
         }
 
-        // Unlock badge
         if (isUnlocked) {
           const badge = document.createElement("div")
           badge.style.cssText = `
@@ -174,14 +265,13 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
           circle.appendChild(badge)
         }
 
-        // Label
         const label = document.createElement("div")
         label.style.cssText = `
           background: rgba(255,255,255,0.95);
           backdrop-filter: blur(6px);
           border-radius: 6px;
-          padding: 2px 7px;
-          font-size: 10px;
+          padding: 3px 10px;
+          font-size: 12px;
           font-weight: 700;
           color: #1e293b;
           white-space: nowrap;
@@ -192,10 +282,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
         `
         label.textContent = node.label
 
-        // Country subtitle
         const country = document.createElement("div")
         country.style.cssText = `
-          font-size: 8px;
+          font-size: 9px;
           font-weight: 600;
           color: #64748b;
           white-space: nowrap;
@@ -209,16 +298,25 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
         inner.appendChild(country)
         el.appendChild(inner)
 
-        // Hover effects on inner wrapper (not el — MapLibre controls el's transform)
+        // Hover effects — bigger scale
         el.addEventListener("mouseenter", () => {
-          inner.style.transform = "scale(1.2)"
-          inner.style.filter = "drop-shadow(0 0 16px rgba(74,124,219,0.5))"
+          inner.style.transform = "scale(1.4)"
+          inner.style.filter = "drop-shadow(0 0 20px rgba(74,124,219,0.6))"
+          circle.style.border = "4px solid #fbbf24"
+          circle.style.boxShadow = "0 0 24px rgba(251,191,36,0.5), 0 4px 12px rgba(0,0,0,0.2)"
           el.style.zIndex = "100"
         })
         el.addEventListener("mouseleave", () => {
-          inner.style.transform = "scale(1)"
-          inner.style.filter = "none"
-          el.style.zIndex = "10"
+          // Only reset if not the pad-selected marker
+          const nodes = activeRegionRef.current === "nouns" ? NOUN_NODES : VERB_NODES
+          const nodeIdx = nodes.findIndex(n => n.sectionId === node.sectionId)
+          if (nodeIdx !== selectedIndexRef.current) {
+            inner.style.transform = "scale(1)"
+            inner.style.filter = "none"
+            circle.style.border = "3px solid rgba(255,255,255,0.9)"
+            circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
+            el.style.zIndex = "10"
+          }
         })
 
         // Click handler
@@ -238,9 +336,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
           .setLngLat([node.lng, node.lat])
           .addTo(map)
 
-        markersRef.current.push({ marker, category: node.category })
+        markersRef.current.push({ marker, inner, circle, category: node.category, sectionId: node.sectionId })
 
-        // Hide verb markers initially
         if (isVerb) {
           el.style.display = "none"
           el.style.opacity = "0"
@@ -259,6 +356,32 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
   return (
     <div className="relative w-full h-full" style={{ minHeight: 400 }}>
       <div ref={containerRef} className="w-full h-full" />
+
+      {/* Selected marker name overlay */}
+      {selectedIndex >= 0 && (
+        <div style={{
+          position: "absolute",
+          top: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: activeRegion === "nouns"
+            ? "linear-gradient(135deg, #3b82f6, #2563eb)"
+            : "linear-gradient(135deg, #7c3aed, #6d28d9)",
+          color: "white",
+          padding: "10px 24px",
+          borderRadius: 16,
+          fontSize: 16,
+          fontWeight: 800,
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+          zIndex: 10,
+          textAlign: "center",
+          lineHeight: 1.3,
+        }}>
+          <div>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.icon} {(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.label}</div>
+          <div style={{ fontSize: 11, fontWeight: 500, opacity: 0.8 }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
+        </div>
+      )}
 
       {/* Region toggle buttons */}
       <div style={{
