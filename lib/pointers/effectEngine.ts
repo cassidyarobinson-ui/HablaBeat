@@ -17,6 +17,9 @@ export interface EffectContext {
 
 type EffectFn = (ctx: EffectContext, palette: string[]) => void
 
+// Lane colors: left=Green, down=Red, up=Yellow, right=Purple
+const LANE_HEX = ["#22c55e", "#ef4444", "#facc15", "#a855f7"]
+
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -76,48 +79,67 @@ function spawnEmoji(
 // EFFECT IMPLEMENTATIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** 🥕  Carrot: bubble pop + carrot emojis fly on hit */
+/** 🥕  Carrot: lane-colored laser beam + impact ring + sparks */
 const sparkle_burst: EffectFn = (ctx, palette) => {
-  const { container, laneLeft, laneWidth, rainbowColor } = ctx
+  const { container, lane, laneLeft, laneWidth } = ctx
   const cx = laneLeft + laneWidth / 2
+  const lc = LANE_HEX[lane] || "#ffffff"
+  const lcAlpha = lc + "88"
 
-  // Bubble ring
+  // Thin beam in lane color
+  const beam = el("div", `
+    left: ${cx - 0.5}%; bottom: 16%; width: 1%; height: 78%;
+    background: linear-gradient(0deg, ${lc} 0%, ${lc}cc 25%, #fff 50%, ${lc}cc 75%, transparent 100%);
+    box-shadow: 0 0 6px ${lc}, 0 0 16px ${lc}, 0 0 2px #fff;
+    border-radius: 1px;
+    animation: laserBeamUp 0.28s ease-out forwards; z-index: 96;
+  `)
+  spawn(container, beam, 300)
+
+  // Wider soft glow behind beam
+  const glow = el("div", `
+    left: ${cx - 1.5}%; bottom: 16%; width: 3%; height: 75%;
+    background: linear-gradient(0deg, ${lcAlpha} 0%, ${lc}44 40%, transparent 100%);
+    border-radius: 2px;
+    animation: laserBeamUp 0.32s ease-out forwards; z-index: 95;
+  `)
+  spawn(container, glow, 340)
+
+  // Impact ring
   const ring = el("div", `
-    left: ${laneLeft + 2}%; width: ${laneWidth - 4}%; bottom: 12%; aspect-ratio: 1;
-    border-radius: 50%;
-    border: 3px solid ${rainbowColor};
-    box-shadow: 0 0 12px ${rainbowColor};
-    animation: bubblePop 0.45s ease-out forwards; z-index: 90;
+    left: ${cx - 3}%; bottom: 14%; width: 6%; aspect-ratio: 1;
+    border: 3px solid ${lc};
+    box-shadow: 0 0 12px ${lc};
+    animation: laserImpact 0.28s ease-out forwards; z-index: 97;
   `, "absolute pointer-events-none rounded-full")
-  spawn(container, ring, 450)
+  spawn(container, ring, 300)
 
-  // 6 small sparks radiating out
-  for (let i = 0; i < 6; i++) {
-    const angle = (i / 6) * Math.PI * 2
-    const dist = 22 + Math.random() * 18
-    const tx = Math.cos(angle) * dist
-    const ty = Math.sin(angle) * dist - 8
-    const c = palette[i % palette.length]
-    const s = el("div", `
-      left: calc(${cx}% - 3px); bottom: 16%;
-      width: 6px; height: 6px;
-      background: ${c};
-      border-radius: 50%;
-      filter: drop-shadow(0 0 3px ${c});
-      --tx: ${tx}px; --ty: ${ty}px; --rot: 0deg;
-      animation: wandSparkFly 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
-      z-index: 91;
+  // Flash
+  const flash = el("div", `
+    left: ${cx - 2}%; bottom: 14%; width: 4%; aspect-ratio: 1;
+    background: radial-gradient(circle, #fff 20%, ${lc}cc 50%, ${lc} 80%, transparent 100%);
+    box-shadow: 0 0 20px ${lc};
+    animation: laserFlash 0.18s ease-out forwards; z-index: 98;
+  `, "absolute pointer-events-none rounded-full")
+  spawn(container, flash, 200)
+
+  // Spark particles
+  for (let i = 0; i < 5; i++) {
+    const side = i % 2 === 0 ? 1 : -1
+    const sp = el("div", `
+      left: ${cx}%; bottom: 16%;
+      width: 2px; height: ${8 + Math.random() * 8}px;
+      background: linear-gradient(to top, ${lc}, #fff);
+      box-shadow: 0 0 5px ${lc};
+      border-radius: 1px;
+      opacity: 1;
+      transition: all 0.28s ease-out;
     `)
-    spawn(container, s, 320)
-  }
-
-  // 4 carrot emojis floating upward — varied sizes
-  const carrotEmojis = ["🥕", "🥕", "🥕", "🌿"]
-  const carrotSizes = [12, 20, 28, 16]
-  for (let i = 0; i < 4; i++) {
-    const tx = (Math.random() - 0.5) * 44
-    const ty = -(32 + Math.random() * 36)
-    spawnEmoji(container, carrotEmojis[i], cx, 18, tx, ty, carrotSizes[i], 480 + i * 40)
+    spawn(container, sp, 320)
+    setTimeout(() => {
+      sp.style.transform = `translate(${side * (12 + Math.random() * 18)}px, -${18 + Math.random() * 24}px) rotate(${side * (25 + Math.random() * 25)}deg)`
+      sp.style.opacity = "0"
+    }, 16)
   }
 }
 

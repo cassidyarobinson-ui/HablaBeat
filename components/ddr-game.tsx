@@ -1917,11 +1917,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                         <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
                       </filter>
                     </defs>
-                    {/* Outer ring — rounded square */}
-                    <rect x="3" y="3" width="42" height="42" rx="10" fill="none" stroke={LANE_HEX[lane]} strokeWidth="1.5" opacity="0.35" />
                     {/* Triangle — rotated per lane */}
                     <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`} filter={`url(#glow-${lane})`}>
-                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinejoin="round" />
+                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} strokeLinejoin="round" />
                     </g>
                   </svg>
                 </div>
