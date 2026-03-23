@@ -1908,14 +1908,20 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               <div key={lane} className={`flex-1 ${lane < 3 ? "border-r border-white/20" : ""} relative`} data-ddr-lane={lane}>
                 <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_HEX[lane] }} />
                 <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "1%", width: "min(95%, 280px)", aspectRatio: "1" }} />
-                {/* Target arrow at hit line — clean directional chevron */}
+                {/* Target arrow — bold triangle with glow */}
                 <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "2%", width: "min(70%, 90px)", aspectRatio: "1" }}>
                   <svg viewBox="0 0 48 48" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    {/* Outer glow circle in lane color */}
-                    <circle cx="24" cy="24" r="22" fill="none" stroke={LANE_HEX[lane]} strokeWidth="1.5" opacity="0.5" />
-                    {/* Arrow shape — rotated per lane: left=0, down=1, up=2, right=3 */}
-                    <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`}>
-                      <path d="M24 10 L38 28 L30 28 L30 38 L18 38 L18 28 L10 28 Z" fill={LANE_HEX[lane]} stroke="rgba(255,255,255,0.6)" strokeWidth="1" strokeLinejoin="round" />
+                    <defs>
+                      <filter id={`glow-${lane}`}>
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                      </filter>
+                    </defs>
+                    {/* Outer ring — rounded square */}
+                    <rect x="3" y="3" width="42" height="42" rx="10" fill="none" stroke={LANE_HEX[lane]} strokeWidth="1.5" opacity="0.35" />
+                    {/* Triangle — rotated per lane */}
+                    <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`} filter={`url(#glow-${lane})`}>
+                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinejoin="round" />
                     </g>
                   </svg>
                 </div>
