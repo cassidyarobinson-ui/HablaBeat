@@ -237,7 +237,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
       {/* Region toggle buttons */}
       <div style={{
         position: "absolute",
-        bottom: 16,
+        bottom: 70,
         left: "50%",
         transform: "translateX(-50%)",
         display: "flex",
