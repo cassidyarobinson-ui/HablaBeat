@@ -52,12 +52,29 @@ const REGIONS = {
 export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
+  const markersRef = useRef<{ marker: maplibregl.Marker; category: "nouns" | "verbs" }[]>([])
   const [activeRegion, setActiveRegion] = useState<"nouns" | "verbs">("nouns")
+
+  const showMarkersForRegion = (region: "nouns" | "verbs") => {
+    markersRef.current.forEach(({ marker, category }) => {
+      const el = marker.getElement()
+      if (category === region) {
+        el.style.display = "block"
+        el.style.opacity = "1"
+        el.style.pointerEvents = "auto"
+      } else {
+        el.style.display = "none"
+        el.style.opacity = "0"
+        el.style.pointerEvents = "none"
+      }
+    })
+  }
 
   const flyTo = (region: "nouns" | "verbs") => {
     const map = mapRef.current
     if (!map) return
     setActiveRegion(region)
+    showMarkersForRegion(region)
     const r = REGIONS[region]
     map.flyTo({ center: r.center, zoom: r.zoom, duration: 1200, essential: true })
   }
@@ -217,9 +234,18 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked }: M
           }
         })
 
-        new maplibregl.Marker({ element: el, anchor: "bottom" })
+        const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
           .setLngLat([node.lng, node.lat])
           .addTo(map)
+
+        markersRef.current.push({ marker, category: node.category })
+
+        // Hide verb markers initially
+        if (isVerb) {
+          el.style.display = "none"
+          el.style.opacity = "0"
+          el.style.pointerEvents = "none"
+        }
       })
     })
 
