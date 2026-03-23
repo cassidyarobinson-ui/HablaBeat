@@ -3697,7 +3697,7 @@ export default function HablaBeat() {
                         const hasSing = song.youtubeId && song.youtubeId !== ""
                         const description = SONG_DESCRIPTIONS[song.number] ?? ""
                         const keywords = SONG_KEYWORDS_DISPLAY[song.number] ?? []
-                        const isPadSelected = songIdx === worldSongIdx
+                        const isPadSelected = isDesktop && songIdx === worldSongIdx
                         // Build mode list to determine which mode button gets highlight
                         const modeList: string[] = []
                         if (hasSing) modeList.push("sing")
