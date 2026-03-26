@@ -1071,102 +1071,89 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   // SETUP SCREEN
   if (gameState === "setup") {
-    // Bubble helper — iridescent soap-bubble style scattered around the screen
-    const bubbles: { size: number; top: string; left: string; opacity: number; hue: number }[] = [
-      { size: 110, top: "72%", left: "-6%",  opacity: 0.55, hue: 190 },
-      { size: 80,  top: "80%", left: "10%",  opacity: 0.45, hue: 210 },
-      { size: 55,  top: "88%", left: "30%",  opacity: 0.4,  hue: 170 },
-      { size: 95,  top: "75%", left: "62%",  opacity: 0.5,  hue: 200 },
-      { size: 70,  top: "83%", left: "82%",  opacity: 0.45, hue: 180 },
-      { size: 50,  top: "66%", left: "90%",  opacity: 0.35, hue: 220 },
-      { size: 40,  top: "60%", left: "5%",   opacity: 0.3,  hue: 195 },
-      { size: 30,  top: "55%", left: "50%",  opacity: 0.25, hue: 205 },
-      { size: 25,  top: "92%", left: "50%",  opacity: 0.3,  hue: 185 },
-      { size: 20,  top: "70%", left: "40%",  opacity: 0.25, hue: 175 },
-    ]
-
     return (
-      <div className={`relative overflow-hidden flex flex-col ${danceMode ? "h-[100dvh] items-center justify-center" : "min-h-screen"}`} style={{
-        background: danceMode
-          ? "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)"
-          : "linear-gradient(180deg, #edf2fa 0%, #f5f7fb 40%, #fafafa 100%)",
+      <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{
+        background: "rgba(0,0,0,0.85)",
+        backdropFilter: "blur(8px)",
       }}>
-        <style jsx global>{`
-          @keyframes setupSwirlBg {
-            0%   { background-position: 0% 50%; }
-            25%  { background-position: 50% 100%; }
-            50%  { background-position: 100% 50%; }
-            75%  { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
-          }
-          @keyframes turtleWaddle {
-            0%,100% { transform: rotate(-8deg) translateX(0px); }
-            25%      { transform: rotate(4deg) translateX(2px); }
-            50%      { transform: rotate(-6deg) translateX(-1px); }
-            75%      { transform: rotate(3deg) translateX(1px); }
-          }
-          @keyframes setupLightning {
-            0%,100% { transform: scaleX(1); filter: brightness(1); }
-            40%      { transform: scaleX(1.2) skewX(-6deg); filter: brightness(1.7) drop-shadow(0 0 4px #fff); }
-            70%      { transform: scaleX(0.9) skewX(3deg); filter: brightness(1.2); }
-          }
-          @keyframes playPulse {
-            0%,100% { transform: translateX(0) scale(1); }
-            40%      { transform: translateX(4px) scale(1.15); }
-            70%      { transform: translateX(2px) scale(1.05); }
-          }
-          @keyframes setupCoinFall {
-            0%   { transform: translateY(30vh) rotate(var(--r)); opacity: 0; }
-            5%   { opacity: 0; }
-            10%  { opacity: 0.85; }
-            70%  { opacity: 0.85; }
-            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)); opacity: 0; }
-          }
-          @keyframes setupCarrotFall {
-            0%   { transform: translateY(25vh) rotate(var(--r)) scale(0.8); opacity: 0; }
-            5%   { opacity: 0; }
-            12%  { opacity: 0.9; transform: translateY(35vh) rotate(var(--r)) scale(1); }
-            70%  { opacity: 0.9; }
-            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)) scale(0.9); opacity: 0; }
-          }
-          .emoji-turtle    { display:inline-block; font-size: 1.7em; animation: turtleWaddle 1.6s ease-in-out infinite; }
-          .emoji-setup-zap { display:inline-block; font-size: 1.7em; animation: setupLightning 1.8s ease-in-out infinite; }
-          .emoji-play-btn  { display:inline-block; animation: playPulse 1.2s ease-in-out infinite; }
+        <style>{`
+          @keyframes btnBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         `}</style>
 
-        {/* Falling gold coins — interactive */}
-        {[
-          { left: "5%",  size: 32, duration: "6s",  delay: "0s",    rotate: 15 },
-          { left: "15%", size: 24, duration: "7s",  delay: "1.2s",  rotate: -20 },
-          { left: "25%", size: 28, duration: "5.5s", delay: "0.5s", rotate: 35 },
-          { left: "38%", size: 20, duration: "8s",  delay: "2s",    rotate: -10 },
-          { left: "52%", size: 30, duration: "6.5s", delay: "0.8s", rotate: 25 },
-          { left: "65%", size: 22, duration: "7.5s", delay: "1.5s", rotate: -30 },
-          { left: "75%", size: 26, duration: "5.8s", delay: "3s",   rotate: 40 },
-          { left: "88%", size: 34, duration: "6.2s", delay: "0.3s", rotate: -15 },
-          { left: "45%", size: 18, duration: "9s",  delay: "4s",    rotate: 20 },
-          { left: "92%", size: 22, duration: "7s",  delay: "2.5s",  rotate: -25 },
-        ].map((c, i) => (
-          <div key={`setup-coin-${i}`} onClick={playCoinSound} onMouseEnter={playCoinSound} style={{
-            position: "absolute",
-            left: c.left,
-            top: "-60px",
-            width: `${c.size}px`,
-            height: `${c.size}px`,
-            borderRadius: "50%",
-            background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-            border: `${c.size > 30 ? 2 : 1.5}px solid #92400E`,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
-            animation: `setupCoinFall ${c.duration} ${c.delay} ease-in infinite`,
-            ["--r" as any]: `${c.rotate}deg`,
-            zIndex: 1,
-            cursor: "pointer",
-          }}>
-            <div style={{ position: "absolute", top: "15%", left: "20%", width: "30%", height: "18%", background: "radial-gradient(ellipse,rgba(255,255,255,0.55),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
-          </div>
-        ))}
+        {/* Centered modal card */}
+        <div className="w-full max-w-sm mx-4 rounded-3xl overflow-hidden" style={{
+          background: "linear-gradient(180deg, rgba(30,27,75,0.95), rgba(15,5,32,0.98))",
+          border: "1.5px solid rgba(255,255,255,0.15)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+        }} onClick={e => e.stopPropagation()}>
 
-        {/* Falling carrots — interactive */}
+          {/* Song image header */}
+          <div className="relative h-32 overflow-hidden">
+            <img src={`/images/backgrounds/song-${songNumber}.jpg`} alt={songTitle}
+              style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.6)" }} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <h2 className="text-white font-black text-2xl text-center" style={{ textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>{songTitle}</h2>
+            </div>
+          </div>
+
+          <div className="px-5 py-5 space-y-4">
+            {/* Speed selection */}
+            <div>
+              <p className="text-white/60 font-bold text-sm mb-3 text-center">Choose Speed</p>
+              <div className="flex gap-2">
+                {([["slower", "Slower"], ["normal", "Normal"], ["keywords", "Key Words"]] as const).map(([key, label]) => (
+                  <button key={key} onClick={() => setSpeed(key)}
+                    className="flex-1 py-3 rounded-full font-black text-sm transition-all active:scale-90"
+                    style={speed === key ? {
+                      background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
+                      color: "white",
+                      border: "2px solid rgba(255,255,255,0.4)",
+                      boxShadow: "0 4px 16px rgba(74,124,219,0.4)",
+                    } : {
+                      background: "rgba(255,255,255,0.08)",
+                      color: "rgba(255,255,255,0.5)",
+                      border: "1.5px solid rgba(255,255,255,0.15)",
+                    }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-center text-xs text-white/30 mt-2">{totalNotes} vocab words</p>
+            </div>
+
+            {/* Calibrate pad */}
+            {padConnected && (
+              <button
+                onClick={() => { setCalibrating(true); setCalibrationStep(0); setCalibrationData({}) }}
+                className="w-full py-2.5 rounded-full font-bold text-sm transition-all active:scale-95"
+                style={{
+                  background: padMapping ? "rgba(34,197,94,0.15)" : "rgba(251,191,36,0.15)",
+                  color: padMapping ? "#4ade80" : "#fbbf24",
+                  border: `1.5px solid ${padMapping ? "rgba(34,197,94,0.4)" : "rgba(251,191,36,0.4)"}`,
+                }}>
+                🎮 {padMapping ? "Pad Calibrated ✓" : "Calibrate Dance Pad"}
+              </button>
+            )}
+
+            {/* Start button */}
+            <button onClick={startGame}
+              className="w-full py-4 rounded-full font-black text-xl text-white transition-all active:scale-95"
+              style={{
+                background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
+                boxShadow: "0 4px 25px rgba(74,124,219,0.5)",
+              }}>
+              <span style={{ display: "inline-block", animation: "btnBounce 0.7s ease-in-out infinite" }}>▶</span> Start!
+            </button>
+
+            {/* Back */}
+            <button onClick={onBack}
+              className="w-full py-2 text-white/40 text-sm font-bold text-center active:scale-95 transition-all">
+              ← Back
+            </button>
+          </div>
+        </div>
+
+        {false && <>
         {[
           { left: "10%", size: 22, duration: "7.5s", delay: "1s",   rotate: 20 },
           { left: "30%", size: 18, duration: "6s",   delay: "3s",   rotate: -15 },
@@ -1384,6 +1371,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           </div>
           </div>
           </div>
+
+        </>}
 
         {/* Calibration overlay */}
         {calibrating && (
