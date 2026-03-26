@@ -22,9 +22,9 @@ const MAP_NODES: {
   { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🧍", lat: 17.0, lng: -93.0, category: "nouns" },
   { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍👩‍👧", lat: 13.5, lng: -90.5, category: "nouns" },
   { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.8, lng: -84.0, category: "nouns" },
-  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🏠", lat: 12.5, lng: -84.0, category: "nouns" },
-  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🔢", lat: 10.0, lng: -83.5, category: "nouns" },
-  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.5, lng: -79.0, category: "nouns" },
+  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🏠", lat: 12.5, lng: -86.0, category: "nouns" },
+  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🔢", lat: 9.5, lng: -82.0, category: "nouns" },
+  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns" },
   { sectionId: "colors-feelings", label: "Feelings", country: "Caribbean", icon: "🌈", lat: 19.0, lng: -72.0, category: "nouns" },
   { sectionId: "foods", label: "Food", country: "Cuba", icon: "🍎", lat: 22.0, lng: -80.0, category: "nouns" },
   // Verbs — South America, spread for mobile readability
