@@ -3520,7 +3520,7 @@ export default function HablaBeat() {
           .shooting-star-b { animation: shootingStarB linear infinite; }
           .alien-float { animation: alienFloat ease-in-out infinite; }
         `}</style>
-        <div className={isDesktop ? "w-full h-screen" : "max-w-md md:max-w-2xl mx-auto min-h-screen"}>
+        <div className={isDesktop ? "w-full h-screen" : "w-full min-h-screen"}>
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
@@ -3792,7 +3792,7 @@ export default function HablaBeat() {
           })()}
 
           {/* ── GALAXY MAP — stacked, one always open ── */}
-          <div className={isDesktop ? "px-0 pt-0 pb-0 overflow-hidden" : "px-3 pt-4 pb-6 space-y-4"}>
+          <div className="px-0 pt-0 pb-0 overflow-hidden">
             <style>{`
               @keyframes galaxyOpen {
                 from { opacity: 0; transform: scaleY(0.9); }

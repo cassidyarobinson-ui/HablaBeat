@@ -378,9 +378,23 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         country.textContent = node.country
 
         if (isMob) {
+          // Mobile: compact text button, no icon circle
+          label.style.cssText = `
+            background: ${isVerb ? "linear-gradient(135deg, #7c3aed, #6d28d9)" : "linear-gradient(135deg, #4a7cdb, #3d6bc4)"};
+            color: white;
+            border-radius: 12px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.5);
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.1;
+          `
+          label.innerHTML = `${node.label}<br><span style="font-size:9px;font-weight:600;opacity:0.8">${node.country}</span>`
           inner.appendChild(label)
-          inner.appendChild(circle)
-          inner.appendChild(country)
         } else {
           inner.appendChild(circle)
           inner.appendChild(label)
