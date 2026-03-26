@@ -17,16 +17,16 @@ const MAP_NODES: {
   verbLetter?: string
   verbStyle?: { bg: string; color: string }
 }[] = [
-  // Nouns — ordered by song number (1→24), spread for readability
-  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "📚", lat: 24.0, lng: -99.0, category: "nouns" },
-  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🧍", lat: 16.5, lng: -92.5, category: "nouns" },
-  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍👩‍👧", lat: 13.0, lng: -92.0, category: "nouns" },
-  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.5, lng: -85.5, category: "nouns" },
-  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🏠", lat: 12.0, lng: -85.5, category: "nouns" },
-  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🔢", lat: 9.5, lng: -85.0, category: "nouns" },
-  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -79.5, category: "nouns" },
-  { sectionId: "colors-feelings", label: "Feelings", country: "Caribbean", icon: "🌈", lat: 19.5, lng: -69.0, category: "nouns" },
-  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🍎", lat: 22.5, lng: -79.0, category: "nouns" },
+  // Nouns — ordered by song number (1→24), positioned for mobile readability
+  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "📚", lat: 22.0, lng: -96.0, category: "nouns" },
+  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🧍", lat: 17.0, lng: -93.0, category: "nouns" },
+  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍👩‍👧", lat: 13.5, lng: -90.5, category: "nouns" },
+  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.8, lng: -84.0, category: "nouns" },
+  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🏠", lat: 12.5, lng: -84.0, category: "nouns" },
+  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🔢", lat: 10.0, lng: -83.5, category: "nouns" },
+  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.5, lng: -79.0, category: "nouns" },
+  { sectionId: "colors-feelings", label: "Feelings", country: "Caribbean", icon: "🌈", lat: 19.0, lng: -72.0, category: "nouns" },
+  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🍎", lat: 22.0, lng: -80.0, category: "nouns" },
   // Verbs — South America, spread for mobile readability
   { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
   { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" } },
@@ -52,7 +52,7 @@ interface MapboxMapProps {
 function getRegions() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
   return {
-    nouns: { center: (isMobile ? [-85, 16] : [-85, 18]) as [number, number], zoom: isMobile ? 2.9 : 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
+    nouns: { center: (isMobile ? [-85, 14] : [-85, 18]) as [number, number], zoom: isMobile ? 3.0 : 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
     verbs: { center: (isMobile ? [-65, -14] : [-70, -10]) as [number, number], zoom: isMobile ? 2.3 : 3.4, label: "🌍 VERBS", subtitle: "South America" },
   }
 }
