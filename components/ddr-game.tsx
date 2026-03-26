@@ -66,15 +66,15 @@ interface DDRGameProps {
 
 // Mini catalog for in-game loadout UI (pointers only)
 const GAME_CATALOG = [
-  { id: "pointer-carrot",    name: "Carrot",           emoji: "🥕", category: "pointer" },
-  { id: "pointer-red-laser", name: "Red Laser",        emoji: "🔴", category: "pointer" },
-  { id: "pointer-banana",    name: "Banana Blaster",   emoji: "🍌", category: "pointer" },
-  { id: "pointer-water",     name: "Water Cannon",     emoji: "💧", category: "pointer" },
-  { id: "pointer-lightning", name: "Lightning Bolt",   emoji: "⚡", category: "pointer" },
-  { id: "pointer-ice",       name: "Ice Blaster",      emoji: "❄️", category: "pointer" },
-  { id: "pointer-rainbow",   name: "Rainbow Laser",    emoji: "🌈", category: "pointer" },
-  { id: "pointer-rocket",    name: "Rocket Launcher",  emoji: "🚀", category: "pointer" },
-  { id: "pointer-star",      name: "Star Shooter",     emoji: "⭐", category: "pointer" },
+  { id: "pointer-carrot",    name: "Carrot",           emoji: "🥕", category: "pointer", cost: 0 },
+  { id: "pointer-red-laser", name: "Red Laser",        emoji: "🔴", category: "pointer", cost: 250 },
+  { id: "pointer-banana",    name: "Banana Blaster",   emoji: "🍌", category: "pointer", cost: 500 },
+  { id: "pointer-water",     name: "Water Cannon",     emoji: "💧", category: "pointer", cost: 750 },
+  { id: "pointer-lightning", name: "Lightning Bolt",   emoji: "⚡", category: "pointer", cost: 1500 },
+  { id: "pointer-ice",       name: "Ice Blaster",      emoji: "❄️", category: "pointer", cost: 2000 },
+  { id: "pointer-rainbow",   name: "Rainbow Laser",    emoji: "🌈", category: "pointer", cost: 3500 },
+  { id: "pointer-rocket",    name: "Rocket Launcher",  emoji: "🚀", category: "pointer", cost: 5000 },
+  { id: "pointer-star",      name: "Star Shooter",     emoji: "⭐", category: "pointer", cost: 6500 },
 ]
 
 // Constants
@@ -1764,7 +1764,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       {/* Loadout overlay — shown when gear button tapped */}
       {showLoadout && (
         <div className="absolute inset-0 z-[999] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.75)" }} onClick={() => { setShowLoadout(false); togglePause() }}>
-          {/* Centered modal panel */}
           <div
             className="w-full max-w-md flex flex-col rounded-3xl overflow-hidden mx-4"
             style={{
@@ -1772,15 +1771,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               border: "1.5px solid rgba(168,85,247,0.35)",
               boxShadow: "0 0 60px rgba(168,85,247,0.25), 0 8px 40px rgba(0,0,0,0.7)",
               maxHeight: "80dvh",
-              animation: "loadoutModalIn 0.3s ease-out",
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Header row */}
+            {/* Header with coin balance */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
               <div>
                 <p className="text-white text-xl font-black">⚙️ Loadout</p>
-                <p className="text-white/50 text-xs mt-0.5">Tap an item to equip it</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-yellow-300 font-black text-sm">💰 {totalVocabBank} coins</span>
+                </div>
               </div>
               <button
                 onClick={() => { setShowLoadout(false); togglePause() }}
@@ -1789,50 +1789,43 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               >▶ Resume</button>
             </div>
 
-            {/* Active pointer hero card */}
-            {(() => {
-              const active = GAME_CATALOG.find(i => i.id === activePointer)
-              return active ? (
-                <div className="mx-5 mb-3 flex items-center gap-3 px-4 py-3 rounded-2xl flex-shrink-0" style={{
-                  background: "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(99,102,241,0.3))",
-                  border: "1.5px solid rgba(168,85,247,0.5)",
-                }}>
-                  <span style={{ fontSize: "36px" }}>{active.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white font-black text-sm">{active.name}</p>
-                    <p className="text-white/50 text-[11px]">Currently equipped</p>
-                  </div>
-                  <span className="text-[10px] font-black px-2.5 py-1 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>
-                </div>
-              ) : null
-            })()}
-
-            {/* Pointer items grid — scrollable */}
+            {/* Items grid — scrollable */}
             <div className="overflow-y-auto px-4 pb-6" style={{ WebkitOverflowScrolling: "touch" }}>
-              <div className="grid grid-cols-4 gap-2">
-                {GAME_CATALOG.filter(i => i.category === "pointer").map(item => {
+              <div className="grid grid-cols-3 gap-2">
+                {GAME_CATALOG.filter(i => i.category === "pointer").map((item) => {
                   const owned = storeOwned.includes(item.id)
+                  const canAfford = totalVocabBank >= item.cost
                   const isActive = activePointer === item.id
+                  const unlocked = owned || canAfford
                   return (
                     <button
                       key={item.id}
-                      disabled={!owned}
                       onClick={() => {
-                        if (!owned) return
-                        onEquipPointer?.(item.id)
+                        if (owned) {
+                          onEquipPointer?.(item.id)
+                        }
                       }}
-                      className="flex flex-col items-center gap-1 py-2.5 px-1.5 rounded-xl transition-all active:scale-90"
+                      className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-all active:scale-95"
                       style={{
                         background: isActive
                           ? "linear-gradient(135deg, rgba(168,85,247,0.45), rgba(99,102,241,0.45))"
-                          : owned ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)",
-                        border: isActive ? "2px solid rgba(168,85,247,0.9)" : "1.5px solid rgba(255,255,255,0.08)",
-                        opacity: owned ? 1 : 0.35,
+                          : unlocked ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)",
+                        border: isActive ? "2px solid rgba(168,85,247,0.9)" : unlocked ? "1.5px solid rgba(255,255,255,0.12)" : "1.5px solid rgba(255,255,255,0.05)",
+                        opacity: unlocked ? 1 : 0.4,
                       }}
                     >
-                      <span style={{ fontSize: "24px", filter: owned ? "none" : "grayscale(1)" }}>{item.emoji}</span>
-                      <span className="text-white text-[10px] font-bold text-center leading-tight">{item.name}</span>
-                      {!owned && <span className="text-white/40 text-[8px]">🔒</span>}
+                      <span style={{ fontSize: "28px", filter: unlocked ? "none" : "grayscale(1)" }}>{item.emoji}</span>
+                      <span className="text-white text-[11px] font-bold text-center leading-tight">{item.name}</span>
+                      {isActive && <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>}
+                      {!owned && item.cost > 0 && (
+                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{
+                          background: canAfford ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)",
+                          color: canAfford ? "#fbbf24" : "rgba(255,255,255,0.3)",
+                        }}>
+                          {canAfford ? "✨ " : "🔒 "}{item.cost} 💰
+                        </span>
+                      )}
+                      {owned && !isActive && <span className="text-[9px] text-white/30">Owned</span>}
                     </button>
                   )
                 })}
