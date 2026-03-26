@@ -240,15 +240,43 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
     return () => window.removeEventListener("keydown", handler)
   }, [openSectionId, handlePadPress])
 
-  // When overlay closes, fly back to region view
+  // When overlay opens, disable map interaction and hide markers; restore on close
   const prevOpenRef = useRef(openSectionId)
   useEffect(() => {
-    if (prevOpenRef.current && !openSectionId && mapRef.current) {
-      const r = REGIONS[activeRegionRef.current]
-      mapRef.current.flyTo({ center: r.center, zoom: r.zoom, duration: 800, essential: true })
+    const map = mapRef.current
+    if (!map) return
+
+    if (openSectionId) {
+      // Disable all map interaction
+      map.dragPan.disable()
+      map.scrollZoom.disable()
+      map.touchZoomRotate.disable()
+      map.doubleClickZoom.disable()
+      map.keyboard.disable()
+      // Hide all markers
+      markersRef.current.forEach(({ marker }) => {
+        const el = marker.getElement()
+        el.style.pointerEvents = "none"
+        el.style.opacity = "0"
+        el.style.transition = "opacity 0.3s"
+      })
+    } else {
+      // Re-enable map interaction
+      map.dragPan.enable()
+      map.scrollZoom.enable()
+      map.touchZoomRotate.enable()
+      map.doubleClickZoom.enable()
+      map.keyboard.enable()
+      // Fly back to region view and restore markers
+      if (prevOpenRef.current) {
+        const r = REGIONS[activeRegionRef.current]
+        map.flyTo({ center: r.center, zoom: r.zoom, duration: 800, essential: true })
+      }
+      // Restore markers for active region
+      showMarkersForRegion(activeRegionRef.current)
     }
     prevOpenRef.current = openSectionId
-  }, [openSectionId])
+  }, [openSectionId, showMarkersForRegion])
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return

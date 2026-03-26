@@ -3687,10 +3687,10 @@ export default function HablaBeat() {
                     <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(45vh, 45vw)" }}>
                       {/* Left arrow */}
                       {selectedIdx > 0 && (
-                        <div className="fixed left-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer hidden md:block"
+                        <div className="fixed left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer"
                           onClick={() => setWorldSongIdx(Math.max(0, selectedIdx - 1))}
-                          style={{ color: "rgba(255,255,255,0.25)" }}>
-                          <ChevronLeft className="h-20 w-20" />
+                          style={{ color: "rgba(255,255,255,0.5)" }}>
+                          <ChevronLeft className="h-10 w-10 md:h-20 md:w-20" />
                         </div>
                       )}
 
@@ -3728,10 +3728,10 @@ export default function HablaBeat() {
 
                       {/* Right arrow */}
                       {selectedIdx < songs.length - 1 && (
-                        <div className="fixed right-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer hidden md:block"
+                        <div className="fixed right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer"
                           onClick={() => setWorldSongIdx(Math.min(songs.length - 1, selectedIdx + 1))}
-                          style={{ color: "rgba(255,255,255,0.25)" }}>
-                          <ChevronRight className="h-20 w-20" />
+                          style={{ color: "rgba(255,255,255,0.5)" }}>
+                          <ChevronRight className="h-10 w-10 md:h-20 md:w-20" />
                         </div>
                       )}
                     </div>
