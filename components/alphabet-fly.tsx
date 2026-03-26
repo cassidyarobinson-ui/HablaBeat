@@ -198,6 +198,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
   const [bunnyPos, setBunnyPos] = useState({ x: BUNNY_HOME_X, y: BUNNY_HOME_Y })
   const [bunnyAnimating, setBunnyAnimating] = useState(false)
   const [bunnyFacing, setBunnyFacing] = useState<"left" | "right">("left")
+  const [bunnySpin, setBunnySpin] = useState(false)
 
   // Refs
   const alphabetIdxRef   = useRef(0)
@@ -300,11 +301,13 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
 
     setTimeout(() => {
       setAnswerFlash({ id: answer.id, correct: answer.isTarget })
+      if (answer.isTarget) setBunnySpin(true)
       setTimeout(() => {
         setBunnyPos({ x: BUNNY_HOME_X, y: BUNNY_HOME_Y })
         setBunnyFacing("left")
+        setBunnySpin(false)
         setTimeout(() => { setBunnyAnimating(false); advanceRef.current(answer.isTarget) }, 400)
-      }, 350)
+      }, 450)
     }, 450)
   }, [waitingForNext, bunnyAnimating])
 
@@ -538,7 +541,8 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
           }}>
             <Image src="/images/super-bunny-winner.png" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
-              className="w-full h-full object-contain" unoptimized priority/>
+              className="w-full h-full object-contain" unoptimized priority
+              style={{ animation: bunnySpin ? "bunnySpin 0.5s ease-in-out" : "none" }}/>
           </div>
         )}
 
@@ -751,6 +755,7 @@ export default function AlphabetFly({ sectionTitle, coins: initialCoins, onCoins
         @keyframes countdownPop { 0% { transform:scale(0.5); opacity:0; } 50% { transform:scale(1.2); opacity:1; } 100% { transform:scale(1); opacity:1; } }
         @keyframes starGlow { 0% { opacity:0.4; transform:scale(0.9); } 100% { opacity:0.8; transform:scale(1.15); } }
         @keyframes starFloat { 0%,100% { transform:scale(1) rotate(-2deg); } 50% { transform:scale(1.06) rotate(2deg); } }
+        @keyframes bunnySpin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(360deg) scale(1.2); } 100% { transform: rotate(720deg) scale(1); } }
       `}</style>
 
       {/* Loadout overlay */}

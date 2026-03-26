@@ -210,6 +210,7 @@ export default function VocabFly({
   const [bunnyPos, setBunnyPos] = useState({ x: BUNNY_HOME_X, y: BUNNY_HOME_Y })
   const [bunnyAnimating, setBunnyAnimating] = useState(false)
   const [bunnyFacing, setBunnyFacing] = useState<"left" | "right">("left")
+  const [bunnySpin, setBunnySpin] = useState(false)
 
   // ── Mutable refs ──────────────────────────────────────────────────────────
   const wordIdxRef       = useRef(0)
@@ -357,17 +358,19 @@ export default function VocabFly({
     // After bunny arrives (~450ms), show result
     setTimeout(() => {
       setAnswerFlash({ id: answer.id, correct: answer.isTarget })
+      if (answer.isTarget) setBunnySpin(true)
 
       // After showing flash, fly bunny back and advance
       setTimeout(() => {
         setBunnyPos({ x: BUNNY_HOME_X, y: BUNNY_HOME_Y })
         setBunnyFacing("left")
+        setBunnySpin(false)
 
         setTimeout(() => {
           setBunnyAnimating(false)
           advanceRef.current(answer.isTarget)
         }, 400)
-      }, 350)
+      }, 450)
     }, 450)
   }, [waitingForNext, bunnyAnimating])
 
@@ -628,7 +631,8 @@ export default function VocabFly({
           }}>
             <Image src="/images/super-bunny-winner.png" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
-              className="w-full h-full object-contain" unoptimized priority/>
+              className="w-full h-full object-contain" unoptimized priority
+              style={{ animation: bunnySpin ? "bunnySpin 0.5s ease-in-out" : "none" }}/>
           </div>
         )}
 
@@ -892,6 +896,11 @@ export default function VocabFly({
         @keyframes starFloat {
           0%,100% { transform:scale(1) rotate(-2deg); }
           50%     { transform:scale(1.06) rotate(2deg); }
+        }
+        @keyframes bunnySpin {
+          0%   { transform: rotate(0deg) scale(1); }
+          50%  { transform: rotate(360deg) scale(1.2); }
+          100% { transform: rotate(720deg) scale(1); }
         }
       `}</style>
 
