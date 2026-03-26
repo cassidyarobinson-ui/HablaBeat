@@ -61,6 +61,7 @@ interface DDRGameProps {
   onEquipTheme?: (id: string) => void
   onEquipPointer?: (id: string) => void
   danceMode?: boolean
+  onOpenBank?: () => void
 }
 
 // Mini catalog for in-game loadout UI (pointers only)
@@ -157,7 +158,7 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","modo","comido","gordo"]),
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer, danceMode = false }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer, danceMode = false, onOpenBank }: DDRGameProps) {
   // Sound effects for interactive coins/carrots
   const playCoinSound = () => {
     try {
@@ -1204,9 +1205,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           />
         ))}
 
-        <div className={`mx-auto w-full p-4 flex flex-col gap-3 relative z-10 ${danceMode ? "max-w-2xl pt-0 pb-4" : "max-w-md pt-6 pb-12"}`}>
+        <div className="mx-auto w-full flex flex-col gap-3 relative z-10">
 
-          {/* Header card — yellow→purple→blue→teal→green gradient (matches HablaBeat ribbon) */}
+          {/* Header bar — full width on desktop */}
           {(() => {
             const songDescriptions: Record<number, string> = {
               1:  "The Spanish alphabet letters",
@@ -1262,29 +1263,25 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             }
             const desc = songDescriptions[songNumber] ?? "Vocabulary and grammar"
             return (
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
-                background: "#4a7cdb",
-                border: "2px solid rgba(255,255,255,0.25)"
-              }}>
-                <div className="px-5 py-5 relative">
-                  <div className="flex items-center justify-between mb-3">
-                    <button
-                      onClick={onBack}
-                      className="w-10 h-10 rounded-2xl flex items-center justify-center backdrop-blur-sm flex-shrink-0"
-                      style={{ backgroundColor: "rgba(255,255,255,0.22)", border: "1px solid rgba(255,255,255,0.3)" }}
-                    >
-                      <ChevronLeft className="h-5 w-5 text-white" />
-                    </button>
-                    <div className="text-center flex-1 px-2">
-                      <h1 className="text-2xl font-black text-white leading-tight drop-shadow">{songTitle}</h1>
-                      <p className="text-white/80 text-sm font-medium mt-1">{desc}</p>
-                    </div>
-                    <div className="w-10 flex-shrink-0" />
-                  </div>
+              <div className="w-full" style={{ background: "#4a7cdb" }}>
+                <div className="flex items-center gap-2 px-4 py-2">
+                  <button
+                    onClick={onBack}
+                    className="w-7 h-7 rounded-full flex items-center justify-center font-black text-sm active:scale-90 transition-all flex-shrink-0"
+                    style={{ background: "rgba(255,255,255,0.2)", color: "#ffffff" }}
+                  >
+                    <ChevronLeft className="h-4 w-4 text-white" />
+                  </button>
+                  <h1 className="font-black text-base text-white leading-tight">{songTitle}</h1>
+                  <span className="text-xs font-semibold text-white/70">·</span>
+                  <p className="text-xs font-semibold text-white/70 truncate">{desc}</p>
                 </div>
               </div>
             )
           })()}
+
+          {/* Content area — constrained width */}
+          <div className={`mx-auto w-full px-4 flex flex-col gap-3 ${danceMode ? "max-w-2xl pb-4" : "max-w-md pt-2 pb-12"}`}>
 
           {/* Mission card — frosted glass */}
           <div className="rounded-3xl px-5 py-4 shadow-lg" style={{
@@ -1385,8 +1382,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               <span style={{ display: "inline-block", animation: "btnBounce 0.7s ease-in-out infinite" }}>▶</span> Start!
             </button>
           </div>
-
-        </div>
+          </div>
+          </div>
 
         {/* Calibration overlay */}
         {calibrating && (
@@ -1759,10 +1756,18 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       {/* Simple pause indicator (no loadout) */}
       {isPaused && !showLoadout && (
         <div className="absolute inset-0 z-[998] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.6)" }} onClick={togglePause}>
-          <div className="text-center">
+          <div className="text-center" onClick={e => e.stopPropagation()}>
             <div className="text-6xl mb-3">⏸️</div>
             <p className="text-white text-2xl font-black">Paused</p>
-            <p className="text-white/60 mt-1 text-sm">Tap to resume</p>
+            <p className="text-white/60 mt-1 text-sm mb-4">Tap outside to resume</p>
+            {onOpenBank && (
+              <button
+                onClick={() => { togglePause(); onOpenBank() }}
+                className="px-5 py-2.5 rounded-2xl font-black text-white text-sm transition-transform active:scale-95"
+                style={{ background: "linear-gradient(135deg, #D97706, #FBBF24)", boxShadow: "0 4px 16px rgba(251,191,36,0.4)" }}>
+                💰 Bank &amp; Store
+              </button>
+            )}
           </div>
         </div>
       )}

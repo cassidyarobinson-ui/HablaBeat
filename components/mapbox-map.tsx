@@ -17,26 +17,26 @@ const MAP_NODES: {
   verbLetter?: string
   verbStyle?: { bg: string; color: string }
 }[] = [
-  // Nouns — North, Central America & Caribbean
-  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "📚", lat: 23.6, lng: -102.5, category: "nouns" },
-  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🍎", lat: 22.0, lng: -79.5, category: "nouns" },
-  { sectionId: "colors-feelings", label: "Feelings", country: "Caribbean", icon: "🌈", lat: 18.7, lng: -70.2, category: "nouns" },
-  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🧍", lat: 15.5, lng: -90.3, category: "nouns" },
-  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 14.8, lng: -87.2, category: "nouns" },
-  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍👩‍👧", lat: 13.7, lng: -89.2, category: "nouns" },
-  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🏠", lat: 12.8, lng: -85.2, category: "nouns" },
-  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🔢", lat: 10.0, lng: -84.1, category: "nouns" },
-  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.5, lng: -80.0, category: "nouns" },
-  // Verbs — South America
-  { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 4.6, lng: -74.1, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
-  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 5.5, lng: -66.9, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" } },
-  { sectionId: "ir-verbs", label: "IR Verbs", country: "Ecuador", icon: "", lat: -1.8, lng: -78.2, category: "verbs", verbLetter: "I", verbStyle: { bg: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" } },
-  { sectionId: "preterite", label: "Quick Past", country: "Peru", icon: "⏪", lat: -12.0, lng: -77.0, category: "verbs" },
-  { sectionId: "imperfecto", label: "Long Past", country: "Bolivia", icon: "🔄", lat: -16.5, lng: -68.2, category: "verbs" },
-  { sectionId: "futuro", label: "Future", country: "Paraguay", icon: "⏩", lat: -23.4, lng: -58.4, category: "verbs" },
-  { sectionId: "conditional", label: "Conditional", country: "Uruguay", icon: "🤔", lat: -34.9, lng: -56.2, category: "verbs" },
-  { sectionId: "pronouns", label: "Pronoun", country: "Chile", icon: "👥", lat: -33.4, lng: -70.7, category: "verbs" },
-  { sectionId: "advanced", label: "Advanced", country: "Argentina", icon: "🎓", lat: -38.0, lng: -63.6, category: "verbs" },
+  // Nouns — ordered by song number (1→24), spread for readability
+  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "📚", lat: 24.0, lng: -99.0, category: "nouns" },
+  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🧍", lat: 16.5, lng: -92.5, category: "nouns" },
+  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍👩‍👧", lat: 13.0, lng: -92.0, category: "nouns" },
+  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.5, lng: -85.5, category: "nouns" },
+  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🏠", lat: 12.0, lng: -85.5, category: "nouns" },
+  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🔢", lat: 9.5, lng: -85.0, category: "nouns" },
+  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -79.5, category: "nouns" },
+  { sectionId: "colors-feelings", label: "Feelings", country: "Caribbean", icon: "🌈", lat: 19.5, lng: -69.0, category: "nouns" },
+  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🍎", lat: 22.5, lng: -79.0, category: "nouns" },
+  // Verbs — South America, spread for mobile readability
+  { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
+  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" } },
+  { sectionId: "ir-verbs", label: "IR Verbs", country: "Ecuador", icon: "", lat: -1.0, lng: -78.0, category: "verbs", verbLetter: "I", verbStyle: { bg: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" } },
+  { sectionId: "preterite", label: "Quick Past", country: "Peru", icon: "⏪", lat: -10.0, lng: -76.0, category: "verbs" },
+  { sectionId: "imperfecto", label: "Long Past", country: "Bolivia", icon: "🔄", lat: -17.0, lng: -65.0, category: "verbs" },
+  { sectionId: "futuro", label: "Future", country: "Paraguay", icon: "⏩", lat: -23.0, lng: -57.0, category: "verbs" },
+  { sectionId: "conditional", label: "Conditional", country: "Uruguay", icon: "🤔", lat: -33.0, lng: -55.0, category: "verbs" },
+  { sectionId: "pronouns", label: "Pronoun", country: "Chile", icon: "👥", lat: -30.0, lng: -71.0, category: "verbs" },
+  { sectionId: "advanced", label: "Advanced", country: "Argentina", icon: "🎓", lat: -37.0, lng: -63.0, category: "verbs" },
 ]
 
 const NOUN_NODES = MAP_NODES.filter(n => n.category === "nouns")
@@ -48,11 +48,15 @@ interface MapboxMapProps {
   openSectionId?: string
 }
 
-// Region presets
-const REGIONS = {
-  nouns: { center: [-85, 18] as [number, number], zoom: 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
-  verbs: { center: [-65, -18] as [number, number], zoom: 3.2, label: "🌍 VERBS", subtitle: "South America" },
+// Region presets — zoom adjusts for mobile
+function getRegions() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+  return {
+    nouns: { center: (isMobile ? [-85, 16] : [-85, 18]) as [number, number], zoom: isMobile ? 2.9 : 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
+    verbs: { center: (isMobile ? [-65, -14] : [-70, -10]) as [number, number], zoom: isMobile ? 2.3 : 3.4, label: "🌍 VERBS", subtitle: "South America" },
+  }
 }
+const REGIONS = getRegions()
 
 export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -101,10 +105,10 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
       if (category !== activeRegionRef.current) return
       const nodeIdx = nodes.findIndex(n => n.sectionId === sectionId)
       if (nodeIdx === index) {
-        inner.style.transform = "scale(1.5)"
-        inner.style.filter = "drop-shadow(0 0 20px rgba(74,124,219,0.6))"
-        circle.style.border = "4px solid #fbbf24"
-        circle.style.boxShadow = "0 0 24px rgba(251,191,36,0.5), 0 4px 12px rgba(0,0,0,0.2)"
+        inner.style.transform = "scale(2.2)"
+        inner.style.filter = "drop-shadow(0 0 30px rgba(74,124,219,0.8))"
+        circle.style.border = "5px solid #fbbf24"
+        circle.style.boxShadow = "0 0 40px rgba(251,191,36,0.6), 0 8px 24px rgba(0,0,0,0.3)"
         inner.parentElement!.style.zIndex = "100"
       } else {
         inner.style.transform = "scale(1)"
@@ -152,30 +156,60 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
   }, [showMarkersForRegion])
 
   // Dance pad navigation
-  const handlePadPress = useCallback((btn: PadButton) => {
-    const nodes = getActiveNodes()
-    const count = nodes.length
+  // Navigate through ALL nodes in order (nouns then verbs), auto-switching region
+  const navigateToGlobalIndex = useCallback((globalIdx: number) => {
+    const total = MAP_NODES.length
+    const idx = ((globalIdx % total) + total) % total // wrap around
+    const node = MAP_NODES[idx]
+    const targetRegion = node.category === "nouns" ? "nouns" : "verbs"
 
+    // Switch region if needed
+    if (activeRegionRef.current !== targetRegion) {
+      setActiveRegion(targetRegion)
+      activeRegionRef.current = targetRegion
+      showMarkersForRegion(targetRegion)
+      const r = REGIONS[targetRegion]
+      mapRef.current?.flyTo({ center: r.center, zoom: r.zoom, duration: 800, essential: true })
+      // After region switch animation, highlight and pan to the node
+      setTimeout(() => {
+        const regionNodes = targetRegion === "nouns" ? NOUN_NODES : VERB_NODES
+        const localIdx = regionNodes.findIndex(n => n.sectionId === node.sectionId)
+        setSelectedIndex(localIdx)
+        selectedIndexRef.current = localIdx
+        highlightMarker(localIdx)
+        mapRef.current?.flyTo({ center: [node.lng, node.lat], duration: 600, essential: true })
+      }, 850)
+    } else {
+      const regionNodes = targetRegion === "nouns" ? NOUN_NODES : VERB_NODES
+      const localIdx = regionNodes.findIndex(n => n.sectionId === node.sectionId)
+      setSelectedIndex(localIdx)
+      selectedIndexRef.current = localIdx
+      highlightMarker(localIdx)
+      mapRef.current?.flyTo({ center: [node.lng, node.lat], duration: 600, essential: true })
+    }
+  }, [highlightMarker, showMarkersForRegion])
+
+  // Get current global index from active region + selectedIndex
+  const getGlobalIndex = useCallback(() => {
+    if (selectedIndexRef.current < 0) return -1
+    const regionNodes = activeRegionRef.current === "nouns" ? NOUN_NODES : VERB_NODES
+    const node = regionNodes[selectedIndexRef.current]
+    if (!node) return -1
+    return MAP_NODES.findIndex(n => n.sectionId === node.sectionId)
+  }, [])
+
+  const handlePadPress = useCallback((btn: PadButton) => {
     if (btn === "left") {
-      const newIdx = selectedIndexRef.current <= 0 ? count - 1 : selectedIndexRef.current - 1
-      setSelectedIndex(newIdx)
-      selectedIndexRef.current = newIdx
-      highlightMarker(newIdx)
-      // Pan map to the selected node
-      const node = nodes[newIdx]
-      mapRef.current?.flyTo({ center: [node.lng, node.lat], duration: 600, essential: true })
+      const globalIdx = getGlobalIndex()
+      navigateToGlobalIndex(globalIdx <= 0 ? MAP_NODES.length - 1 : globalIdx - 1)
     } else if (btn === "right") {
-      const newIdx = selectedIndexRef.current >= count - 1 ? 0 : selectedIndexRef.current + 1
-      setSelectedIndex(newIdx)
-      selectedIndexRef.current = newIdx
-      highlightMarker(newIdx)
-      const node = nodes[newIdx]
-      mapRef.current?.flyTo({ center: [node.lng, node.lat], duration: 600, essential: true })
+      const globalIdx = getGlobalIndex()
+      navigateToGlobalIndex(globalIdx < 0 ? 0 : globalIdx + 1)
     } else if (btn === "up" || btn === "down") {
       // Up/Down toggles between Nouns and Verbs
       const newRegion = activeRegionRef.current === "nouns" ? "verbs" : "nouns"
       flyTo(newRegion)
-    } else if (btn === "start") {
+    } else if (btn === "start" || btn === "select") {
       // Select the current marker — zoom in then open
       if (selectedIndexRef.current >= 0) {
         const nodes = getActiveNodes()
@@ -183,9 +217,28 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         if (node) zoomAndOpen(node)
       }
     }
-  }, [getActiveNodes, highlightMarker, flyTo, zoomAndOpen])
+  }, [getActiveNodes, getGlobalIndex, navigateToGlobalIndex, flyTo, zoomAndOpen])
 
-  useGamepad({ onPress: handlePadPress, enabled: true })
+  useGamepad({ onPress: handlePadPress, enabled: !openSectionId })
+
+  // Keyboard arrow support for map navigation
+  useEffect(() => {
+    if (openSectionId) return // Don't handle when overlay is open
+    const handler = (e: KeyboardEvent) => {
+      let btn: PadButton | null = null
+      if (e.key === "ArrowLeft") btn = "left"
+      else if (e.key === "ArrowRight") btn = "right"
+      else if (e.key === "ArrowUp") btn = "up"
+      else if (e.key === "ArrowDown") btn = "down"
+      else if (e.key === "Enter" || e.key === " ") btn = "start"
+      else if (e.key === "Escape" || e.key === "Backspace") btn = "select"
+      if (!btn) return
+      e.preventDefault()
+      handlePadPress(btn)
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [openSectionId, handlePadPress])
 
   // When overlay closes, fly back to region view
   const prevOpenRef = useRef(openSectionId)
@@ -254,9 +307,11 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         `
 
         const circle = document.createElement("div")
+        const isMob = window.innerWidth < 768
+        const circleSize = isMob ? 40 : 56
         circle.style.cssText = `
-          width: 56px;
-          height: 56px;
+          width: ${circleSize}px;
+          height: ${circleSize}px;
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -268,14 +323,15 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           };
           border: 3px solid rgba(255,255,255,0.9);
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
+          transition: border 0.25s ease, box-shadow 0.25s ease;
           position: relative;
           transition: border 0.2s, box-shadow 0.2s;
         `
 
         if (node.verbLetter) {
-          circle.innerHTML = `<span style="font-size:24px;font-weight:900;color:${node.verbStyle?.color}">${node.verbLetter}</span>`
+          circle.innerHTML = `<span style="font-size:${isMob ? 18 : 24}px;font-weight:900;color:${node.verbStyle?.color}">${node.verbLetter}</span>`
         } else {
-          circle.innerHTML = `<span style="font-size:26px;line-height:1">${node.icon}</span>`
+          circle.innerHTML = `<span style="font-size:${isMob ? 20 : 26}px;line-height:1">${node.icon}</span>`
         }
 
         if (isUnlocked) {
@@ -293,8 +349,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           background: rgba(255,255,255,0.95);
           backdrop-filter: blur(6px);
           border-radius: 6px;
-          padding: 3px 10px;
-          font-size: 14px;
+          padding: ${isMob ? "2px 6px" : "3px 10px"};
+          font-size: ${isMob ? 11 : 14}px;
           font-weight: 700;
           color: #1e293b;
           white-space: nowrap;
@@ -307,7 +363,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         const country = document.createElement("div")
         country.style.cssText = `
-          font-size: 11px;
+          font-size: ${isMob ? 9 : 11}px;
           font-weight: 700;
           color: #1e293b;
           white-space: nowrap;
@@ -321,9 +377,15 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         `
         country.textContent = node.country
 
-        inner.appendChild(circle)
-        inner.appendChild(label)
-        inner.appendChild(country)
+        if (isMob) {
+          inner.appendChild(label)
+          inner.appendChild(circle)
+          inner.appendChild(country)
+        } else {
+          inner.appendChild(circle)
+          inner.appendChild(label)
+          inner.appendChild(country)
+        }
         el.appendChild(inner)
 
         // Hover effects — bigger scale
@@ -403,14 +465,14 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         </div>
       )}
 
-      {/* Region toggle buttons */}
+      {/* Region toggle buttons — top-left */}
       <div style={{
         position: "absolute",
-        bottom: 70,
-        left: "50%",
-        transform: "translateX(-50%)",
+        top: 12,
+        left: 12,
         display: "flex",
-        gap: 8,
+        flexDirection: "column",
+        gap: 6,
         zIndex: 10,
       }}>
         {(["nouns", "verbs"] as const).map((region) => {
@@ -421,8 +483,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
               key={region}
               onClick={() => flyTo(region)}
               style={{
-                padding: "8px 20px",
-                borderRadius: 24,
+                padding: window.innerWidth < 768 ? "5px 12px" : "8px 20px",
+                borderRadius: 20,
                 border: isActive ? "2px solid white" : "2px solid rgba(255,255,255,0.5)",
                 background: isActive
                   ? (region === "nouns"
@@ -431,7 +493,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
                   : "rgba(255,255,255,0.85)",
                 color: isActive ? "white" : "#374151",
                 fontWeight: 700,
-                fontSize: 13,
+                fontSize: window.innerWidth < 768 ? 11 : 13,
                 cursor: "pointer",
                 boxShadow: isActive
                   ? "0 4px 14px rgba(0,0,0,0.25)"
