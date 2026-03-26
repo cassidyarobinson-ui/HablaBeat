@@ -479,11 +479,12 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         </div>
       )}
 
-      {/* Region toggle buttons — top-left */}
+      {/* Region toggle buttons — bottom-right on mobile, top-left on desktop */}
       <div style={{
         position: "absolute",
-        top: 12,
-        left: 12,
+        ...(window.innerWidth < 768
+          ? { bottom: 16, right: 12 }
+          : { top: 12, left: 12 }),
         display: "flex",
         flexDirection: "column",
         gap: 6,
