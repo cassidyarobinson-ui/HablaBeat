@@ -3589,7 +3589,7 @@ export default function HablaBeat() {
                     textTransform: "uppercase" as const,
                     textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 6px rgba(0,0,0,0.1)",
                   }}>HablaBeat</h1>
-                  <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                  <div className="w-20 h-20 flex-shrink-0 hidden md:flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)", background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
                   </div>
