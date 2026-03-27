@@ -13,7 +13,7 @@ const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 const SongFly      = dynamic(() => import("@/components/song-fly"),      { ssr: false })
-const BattleIguana = dynamic(() => import("@/components/battle-iguana"), { ssr: false })
+
 import {
   Play,
   BookOpen,
@@ -1661,7 +1661,7 @@ export default function HablaBeat() {
 
   // Fly game state — which song's fly game is open (null = closed)
   const [flySongNumber, setFlySongNumber] = useState<number | null>(null)
-  const [activeBattle, setActiveBattle] = useState<string | null>(null)
+
 
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
@@ -2633,18 +2633,6 @@ export default function HablaBeat() {
           <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
-    )
-  }
-
-  // Battle Game View
-  if (activeBattle === "iguana") {
-    return (
-      <BattleIguana
-        coins={challengeCoins}
-        onCoinsChange={(delta: number) => setChallengeCoins(c => Math.max(0, c + delta))}
-        onClose={() => setActiveBattle(null)}
-        onGameEnd={(score) => {/* future: track battles won */}}
-      />
     )
   }
 
@@ -3634,8 +3622,6 @@ export default function HablaBeat() {
             const keywords = SONG_KEYWORDS_DISPLAY[song.number] ?? []
             const songBestGrade = bestGrades[song.number]
             // Boss check
-            const bossVillains: Record<string, { name: string; emoji: string }> = { "roles-world": { name: "Iguana", emoji: "🦎" }, "numbers": { name: "Capuchin Monkey", emoji: "🐒" }, "colors-feelings": { name: "Coquí Frog", emoji: "🐸" }, "ir-verbs": { name: "Galápagos Giant Tortoise", emoji: "🐢" }, "futuro": { name: "Wolf", emoji: "🐺" }, "advanced": { name: "Condor", emoji: "🦅" } }
-            const boss = bossVillains[openSection.id]
 
             return (
               <div
@@ -3779,14 +3765,6 @@ export default function HablaBeat() {
                         {worldFocus === "carousel" ? "← → to browse · ↓ to select mode" : "← → to pick mode · ↓ to play · ↑ back to songs"}
                       </div>
 
-                      {/* Boss battle */}
-                      {boss && (
-                        <button onClick={() => { if (boss.name === "Iguana") setActiveBattle("iguana") }}
-                          className="mt-4 px-8 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
-                          style={{ background: "linear-gradient(135deg, rgba(74,124,219,0.7), rgba(99,102,241,0.7))", boxShadow: "0 4px 16px rgba(74,124,219,0.3)", border: "1px solid rgba(255,255,255,0.15)" }}>
-                          ⚔️ Battle {boss.name} {boss.emoji}
-                        </button>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -4002,32 +3980,6 @@ export default function HablaBeat() {
                               )
                             })}
                           </div>
-                          {/* Boss Battle button */}
-                          {(() => {
-                            const bossVillains: Record<string, { name: string; emoji: string }> = {
-                              "roles-world":    { name: "Iguana",                    emoji: "🦎" },
-                              "numbers":        { name: "Capuchin Monkey",           emoji: "🐒" },
-                              "colors-feelings":{ name: "Coquí Frog",               emoji: "🐸" },
-                              "ir-verbs":       { name: "Galápagos Giant Tortoise",  emoji: "🐢" },
-                              "futuro":         { name: "Wolf",                      emoji: "🐺" },
-                              "advanced":       { name: "Condor",                    emoji: "🦅" },
-                            }
-                            const boss = bossVillains[openSection.id]
-                            if (!boss) return null
-                            return (
-                              <button
-                                onClick={() => { if (boss.name === "Iguana") setActiveBattle("iguana") }}
-                                className="w-full mt-4 py-4 rounded-2xl font-black text-lg text-white transition-all active:scale-95"
-                                style={{
-                                  background: "rgba(74,124,219,0.9)",
-                                  backdropFilter: "blur(8px)",
-                                  boxShadow: "0 4px 16px rgba(74,124,219,0.4)",
-                                }}
-                              >
-                                <span style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.8))" }}>⚔️</span>  Battle {boss.name} <span style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.8))" }}>{boss.emoji}</span>
-                              </button>
-                            )
-                          })()}
                         </div>
                       </div>
                     </div>
