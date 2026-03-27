@@ -2646,7 +2646,7 @@ export default function HablaBeat() {
 
         {/* Logo text */}
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
-          <div style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", width: "340px", height: "160px", background: "radial-gradient(circle, rgba(251,191,36,0.32) 0%, rgba(251,191,36,0.18) 30%, rgba(251,191,36,0.08) 55%, transparent 80%)", pointerEvents: "none", zIndex: -1 }} />
+          <div style={{ position: "absolute", top: "-30px", left: "50%", transform: "translateX(-50%)", width: "400px", height: "200px", background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(251,191,36,0.18) 0%, rgba(251,191,36,0.10) 30%, rgba(251,191,36,0.04) 55%, rgba(251,191,36,0.01) 70%, transparent 100%)", pointerEvents: "none", zIndex: -1 }} />
           <p style={{
             fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.06em",
             color: "#ffffff",
