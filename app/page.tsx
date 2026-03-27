@@ -3843,6 +3843,7 @@ export default function HablaBeat() {
                   }}
                   isSectionBadgeUnlocked={isSectionBadgeUnlocked}
                   openSectionId={openSectionId}
+                  onHoverSound={playWorldHover}
                 />
                 {/* Desktop overlay removed — unified overlay renders above the map */}
                 {(() => { return null

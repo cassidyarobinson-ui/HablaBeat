@@ -46,6 +46,7 @@ interface MapboxMapProps {
   onSelectSection: (sectionId: string, originX: string, originY: string) => void
   isSectionBadgeUnlocked: (section: { id: string }) => boolean
   openSectionId?: string
+  onHoverSound?: () => void
 }
 
 // Region presets — zoom adjusts for mobile
@@ -58,7 +59,7 @@ function getRegions() {
 }
 const REGIONS = getRegions()
 
-export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId }: MapboxMapProps) {
+export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId, onHoverSound }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<{ marker: maplibregl.Marker; inner: HTMLDivElement; circle: HTMLDivElement; category: "nouns" | "verbs"; sectionId: string }[]>([])
@@ -67,7 +68,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
   const activeRegionRef = useRef<"nouns" | "verbs">("nouns")
   const selectedIndexRef = useRef<number>(-1)
   const onSelectSectionRef = useRef(onSelectSection)
+  const onHoverSoundRef = useRef(onHoverSound)
   onSelectSectionRef.current = onSelectSection
+  onHoverSoundRef.current = onHoverSound
 
   // Zoom into country, then open the overlay
   const zoomAndOpen = useCallback((node: typeof MAP_NODES[number]) => {
@@ -430,14 +433,18 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         }
         el.appendChild(inner)
 
-        // Hover effects — bigger scale
+        // Hover effects — bigger scale + pop sound
         el.addEventListener("mouseenter", () => {
           inner.style.transform = "scale(1.6)"
           inner.style.filter = "drop-shadow(0 0 24px rgba(74,124,219,0.7))"
           circle.style.border = "4px solid #fbbf24"
           circle.style.boxShadow = "0 0 28px rgba(251,191,36,0.6), 0 6px 16px rgba(0,0,0,0.25)"
           el.style.zIndex = "100"
+          onHoverSoundRef.current?.()
         })
+        el.addEventListener("touchstart", () => {
+          onHoverSoundRef.current?.()
+        }, { passive: true })
         el.addEventListener("mouseleave", () => {
           // Only reset if not the pad-selected marker
           const nodes = activeRegionRef.current === "nouns" ? NOUN_NODES : VERB_NODES
