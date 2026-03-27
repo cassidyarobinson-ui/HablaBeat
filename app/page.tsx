@@ -547,16 +547,16 @@ const languages = {
             songs: [
               {
                 id: "cuando-preterito",
-                title: "Cuándo Usar El Pretérito",
+                title: "Cuando Usar El Preterito",
                 number: 34,
                 playCount: 0,
                 completed: false,
                 youtubeId: "3t70lgDv0oo",
               },
-              { id: "ar-pret", title: "AR Pret", number: 35, playCount: 0, completed: false, youtubeId: "phbODyPzbFI" },
+              { id: "ar-pret", title: "Preterito AR", number: 35, playCount: 0, completed: false, youtubeId: "phbODyPzbFI" },
               {
                 id: "er-ir-pret",
-                title: "Verbos De ER Y De IR Del Pretérito",
+                title: "Preterito ER IR",
                 number: 36,
                 playCount: 0,
                 completed: false,
@@ -564,7 +564,7 @@ const languages = {
               },
               {
                 id: "pret-irregular",
-                title: "Pretérito Irregular",
+                title: "Preterito Irregular",
                 number: 37,
                 playCount: 0,
                 completed: false,
@@ -582,7 +582,7 @@ const languages = {
             songs: [
               {
                 id: "imperfecto",
-                title: "El Imperfecto",
+                title: "Imperfecto",
                 number: 38,
                 playCount: 0,
                 completed: false,
@@ -598,7 +598,7 @@ const languages = {
               },
               {
                 id: "imperfecto-preterito",
-                title: "Imperfecto O Preterito",
+                title: "Imperfecto Y Preterito",
                 number: 40,
                 playCount: 0,
                 completed: false,
@@ -617,7 +617,7 @@ const languages = {
               { id: "futuro", title: "Futuro", number: 41, playCount: 0, completed: false, youtubeId: "m1tE_FPzaQM" },
               {
                 id: "futuro-irreg",
-                title: "Irregulares Del Futuro",
+                title: "Futuro Irregular",
                 number: 42,
                 playCount: 0,
                 completed: false,
@@ -635,7 +635,7 @@ const languages = {
             songs: [
               {
                 id: "condicional",
-                title: "El Condicional",
+                title: "El Conditional",
                 number: 43,
                 playCount: 0,
                 completed: false,
@@ -643,7 +643,7 @@ const languages = {
               },
               {
                 id: "condicional-irreg",
-                title: "Irregulares Del Condicional",
+                title: "El Conditional Irregular",
                 number: 44,
                 playCount: 0,
                 completed: false,
@@ -661,7 +661,7 @@ const languages = {
             songs: [
               {
                 id: "pronombres-personales",
-                title: "Pronombres Personales + Reflexivos",
+                title: "Pronombres Personales",
                 number: 45,
                 playCount: 0,
                 completed: false,
@@ -669,7 +669,7 @@ const languages = {
               },
               {
                 id: "objeto-directo",
-                title: "Pronombres De Objeto Directo E Indirecto",
+                title: "Pronombres De Objeto Directo Y Indirecto",
                 number: 46,
                 playCount: 0,
                 completed: false,
@@ -695,7 +695,7 @@ const languages = {
               },
               {
                 id: "por-para",
-                title: "Por Vs Para",
+                title: "Por O Para",
                 number: 48,
                 playCount: 0,
                 completed: false,
@@ -703,7 +703,7 @@ const languages = {
               },
               {
                 id: "subjuntivo",
-                title: "Subjuntivo Básico",
+                title: "El Subjunctivo",
                 number: 49,
                 playCount: 0,
                 completed: false,
