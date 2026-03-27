@@ -547,7 +547,7 @@ const languages = {
             songs: [
               {
                 id: "cuando-preterito",
-                title: "Cuando Usar El Preterito",
+                title: "Cuándo Usar El Pretérito",
                 number: 34,
                 playCount: 0,
                 completed: false,
@@ -564,7 +564,7 @@ const languages = {
               },
               {
                 id: "pret-irregular",
-                title: "Preterito Irregular",
+                title: "Pretérito Irregular",
                 number: 37,
                 playCount: 0,
                 completed: false,
@@ -582,7 +582,7 @@ const languages = {
             songs: [
               {
                 id: "imperfecto",
-                title: "Imperfecto",
+                title: "El Imperfecto",
                 number: 38,
                 playCount: 0,
                 completed: false,
