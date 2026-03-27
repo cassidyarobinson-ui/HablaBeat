@@ -2521,20 +2521,24 @@ export default function HablaBeat() {
 
   // ── SPLASH SCREEN ──────────────────────────────────────────────────────────
   if (showSplash) {
-    // Circle layout: alternating coins and carrots around the bunny
-    // 4 coins at top, left, right, bottom-left; 4 carrots at top-right corners and bottom
-    const circleItems: { type: "coin" | "carrot"; angle: number; distance: number }[] = [
-      { type: "coin", angle: -90, distance: 140 },    // top center
-      { type: "carrot", angle: -45, distance: 150 },   // top right
-      { type: "coin", angle: 0, distance: 140 },       // right
-      { type: "carrot", angle: 45, distance: 150 },    // bottom right
-      { type: "coin", angle: 135, distance: 140 },     // bottom left
-      { type: "carrot", angle: 180, distance: 140 },   // left
-      { type: "coin", angle: -135, distance: 150 },    // top left
-      { type: "carrot", angle: 90, distance: 150 },    // bottom center
-    ]
-    // Extra carrots at the very bottom row
-    const bottomCarrots = [-20, 0, 20]
+    // Generate 18 falling coins with randomized positions/delays/sizes
+    const coins = Array.from({ length: 18 }, (_, i) => ({
+      id: i,
+      left: `${5 + (i * 5.5) % 90}%`,
+      delay: `${(i * 0.11) % 1.2}s`,
+      duration: `${1.0 + (i * 0.13) % 0.8}s`,
+      size: 18 + (i * 7) % 20,
+      rotate: (i * 37) % 360,
+    }))
+    // Generate 10 falling carrots
+    const carrots = Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+      left: `${8 + (i * 11) % 82}%`,
+      delay: `${0.3 + (i * 0.19) % 1.5}s`,
+      duration: `${1.6 + (i * 0.17) % 1.0}s`,
+      size: 22 + (i * 5) % 14,
+      rotate: (i * 41) % 360,
+    }))
 
     return (
       <div
@@ -2548,110 +2552,84 @@ export default function HablaBeat() {
         }}
       >
         <style>{`
-          @keyframes coinBounce {
-            0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(-12px); }
+          @keyframes coinFall {
+            0%   { transform: translateY(-60px) rotate(var(--r)); opacity: 0; }
+            15%  { opacity: 1; }
+            85%  { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)); opacity: 0; }
           }
-          @keyframes carrotSpin {
-            0%   { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+          @keyframes carrotFall {
+            0%   { transform: translateY(-50px) rotate(var(--r)) scale(0.8); opacity: 0; }
+            10%  { opacity: 1; transform: translateY(0) rotate(var(--r)) scale(1); }
+            50%  { transform: translateY(50vh) rotate(calc(var(--r) + 180deg)) scale(1); }
+            90%  { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)) scale(0.9); opacity: 0; }
           }
-          @keyframes splashBunnyFloat {
-            0%, 100% { transform: scale(1) translateY(0); }
-            50%       { transform: scale(1.03) translateY(-6px); }
+          @keyframes splashPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(251,191,36,0.4)); }
+            50%       { transform: scale(1.04); filter: drop-shadow(0 0 28px rgba(251,191,36,0.65)); }
           }
-          @keyframes capeBlow {
-            0%, 100% { transform: skewX(0deg) scaleX(1); }
-            25%       { transform: skewX(-3deg) scaleX(1.02); }
-            50%       { transform: skewX(2deg) scaleX(0.98); }
-            75%       { transform: skewX(-2deg) scaleX(1.01); }
-          }
-          @keyframes splashFadeIn {
-            0%   { opacity: 0; transform: translateY(10px) scale(0.95); }
+          @keyframes splashWordFade {
+            0%   { opacity: 0; transform: translateY(8px) scale(0.95); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
           }
-          @keyframes circleReveal {
-            0%   { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
-            100% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1); }
-          }
-          @keyframes orbitGlow {
-            0%, 100% { box-shadow: 0 4px 20px rgba(251,191,36,0.3); }
-            50%       { box-shadow: 0 4px 30px rgba(251,191,36,0.6); }
-          }
-          .splash-bunny-wrap {
-            animation: splashBunnyFloat 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 24px rgba(251,191,36,0.45));
-          }
-          .splash-text-in { animation: splashFadeIn 0.6s ease 0.4s both; }
+          .splash-bunny { animation: splashPulse 2s ease-in-out infinite; }
+          .splash-word  { animation: splashWordFade 0.6s ease 0.3s both; }
         `}</style>
 
-        {/* Circle of coins and carrots around center */}
-        <div style={{ position: "absolute", width: "320px", height: "320px", left: "50%", top: "50%", transform: "translate(-50%, -60%)" }}>
-          {circleItems.map((item, i) => {
-            const rad = (item.angle * Math.PI) / 180
-            const x = Math.cos(rad) * item.distance
-            const y = Math.sin(rad) * item.distance
-            return (
-              <div key={i} style={{
-                position: "absolute", left: "50%", top: "50%",
-                transform: `translate(${x}px, ${y}px)`,
-                animation: `circleReveal 0.5s ease ${0.1 + i * 0.08}s both`,
-                ["--tx" as any]: `${x}px`, ["--ty" as any]: `${y}px`,
-              }}>
-                {item.type === "coin" ? (
-                  <div style={{
-                    width: "52px", height: "52px", borderRadius: "50%",
-                    background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
-                    border: "2.5px solid #92400E",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.2), inset 0 -3px 6px rgba(120,53,0,0.4), inset 2px 2px 6px rgba(254,243,199,0.5)",
-                    animation: `coinBounce 1.8s ease-in-out ${i * 0.15}s infinite, orbitGlow 2.5s ease-in-out ${i * 0.2}s infinite`,
-                    transform: "translate(-50%, -50%)",
-                  }}>
-                    <div style={{ position: "absolute", top: "15%", left: "18%", width: "35%", height: "20%", background: "radial-gradient(ellipse,rgba(255,255,255,0.6),transparent 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
-                  </div>
-                ) : (
-                  <div style={{
-                    fontSize: "38px",
-                    animation: `carrotSpin 3s linear ${i * 0.2}s infinite`,
-                    transform: "translate(-50%, -50%)",
-                    filter: "drop-shadow(0 3px 8px rgba(0,0,0,0.15))",
-                  }}>🥕</div>
-                )}
-              </div>
-            )
-          })}
-        </div>
+        {/* Falling coins */}
+        {coins.map(c => (
+          <div key={c.id} style={{
+            position: "absolute",
+            left: c.left,
+            top: "-60px",
+            width: `${c.size}px`,
+            height: `${c.size}px`,
+            borderRadius: "50%",
+            background: "conic-gradient(from 160deg,#D97706,#FBBF24 30%,#FDE68A 50%,#FBBF24 70%,#D97706)",
+            border: `${c.size > 30 ? 2 : 1.5}px solid #92400E`,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
+            animation: `coinFall ${c.duration} ${c.delay} ease-in infinite`,
+            ["--r" as any]: `${c.rotate}deg`,
+          }}>
+            <div style={{ position: "absolute", top: "15%", left: "20%", width: "30%", height: "18%", background: "radial-gradient(ellipse,rgba(255,255,255,0.55),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
+          </div>
+        ))}
 
-        {/* Extra bottom carrots row */}
-        <div style={{ position: "absolute", bottom: "15%", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "24px", zIndex: 1 }}>
-          {bottomCarrots.map((offset, i) => (
-            <div key={`bc-${i}`} style={{
-              fontSize: "34px",
-              animation: `carrotSpin 2.5s linear ${0.3 + i * 0.25}s infinite`,
-              filter: "drop-shadow(0 3px 8px rgba(0,0,0,0.15))",
-            }}>🥕</div>
-          ))}
-        </div>
+        {/* Falling carrots */}
+        {carrots.map(c => (
+          <div key={`carrot-${c.id}`} style={{
+            position: "absolute",
+            left: c.left,
+            top: "-50px",
+            fontSize: `${c.size}px`,
+            animation: `carrotFall ${c.duration} ${c.delay} ease-in infinite`,
+            ["--r" as any]: `${c.rotate}deg`,
+            zIndex: 1,
+            pointerEvents: "none",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
+          }}>🥕</div>
+        ))}
 
-        {/* Bunny centered — using animated gif so cape flows */}
-        <div className="splash-bunny-wrap" style={{ zIndex: 2, marginBottom: "4px" }}>
+        {/* Bunny centered */}
+        <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "-4px" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "160px", height: "160px", objectFit: "contain" }} />
+          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain" }} />
         </div>
 
         {/* Logo text */}
-        <div className="splash-text-in" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
+        <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
           <div style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", width: "340px", height: "160px", background: "radial-gradient(circle, rgba(251,191,36,0.32) 0%, rgba(251,191,36,0.18) 30%, rgba(251,191,36,0.08) 55%, transparent 80%)", pointerEvents: "none", zIndex: -1 }} />
           <p style={{
-            fontSize: "2.8rem", fontWeight: 900, letterSpacing: "0.06em",
+            fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.06em",
             color: "#ffffff",
             lineHeight: 1, margin: 0,
-            WebkitTextStroke: "2.5px #1e3a5f",
+            WebkitTextStroke: "2.5px #2d3748",
             paintOrder: "stroke fill",
             textTransform: "uppercase" as const,
-            textShadow: "2px 3px 0 rgba(0,0,0,0.3), 0 0 12px rgba(0,0,0,0.15)",
+            textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 8px rgba(0,0,0,0.1)",
           }}>HablaBeat</p>
-          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.8rem", fontWeight: 700, marginTop: "14px", letterSpacing: "0.2em" }}>LEARN SPANISH THROUGH MUSIC</p>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
     )
