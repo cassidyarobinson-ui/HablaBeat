@@ -533,7 +533,7 @@ const languages = {
                 completed: false,
                 youtubeId: "-OxWqPBV95k",
               },
-              { id: "ir", title: "IR", number: 32, playCount: 0, completed: false, youtubeId: "oIYfvK-qkeU" },
+              { id: "ir", title: "Ir", number: 32, playCount: 0, completed: false, youtubeId: "oIYfvK-qkeU" },
               { id: "decir", title: "Decir", number: 33, playCount: 0, completed: false, youtubeId: "sHuDDKa323A" },
             ],
           },
