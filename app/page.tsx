@@ -1623,6 +1623,7 @@ export default function HablaBeat() {
   const [worldSongIdx, setWorldSongIdx] = useState(0)
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [worldFocus, setWorldFocus] = useState<"carousel" | "modes">("carousel")
+  const worldSwipeRef = useRef<{ x: number; y: number } | null>(null)
   const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "pointer" | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
   const [isDesktop, setIsDesktop] = useState(false)
@@ -3676,7 +3677,17 @@ export default function HablaBeat() {
                     </div>
 
                     {/* Carousel — same sizing as dance mode */}
-                    <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(45vh, 45vw)" }}>
+                    <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(45vh, 45vw)" }}
+                      onTouchStart={(e) => { worldSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }}
+                      onTouchEnd={(e) => {
+                        if (!worldSwipeRef.current) return
+                        const dx = e.changedTouches[0].clientX - worldSwipeRef.current.x
+                        const dy = e.changedTouches[0].clientY - worldSwipeRef.current.y
+                        worldSwipeRef.current = null
+                        if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return // too short or vertical
+                        if (dx < 0) setWorldSongIdx(prev => Math.min(songs.length - 1, prev + 1))
+                        else setWorldSongIdx(prev => Math.max(0, prev - 1))
+                      }}>
                       {/* Left arrow */}
                       {selectedIdx > 0 && (
                         <div className="fixed left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer"
