@@ -238,7 +238,7 @@ const languages = {
               },
               {
                 id: "special-letters",
-                title: "Ñ, CH, RR, LL",
+                title: "Ñ CH RR LL",
                 number: 2,
                 playCount: 12,
                 completed: true,
@@ -246,7 +246,7 @@ const languages = {
               },
               {
                 id: "vowels",
-                title: "A, E, I, O, U Canta Ya",
+                title: "A E I O U Canta Ya",
                 number: 3,
                 playCount: 8,
                 completed: false,
@@ -309,7 +309,7 @@ const languages = {
             songs: [
               {
                 id: "unicornio",
-                title: "A E I O Unicornio",
+                title: "Unicornio",
                 number: 8,
                 playCount: 5,
                 completed: false,
@@ -325,7 +325,7 @@ const languages = {
               },
               {
                 id: "habitat",
-                title: "Hábitat Animales",
+                title: "El Hábitat De Los Animales",
                 number: 10,
                 playCount: 0,
                 completed: false,
@@ -396,7 +396,7 @@ const languages = {
             songs: [
               {
                 id: "dias-meses",
-                title: "Días, Meses Y Estaciones",
+                title: "Días Meses Y Estaciones",
                 number: 16,
                 playCount: 0,
                 completed: false,
@@ -440,10 +440,10 @@ const languages = {
             color: latinoColors.yellow,
             badgeUnlocked: false,
             songs: [
-              { id: "frutas", title: "Frutas", number: 21, playCount: 0, completed: false, youtubeId: "lqJOx7shWsU" },
+              { id: "frutas", title: "Las Frutas", number: 21, playCount: 0, completed: false, youtubeId: "lqJOx7shWsU" },
               {
                 id: "verduras",
-                title: "Verduras",
+                title: "Las Verduras",
                 number: 22,
                 playCount: 0,
                 completed: false,
@@ -451,7 +451,7 @@ const languages = {
               },
               {
                 id: "comidas",
-                title: "Desayuno, Almuerzo, Cena",
+                title: "Desayuno Almuerzo Cena",
                 number: 23,
                 playCount: 0,
                 completed: false,
