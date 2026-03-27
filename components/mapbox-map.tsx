@@ -47,6 +47,7 @@ interface MapboxMapProps {
   isSectionBadgeUnlocked: (section: { id: string }) => boolean
   openSectionId?: string
   onHoverSound?: () => void
+  flyToSectionId?: string // when set, map flies to this section's country
 }
 
 // Region presets — zoom adjusts for mobile
@@ -59,7 +60,7 @@ function getRegions() {
 }
 const REGIONS = getRegions()
 
-export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId, onHoverSound }: MapboxMapProps) {
+export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId, onHoverSound, flyToSectionId }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<{ marker: maplibregl.Marker; inner: HTMLDivElement; circle: HTMLDivElement; category: "nouns" | "verbs"; sectionId: string }[]>([])
@@ -280,6 +281,15 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
     }
     prevOpenRef.current = openSectionId
   }, [openSectionId, showMarkersForRegion])
+
+  // Fly map to a section's country when navigating between worlds inside the overlay
+  useEffect(() => {
+    if (!flyToSectionId || !mapRef.current) return
+    const node = MAP_NODES.find(n => n.sectionId === flyToSectionId)
+    if (node) {
+      mapRef.current.flyTo({ center: [node.lng, node.lat], zoom: 6, duration: 800, essential: true })
+    }
+  }, [flyToSectionId])
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
