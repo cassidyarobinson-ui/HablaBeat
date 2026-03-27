@@ -1756,8 +1756,22 @@ export default function HablaBeat() {
         if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number]) modes.push("fly")
 
         if (worldFocus === "carousel") {
-          if (btn === "left") setWorldSongIdx(prev => Math.max(0, prev - 1))
-          else if (btn === "right") setWorldSongIdx(prev => Math.min(songCount - 1, prev + 1))
+          if (btn === "left") {
+            if (sidx <= 0) {
+              // Move to previous world
+              const allSecs = curriculumData.flatMap(c => c.sections)
+              const ci = allSecs.findIndex(s => s.id === openSectionId)
+              if (ci > 0) { const prev = allSecs[ci - 1]; setOpenSectionId(prev.id); setWorldSongIdx(prev.songs.length - 1); setWorldFocus("carousel") }
+            } else { setWorldSongIdx(prev => prev - 1) }
+          }
+          else if (btn === "right") {
+            if (sidx >= songCount - 1) {
+              // Move to next world
+              const allSecs = curriculumData.flatMap(c => c.sections)
+              const ci = allSecs.findIndex(s => s.id === openSectionId)
+              if (ci < allSecs.length - 1) { setOpenSectionId(allSecs[ci + 1].id); setWorldSongIdx(0); setWorldFocus("carousel") }
+            } else { setWorldSongIdx(prev => prev + 1) }
+          }
           else if (btn === "down" || btn === "start" || btn === "select") { setWorldFocus("modes"); setWorldModeIdx(0) }
           else if (btn === "up") {
             setWorldClosing(true); setWorldFocus("carousel")
@@ -1823,8 +1837,20 @@ export default function HablaBeat() {
       if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number]) modes.push("fly")
 
       if (worldFocus === "carousel") {
-        if (btn === "left") setWorldSongIdx(prev => Math.max(0, prev - 1))
-        else if (btn === "right") setWorldSongIdx(prev => Math.min(songCount - 1, prev + 1))
+        if (btn === "left") {
+          if (idx <= 0) {
+            const allSecs = curriculumData.flatMap(c => c.sections)
+            const ci = allSecs.findIndex(s => s.id === openSectionId)
+            if (ci > 0) { const prev = allSecs[ci - 1]; setOpenSectionId(prev.id); setWorldSongIdx(prev.songs.length - 1); setWorldFocus("carousel") }
+          } else { setWorldSongIdx(prev => prev - 1) }
+        }
+        else if (btn === "right") {
+          if (idx >= songCount - 1) {
+            const allSecs = curriculumData.flatMap(c => c.sections)
+            const ci = allSecs.findIndex(s => s.id === openSectionId)
+            if (ci < allSecs.length - 1) { setOpenSectionId(allSecs[ci + 1].id); setWorldSongIdx(0); setWorldFocus("carousel") }
+          } else { setWorldSongIdx(prev => prev + 1) }
+        }
         else if (btn === "down" || btn === "start" || btn === "select") { setWorldFocus("modes"); setWorldModeIdx(0) }
         else if (btn === "up") {
           // Close overlay when pressing up from carousel
@@ -3615,6 +3641,30 @@ export default function HablaBeat() {
             const songs = openSection.songs
             const selectedIdx = Math.min(worldSongIdx, songs.length - 1)
             const song = songs[selectedIdx]
+
+            // Navigate to next/prev world when swiping past edge
+            const allSections = curriculumData.flatMap(c => c.sections)
+            const currentSectionIdx = allSections.findIndex(s => s.id === openSectionId)
+            const goToNextWorld = () => {
+              if (currentSectionIdx < allSections.length - 1) {
+                const next = allSections[currentSectionIdx + 1]
+                setOpenSectionId(next.id)
+                setWorldSongIdx(0)
+                setWorldFocus("carousel")
+              }
+            }
+            const goToPrevWorld = () => {
+              if (currentSectionIdx > 0) {
+                const prev = allSections[currentSectionIdx - 1]
+                setOpenSectionId(prev.id)
+                setWorldSongIdx(prev.songs.length - 1) // start at last song
+                setWorldFocus("carousel")
+              }
+            }
+            const hasNextWorld = currentSectionIdx < allSections.length - 1
+            const hasPrevWorld = currentSectionIdx > 0
+            const nextWorldName = hasNextWorld ? (allSections[currentSectionIdx + 1] as any).country || allSections[currentSectionIdx + 1].title : ""
+            const prevWorldName = hasPrevWorld ? (allSections[currentSectionIdx - 1] as any).country || allSections[currentSectionIdx - 1].title : ""
             const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[song.number]
             const hasPop = selectedLanguage === "spanish"
             const hasSing = song.youtubeId && song.youtubeId !== ""
@@ -3670,16 +3720,24 @@ export default function HablaBeat() {
                         const dx = e.changedTouches[0].clientX - worldSwipeRef.current.x
                         const dy = e.changedTouches[0].clientY - worldSwipeRef.current.y
                         worldSwipeRef.current = null
-                        if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return // too short or vertical
-                        if (dx < 0) setWorldSongIdx(prev => Math.min(songs.length - 1, prev + 1))
-                        else setWorldSongIdx(prev => Math.max(0, prev - 1))
+                        if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return
+                        if (dx < 0) {
+                          if (selectedIdx >= songs.length - 1) goToNextWorld()
+                          else setWorldSongIdx(prev => prev + 1)
+                        } else {
+                          if (selectedIdx <= 0) goToPrevWorld()
+                          else setWorldSongIdx(prev => prev - 1)
+                        }
                       }}>
                       {/* Left arrow */}
-                      {selectedIdx > 0 && (
+                      {(selectedIdx > 0 || hasPrevWorld) && (
                         <div className="fixed left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer"
-                          onClick={() => setWorldSongIdx(Math.max(0, selectedIdx - 1))}
-                          style={{ color: "rgba(255,255,255,0.5)" }}>
+                          onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else goToPrevWorld() }}
+                          style={{ color: selectedIdx === 0 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.5)" }}>
                           <ChevronLeft className="h-10 w-10 md:h-20 md:w-20" />
+                          {selectedIdx === 0 && hasPrevWorld && (
+                            <div className="text-[10px] md:text-xs text-white/40 text-center mt-1 whitespace-nowrap">{prevWorldName}</div>
+                          )}
                         </div>
                       )}
 
@@ -3716,11 +3774,14 @@ export default function HablaBeat() {
                       </div>
 
                       {/* Right arrow */}
-                      {selectedIdx < songs.length - 1 && (
+                      {(selectedIdx < songs.length - 1 || hasNextWorld) && (
                         <div className="fixed right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer"
-                          onClick={() => setWorldSongIdx(Math.min(songs.length - 1, selectedIdx + 1))}
-                          style={{ color: "rgba(255,255,255,0.5)" }}>
+                          onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else goToNextWorld() }}
+                          style={{ color: selectedIdx === songs.length - 1 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.5)" }}>
                           <ChevronRight className="h-10 w-10 md:h-20 md:w-20" />
+                          {selectedIdx === songs.length - 1 && hasNextWorld && (
+                            <div className="text-[10px] md:text-xs text-white/40 text-center mt-1 whitespace-nowrap">{nextWorldName}</div>
+                          )}
                         </div>
                       )}
                     </div>
