@@ -3692,10 +3692,15 @@ export default function HablaBeat() {
                       ← Back
                     </button>
                   </div>
-                  {flagBg && (
-                    <div className="absolute top-4 right-4 z-20 w-10 h-6 rounded overflow-hidden" style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={flagBg.url.replace("w640", "w80")} alt={countryName} className="w-full h-full object-cover" />
+                  {countryName && (
+                    <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+                      <span className="text-white/70 text-sm font-bold">{countryName}</span>
+                      {flagBg && (
+                        <div className="w-10 h-6 rounded overflow-hidden" style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={flagBg.url.replace("w640", "w80")} alt={countryName} className="w-full h-full object-cover" />
+                        </div>
+                      )}
                     </div>
                   )}
 
