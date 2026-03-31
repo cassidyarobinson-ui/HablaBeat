@@ -3645,7 +3645,7 @@ export default function HablaBeat() {
                 <div className="flex items-center px-4 pt-4 pb-1 gap-3">
                   <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" style={{ background: "#7c3aed", borderRadius: "16px", padding: "2px" }} />
+                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" />
                   </div>
                   <h1 className="flex-1" style={{
                     fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
@@ -3656,7 +3656,7 @@ export default function HablaBeat() {
                   }}>HablaBeat</h1>
                   <div className="w-20 h-20 flex-shrink-0 hidden md:flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)", background: "#7c3aed", borderRadius: "16px", padding: "2px" }} />
+                    <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)" }} />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 px-2 pb-2">

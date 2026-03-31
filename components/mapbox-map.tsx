@@ -55,7 +55,7 @@ interface MapboxMapProps {
 function getRegions() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
   return {
-    nouns: { center: (isMobile ? [-85, 14] : [-85, 18]) as [number, number], zoom: isMobile ? 3.0 : 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
+    nouns: { center: (isMobile ? [-78, 16] : [-85, 18]) as [number, number], zoom: isMobile ? 2.8 : 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
     verbs: { center: (isMobile ? [-65, -14] : [-70, -10]) as [number, number], zoom: isMobile ? 2.3 : 3.4, label: "🌍 VERBS", subtitle: "South America" },
   }
 }
