@@ -1794,8 +1794,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   return (
     <div className="h-[100dvh] text-white relative" style={{ background: gameBg, backgroundColor: "#1a0a2e" }}>
-      {/* Gamepad debug overlay — shows pad status + last button pressed */}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] font-mono px-6 py-3 rounded-xl max-w-[90vw]" style={{
+      {/* Gamepad debug overlay — shows pad status + last button pressed (hidden on mobile) */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] font-mono px-6 py-3 rounded-xl max-w-[90vw] hidden md:block" style={{
         background: "rgba(0,0,0,0.9)",
         color: padDebug ? "#4ade80" : "#f87171",
         pointerEvents: "none",
