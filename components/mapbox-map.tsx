@@ -26,8 +26,8 @@ const MAP_NODES: {
   { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns" },
   { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns" },
   { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns" },
-  { sectionId: "colors-feelings", label: "Feelings", country: "Dominican Republic", icon: "💖", lat: 19.5, lng: -70.5, category: "nouns" },
-  { sectionId: "colors-feelings-2", label: "Feelings 2", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns" },
+  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -70.5, category: "nouns" },
+  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns" },
   // Verbs — South America, spread for mobile readability
   { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
   { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" } },

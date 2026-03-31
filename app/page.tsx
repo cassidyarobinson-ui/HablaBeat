@@ -460,14 +460,24 @@ const languages = {
             ],
           },
           {
-            id: "colors-feelings",
-            title: "Feelings",
+            id: "colors",
+            title: "Colors",
             country: "Dominican Republic",
-            icon: "💖",
+            icon: "🌈",
             color: latinoColors.orange,
             badgeUnlocked: false,
             songs: [
               { id: "colores", title: "Colores", number: 18, playCount: 0, completed: false, youtubeId: "rlLf4YlGMf0" },
+            ],
+          },
+          {
+            id: "feelings",
+            title: "Feelings",
+            country: "Puerto Rico",
+            icon: "💖",
+            color: latinoColors.orange,
+            badgeUnlocked: false,
+            songs: [
               {
                 id: "feliz",
                 title: "Estoy Feliz",
@@ -476,16 +486,6 @@ const languages = {
                 completed: false,
                 youtubeId: "ncDUEJR03d0",
               },
-            ],
-          },
-          {
-            id: "colors-feelings-2",
-            title: "Feelings 2",
-            country: "Puerto Rico",
-            icon: "💖",
-            color: latinoColors.orange,
-            badgeUnlocked: false,
-            songs: [
               { id: "sed", title: "Tengo Sed", number: 20, playCount: 0, completed: false, youtubeId: "Ip3KgS0rDno" },
             ],
           },
