@@ -26,7 +26,7 @@ const MAP_NODES: {
   { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns" },
   { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns" },
   { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns" },
-  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -70.5, category: "nouns" },
+  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -72.5, category: "nouns" },
   { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns" },
   // Verbs — South America, spread for mobile readability
   { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
@@ -55,7 +55,7 @@ interface MapboxMapProps {
 function getRegions() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
   return {
-    nouns: { center: (isMobile ? [-81, 16] : [-85, 18]) as [number, number], zoom: isMobile ? 2.5 : 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
+    nouns: { center: (isMobile ? [-81, 16] : [-85, 18]) as [number, number], zoom: isMobile ? 2.7 : 4.6, label: "🌎 NOUNS", subtitle: "North & Central America" },
     verbs: { center: (isMobile ? [-65, -14] : [-70, -10]) as [number, number], zoom: isMobile ? 2.3 : 3.4, label: "🌍 VERBS", subtitle: "South America" },
   }
 }
