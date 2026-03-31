@@ -82,7 +82,7 @@ const GAME_CATALOG = [
 // Constants
 const NOTE_TRAVEL_TIME = 3.0
 const HIT_LINE_POSITION = 0.88
-const HIT_WINDOWS = { PERFECT: 0.08, GOOD: 0.15, MISS: 0.25 }
+const HIT_WINDOWS = { PERFECT: 0.12, GOOD: 0.22, MISS: 0.35 }
 // Lane colors: left=Green, down=Red, up=Yellow, right=Purple
 const LANE_COLORS = ["bg-green-500", "bg-red-500", "bg-yellow-400", "bg-purple-500"]
 const LANE_TEXT_COLORS = ["text-green-500", "text-red-500", "text-yellow-400", "text-purple-500"]
