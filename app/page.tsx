@@ -492,7 +492,7 @@ const languages = {
           {
             id: "foods",
             title: "Food",
-            country: "Puerto Rico",
+            country: "Cuba",
             icon: "🌮",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -511,7 +511,7 @@ const languages = {
           {
             id: "foods-2",
             title: "Food 2",
-            country: "Dominican Republic",
+            country: "Cuba",
             icon: "🌮",
             color: latinoColors.orange,
             badgeUnlocked: false,
