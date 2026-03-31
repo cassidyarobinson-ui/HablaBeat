@@ -271,7 +271,7 @@ const languages = {
             id: "alphabet-vowels",
             title: "Alphabet",
             country: "Mexico",
-            icon: "📚",
+            icon: "✏️",
             color: latinoColors.yellow,
             badgeUnlocked: false,
             songs: [
@@ -305,7 +305,7 @@ const languages = {
             id: "body-world",
             title: "Body",
             country: "Guatemala",
-            icon: "🧍",
+            icon: "🖐️",
             color: latinoColors.teal,
             badgeUnlocked: false,
             songs: [
@@ -324,7 +324,7 @@ const languages = {
             id: "roles-world",
             title: "Roles",
             country: "El Salvador",
-            icon: "👨‍👩‍👧",
+            icon: "👨‍🌾",
             color: latinoColors.orange,
             badgeUnlocked: false,
             songs: [
@@ -384,7 +384,7 @@ const languages = {
             id: "places",
             title: "Travel",
             country: "Nicaragua",
-            icon: "🏠",
+            icon: "🌴",
             color: latinoColors.mint,
             badgeUnlocked: false,
             songs: [
@@ -411,7 +411,7 @@ const languages = {
             id: "numbers",
             title: "Numbers",
             country: "Costa Rica",
-            icon: "🔢",
+            icon: "🎲",
             color: latinoColors.purple,
             badgeUnlocked: false,
             songs: [
@@ -463,7 +463,7 @@ const languages = {
             id: "colors-feelings",
             title: "Feelings",
             country: "Dominican Republic",
-            icon: "🌈",
+            icon: "💖",
             color: latinoColors.orange,
             badgeUnlocked: false,
             songs: [
@@ -482,7 +482,7 @@ const languages = {
             id: "colors-feelings-2",
             title: "Feelings 2",
             country: "Puerto Rico",
-            icon: "😊",
+            icon: "💖",
             color: latinoColors.orange,
             badgeUnlocked: false,
             songs: [
@@ -493,7 +493,7 @@ const languages = {
             id: "foods",
             title: "Food",
             country: "Puerto Rico",
-            icon: "🍎",
+            icon: "🌮",
             color: latinoColors.yellow,
             badgeUnlocked: false,
             songs: [
@@ -512,7 +512,7 @@ const languages = {
             id: "foods-2",
             title: "Food 2",
             country: "Dominican Republic",
-            icon: "🍽️",
+            icon: "🌮",
             color: latinoColors.orange,
             badgeUnlocked: false,
             songs: [
@@ -804,7 +804,7 @@ const languages = {
           {
             id: "alphabet-phonics",
             title: "Alphabet & Phonics",
-            icon: "🔤",
+            icon: "✏️",
             color: latinoColors.yellow,
             badgeUnlocked: false,
             songs: [
@@ -919,7 +919,7 @@ const languages = {
           {
             id: "numbers-counting",
             title: "Numbers & Counting",
-            icon: "🔢",
+            icon: "🎲",
             color: latinoColors.purple,
             badgeUnlocked: false,
             songs: [
@@ -994,7 +994,7 @@ const languages = {
           {
             id: "food-health",
             title: "Food & Health",
-            icon: "🍎",
+            icon: "🌮",
             color: latinoColors.yellow,
             badgeUnlocked: false,
             songs: [
@@ -1226,7 +1226,7 @@ const languages = {
           {
             id: "alphabet-pronunciation",
             title: "Alphabet & Pronunciation",
-            icon: "🗣️",
+            icon: "✏️",
             color: latinoColors.yellow,
             badgeUnlocked: false,
             songs: [
@@ -1424,7 +1424,7 @@ const languages = {
           {
             id: "body-clothing",
             title: "Body & Clothing",
-            icon: "👕",
+            icon: "🖐️",
             color: latinoColors.orange,
             badgeUnlocked: false,
             songs: [
