@@ -360,8 +360,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           justify-content: center;
           background: ${
             isVerb
-              ? "linear-gradient(180deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%)"
-              : "linear-gradient(180deg, #5b9be6 0%, #4a7cdb 50%, #3d6bc4 100%)"
+              ? "linear-gradient(180deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%)"
+              : "linear-gradient(180deg, #8b5cf6 0%, #6d28d9 50%, #4a7cdb 100%)"
           };
           border: 3px solid rgba(255,255,255,0.9);
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
@@ -422,7 +422,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         if (isMob) {
           // Mobile: compact text button, no icon circle
           label.style.cssText = `
-            background: ${isVerb ? "linear-gradient(135deg, #7c3aed, #6d28d9)" : "linear-gradient(135deg, #4a7cdb, #3d6bc4)"};
+            background: ${isVerb ? "linear-gradient(135deg, #8b5cf6, #7c3aed)" : "linear-gradient(135deg, #7c3aed, #4a7cdb)"};
             color: white;
             border-radius: 12px;
             padding: 6px 10px;
@@ -549,8 +549,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
                 border: isActive ? "2px solid white" : "2px solid rgba(255,255,255,0.5)",
                 background: isActive
                   ? (region === "nouns"
-                    ? "linear-gradient(135deg, #3b82f6, #2563eb)"
-                    : "linear-gradient(135deg, #7c3aed, #6d28d9)")
+                    ? "linear-gradient(135deg, #7c3aed, #4a7cdb)"
+                    : "linear-gradient(135deg, #8b5cf6, #7c3aed)")
                   : "rgba(255,255,255,0.85)",
                 color: isActive ? "white" : "#374151",
                 fontWeight: 700,

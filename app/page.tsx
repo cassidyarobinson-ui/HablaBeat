@@ -3607,7 +3607,7 @@ export default function HablaBeat() {
 
 
           {/* ── HEADER — compact single-line bar (desktop) / stacked (mobile) ── */}
-          <div style={{ background: "#4a7cdb" }}>
+          <div style={{ background: "linear-gradient(135deg, #7c3aed, #4a7cdb, #8b5cf6)" }}>
             {/* Desktop: single compact row */}
             {isDesktop ? (
               <div className="flex items-center px-4 py-1.5 gap-4">
@@ -3645,7 +3645,7 @@ export default function HablaBeat() {
                 <div className="flex items-center px-4 pt-4 pb-1 gap-3">
                   <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" style={{ background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
+                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" style={{ }} />
                   </div>
                   <h1 className="flex-1" style={{
                     fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
@@ -3656,7 +3656,7 @@ export default function HablaBeat() {
                   }}>HablaBeat</h1>
                   <div className="w-20 h-20 flex-shrink-0 hidden md:flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)", background: "#4a7cdb", borderRadius: "16px", padding: "2px" }} />
+                    <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)" }} />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 px-2 pb-2">
@@ -4203,7 +4203,7 @@ export default function HablaBeat() {
                               onTouchStart={playWorldHover}
                               className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
                               style={{
-                                background: "linear-gradient(180deg, #5b9be6 0%, #4a7cdb 50%, #3d6bc4 100%)",
+                                background: "linear-gradient(180deg, #8b5cf6 0%, #6d28d9 50%, #4a7cdb 100%)",
                                 border: "3px solid rgba(255,255,255,0.6)",
                                 boxShadow: "0 3px 12px rgba(74,124,219,0.3)",
                               }}
