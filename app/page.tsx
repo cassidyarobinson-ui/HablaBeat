@@ -506,16 +506,6 @@ const languages = {
                 completed: false,
                 youtubeId: "RnHHi6I9Le0",
               },
-            ],
-          },
-          {
-            id: "foods-2",
-            title: "Food 2",
-            country: "Cuba",
-            icon: "🌮",
-            color: latinoColors.orange,
-            badgeUnlocked: false,
-            songs: [
               {
                 id: "comidas",
                 title: "Desayuno Almuerzo Cena",

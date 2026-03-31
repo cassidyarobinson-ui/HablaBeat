@@ -26,7 +26,6 @@ const MAP_NODES: {
   { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns" },
   { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns" },
   { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns" },
-  { sectionId: "foods-2", label: "Food 2", country: "Cuba", icon: "🌮", lat: 21.0, lng: -77.0, category: "nouns" },
   { sectionId: "colors-feelings", label: "Feelings", country: "Dominican Republic", icon: "💖", lat: 19.5, lng: -70.5, category: "nouns" },
   { sectionId: "colors-feelings-2", label: "Feelings 2", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns" },
   // Verbs — South America, spread for mobile readability
