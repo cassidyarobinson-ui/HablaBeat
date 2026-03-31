@@ -97,6 +97,53 @@ const SECTION_GRADIENTS: Record<string, string> = {
   "advanced":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
 }
 
+// ── RECALL BREAKS: mid-song vocabulary quizzes per song ──────────────────────
+const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: string; english: string }[]; label: string }[]> = {
+  16: [
+    {
+      timestamp: 20.0,
+      label: "Days of the Week",
+      words: [
+        { spanish: "lunes",     english: "Monday"    },
+        { spanish: "martes",    english: "Tuesday"   },
+        { spanish: "miércoles", english: "Wednesday" },
+        { spanish: "jueves",    english: "Thursday"  },
+        { spanish: "viernes",   english: "Friday"    },
+        { spanish: "sábado",    english: "Saturday"  },
+        { spanish: "domingo",   english: "Sunday"    },
+      ],
+    },
+    {
+      timestamp: 42.0,
+      label: "Months of the Year",
+      words: [
+        { spanish: "enero",      english: "January"   },
+        { spanish: "febrero",    english: "February"  },
+        { spanish: "marzo",      english: "March"     },
+        { spanish: "abril",      english: "April"     },
+        { spanish: "mayo",       english: "May"       },
+        { spanish: "junio",      english: "June"      },
+        { spanish: "julio",      english: "July"      },
+        { spanish: "agosto",     english: "August"    },
+        { spanish: "septiembre", english: "September" },
+        { spanish: "octubre",    english: "October"   },
+        { spanish: "noviembre",  english: "November"  },
+        { spanish: "diciembre",  english: "December"  },
+      ],
+    },
+    {
+      timestamp: 65.5,
+      label: "Seasons",
+      words: [
+        { spanish: "primavera", english: "spring" },
+        { spanish: "verano",    english: "summer" },
+        { spanish: "otoño",     english: "fall"   },
+        { spanish: "invierno",  english: "winter" },
+      ],
+    },
+  ],
+}
+
 const STORE_CATALOG: StoreItem[] = [
   // ── Pointer Arrows ──
   // 🟢 Common (easy to unlock early)
@@ -414,8 +461,8 @@ const languages = {
           },
           {
             id: "colors-feelings",
-            title: "Feelings Color",
-            country: "Puerto Rico / DR",
+            title: "Feelings",
+            country: "Dominican Republic",
             icon: "🌈",
             color: latinoColors.orange,
             badgeUnlocked: false,
@@ -429,13 +476,23 @@ const languages = {
                 completed: false,
                 youtubeId: "ncDUEJR03d0",
               },
+            ],
+          },
+          {
+            id: "colors-feelings-2",
+            title: "Feelings 2",
+            country: "Puerto Rico",
+            icon: "😊",
+            color: latinoColors.orange,
+            badgeUnlocked: false,
+            songs: [
               { id: "sed", title: "Tengo Sed", number: 20, playCount: 0, completed: false, youtubeId: "Ip3KgS0rDno" },
             ],
           },
           {
             id: "foods",
             title: "Food",
-            country: "Cuba",
+            country: "Puerto Rico",
             icon: "🍎",
             color: latinoColors.yellow,
             badgeUnlocked: false,
@@ -449,6 +506,16 @@ const languages = {
                 completed: false,
                 youtubeId: "RnHHi6I9Le0",
               },
+            ],
+          },
+          {
+            id: "foods-2",
+            title: "Food 2",
+            country: "Dominican Republic",
+            icon: "🍽️",
+            color: latinoColors.orange,
+            badgeUnlocked: false,
+            songs: [
               {
                 id: "comidas",
                 title: "Desayuno Almuerzo Cena",
@@ -456,6 +523,14 @@ const languages = {
                 playCount: 0,
                 completed: false,
                 youtubeId: "266J5zFf8cI",
+              },
+              {
+                id: "quiero-pedir",
+                title: "Quiero Pedir",
+                number: 24,
+                playCount: 0,
+                completed: false,
+                youtubeId: "JC6MeBmQFrM",
               },
             ],
           },
@@ -477,14 +552,6 @@ const languages = {
             color: latinoColors.aqua,
             badgeUnlocked: false,
             songs: [
-              {
-                id: "quiero-pedir",
-                title: "Quiero Pedir",
-                number: 24,
-                playCount: 0,
-                completed: false,
-                youtubeId: "JC6MeBmQFrM",
-              },
               {
                 id: "verbos-ar",
                 title: "Verbos AR",
@@ -2875,6 +2942,7 @@ export default function HablaBeat() {
         onEquipPointer={setActivePointer}
         danceMode={launchedFromDance}
         onOpenBank={() => setCurrentView("coins")}
+        recallBreaks={SONG_RECALL_BREAKS[currentSong.number]}
       />
     )
   }

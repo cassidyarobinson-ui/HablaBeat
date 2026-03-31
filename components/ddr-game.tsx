@@ -8,6 +8,7 @@ import Image from "next/image"
 import { getPointer, firePointerEffect, POINTER_KEYFRAMES } from "@/lib/pointers"
 import { useGamepad, type PadButton, type PadMapping, loadPadMapping, savePadMapping, clearPadMapping } from "@/hooks/use-gamepad"
 import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
+import VocabFly, { type FlyWord } from "./vocab-fly"
 
 // Types
 interface KaraokeWord {
@@ -62,6 +63,7 @@ interface DDRGameProps {
   onEquipPointer?: (id: string) => void
   danceMode?: boolean
   onOpenBank?: () => void
+  recallBreaks?: { timestamp: number; words: FlyWord[]; label: string }[]
 }
 
 // Mini catalog for in-game loadout UI (pointers only)
@@ -158,7 +160,7 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","modo","comido","gordo"]),
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer, danceMode = false, onOpenBank }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer, danceMode = false, onOpenBank, recallBreaks }: DDRGameProps) {
   // Sound effects for interactive coins/carrots
   const playCoinSound = () => {
     try {
@@ -200,7 +202,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     } catch {}
   }
 
-  const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "ended">("loading")
+  const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "recall_break" | "ended">("loading")
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
@@ -230,6 +232,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const fallingRef = useRef<HTMLDivElement>(null)
   /** Tracks if the Dragon Breath combo-shield has been used this song */
   const comboShieldUsedRef = useRef(false)
+  // Recall break tracking
+  const recallBreaksFiredRef = useRef<Set<number>>(new Set())
+  const [currentBreakIndex, setCurrentBreakIndex] = useState<number>(-1)
+  const [recallCoins, setRecallCoins] = useState(0)
   const [padDebug, setPadDebug] = useState("")
   const [padConnected, setPadConnected] = useState(false)
   const [padMapping, setPadMapping] = useState<PadMapping | null>(null)
@@ -398,6 +404,19 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       const tMins = Math.floor(displayTotal / 60)
       const tSecs = Math.floor(displayTotal % 60)
       setTotalTime(`${tMins}:${tSecs.toString().padStart(2, "0")}`)
+
+      // Check recall breaks — pause game when audio reaches a break timestamp
+      if (recallBreaks && audio) {
+        for (let i = 0; i < recallBreaks.length; i++) {
+          if (!recallBreaksFiredRef.current.has(i) && currentTime >= recallBreaks[i].timestamp) {
+            recallBreaksFiredRef.current.add(i)
+            setCurrentBreakIndex(i)
+            audio.pause()
+            setGameState("recall_break")
+            return // stop render loop — will resume after recall quiz
+          }
+        }
+      }
 
       container.innerHTML = ""
 
@@ -1056,6 +1075,51 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       return true
     }).length, 0)
   })()
+
+  // RECALL BREAK STATE — bunny quiz between song sections
+  if (gameState === "recall_break" && recallBreaks && currentBreakIndex >= 0) {
+    const brk = recallBreaks[currentBreakIndex]
+    return (
+      <div className="fixed inset-0 z-[300]">
+        <VocabFly
+          title={brk.label}
+          icon="🐰"
+          phase1={{
+            words: brk.words,
+            speedBase: 0.26,
+            speedVariance: 0.10,
+            waveInterval: 4200,
+            label: brk.label,
+            bgGradient: "linear-gradient(180deg,#0a1535 0%,#0c2461 30%,#1e40af 65%,#3b82f6 100%)",
+            bubbleBg: "#bfdbfe",
+            bubbleText: "#1d4ed8",
+            progressGrad: "linear-gradient(90deg,#60a5fa,#3b82f6)",
+            badgeColor: "rgba(29,78,216,0.5)",
+          }}
+          accentColor="linear-gradient(135deg,#1d4ed8,#1e40af)"
+          coins={recallCoins}
+          onCoinsChange={(delta) => setRecallCoins((c) => c + delta)}
+          onClose={() => {
+            // Resume the DDR game
+            setGameState("playing")
+            if (audioRef.current) {
+              audioRef.current.play()
+            }
+          }}
+          onGameEnd={() => {
+            // Resume the DDR game
+            setGameState("playing")
+            if (audioRef.current) {
+              audioRef.current.play()
+            }
+          }}
+          activePointer={activePointer}
+          storeOwned={storeOwned}
+          onEquipPointer={onEquipPointer}
+        />
+      </div>
+    )
+  }
 
   // LOADING STATE
   if (gameState === "loading") {
