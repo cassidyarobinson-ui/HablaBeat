@@ -790,27 +790,21 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   }, [])
 
   const showLanePress = (lane: number) => {
-    const mob = isMobileRef.current
+    const arrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
+    const flash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
 
-    if (!mob) {
-      // Desktop: animate arrow + lane flash
-      const arrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
-      const flash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
-      if (arrow) {
-        arrow.style.transform = "translateY(-12px) scale(1.15)"
-        setTimeout(() => { arrow.style.transform = "translateY(0) scale(1)" }, 120)
-      }
-      if (flash) {
-        flash.style.opacity = "0.25"
-        setTimeout(() => { flash.style.opacity = "0" }, 150)
-      }
-    } else {
-      // Mobile: flash the single lane
-      const flash = document.querySelector(`[data-ddr-lane="0"] .ddr-flash`) as HTMLElement
-      if (flash) {
-        flash.style.opacity = "0.15"
-        setTimeout(() => { flash.style.opacity = "0" }, 150)
-      }
+    // Arrow pushes up a smidge then snaps back
+    if (arrow) {
+      arrow.style.transform = "translateY(-12px) scale(1.15)"
+      setTimeout(() => {
+        arrow.style.transform = "translateY(0) scale(1)"
+      }, 120)
+    }
+    if (flash) {
+      flash.style.opacity = "0.25"
+      setTimeout(() => {
+        flash.style.opacity = "0"
+      }, 150)
     }
 
     // Press-burst: fires on every tap (hit OR miss) for pointer-specific emojis
@@ -908,33 +902,25 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const rainbowColor = RAINBOW_COLORS[hitColorIndexRef.current % RAINBOW_COLORS.length]
     hitColorIndexRef.current += 1
 
-    const mob = isMobileRef.current
-    if (!mob) {
-      // Desktop: flash arrow with rainbow glow
-      const hitArrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
-      if (hitArrow) {
-        hitArrow.style.filter = `drop-shadow(0 0 12px ${rainbowColor}) drop-shadow(0 0 24px ${rainbowColor})`
-        hitArrow.style.transform = "translateY(-14px) scale(1.2)"
-        setTimeout(() => {
-          hitArrow.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"
-          hitArrow.style.transform = "translateY(0) scale(1)"
-        }, 200)
-      }
-      // Desktop: flash lane background
-      const laneFlash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
-      if (laneFlash) {
-        laneFlash.style.backgroundColor = rainbowColor
-        laneFlash.style.opacity = "0.25"
-        setTimeout(() => { laneFlash.style.opacity = "0" }, 200)
-      }
-    } else {
-      // Mobile: flash the single lane
-      const laneFlash = document.querySelector(`[data-ddr-lane="0"] .ddr-flash`) as HTMLElement
-      if (laneFlash) {
-        laneFlash.style.backgroundColor = rainbowColor
-        laneFlash.style.opacity = "0.2"
-        setTimeout(() => { laneFlash.style.opacity = "0" }, 200)
-      }
+    // Flash carrot arrow with rainbow color on hit
+    const hitArrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
+    if (hitArrow) {
+      hitArrow.style.filter = `drop-shadow(0 0 12px ${rainbowColor}) drop-shadow(0 0 24px ${rainbowColor})`
+      hitArrow.style.transform = "translateY(-14px) scale(1.2)"
+      setTimeout(() => {
+        hitArrow.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"
+        hitArrow.style.transform = "translateY(0) scale(1)"
+      }, 200)
+    }
+
+    // Flash the lane background with the rainbow color
+    const laneFlash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
+    if (laneFlash) {
+      laneFlash.style.backgroundColor = rainbowColor
+      laneFlash.style.opacity = "0.25"
+      setTimeout(() => {
+        laneFlash.style.opacity = "0"
+      }, 200)
     }
 
     // Find the note text for the coin
@@ -1191,6 +1177,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       }}>
         <style>{`
           @keyframes btnBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+          @keyframes rotateHint { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
         `}</style>
 
         {/* Centered modal card */}
@@ -1246,6 +1233,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 }}>
                 🎮 {padMapping ? "Pad Calibrated ✓" : "Calibrate Dance Pad"}
               </button>
+            )}
+
+            {/* Rotate phone prompt — mobile only */}
+            {isMobile && (
+              <div className="flex items-center gap-3 px-4 py-3 rounded-2xl mb-2" style={{ background: "rgba(168,85,247,0.15)", border: "1px solid rgba(168,85,247,0.3)" }}>
+                <span className="text-3xl" style={{ display: "inline-block", animation: "rotateHint 2s ease-in-out infinite" }}>📱</span>
+                <p className="text-white/80 text-sm font-bold">Rotate your phone sideways for the best experience!</p>
+              </div>
             )}
 
             {/* Start button */}
@@ -2026,34 +2021,26 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         >
           {/* Lanes - extend full height, no top/bottom borders */}
           <div className="absolute inset-0 flex">
-            {isMobile ? (
-              /* Mobile: single full-width lane, no arrows */
-              <div className="flex-1 relative" data-ddr-lane="0">
-                <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: "rgba(255,255,255,0.15)" }} />
-              </div>
-            ) : (
-              /* Desktop: 4 lanes with arrow targets */
-              [0, 1, 2, 3].map((lane) => (
-                <div key={lane} className="flex-1 relative" data-ddr-lane={lane}>
-                  <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_HEX[lane] }} />
-                  <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "1%", width: "min(95%, 280px)", aspectRatio: "1", border: "none", outline: "none", background: "none" }} />
-                  {/* Target arrow — bold triangle with glow */}
-                  <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "2%", width: "min(70%, 90px)", aspectRatio: "1" }}>
-                    <svg viewBox="0 0 48 48" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <filter id={`glow-${lane}`}>
-                          <feGaussianBlur stdDeviation="2" result="blur" />
-                          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                        </filter>
-                      </defs>
-                      <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`} filter={`url(#glow-${lane})`}>
-                        <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} strokeLinejoin="round" />
-                      </g>
-                    </svg>
-                  </div>
+            {[0, 1, 2, 3].map((lane) => (
+              <div key={lane} className="flex-1 relative" data-ddr-lane={lane}>
+                <div className="ddr-flash absolute inset-0 opacity-0 transition-opacity duration-300" style={{ backgroundColor: LANE_HEX[lane] }} />
+                <div className="ddr-hit-zone absolute left-1/2 -translate-x-1/2 transition-all duration-150" style={{ bottom: "1%", width: "min(95%, 280px)", aspectRatio: "1", border: "none", outline: "none", background: "none" }} />
+                {/* Target arrow — bold triangle with glow */}
+                <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "2%", width: "min(70%, 90px)", aspectRatio: "1" }}>
+                  <svg viewBox="0 0 48 48" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <filter id={`glow-${lane}`}>
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                      </filter>
+                    </defs>
+                    <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`} filter={`url(#glow-${lane})`}>
+                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} strokeLinejoin="round" />
+                    </g>
+                  </svg>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
 
           {/* Fire edge glow at high combos */}
@@ -2087,30 +2074,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </>
           )}
 
-          {/* Tap line — glowing beam on mobile, dashed line on desktop */}
-          {isMobile ? (
-            <div
-              className="absolute left-0 right-0 pointer-events-none z-[3]"
-              style={{
-                bottom: "calc(2% + 45px)",
-                height: "6px",
-                borderRadius: "3px",
-                background: "linear-gradient(90deg, transparent 0%, rgba(168,85,247,0.7) 15%, rgba(99,102,241,0.9) 50%, rgba(168,85,247,0.7) 85%, transparent 100%)",
-                boxShadow: "0 0 12px rgba(168,85,247,0.6), 0 0 30px rgba(99,102,241,0.3), 0 0 60px rgba(168,85,247,0.15)",
-                animation: "beamPulse 2s ease-in-out infinite",
-              }}
-            />
-          ) : (
-            <div
-              className="absolute left-0 right-0 pointer-events-none z-[1]"
-              style={{
-                bottom: "calc(2% + 45px)",
-                height: "2px",
-                background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 12px, transparent 12px, transparent 22px)",
-                boxShadow: "0 0 6px rgba(255,255,255,0.25)",
-              }}
-            />
-          )}
+          {/* Dashed tap line — behind arrows at their vertical center */}
+          <div
+            className="absolute left-0 right-0 pointer-events-none z-[1]"
+            style={{
+              bottom: "calc(2% + 45px)",
+              height: "2px",
+              background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 12px, transparent 12px, transparent 22px)",
+              boxShadow: "0 0 6px rgba(255,255,255,0.25)",
+            }}
+          />
 
           {/* Flow counter centered behind bubbles — intensifies with combo */}
           {combo >= 2 && (() => {
