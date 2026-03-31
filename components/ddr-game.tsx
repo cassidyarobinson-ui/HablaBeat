@@ -462,8 +462,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               // Word with colored underline — underline aligns to dashed hit line
               noteEl.style.cssText = `
                 position: absolute;
-                left: ${isMobileRef.current ? "15%" : `${note.lane * 25}%`};
-                width: ${isMobileRef.current ? "70%" : "25%"};
+                left: ${note.lane * 25}%;
+                width: 25%;
                 top: ${yPosition}%;
                 transform: translateY(-50%);
                 z-index: ${Math.floor(progress * 20) + 10};
@@ -816,8 +816,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     // Press-burst: fires on every tap (hit OR miss) for pointer-specific emojis
     const gameContainer = containerRef.current
     if (gameContainer) {
-      const laneLeft = mob ? 15 : lane * 25
-      const cx = mob ? 50 : laneLeft + 12.5
+      const laneLeft = lane * 25
+      const cx = laneLeft + 12.5
       const pressEmojis: Record<string, string[]> = {
         "pointer-carrot":    ["🥕","🥕","🌿"],
         "pointer-banana":    ["🍌","🍌","✨"],
@@ -946,8 +946,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const noteText = hitNote ? hitNote.text : ""
     const noteEnglish = hitNote ? hitNote.english : ""
 
-    const laneLeft = mob ? 15 : lane * 25 + 1
-    const laneWidth = mob ? 70 : 23
+    const laneLeft = lane * 25 + 1
+    const laneWidth = 23
 
     // ── POINTER ANIMATIONS: delegated to effect engine ────────────────────
     firePointerEffect(getPointer(activePointer), {
