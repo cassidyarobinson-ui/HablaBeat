@@ -530,7 +530,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         position: "absolute",
         ...(window.innerWidth < 768
           ? { bottom: 90, right: 12 }
-          : { top: 12, left: 12 }),
+          : { bottom: 16, right: 16 }),
         display: "flex",
         flexDirection: "column",
         gap: 6,
