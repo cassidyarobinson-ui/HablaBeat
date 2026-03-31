@@ -111,7 +111,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
       const nodeIdx = nodes.findIndex(n => n.sectionId === sectionId)
       if (nodeIdx === index) {
         inner.style.transform = "scale(2.2)"
-        inner.style.filter = "drop-shadow(0 0 30px rgba(211,84,0,0.8))"
+        inner.style.filter = "drop-shadow(0 0 30px rgba(74,124,219,0.8))"
         circle.style.border = "5px solid #fbbf24"
         circle.style.boxShadow = "0 0 40px rgba(251,191,36,0.6), 0 8px 24px rgba(0,0,0,0.3)"
         inner.parentElement!.style.zIndex = "100"
@@ -361,7 +361,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           background: ${
             isVerb
               ? "linear-gradient(180deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%)"
-              : "linear-gradient(180deg, #e67e22 0%, #d35400 50%, #c0392b 100%)"
+              : "linear-gradient(180deg, #5b9be6 0%, #4a7cdb 50%, #3d6bc4 100%)"
           };
           border: 3px solid rgba(255,255,255,0.9);
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
@@ -422,7 +422,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         if (isMob) {
           // Mobile: compact text button, no icon circle
           label.style.cssText = `
-            background: ${isVerb ? "linear-gradient(135deg, #8e44ad, #6c3483)" : "linear-gradient(135deg, #d35400, #c0392b)"};
+            background: ${isVerb ? "linear-gradient(135deg, #7c3aed, #6d28d9)" : "linear-gradient(135deg, #4a7cdb, #3d6bc4)"};
             color: white;
             border-radius: 12px;
             padding: 6px 10px;
@@ -447,7 +447,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         // Hover effects — bigger scale + pop sound
         el.addEventListener("mouseenter", () => {
           inner.style.transform = "scale(1.6)"
-          inner.style.filter = "drop-shadow(0 0 24px rgba(211,84,0,0.7))"
+          inner.style.filter = "drop-shadow(0 0 24px rgba(74,124,219,0.7))"
           circle.style.border = "4px solid #fbbf24"
           circle.style.boxShadow = "0 0 28px rgba(251,191,36,0.6), 0 6px 16px rgba(0,0,0,0.25)"
           el.style.zIndex = "100"
@@ -530,7 +530,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         position: "absolute",
         ...(window.innerWidth < 768
           ? { bottom: 90, right: 12 }
-          : { bottom: 16, right: 16 }),
+          : { top: 12, left: 12 }),
         display: "flex",
         flexDirection: "column",
         gap: 6,
@@ -546,18 +546,18 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
               style={{
                 padding: window.innerWidth < 768 ? "5px 12px" : "8px 20px",
                 borderRadius: 20,
-                border: isActive ? "2px solid rgba(255,255,255,0.9)" : "2px solid rgba(255,255,255,0.4)",
+                border: isActive ? "2px solid white" : "2px solid rgba(255,255,255,0.5)",
                 background: isActive
                   ? (region === "nouns"
-                    ? "linear-gradient(135deg, #d35400, #e74c3c)"
-                    : "linear-gradient(135deg, #8e44ad, #c0392b)")
+                    ? "linear-gradient(135deg, #3b82f6, #2563eb)"
+                    : "linear-gradient(135deg, #7c3aed, #6d28d9)")
                   : "rgba(255,255,255,0.85)",
                 color: isActive ? "white" : "#374151",
                 fontWeight: 700,
                 fontSize: window.innerWidth < 768 ? 11 : 13,
                 cursor: "pointer",
                 boxShadow: isActive
-                  ? "0 4px 14px rgba(211,84,0,0.4)"
+                  ? "0 4px 14px rgba(0,0,0,0.25)"
                   : "0 2px 8px rgba(0,0,0,0.12)",
                 backdropFilter: "blur(8px)",
                 transition: "all 0.2s ease",
