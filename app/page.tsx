@@ -3606,20 +3606,40 @@ export default function HablaBeat() {
           />
 
 
-          {/* ── HEADER — compact single-line bar (desktop) / stacked (mobile) ── */}
-          <div style={{ background: "linear-gradient(135deg, #7c3aed, #4a7cdb, #8b5cf6)" }}>
+          {/* ── HEADER — Dia de los Muertos style ── */}
+          <div style={{ background: "#1a0a3e" }}>
+            {/* Top zigzag border */}
+            <svg width="100%" height="14" viewBox="0 0 200 14" preserveAspectRatio="none" style={{ display: "block" }}>
+              <rect width="200" height="14" fill="#d35400" />
+              {Array.from({ length: 20 }).map((_, i) => (
+                <polygon key={`zt-${i}`} points={`${i * 10},14 ${i * 10 + 5},2 ${i * 10 + 10},14`} fill="#22c55e" />
+              ))}
+            </svg>
             {/* Desktop: single compact row */}
             {isDesktop ? (
-              <div className="flex items-center px-4 py-1.5 gap-4">
+              <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
-                <h1 style={{
-                  fontSize: "1.4rem", fontWeight: 900, letterSpacing: "0.06em",
-                  color: "#ffffff", lineHeight: 1,
-                  WebkitTextStroke: "1.5px #2d3748", paintOrder: "stroke fill",
-                  textTransform: "uppercase" as const,
-                  textShadow: "1px 2px 0 rgba(0,0,0,0.25)",
-                }}>HablaBeat</h1>
+                <h1 className="flex items-center gap-[2px]" aria-label="HablaBeat">
+                  {[
+                    { letter: "H", color: "#6fa8dc" },
+                    { letter: "a", color: "#f4a742" },
+                    { letter: "b", color: "#c27ba0" },
+                    { letter: "L", color: "#93c47d" },
+                    { letter: "a", color: "#8e7cc3" },
+                    { letter: "b", color: "#6fa8dc" },
+                    { letter: "e", color: "#f4a742" },
+                    { letter: "A", color: "#e06666" },
+                    { letter: "T", color: "#c27ba0" },
+                  ].map((l, i) => (
+                    <span key={i} style={{
+                      color: l.color, fontWeight: 900, fontSize: "1.6rem",
+                      fontFamily: "var(--font-fredoka), 'Fredoka One', 'Bubblegum Sans', cursive, system-ui",
+                      textShadow: "1px 2px 0 rgba(0,0,0,0.4)",
+                      lineHeight: 1,
+                    }}>{l.letter}</span>
+                  ))}
+                </h1>
                 <div className="flex-1" />
                 <div className="flex items-center gap-5">
                   <div className="flex items-center gap-1">
@@ -3641,23 +3661,32 @@ export default function HablaBeat() {
               </div>
             ) : (
               <>
-                {/* Mobile: stacked layout (original) */}
-                <div className="flex items-center px-4 pt-4 pb-1 gap-3">
-                  <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                {/* Mobile: stacked layout */}
+                <div className="flex items-center justify-center px-4 pt-3 pb-1 gap-3">
+                  <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[72px] h-[72px] object-contain" />
+                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
                   </div>
-                  <h1 className="flex-1" style={{
-                    fontSize: "2rem", fontWeight: 900, letterSpacing: "0.06em",
-                    color: "#ffffff", lineHeight: 1,
-                    WebkitTextStroke: "2px #2d3748", paintOrder: "stroke fill",
-                    textTransform: "uppercase" as const,
-                    textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 6px rgba(0,0,0,0.1)",
-                  }}>HablaBeat</h1>
-                  <div className="w-20 h-20 flex-shrink-0 hidden md:flex items-center justify-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-[72px] h-[72px] object-contain" style={{ transform: "scaleX(-1)" }} />
-                  </div>
+                  <h1 className="flex items-center gap-[1px]" aria-label="HablaBeat">
+                    {[
+                      { letter: "H", color: "#6fa8dc" },
+                      { letter: "a", color: "#f4a742" },
+                      { letter: "b", color: "#c27ba0" },
+                      { letter: "L", color: "#93c47d" },
+                      { letter: "a", color: "#8e7cc3" },
+                      { letter: "b", color: "#6fa8dc" },
+                      { letter: "e", color: "#f4a742" },
+                      { letter: "A", color: "#e06666" },
+                      { letter: "T", color: "#c27ba0" },
+                    ].map((l, i) => (
+                      <span key={i} style={{
+                        color: l.color, fontWeight: 900, fontSize: "2.2rem",
+                        fontFamily: "var(--font-fredoka), 'Fredoka One', 'Bubblegum Sans', cursive, system-ui",
+                        textShadow: "2px 3px 0 rgba(0,0,0,0.4)",
+                        lineHeight: 1,
+                      }}>{l.letter}</span>
+                    ))}
+                  </h1>
                 </div>
                 <div className="grid grid-cols-3 px-2 pb-2">
                   <div className="flex items-center justify-center gap-1">
@@ -3678,6 +3707,13 @@ export default function HablaBeat() {
                 </div>
               </>
             )}
+            {/* Bottom zigzag border */}
+            <svg width="100%" height="14" viewBox="0 0 200 14" preserveAspectRatio="none" style={{ display: "block" }}>
+              <rect width="200" height="14" fill="#d35400" />
+              {Array.from({ length: 20 }).map((_, i) => (
+                <polygon key={`zb-${i}`} points={`${i * 10},0 ${i * 10 + 5},12 ${i * 10 + 10},0`} fill="#22c55e" />
+              ))}
+            </svg>
           </div>
 
           {/* ✨ World overlay — immersive carousel (both mobile & desktop) */}
