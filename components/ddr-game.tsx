@@ -236,6 +236,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const recallBreaksFiredRef = useRef<Set<number>>(new Set())
   const [currentBreakIndex, setCurrentBreakIndex] = useState<number>(-1)
   const [recallCoins, setRecallCoins] = useState(0)
+  const [recallScores, setRecallScores] = useState<{ label: string; score: number }[]>([])
   const [padDebug, setPadDebug] = useState("")
   const [padConnected, setPadConnected] = useState(false)
   const [padMapping, setPadMapping] = useState<PadMapping | null>(null)
@@ -1100,13 +1101,17 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           coins={recallCoins}
           onCoinsChange={(delta) => setRecallCoins((c) => c + delta)}
           onClose={() => {
+            // Save a 0 score if user skips
+            setRecallScores(prev => prev.length <= currentBreakIndex ? [...prev, { label: brk.label, score: 0 }] : prev)
             // Resume the DDR game
             setGameState("playing")
             if (audioRef.current) {
               audioRef.current.play()
             }
           }}
-          onGameEnd={() => {
+          onGameEnd={(s: number) => {
+            // Save recall score for this section
+            setRecallScores(prev => [...prev, { label: brk.label, score: s }])
             // Resume the DDR game
             setGameState("playing")
             if (audioRef.current) {
@@ -1677,6 +1682,28 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               </div>
             </div>
           </div>
+
+          {/* Recall Test Scores */}
+          {recallScores.length > 0 && (
+            <div className="w-full mb-4 rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
+              <div className="flex items-center gap-2 mb-2 justify-center">
+                <span className="text-lg">🐰</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Recall Test</span>
+              </div>
+              <div className="flex gap-2 justify-center flex-wrap">
+                {recallScores.map((rs, i) => (
+                  <div key={i} className="flex flex-col items-center rounded-xl px-3 py-2" style={{ background: "rgba(74,124,219,0.08)", minWidth: 80 }}>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{rs.label}</span>
+                    <span className="font-black text-gray-800 text-xl">{rs.score}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 pt-2 border-t border-gray-200/50 flex justify-center">
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider mr-2">Total</span>
+                <span className="font-black text-gray-800">{recallScores.reduce((sum, rs) => sum + rs.score, 0)}</span>
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2.5 w-full mb-3">
             {/* Play Again */}
