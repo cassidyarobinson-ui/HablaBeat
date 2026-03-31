@@ -16,14 +16,15 @@ const MAP_NODES: {
   verbStyle?: { bg: string; color: string }
 }[] = [
   // Nouns — North, Central America & Caribbean
-  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "📚", x: 18, y: 6, category: "nouns" },
-  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🍎", x: 36, y: 8, category: "nouns" },
-  { sectionId: "colors-feelings", label: "Feelings", country: "Caribbean", icon: "🌈", x: 50, y: 12, category: "nouns" },
-  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🧍", x: 20, y: 18, category: "nouns" },
+  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "✏️", x: 18, y: 6, category: "nouns" },
+  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", x: 36, y: 8, category: "nouns" },
+  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", x: 50, y: 12, category: "nouns" },
+  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", x: 58, y: 16, category: "nouns" },
+  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🖐️", x: 20, y: 18, category: "nouns" },
   { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", x: 32, y: 17, category: "nouns" },
-  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍👩‍👧", x: 22, y: 27, category: "nouns" },
-  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🏠", x: 34, y: 26, category: "nouns" },
-  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🔢", x: 27, y: 35, category: "nouns" },
+  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍🌾", x: 22, y: 27, category: "nouns" },
+  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🌴", x: 34, y: 26, category: "nouns" },
+  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", x: 27, y: 35, category: "nouns" },
   { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", x: 38, y: 37, category: "nouns" },
   // Verbs — South America
   { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", x: 42, y: 43, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
