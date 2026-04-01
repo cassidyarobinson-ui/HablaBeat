@@ -2628,7 +2628,7 @@ export default function HablaBeat() {
       <div
         style={{
           position: "fixed", inset: 0, zIndex: 9999,
-          background: "#4a7cdb",
+          background: "url('/images/serape-bg.jpg') repeat center/auto 100%",
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           opacity: splashFading ? 0 : 1,
           transition: "opacity 0.5s ease",
@@ -2703,18 +2703,9 @@ export default function HablaBeat() {
 
         {/* Logo text */}
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
-          <div style={{ position: "absolute", top: "-30px", left: "50%", transform: "translateX(-50%)", width: "400px", height: "200px", background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(251,191,36,0.18) 0%, rgba(251,191,36,0.10) 30%, rgba(251,191,36,0.04) 55%, rgba(251,191,36,0.01) 70%, transparent 100%)", pointerEvents: "none", zIndex: -1 }} />
-          <p style={{
-            fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.06em",
-            fontFamily: "'Taco Modern', var(--font-chango), 'Chango', var(--font-fredoka), cursive, system-ui",
-            color: "#ffffff",
-            lineHeight: 1, margin: 0,
-            WebkitTextStroke: "2.5px #2d3748",
-            paintOrder: "stroke fill",
-            textTransform: "uppercase" as const,
-            textShadow: "2px 3px 0 rgba(0,0,0,0.25), 0 0 8px rgba(0,0,0,0.1)",
-          }}>HablaBeat</p>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.75rem", fontWeight: 700, marginTop: "12px", letterSpacing: "0.18em" }}>LEARN SPANISH THROUGH MUSIC</p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", filter: "invert(1)", marginBottom: "12px" }} />
+          <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.5)" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
     )
@@ -3608,7 +3599,7 @@ export default function HablaBeat() {
 
 
           {/* ── HEADER — Dia de los Muertos style ── */}
-          <div style={{ background: "#1a0a3e" }}>
+          <div style={{ background: "url('/images/serape-bg.jpg') repeat center/cover" }}>
             {/* Top zigzag border */}
             <svg width="100%" height="14" viewBox="0 0 200 14" preserveAspectRatio="none" style={{ display: "block" }}>
               <rect width="200" height="14" fill="#d35400" />
@@ -3621,27 +3612,8 @@ export default function HablaBeat() {
               <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
-                <h1 className="flex items-center gap-[1px]" aria-label="HablaBeat">
-                  {[
-                    { letter: "H", color: "#6fa8dc" },
-                    { letter: "A", color: "#f4a742" },
-                    { letter: "B", color: "#c27ba0" },
-                    { letter: "L", color: "#93c47d" },
-                    { letter: "A", color: "#8e7cc3" },
-                    { letter: "B", color: "#6fa8dc" },
-                    { letter: "E", color: "#f4a742" },
-                    { letter: "A", color: "#e06666" },
-                    { letter: "T", color: "#c27ba0" },
-                  ].map((l, i) => (
-                    <span key={i} style={{
-                      color: l.color, fontWeight: 900, fontSize: "1.8rem",
-                      fontFamily: "'Taco Modern', var(--font-chango), 'Chango', cursive, system-ui",
-                      textShadow: "2px 2px 0 rgba(0,0,0,0.6), 4px 4px 0 rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)",
-                      WebkitTextStroke: "0.5px rgba(0,0,0,0.3)",
-                      lineHeight: 1,
-                    }}>{l.letter}</span>
-                  ))}
-                </h1>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" style={{ filter: "invert(1)", mixBlendMode: "screen" }} />
                 <div className="flex-1" />
                 <div className="flex items-center gap-5">
                   <div className="flex items-center gap-1">
@@ -3669,27 +3641,8 @@ export default function HablaBeat() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
                   </div>
-                  <h1 className="flex items-center gap-[1px]" aria-label="HablaBeat">
-                    {[
-                      { letter: "H", color: "#6fa8dc" },
-                      { letter: "A", color: "#f4a742" },
-                      { letter: "B", color: "#c27ba0" },
-                      { letter: "L", color: "#93c47d" },
-                      { letter: "A", color: "#8e7cc3" },
-                      { letter: "B", color: "#6fa8dc" },
-                      { letter: "E", color: "#f4a742" },
-                      { letter: "A", color: "#e06666" },
-                      { letter: "T", color: "#c27ba0" },
-                    ].map((l, i) => (
-                      <span key={i} style={{
-                        color: l.color, fontWeight: 900, fontSize: "2.4rem",
-                        fontFamily: "'Taco Modern', var(--font-chango), 'Chango', cursive, system-ui",
-                        textShadow: "2px 2px 0 rgba(0,0,0,0.6), 4px 4px 0 rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)",
-                        WebkitTextStroke: "0.5px rgba(0,0,0,0.3)",
-                        lineHeight: 1,
-                      }}>{l.letter}</span>
-                    ))}
-                  </h1>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" style={{ filter: "invert(1)", mixBlendMode: "screen" }} />
                 </div>
                 <div className="grid grid-cols-3 px-2 pb-2">
                   <div className="flex items-center justify-center gap-1">

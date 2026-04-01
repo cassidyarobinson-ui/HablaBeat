@@ -97,7 +97,7 @@ body {
 }
 
 @theme inline {
-  --font-sans: "Suisse Int'l", var(--font-inter);
+  --font-sans: var(--font-montserrat), "Montserrat", "Suisse Int'l", var(--font-inter);
   --font-mono: monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
