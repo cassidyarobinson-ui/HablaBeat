@@ -3621,22 +3621,23 @@ export default function HablaBeat() {
               <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
-                <h1 className="flex items-center gap-[2px]" aria-label="HablaBeat">
+                <h1 className="flex items-center gap-[1px]" aria-label="HablaBeat">
                   {[
                     { letter: "H", color: "#6fa8dc" },
-                    { letter: "a", color: "#f4a742" },
-                    { letter: "b", color: "#c27ba0" },
+                    { letter: "A", color: "#f4a742" },
+                    { letter: "B", color: "#c27ba0" },
                     { letter: "L", color: "#93c47d" },
-                    { letter: "a", color: "#8e7cc3" },
-                    { letter: "b", color: "#6fa8dc" },
-                    { letter: "e", color: "#f4a742" },
+                    { letter: "A", color: "#8e7cc3" },
+                    { letter: "B", color: "#6fa8dc" },
+                    { letter: "E", color: "#f4a742" },
                     { letter: "A", color: "#e06666" },
                     { letter: "T", color: "#c27ba0" },
                   ].map((l, i) => (
                     <span key={i} style={{
-                      color: l.color, fontWeight: 900, fontSize: "1.6rem",
-                      fontFamily: "'Taco Modern', var(--font-chango), 'Chango', var(--font-fredoka), cursive, system-ui",
-                      textShadow: "1px 2px 0 rgba(0,0,0,0.4)",
+                      color: l.color, fontWeight: 900, fontSize: "1.8rem",
+                      fontFamily: "'Taco Modern', var(--font-chango), 'Chango', cursive, system-ui",
+                      textShadow: "2px 2px 0 rgba(0,0,0,0.6), 4px 4px 0 rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)",
+                      WebkitTextStroke: "0.5px rgba(0,0,0,0.3)",
                       lineHeight: 1,
                     }}>{l.letter}</span>
                   ))}
@@ -3671,19 +3672,20 @@ export default function HablaBeat() {
                   <h1 className="flex items-center gap-[1px]" aria-label="HablaBeat">
                     {[
                       { letter: "H", color: "#6fa8dc" },
-                      { letter: "a", color: "#f4a742" },
-                      { letter: "b", color: "#c27ba0" },
+                      { letter: "A", color: "#f4a742" },
+                      { letter: "B", color: "#c27ba0" },
                       { letter: "L", color: "#93c47d" },
-                      { letter: "a", color: "#8e7cc3" },
-                      { letter: "b", color: "#6fa8dc" },
-                      { letter: "e", color: "#f4a742" },
+                      { letter: "A", color: "#8e7cc3" },
+                      { letter: "B", color: "#6fa8dc" },
+                      { letter: "E", color: "#f4a742" },
                       { letter: "A", color: "#e06666" },
                       { letter: "T", color: "#c27ba0" },
                     ].map((l, i) => (
                       <span key={i} style={{
-                        color: l.color, fontWeight: 900, fontSize: "2.2rem",
-                        fontFamily: "'Taco Modern', var(--font-chango), 'Chango', var(--font-fredoka), cursive, system-ui",
-                        textShadow: "2px 3px 0 rgba(0,0,0,0.4)",
+                        color: l.color, fontWeight: 900, fontSize: "2.4rem",
+                        fontFamily: "'Taco Modern', var(--font-chango), 'Chango', cursive, system-ui",
+                        textShadow: "2px 2px 0 rgba(0,0,0,0.6), 4px 4px 0 rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)",
+                        WebkitTextStroke: "0.5px rgba(0,0,0,0.3)",
                         lineHeight: 1,
                       }}>{l.letter}</span>
                     ))}
