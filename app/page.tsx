@@ -81,12 +81,12 @@ const SECTION_GRADIENTS: Record<string, string> = {
   "body-world":       "#2090f0",
   "roles-world":      "#50b050",
   "pets-syllables":   "#f06090",
-  "places":           "#00c0d0",
+  "places":           "#e03030",
   "numbers":          "#8020a0",
   "numbers-time":     "#1060c0",
   "colors-feelings":  "#f09000",
   "colors":           "#f09000",
-  "feelings":         "#e03030",
+  "feelings":         "#00c0d0",
   "foods":            "#40a040",
   "ar-verbs":         "#f0d030",
   "er-verbs":         "#309040",
@@ -4110,7 +4110,7 @@ export default function HablaBeat() {
                     {/* Title */}
                     <div className="flex-1 text-left pl-1">
                       <p className="text-[13px] leading-tight uppercase tracking-wider" style={{ color: "white", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.5)" }}><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-bold"> {(category as any).titleSub}</span> : null}</p>
-                      <p className="font-bold text-[10px] mt-0.5 uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.85)", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
+                      <p className="font-bold text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.85)", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
                     </div>
 
                     {/* Chevron */}

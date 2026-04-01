@@ -23,12 +23,12 @@ const MAP_NODES: {
   { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🖐️", lat: 17.0, lng: -93.0, category: "nouns", bgColor: "#2090f0" },
   { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍🌾", lat: 13.5, lng: -90.5, category: "nouns", bgColor: "#50b050" },
   { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.8, lng: -84.0, category: "nouns", bgColor: "#f06090" },
-  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🌴", lat: 12.5, lng: -86.0, category: "nouns", bgColor: "#00c0d0" },
+  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🌴", lat: 12.5, lng: -86.0, category: "nouns", bgColor: "#e03030" },
   { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns", bgColor: "#8020a0" },
   { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns", bgColor: "#1060c0" },
   { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns", bgColor: "#40a040" },
   { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -72.5, category: "nouns", bgColor: "#f09000" },
-  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns", bgColor: "#e03030" },
+  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns", bgColor: "#00c0d0" },
   // Verbs — South America, spread for mobile readability
   { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }, bgColor: "#f0d030" },
   { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }, bgColor: "#309040" },
@@ -417,8 +417,6 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           padding: 1px 6px;
           text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
           border: 1px solid rgba(255,255,255,0.5);
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
         `
         country.textContent = node.country
 
@@ -438,10 +436,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             font-family: system-ui, -apple-system, sans-serif;
             line-height: 1.1;
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
           `
-          label.innerHTML = `${node.label}<br><span style="font-size:9px;font-weight:700;opacity:0.85;text-transform:uppercase;letter-spacing:0.08em">${node.country}</span>`
+          label.innerHTML = `<span style="text-transform:uppercase;letter-spacing:0.08em">${node.label}</span><br><span style="font-size:9px;font-weight:700;opacity:0.85">${node.country}</span>`
           inner.appendChild(label)
         } else {
           inner.appendChild(circle)
@@ -531,7 +527,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           letterSpacing: "0.08em",
         }}>
           <div>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.icon} {(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.label}</div>
-          <div style={{ fontSize: 11, fontWeight: 700, opacity: 0.9, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, opacity: 0.9 }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
         </div>
       )}
 
@@ -580,7 +576,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
               }}
             >
               <span>{r.label}</span>
-              <span style={{ fontSize: 9, fontWeight: 700, opacity: 0.85, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{r.subtitle}</span>
+              <span style={{ fontSize: 9, fontWeight: 700, opacity: 0.85, textTransform: "none" as const }}>{r.subtitle}</span>
             </button>
           )
         })}
