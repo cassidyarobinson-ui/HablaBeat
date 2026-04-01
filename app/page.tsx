@@ -4109,8 +4109,8 @@ export default function HablaBeat() {
                   >
                     {/* Title */}
                     <div className="flex-1 text-left pl-1">
-                      <p className="text-[13px] leading-tight" style={{ color: "white", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.5)" }}><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-normal"> {(category as any).titleSub}</span> : null}</p>
-                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.85)", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
+                      <p className="text-[13px] leading-tight uppercase tracking-wider" style={{ color: "white", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.5)" }}><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-bold"> {(category as any).titleSub}</span> : null}</p>
+                      <p className="font-bold text-[10px] mt-0.5 uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.85)", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
                     </div>
 
                     {/* Chevron */}

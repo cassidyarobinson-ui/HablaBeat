@@ -390,7 +390,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           border-radius: 6px;
           padding: ${isMob ? "2px 6px" : "3px 10px"};
           font-size: ${isMob ? 11 : 14}px;
-          font-weight: 800;
+          font-weight: 900;
           color: white;
           white-space: nowrap;
           text-align: center;
@@ -398,6 +398,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           border: 2px solid rgba(255,255,255,0.6);
           font-family: system-ui, -apple-system, sans-serif;
           text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
         `
         label.textContent = node.label
 
@@ -415,6 +417,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           padding: 1px 6px;
           text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
           border: 1px solid rgba(255,255,255,0.5);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
         `
         country.textContent = node.country
 
@@ -426,7 +430,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             border-radius: 12px;
             padding: 6px 10px;
             font-size: 12px;
-            font-weight: 800;
+            font-weight: 900;
             white-space: nowrap;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -434,8 +438,10 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             font-family: system-ui, -apple-system, sans-serif;
             line-height: 1.1;
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
           `
-          label.innerHTML = `${node.label}<br><span style="font-size:9px;font-weight:600;opacity:0.8">${node.country}</span>`
+          label.innerHTML = `${node.label}<br><span style="font-size:9px;font-weight:700;opacity:0.85;text-transform:uppercase;letter-spacing:0.08em">${node.country}</span>`
           inner.appendChild(label)
         } else {
           inner.appendChild(circle)
@@ -513,7 +519,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           padding: "10px 24px",
           borderRadius: 16,
           fontSize: 16,
-          fontWeight: 800,
+          fontWeight: 900,
           fontFamily: "system-ui, -apple-system, sans-serif",
           boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
           zIndex: 10,
@@ -521,9 +527,11 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           lineHeight: 1.3,
           border: "2px solid rgba(255,255,255,0.6)",
           textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+          textTransform: "uppercase" as const,
+          letterSpacing: "0.08em",
         }}>
           <div>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.icon} {(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.label}</div>
-          <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.9 }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, opacity: 0.9, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
         </div>
       )}
 
@@ -545,6 +553,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             <button
               key={region}
               onClick={() => flyTo(region)}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.35)" }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = isActive ? "0 4px 14px rgba(0,0,0,0.3)" : "0 2px 8px rgba(0,0,0,0.2)" }}
               style={{
                 padding: window.innerWidth < 768 ? "6px 10px" : "6px 14px",
                 borderRadius: 12,
@@ -552,7 +562,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
                 background: region === "nouns" ? "#2090f0" : "#7020a0",
                 color: "white",
                 textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
-                fontWeight: 800,
+                fontWeight: 900,
                 fontSize: window.innerWidth < 768 ? 12 : 13,
                 cursor: "pointer",
                 boxShadow: isActive
@@ -565,10 +575,12 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
                 alignItems: "center",
                 lineHeight: 1.1,
                 opacity: isActive ? 1 : 0.8,
+                textTransform: "uppercase" as const,
+                letterSpacing: "0.08em",
               }}
             >
               <span>{r.label}</span>
-              <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.85 }}>{r.subtitle}</span>
+              <span style={{ fontSize: 9, fontWeight: 700, opacity: 0.85, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{r.subtitle}</span>
             </button>
           )
         })}
