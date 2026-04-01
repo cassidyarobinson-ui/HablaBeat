@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Taco Modern — Mexican gothic display font for HABLABEAT title */
+@font-face {
+  font-family: 'Taco Modern';
+  src: url('/fonts/TACOM___.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* PWA full-screen safe area support */
 html, body {
   height: 100%;
