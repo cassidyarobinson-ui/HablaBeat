@@ -359,8 +359,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           display: flex;
           align-items: center;
           justify-content: center;
-          background: ${node.bgColor || "#7B1FA2"};
-          border: 3px solid rgba(255,255,255,0.9);
+          background: white;
+          border: 3px solid ${node.bgColor || "#7B1FA2"};
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
           transition: border 0.25s ease, box-shadow 0.25s ease;
           position: relative;
@@ -385,19 +385,18 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         const label = document.createElement("div")
         label.style.cssText = `
-          background: ${node.bgColor || "#7B1FA2"};
+          background: white;
           backdrop-filter: blur(6px);
           border-radius: 6px;
           padding: ${isMob ? "2px 6px" : "3px 10px"};
           font-size: ${isMob ? 11 : 14}px;
           font-weight: 900;
-          color: white;
+          color: #1e293b;
           white-space: nowrap;
           text-align: center;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-          border: 2px solid rgba(255,255,255,0.6);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          border: 2px solid ${node.bgColor || "#7B1FA2"};
           font-family: system-ui, -apple-system, sans-serif;
-          text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
           text-transform: uppercase;
           letter-spacing: 0.08em;
         `
@@ -407,37 +406,35 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         country.style.cssText = `
           font-size: ${isMob ? 9 : 11}px;
           font-weight: 700;
-          color: white;
+          color: #64748b;
           white-space: nowrap;
           text-align: center;
           font-family: system-ui, -apple-system, sans-serif;
-          background: ${node.bgColor || "#7B1FA2"};
+          background: white;
           backdrop-filter: blur(4px);
           border-radius: 4px;
           padding: 1px 6px;
-          text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-          border: 1px solid rgba(255,255,255,0.5);
+          border: 1px solid ${node.bgColor || "#7B1FA2"};
         `
         country.textContent = node.country
 
         if (isMob) {
           // Mobile: compact text button, no icon circle
           label.style.cssText = `
-            background: ${node.bgColor || "#7B1FA2"};
-            color: white;
+            background: white;
+            color: #1e293b;
             border-radius: 12px;
             padding: 6px 10px;
             font-size: 12px;
             font-weight: 900;
             white-space: nowrap;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            border: 2px solid rgba(255,255,255,0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 2px solid ${node.bgColor || "#7B1FA2"};
             font-family: system-ui, -apple-system, sans-serif;
             line-height: 1.1;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
           `
-          label.innerHTML = `<span style="text-transform:uppercase;letter-spacing:0.08em">${node.label}</span><br><span style="font-size:9px;font-weight:700;opacity:0.85">${node.country}</span>`
+          label.innerHTML = `<span style="text-transform:uppercase;letter-spacing:0.08em">${node.label}</span><br><span style="font-size:9px;font-weight:700;color:#64748b">${node.country}</span>`
           inner.appendChild(label)
         } else {
           inner.appendChild(circle)
@@ -508,26 +505,23 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           top: 16,
           left: "50%",
           transform: "translateX(-50%)",
-          background: activeRegion === "nouns"
-            ? "#2090f0"
-            : "#7020a0",
-          color: "white",
+          background: "white",
+          color: "#1e293b",
           padding: "10px 24px",
           borderRadius: 16,
           fontSize: 16,
           fontWeight: 900,
           fontFamily: "system-ui, -apple-system, sans-serif",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
           zIndex: 10,
           textAlign: "center",
           lineHeight: 1.3,
-          border: "2px solid rgba(255,255,255,0.6)",
-          textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+          border: `3px solid ${activeRegion === "nouns" ? "#2090f0" : "#7020a0"}`,
           textTransform: "uppercase" as const,
           letterSpacing: "0.08em",
         }}>
           <div>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.icon} {(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.label}</div>
-          <div style={{ fontSize: 11, fontWeight: 700, opacity: 0.9 }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#64748b" }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
         </div>
       )}
 
@@ -554,29 +548,30 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
               style={{
                 padding: window.innerWidth < 768 ? "6px 10px" : "6px 14px",
                 borderRadius: 12,
-                border: isActive ? "3px solid white" : "2px solid rgba(255,255,255,0.6)",
-                background: region === "nouns" ? "#2090f0" : "#7020a0",
-                color: "white",
-                textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+                border: isActive
+                  ? `3px solid ${region === "nouns" ? "#2090f0" : "#7020a0"}`
+                  : `2px solid ${region === "nouns" ? "#2090f0" : "#7020a0"}`,
+                background: "white",
+                color: "#1e293b",
                 fontWeight: 900,
                 fontSize: window.innerWidth < 768 ? 12 : 13,
                 cursor: "pointer",
                 boxShadow: isActive
-                  ? "0 4px 14px rgba(0,0,0,0.3)"
-                  : "0 2px 8px rgba(0,0,0,0.2)",
+                  ? "0 4px 14px rgba(0,0,0,0.15)"
+                  : "0 2px 8px rgba(0,0,0,0.1)",
                 transition: "all 0.2s ease",
                 fontFamily: "system-ui, -apple-system, sans-serif",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 lineHeight: 1.1,
-                opacity: isActive ? 1 : 0.8,
+                opacity: isActive ? 1 : 0.7,
                 textTransform: "uppercase" as const,
                 letterSpacing: "0.08em",
               }}
             >
               <span>{r.label}</span>
-              <span style={{ fontSize: 9, fontWeight: 700, opacity: 0.85, textTransform: "none" as const }}>{r.subtitle}</span>
+              <span style={{ fontSize: 9, fontWeight: 700, color: "#64748b", textTransform: "none" as const }}>{r.subtitle}</span>
             </button>
           )
         })}

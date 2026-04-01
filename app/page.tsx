@@ -4094,12 +4094,12 @@ export default function HablaBeat() {
             )}
             {false && curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id
-              const catBg = catIdx === 0 ? "#2090f0" : "#7020a0"
-              const catGlow = "0 2px 8px rgba(0,0,0,0.2)"
+              const catBorder = catIdx === 0 ? "#2090f0" : "#7020a0"
+              const catGlow = "0 2px 8px rgba(0,0,0,0.1)"
 
               return (
                 <div key={category.id} className="rounded-3xl transition-all duration-300"
-                  style={{ background: catBg, boxShadow: catGlow, border: `2px solid rgba(255,255,255,0.6)`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
+                  style={{ background: "white", boxShadow: catGlow, border: `2px solid ${catBorder}`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
 
                   {/* ── Header row — always visible ── */}
                   <button
@@ -4109,12 +4109,12 @@ export default function HablaBeat() {
                   >
                     {/* Title */}
                     <div className="flex-1 text-left pl-1">
-                      <p className="text-[13px] leading-tight uppercase tracking-wider" style={{ color: "white", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.5)" }}><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-bold"> {(category as any).titleSub}</span> : null}</p>
-                      <p className="font-bold text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.85)", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
+                      <p className="text-[13px] leading-tight uppercase tracking-wider" style={{ color: "#1e293b" }}><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-bold text-gray-500"> {(category as any).titleSub}</span> : null}</p>
+                      <p className="font-bold text-[10px] mt-0.5" style={{ color: "#64748b" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
                     </div>
 
                     {/* Chevron */}
-                    <span className="text-white text-sm font-bold" style={{ textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{isOpen ? "▲" : "▼"}</span>
+                    <span className="text-gray-400 text-sm font-bold">{isOpen ? "▲" : "▼"}</span>
                   </button>
 
                   {/* ── World grid — only when open ── */}
@@ -4182,9 +4182,9 @@ export default function HablaBeat() {
                               onTouchStart={playWorldHover}
                               className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
                               style={{
-                                background: sectionGradient,
-                                border: "3px solid rgba(255,255,255,0.6)",
-                                boxShadow: "0 3px 12px rgba(74,124,219,0.3)",
+                                background: "white",
+                                border: `3px solid ${sectionGradient}`,
+                                boxShadow: "0 3px 12px rgba(0,0,0,0.1)",
                               }}
                             >
                               {isSectionBadgeUnlocked(section) && (
