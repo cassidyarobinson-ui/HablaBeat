@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Fredoka } from "next/font/google"
+import { Inter, Fredoka, Chango } from "next/font/google"
 import "./globals.css"
 
 const inter = Inter({
@@ -13,6 +13,12 @@ const fredoka = Fredoka({
   variable: "--font-fredoka",
   subsets: ["latin"],
   weight: ["700"],
+})
+
+const chango = Chango({
+  variable: "--font-chango",
+  subsets: ["latin"],
+  weight: ["400"],
 })
 
 export const metadata: Metadata = {
@@ -54,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${fredoka.variable}`}>
+    <html lang="en" className={`${inter.variable} ${fredoka.variable} ${chango.variable}`}>
       <head>
         {/* PWA full-screen mode on iOS */}
         <meta name="mobile-web-app-capable" content="yes" />

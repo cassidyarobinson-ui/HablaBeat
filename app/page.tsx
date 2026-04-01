@@ -2706,6 +2706,7 @@ export default function HablaBeat() {
           <div style={{ position: "absolute", top: "-30px", left: "50%", transform: "translateX(-50%)", width: "400px", height: "200px", background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(251,191,36,0.18) 0%, rgba(251,191,36,0.10) 30%, rgba(251,191,36,0.04) 55%, rgba(251,191,36,0.01) 70%, transparent 100%)", pointerEvents: "none", zIndex: -1 }} />
           <p style={{
             fontSize: "2.6rem", fontWeight: 900, letterSpacing: "0.06em",
+            fontFamily: "var(--font-chango), 'Chango', var(--font-fredoka), cursive, system-ui",
             color: "#ffffff",
             lineHeight: 1, margin: 0,
             WebkitTextStroke: "2.5px #2d3748",
@@ -3634,7 +3635,7 @@ export default function HablaBeat() {
                   ].map((l, i) => (
                     <span key={i} style={{
                       color: l.color, fontWeight: 900, fontSize: "1.6rem",
-                      fontFamily: "var(--font-fredoka), 'Fredoka One', 'Bubblegum Sans', cursive, system-ui",
+                      fontFamily: "var(--font-chango), 'Chango', var(--font-fredoka), cursive, system-ui",
                       textShadow: "1px 2px 0 rgba(0,0,0,0.4)",
                       lineHeight: 1,
                     }}>{l.letter}</span>
@@ -3681,7 +3682,7 @@ export default function HablaBeat() {
                     ].map((l, i) => (
                       <span key={i} style={{
                         color: l.color, fontWeight: 900, fontSize: "2.2rem",
-                        fontFamily: "var(--font-fredoka), 'Fredoka One', 'Bubblegum Sans', cursive, system-ui",
+                        fontFamily: "var(--font-chango), 'Chango', var(--font-fredoka), cursive, system-ui",
                         textShadow: "2px 3px 0 rgba(0,0,0,0.4)",
                         lineHeight: 1,
                       }}>{l.letter}</span>
