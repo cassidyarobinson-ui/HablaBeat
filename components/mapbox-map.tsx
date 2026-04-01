@@ -546,31 +546,29 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
               key={region}
               onClick={() => flyTo(region)}
               style={{
-                padding: window.innerWidth < 768 ? "5px 12px" : "8px 20px",
-                borderRadius: 20,
-                border: isActive ? "2px solid white" : "2px solid rgba(255,255,255,0.5)",
-                background: isActive
-                  ? (region === "nouns" ? "#2090f0" : "#7020a0")
-                  : "rgba(255,255,255,0.85)",
-                color: isActive ? "white" : "#374151",
-                textShadow: isActive ? "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" : "none",
-                fontWeight: 700,
-                fontSize: window.innerWidth < 768 ? 11 : 13,
+                padding: window.innerWidth < 768 ? "6px 10px" : "6px 14px",
+                borderRadius: 12,
+                border: isActive ? "3px solid white" : "2px solid rgba(255,255,255,0.6)",
+                background: region === "nouns" ? "#2090f0" : "#7020a0",
+                color: "white",
+                textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+                fontWeight: 800,
+                fontSize: window.innerWidth < 768 ? 12 : 13,
                 cursor: "pointer",
                 boxShadow: isActive
-                  ? "0 4px 14px rgba(0,0,0,0.25)"
-                  : "0 2px 8px rgba(0,0,0,0.12)",
-                backdropFilter: "blur(8px)",
+                  ? "0 4px 14px rgba(0,0,0,0.3)"
+                  : "0 2px 8px rgba(0,0,0,0.2)",
                 transition: "all 0.2s ease",
                 fontFamily: "system-ui, -apple-system, sans-serif",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                lineHeight: 1.2,
+                lineHeight: 1.1,
+                opacity: isActive ? 1 : 0.8,
               }}
             >
               <span>{r.label}</span>
-              <span style={{ fontSize: 9, fontWeight: 500, opacity: 0.8 }}>{r.subtitle}</span>
+              <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.85 }}>{r.subtitle}</span>
             </button>
           )
         })}
