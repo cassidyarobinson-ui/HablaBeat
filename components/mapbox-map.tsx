@@ -443,12 +443,15 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         }
         el.appendChild(inner)
 
-        // Hover effects — bigger scale + pop sound
+        // Hover effects — bigger scale + pop sound + golden borders
         el.addEventListener("mouseenter", () => {
           inner.style.transform = "scale(1.6)"
-          inner.style.filter = "drop-shadow(0 0 24px rgba(74,124,219,0.7))"
+          inner.style.filter = "drop-shadow(0 0 24px rgba(251,191,36,0.5))"
           circle.style.border = "4px solid #fbbf24"
           circle.style.boxShadow = "0 0 28px rgba(251,191,36,0.6), 0 6px 16px rgba(0,0,0,0.25)"
+          label.style.border = "2px solid #fbbf24"
+          label.style.boxShadow = "0 0 12px rgba(251,191,36,0.4), 0 2px 8px rgba(0,0,0,0.15)"
+          country.style.border = "1px solid #fbbf24"
           el.style.zIndex = "100"
           onHoverSoundRef.current?.()
         })
@@ -464,6 +467,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             inner.style.filter = "none"
             circle.style.border = `3px solid ${node.bgColor || "#7B1FA2"}`
             circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
+            label.style.border = `2px solid ${node.bgColor || "#7B1FA2"}`
+            label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)"
+            country.style.border = `1px solid ${node.bgColor || "#7B1FA2"}`
             el.style.zIndex = "10"
           }
         })
