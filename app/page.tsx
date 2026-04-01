@@ -3640,36 +3640,36 @@ export default function HablaBeat() {
               <div className="flex items-center justify-center gap-8 px-4 py-2">
                 <div className="flex items-center gap-1">
                   <span className="emoji-fire text-sm">🔥</span>
-                  <span className="text-gray-400 text-[10px] font-bold uppercase">Streak</span>
-                  <span className="text-gray-800 font-black text-xs">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Streak</span>
+                  <span className="font-black text-xs" style={{ color: "#1e293b" }}>{dailyStreak > 0 ? dailyStreak : "0"}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="emoji-lightning text-sm">⚡</span>
-                  <span className="text-gray-400 text-[10px] font-bold uppercase">Flow</span>
-                  <span className="text-gray-800 font-black text-xs">{bestFlow}</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Flow</span>
+                  <span className="font-black text-xs" style={{ color: "#1e293b" }}>{bestFlow}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="text-sm">💰</span>
-                  <span className="text-gray-400 text-[10px] font-bold uppercase">Bank</span>
-                  <span className="text-gray-800 font-black text-xs">{totalVocabBank}</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Bank</span>
+                  <span className="font-black text-xs" style={{ color: "#1e293b" }}>{totalVocabBank}</span>
                 </div>
               </div>
             ) : (
               <div className="grid grid-cols-3 px-2 py-2">
                 <div className="flex items-center justify-center gap-1">
                   <span className="emoji-fire text-base">🔥</span>
-                  <span className="text-gray-400 text-[11px] font-bold uppercase">Streak</span>
-                  <span className="text-gray-800 font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+                  <span className="text-[11px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Streak</span>
+                  <span className="font-black text-sm" style={{ color: "#1e293b" }}>{dailyStreak > 0 ? dailyStreak : "0"}</span>
                 </div>
                 <div className="flex items-center justify-center gap-1">
                   <span className="emoji-lightning text-base">⚡</span>
-                  <span className="text-gray-400 text-[11px] font-bold uppercase">Flow</span>
-                  <span className="text-gray-800 font-black text-sm">{bestFlow}</span>
+                  <span className="text-[11px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Flow</span>
+                  <span className="font-black text-sm" style={{ color: "#1e293b" }}>{bestFlow}</span>
                 </div>
                 <div className="flex items-center justify-center gap-1">
                   <span className="text-base">💰</span>
-                  <span className="text-gray-400 text-[11px] font-bold uppercase">Bank</span>
-                  <span className="text-gray-800 font-black text-sm">{totalVocabBank}</span>
+                  <span className="text-[11px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Bank</span>
+                  <span className="font-black text-sm" style={{ color: "#1e293b" }}>{totalVocabBank}</span>
                 </div>
               </div>
             )}
@@ -3930,7 +3930,7 @@ export default function HablaBeat() {
             `}</style>
             {/* ── Americas Map (both desktop and mobile) ── */}
             {(
-              <div className="w-full relative" style={{ height: isDesktop ? "calc(100vh - 55px)" : "calc(100dvh - 55px)" }}>
+              <div className="w-full relative" style={{ height: isDesktop ? "calc(100vh - 90px)" : "calc(100dvh - 120px)" }}>
                 <MapboxMap
                   onSelectSection={(sectionId, cx, cy) => {
                     setWorldZoomOrigin({ x: cx, y: cy })

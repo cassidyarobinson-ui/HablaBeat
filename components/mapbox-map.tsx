@@ -462,7 +462,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           if (nodeIdx !== selectedIndexRef.current) {
             inner.style.transform = "scale(1)"
             inner.style.filter = "none"
-            circle.style.border = "3px solid rgba(255,255,255,0.9)"
+            circle.style.border = `3px solid ${node.bgColor || "#7B1FA2"}`
             circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
             el.style.zIndex = "10"
           }
@@ -530,7 +530,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         position: "absolute",
         ...(window.innerWidth < 768
           ? { bottom: 90, right: 12 }
-          : { bottom: 16, right: 16 }),
+          : { bottom: 40, right: 16 }),
         display: "flex",
         flexDirection: "column",
         gap: 6,
@@ -543,8 +543,22 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             <button
               key={region}
               onClick={() => flyTo(region)}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.35)" }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = isActive ? "0 4px 14px rgba(0,0,0,0.3)" : "0 2px 8px rgba(0,0,0,0.2)" }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget
+                el.style.transform = "scale(1.15)"
+                el.style.border = `3px solid #fbbf24`
+                el.style.boxShadow = "0 0 20px rgba(251,191,36,0.5), 0 6px 16px rgba(0,0,0,0.2)"
+                el.style.zIndex = "100"
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget
+                el.style.transform = "scale(1)"
+                el.style.border = isActive
+                  ? `3px solid ${region === "nouns" ? "#2090f0" : "#7020a0"}`
+                  : `2px solid ${region === "nouns" ? "#2090f0" : "#7020a0"}`
+                el.style.boxShadow = isActive ? "0 4px 14px rgba(0,0,0,0.15)" : "0 2px 8px rgba(0,0,0,0.1)"
+                el.style.zIndex = "10"
+              }}
               style={{
                 padding: window.innerWidth < 768 ? "6px 10px" : "6px 14px",
                 borderRadius: 12,
