@@ -2704,7 +2704,7 @@ export default function HablaBeat() {
         {/* Logo text */}
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", marginBottom: "12px" }} />
+          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", marginBottom: "12px", filter: "invert(1)" }} />
           <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.5)" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
@@ -3602,11 +3602,11 @@ export default function HablaBeat() {
           <div style={{ background: "url('/images/serape-bg.jpg') repeat center/cover" }}>
             {/* Desktop: single compact row */}
             {isDesktop ? (
-              <div className="flex items-center px-4 py-2 gap-4">
+              <div className="flex items-center px-4 py-2 gap-4" style={{ background: "rgba(0,0,0,0.55)" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" />
+                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" style={{ filter: "invert(1)" }} />
                 <div className="flex-1" />
                 <div className="flex items-center gap-5">
                   <div className="flex items-center gap-1">
@@ -3629,13 +3629,13 @@ export default function HablaBeat() {
             ) : (
               <>
                 {/* Mobile: stacked layout */}
-                <div className="flex items-center justify-center px-4 pt-3 pb-1 gap-3">
+                <div className="flex items-center justify-center px-4 pt-3 pb-1 gap-3" style={{ background: "rgba(0,0,0,0.55)" }}>
                   <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
                   </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" />
+                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" style={{ filter: "invert(1)" }} />
                 </div>
                 <div className="grid grid-cols-3 px-2 pb-2">
                   <div className="flex items-center justify-center gap-1">
