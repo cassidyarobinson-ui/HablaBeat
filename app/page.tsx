@@ -3609,54 +3609,57 @@ export default function HablaBeat() {
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" />
-                <div className="flex-1" />
-                <div className="flex items-center gap-5">
-                  <div className="flex items-center gap-1">
-                    <span className="emoji-fire text-sm">🔥</span>
-                    <span className="text-white/70 text-[10px] font-bold uppercase">Streak</span>
-                    <span className="text-white font-black text-xs">{dailyStreak > 0 ? dailyStreak : "0"}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="emoji-lightning text-sm">⚡</span>
-                    <span className="text-white/70 text-[10px] font-bold uppercase">Flow</span>
-                    <span className="text-white font-black text-xs">{bestFlow}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm">💰</span>
-                    <span className="text-white/70 text-[10px] font-bold uppercase">Bank</span>
-                    <span className="text-white font-black text-xs">{totalVocabBank}</span>
-                  </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center px-4 pt-3 pb-2 gap-3">
+                <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
+                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" />
+              </div>
+            )}
+          </div>
+
+          {/* Stats bar — white background, full width */}
+          <div className="w-full" style={{ background: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+            {isDesktop ? (
+              <div className="flex items-center justify-center gap-8 px-4 py-2">
+                <div className="flex items-center gap-1">
+                  <span className="emoji-fire text-sm">🔥</span>
+                  <span className="text-gray-400 text-[10px] font-bold uppercase">Streak</span>
+                  <span className="text-gray-800 font-black text-xs">{dailyStreak > 0 ? dailyStreak : "0"}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="emoji-lightning text-sm">⚡</span>
+                  <span className="text-gray-400 text-[10px] font-bold uppercase">Flow</span>
+                  <span className="text-gray-800 font-black text-xs">{bestFlow}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm">💰</span>
+                  <span className="text-gray-400 text-[10px] font-bold uppercase">Bank</span>
+                  <span className="text-gray-800 font-black text-xs">{totalVocabBank}</span>
                 </div>
               </div>
             ) : (
-              <>
-                {/* Mobile: stacked layout */}
-                <div className="flex items-center justify-center px-4 pt-3 pb-1 gap-3">
-                  <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
-                  </div>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" />
+              <div className="grid grid-cols-3 px-2 py-2">
+                <div className="flex items-center justify-center gap-1">
+                  <span className="emoji-fire text-base">🔥</span>
+                  <span className="text-gray-400 text-[11px] font-bold uppercase">Streak</span>
+                  <span className="text-gray-800 font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
                 </div>
-                <div className="grid grid-cols-3 px-2 pb-2">
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="emoji-fire text-base">🔥</span>
-                    <span className="text-white/70 text-[11px] font-bold uppercase">Streak</span>
-                    <span className="text-white font-black text-sm">{dailyStreak > 0 ? dailyStreak : "0"}</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="emoji-lightning text-base">⚡</span>
-                    <span className="text-white/70 text-[11px] font-bold uppercase">Flow</span>
-                    <span className="text-white font-black text-sm">{bestFlow}</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="text-base">💰</span>
-                    <span className="text-white/70 text-[11px] font-bold uppercase">Bank</span>
-                    <span className="text-white font-black text-sm">{totalVocabBank}</span>
-                  </div>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="emoji-lightning text-base">⚡</span>
+                  <span className="text-gray-400 text-[11px] font-bold uppercase">Flow</span>
+                  <span className="text-gray-800 font-black text-sm">{bestFlow}</span>
                 </div>
-              </>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-base">💰</span>
+                  <span className="text-gray-400 text-[11px] font-bold uppercase">Bank</span>
+                  <span className="text-gray-800 font-black text-sm">{totalVocabBank}</span>
+                </div>
+              </div>
             )}
           </div>
 
