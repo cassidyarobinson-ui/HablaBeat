@@ -2704,7 +2704,7 @@ export default function HablaBeat() {
         {/* Logo text */}
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", marginBottom: "12px", filter: "invert(1)" }} />
+          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", marginBottom: "12px" }} />
           <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.5)" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
@@ -3602,11 +3602,11 @@ export default function HablaBeat() {
           <div style={{ background: "url('/images/serape-bg.jpg') repeat center/cover" }}>
             {/* Desktop: single compact row */}
             {isDesktop ? (
-              <div className="flex items-center px-4 py-2 gap-4" style={{ background: "rgba(0,0,0,0.55)" }}>
+              <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" style={{ filter: "invert(1)" }} />
+                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" />
                 <div className="flex-1" />
                 <div className="flex items-center gap-5">
                   <div className="flex items-center gap-1">
@@ -3629,13 +3629,13 @@ export default function HablaBeat() {
             ) : (
               <>
                 {/* Mobile: stacked layout */}
-                <div className="flex items-center justify-center px-4 pt-3 pb-1 gap-3" style={{ background: "rgba(0,0,0,0.55)" }}>
+                <div className="flex items-center justify-center px-4 pt-3 pb-1 gap-3">
                   <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
                   </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" style={{ filter: "invert(1)" }} />
+                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" />
                 </div>
                 <div className="grid grid-cols-3 px-2 pb-2">
                   <div className="flex items-center justify-center gap-1">
@@ -4092,13 +4092,11 @@ export default function HablaBeat() {
             )}
             {false && curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id
-              const catGradient = "#ffffff"
-              const catGlow = "0 1px 3px rgba(0,0,0,0.04)"
-              const catAccent = ["#4a7cdb","#7ba3e8","#5b7fbf"]
+              const catGlow = "0 2px 8px rgba(0,0,0,0.2)"
 
               return (
                 <div key={category.id} className="rounded-3xl transition-all duration-300"
-                  style={{ background: catGradient, boxShadow: catGlow, border: `1px solid ${isOpen ? "#d6e4f5" : "#e5e7eb"}`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
+                  style={{ backgroundImage: "url('/images/serape-bg.jpg')", backgroundSize: "cover", backgroundPosition: "center", boxShadow: catGlow, border: `2px solid rgba(255,255,255,0.6)`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
 
                   {/* ── Header row — always visible ── */}
                   <button
@@ -4108,12 +4106,12 @@ export default function HablaBeat() {
                   >
                     {/* Title */}
                     <div className="flex-1 text-left pl-1">
-                      <p className="text-gray-900 text-[13px] leading-tight"><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-normal text-gray-600"> {(category as any).titleSub}</span> : null}</p>
-                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: "#71717a" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
+                      <p className="text-[13px] leading-tight" style={{ color: "white", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.5)" }}><span className="font-black">{category.title}</span>{(category as any).titleSub ? <span className="font-normal"> {(category as any).titleSub}</span> : null}</p>
+                      <p className="font-semibold text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.85)", textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{catIdx === 0 ? 10 : category.sections.length} countries, {category.sections.reduce((s, sec) => s + sec.songs.length, 0)} songs, 3 battles</p>
                     </div>
 
                     {/* Chevron */}
-                    <span className="text-gray-400 text-sm font-bold">{isOpen ? "▲" : "▼"}</span>
+                    <span className="text-white text-sm font-bold" style={{ textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" }}>{isOpen ? "▲" : "▼"}</span>
                   </button>
 
                   {/* ── World grid — only when open ── */}
@@ -4181,7 +4179,9 @@ export default function HablaBeat() {
                               onTouchStart={playWorldHover}
                               className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
                               style={{
-                                background: "linear-gradient(180deg, #8b5cf6 0%, #6d28d9 50%, #4a7cdb 100%)",
+                                backgroundImage: "url('/images/serape-bg.jpg')",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
                                 border: "3px solid rgba(255,255,255,0.6)",
                                 boxShadow: "0 3px 12px rgba(74,124,219,0.3)",
                               }}
@@ -4210,7 +4210,7 @@ export default function HablaBeat() {
                                       <path id={`g-top-${section.id}`} d={topArc} />
                                       <path id={`g-bot-${section.id}`} d={botArc} />
                                       <filter id={`g-outline-${section.id}`} x="-20%" y="-20%" width="140%" height="140%">
-                                        <feMorphology in="SourceAlpha" operator="dilate" radius="0.8" result="expanded"/>
+                                        <feMorphology in="SourceAlpha" operator="dilate" radius="1.5" result="expanded"/>
                                         <feFlood floodColor="#000" result="color"/>
                                         <feComposite in="color" in2="expanded" operator="in" result="outline"/>
                                         <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>

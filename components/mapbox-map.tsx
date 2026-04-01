@@ -359,7 +359,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           display: flex;
           align-items: center;
           justify-content: center;
-          background: ${node.bgColor || "#7B1FA2"};
+          background: url('/images/serape-bg.jpg') center/cover;
           border: 3px solid rgba(255,255,255,0.9);
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
           transition: border 0.25s ease, box-shadow 0.25s ease;
@@ -385,18 +385,19 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         const label = document.createElement("div")
         label.style.cssText = `
-          background: rgba(255,255,255,0.95);
+          background: url('/images/serape-bg.jpg') center/cover;
           backdrop-filter: blur(6px);
           border-radius: 6px;
           padding: ${isMob ? "2px 6px" : "3px 10px"};
           font-size: ${isMob ? 11 : 14}px;
-          font-weight: 700;
-          color: #1e293b;
+          font-weight: 800;
+          color: white;
           white-space: nowrap;
           text-align: center;
-          box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-          border: 1px solid rgba(0,0,0,0.06);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+          border: 2px solid rgba(255,255,255,0.6);
           font-family: system-ui, -apple-system, sans-serif;
+          text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         `
         label.textContent = node.label
 
@@ -404,22 +405,23 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         country.style.cssText = `
           font-size: ${isMob ? 9 : 11}px;
           font-weight: 700;
-          color: #1e293b;
+          color: white;
           white-space: nowrap;
           text-align: center;
           font-family: system-ui, -apple-system, sans-serif;
-          background: rgba(255,255,255,0.85);
+          background: url('/images/serape-bg.jpg') center/cover;
           backdrop-filter: blur(4px);
           border-radius: 4px;
           padding: 1px 6px;
-          text-shadow: none;
+          text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+          border: 1px solid rgba(255,255,255,0.5);
         `
         country.textContent = node.country
 
         if (isMob) {
           // Mobile: compact text button, no icon circle
           label.style.cssText = `
-            background: ${node.bgColor || "#7B1FA2"};
+            background: url('/images/serape-bg.jpg') center/cover;
             color: white;
             border-radius: 12px;
             padding: 6px 10px;
@@ -431,6 +433,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             border: 2px solid rgba(255,255,255,0.5);
             font-family: system-ui, -apple-system, sans-serif;
             line-height: 1.1;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
           `
           label.innerHTML = `${node.label}<br><span style="font-size:9px;font-weight:600;opacity:0.8">${node.country}</span>`
           inner.appendChild(label)
@@ -503,9 +506,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           top: 16,
           left: "50%",
           transform: "translateX(-50%)",
-          background: activeRegion === "nouns"
-            ? "linear-gradient(135deg, #3b82f6, #2563eb)"
-            : "linear-gradient(135deg, #7c3aed, #6d28d9)",
+          background: "url('/images/serape-bg.jpg') center/cover",
           color: "white",
           padding: "10px 24px",
           borderRadius: 16,
@@ -516,9 +517,11 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           zIndex: 10,
           textAlign: "center",
           lineHeight: 1.3,
+          border: "2px solid rgba(255,255,255,0.6)",
+          textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
         }}>
           <div>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.icon} {(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.label}</div>
-          <div style={{ fontSize: 11, fontWeight: 500, opacity: 0.8 }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
+          <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.9 }}>{(activeRegion === "nouns" ? NOUN_NODES : VERB_NODES)[selectedIndex]?.country}</div>
         </div>
       )}
 
@@ -544,12 +547,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
                 padding: window.innerWidth < 768 ? "5px 12px" : "8px 20px",
                 borderRadius: 20,
                 border: isActive ? "2px solid white" : "2px solid rgba(255,255,255,0.5)",
-                background: isActive
-                  ? (region === "nouns"
-                    ? "linear-gradient(135deg, #7c3aed, #4a7cdb)"
-                    : "linear-gradient(135deg, #8b5cf6, #7c3aed)")
-                  : "rgba(255,255,255,0.85)",
-                color: isActive ? "white" : "#374151",
+                background: "url('/images/serape-bg.jpg') center/cover",
+                color: "white",
+                textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
                 fontWeight: 700,
                 fontSize: window.innerWidth < 768 ? 11 : 13,
                 cursor: "pointer",
