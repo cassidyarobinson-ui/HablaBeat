@@ -3513,6 +3513,11 @@ export default function HablaBeat() {
             50% { transform: rotate(1deg); }
           }
           .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
+          @keyframes bunnySpin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+          }
+          .bunny-spin { animation: bunnySpin 0.6s ease-in-out; }
           @keyframes worldFloat {
             0%, 100% { transform: translateY(0px); }
             50%       { transform: translateY(-4px); }
@@ -3606,7 +3611,10 @@ export default function HablaBeat() {
             {isDesktop ? (
               <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" style={{ cursor: "pointer" }}
+                  onMouseEnter={(e) => { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") }}
+                  onAnimationEnd={(e) => e.currentTarget.classList.remove("bunny-spin")}
+                />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" />
               </div>
@@ -3614,7 +3622,11 @@ export default function HablaBeat() {
               <div className="flex items-center justify-center px-4 pt-3 pb-2 gap-3">
                 <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
+                  <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" style={{ cursor: "pointer" }}
+                    onTouchStart={(e) => { const el = e.currentTarget; el.classList.remove("bunny-spin"); void el.offsetWidth; el.classList.add("bunny-spin") }}
+                    onMouseEnter={(e) => { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") }}
+                    onAnimationEnd={(e) => e.currentTarget.classList.remove("bunny-spin")}
+                  />
                 </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" />
