@@ -2704,7 +2704,7 @@ export default function HablaBeat() {
         {/* Logo text */}
         <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", filter: "invert(1)", marginBottom: "12px" }} />
+          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", marginBottom: "12px" }} />
           <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.5)" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
@@ -3600,20 +3600,13 @@ export default function HablaBeat() {
 
           {/* ── HEADER — Dia de los Muertos style ── */}
           <div style={{ background: "url('/images/serape-bg.jpg') repeat center/cover" }}>
-            {/* Top zigzag border */}
-            <svg width="100%" height="14" viewBox="0 0 200 14" preserveAspectRatio="none" style={{ display: "block" }}>
-              <rect width="200" height="14" fill="#d35400" />
-              {Array.from({ length: 20 }).map((_, i) => (
-                <polygon key={`zt-${i}`} points={`${i * 10},14 ${i * 10 + 5},2 ${i * 10 + 10},14`} fill="#22c55e" />
-              ))}
-            </svg>
             {/* Desktop: single compact row */}
             {isDesktop ? (
               <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" style={{ filter: "invert(1)", mixBlendMode: "screen" }} />
+                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" />
                 <div className="flex-1" />
                 <div className="flex items-center gap-5">
                   <div className="flex items-center gap-1">
@@ -3642,7 +3635,7 @@ export default function HablaBeat() {
                     <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" />
                   </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" style={{ filter: "invert(1)", mixBlendMode: "screen" }} />
+                  <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" />
                 </div>
                 <div className="grid grid-cols-3 px-2 pb-2">
                   <div className="flex items-center justify-center gap-1">
@@ -3663,13 +3656,6 @@ export default function HablaBeat() {
                 </div>
               </>
             )}
-            {/* Bottom zigzag border */}
-            <svg width="100%" height="14" viewBox="0 0 200 14" preserveAspectRatio="none" style={{ display: "block" }}>
-              <rect width="200" height="14" fill="#d35400" />
-              {Array.from({ length: 20 }).map((_, i) => (
-                <polygon key={`zb-${i}`} points={`${i * 10},0 ${i * 10 + 5},12 ${i * 10 + 10},0`} fill="#22c55e" />
-              ))}
-            </svg>
           </div>
 
           {/* ✨ World overlay — immersive carousel (both mobile & desktop) */}
