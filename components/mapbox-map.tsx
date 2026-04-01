@@ -16,28 +16,29 @@ const MAP_NODES: {
   category: "nouns" | "verbs"
   verbLetter?: string
   verbStyle?: { bg: string; color: string }
+  bgColor?: string
 }[] = [
   // Nouns — ordered by song number (1→24), positioned for mobile readability
-  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "✏️", lat: 22.0, lng: -96.0, category: "nouns" },
-  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🖐️", lat: 17.0, lng: -93.0, category: "nouns" },
-  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍🌾", lat: 13.5, lng: -90.5, category: "nouns" },
-  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.8, lng: -84.0, category: "nouns" },
-  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🌴", lat: 12.5, lng: -86.0, category: "nouns" },
-  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns" },
-  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns" },
-  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns" },
-  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -72.5, category: "nouns" },
-  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns" },
+  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "✏️", lat: 22.0, lng: -96.0, category: "nouns", bgColor: "#7B1FA2" },
+  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🖐️", lat: 17.0, lng: -93.0, category: "nouns", bgColor: "#1A237E" },
+  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍🌾", lat: 13.5, lng: -90.5, category: "nouns", bgColor: "#2E7D32" },
+  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.8, lng: -84.0, category: "nouns", bgColor: "#C2185B" },
+  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🌴", lat: 12.5, lng: -86.0, category: "nouns", bgColor: "#1976D2" },
+  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns", bgColor: "#7B1FA2" },
+  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns", bgColor: "#1A237E" },
+  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns", bgColor: "#2E7D32" },
+  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -72.5, category: "nouns", bgColor: "#C2185B" },
+  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns", bgColor: "#1976D2" },
   // Verbs — South America, spread for mobile readability
-  { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" } },
-  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" } },
-  { sectionId: "ir-verbs", label: "IR Verbs", country: "Ecuador", icon: "", lat: -1.0, lng: -78.0, category: "verbs", verbLetter: "I", verbStyle: { bg: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" } },
-  { sectionId: "preterite", label: "Quick Past", country: "Peru", icon: "⏪", lat: -10.0, lng: -76.0, category: "verbs" },
-  { sectionId: "imperfecto", label: "Long Past", country: "Bolivia", icon: "🔄", lat: -17.0, lng: -65.0, category: "verbs" },
-  { sectionId: "futuro", label: "Future", country: "Paraguay", icon: "⏩", lat: -23.0, lng: -57.0, category: "verbs" },
-  { sectionId: "conditional", label: "Conditional", country: "Uruguay", icon: "🤔", lat: -33.0, lng: -55.0, category: "verbs" },
-  { sectionId: "pronouns", label: "Pronoun", country: "Chile", icon: "👥", lat: -30.0, lng: -71.0, category: "verbs" },
-  { sectionId: "advanced", label: "Advanced", country: "Argentina", icon: "🎓", lat: -37.0, lng: -63.0, category: "verbs" },
+  { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }, bgColor: "#7B1FA2" },
+  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }, bgColor: "#1A237E" },
+  { sectionId: "ir-verbs", label: "IR Verbs", country: "Ecuador", icon: "", lat: -1.0, lng: -78.0, category: "verbs", verbLetter: "I", verbStyle: { bg: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" }, bgColor: "#2E7D32" },
+  { sectionId: "preterite", label: "Quick Past", country: "Peru", icon: "⏪", lat: -10.0, lng: -76.0, category: "verbs", bgColor: "#C2185B" },
+  { sectionId: "imperfecto", label: "Long Past", country: "Bolivia", icon: "🔄", lat: -17.0, lng: -65.0, category: "verbs", bgColor: "#1976D2" },
+  { sectionId: "futuro", label: "Future", country: "Paraguay", icon: "⏩", lat: -23.0, lng: -57.0, category: "verbs", bgColor: "#7B1FA2" },
+  { sectionId: "conditional", label: "Conditional", country: "Uruguay", icon: "🤔", lat: -33.0, lng: -55.0, category: "verbs", bgColor: "#1A237E" },
+  { sectionId: "pronouns", label: "Pronoun", country: "Chile", icon: "👥", lat: -30.0, lng: -71.0, category: "verbs", bgColor: "#2E7D32" },
+  { sectionId: "advanced", label: "Advanced", country: "Argentina", icon: "🎓", lat: -37.0, lng: -63.0, category: "verbs", bgColor: "#C2185B" },
 ]
 
 const NOUN_NODES = MAP_NODES.filter(n => n.category === "nouns")
@@ -358,11 +359,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           display: flex;
           align-items: center;
           justify-content: center;
-          background: ${
-            isVerb
-              ? "linear-gradient(180deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%)"
-              : "linear-gradient(180deg, #8b5cf6 0%, #6d28d9 50%, #4a7cdb 100%)"
-          };
+          background: ${node.bgColor || "#7B1FA2"};
           border: 3px solid rgba(255,255,255,0.9);
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
           transition: border 0.25s ease, box-shadow 0.25s ease;
@@ -422,7 +419,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         if (isMob) {
           // Mobile: compact text button, no icon circle
           label.style.cssText = `
-            background: ${isVerb ? "linear-gradient(135deg, #8b5cf6, #7c3aed)" : "linear-gradient(135deg, #7c3aed, #4a7cdb)"};
+            background: ${node.bgColor || "#7B1FA2"};
             color: white;
             border-radius: 12px;
             padding: 6px 10px;
