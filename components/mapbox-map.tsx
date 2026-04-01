@@ -19,26 +19,26 @@ const MAP_NODES: {
   bgColor?: string
 }[] = [
   // Nouns — ordered by song number (1→24), positioned for mobile readability
-  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "✏️", lat: 22.0, lng: -96.0, category: "nouns", bgColor: "#7B1FA2" },
-  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🖐️", lat: 17.0, lng: -93.0, category: "nouns", bgColor: "#1A237E" },
-  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍🌾", lat: 13.5, lng: -90.5, category: "nouns", bgColor: "#2E7D32" },
-  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.8, lng: -84.0, category: "nouns", bgColor: "#C2185B" },
-  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🌴", lat: 12.5, lng: -86.0, category: "nouns", bgColor: "#1976D2" },
-  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns", bgColor: "#7B1FA2" },
-  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns", bgColor: "#1A237E" },
-  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns", bgColor: "#2E7D32" },
-  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -72.5, category: "nouns", bgColor: "#C2185B" },
-  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns", bgColor: "#1976D2" },
+  { sectionId: "alphabet-vowels", label: "Alphabet", country: "Mexico", icon: "✏️", lat: 22.0, lng: -96.0, category: "nouns", bgColor: "#a020b0" },
+  { sectionId: "body-world", label: "Body", country: "Guatemala", icon: "🖐️", lat: 17.0, lng: -93.0, category: "nouns", bgColor: "#2090f0" },
+  { sectionId: "roles-world", label: "Roles", country: "El Salvador", icon: "👨‍🌾", lat: 13.5, lng: -90.5, category: "nouns", bgColor: "#50b050" },
+  { sectionId: "pets-syllables", label: "Pet", country: "Honduras", icon: "🐕", lat: 15.8, lng: -84.0, category: "nouns", bgColor: "#f06090" },
+  { sectionId: "places", label: "Travel", country: "Nicaragua", icon: "🌴", lat: 12.5, lng: -86.0, category: "nouns", bgColor: "#00c0d0" },
+  { sectionId: "numbers", label: "Numbers", country: "Costa Rica", icon: "🎲", lat: 9.5, lng: -82.0, category: "nouns", bgColor: "#8020a0" },
+  { sectionId: "numbers-time", label: "Time", country: "Panama", icon: "🕐", lat: 8.0, lng: -77.0, category: "nouns", bgColor: "#1060c0" },
+  { sectionId: "foods", label: "Food", country: "Cuba", icon: "🌮", lat: 22.0, lng: -79.5, category: "nouns", bgColor: "#40a040" },
+  { sectionId: "colors", label: "Colors", country: "Dominican Republic", icon: "🌈", lat: 19.5, lng: -72.5, category: "nouns", bgColor: "#f09000" },
+  { sectionId: "feelings", label: "Feelings", country: "Puerto Rico", icon: "💖", lat: 18.5, lng: -66.5, category: "nouns", bgColor: "#e03030" },
   // Verbs — South America, spread for mobile readability
-  { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }, bgColor: "#7B1FA2" },
-  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }, bgColor: "#1A237E" },
-  { sectionId: "ir-verbs", label: "IR Verbs", country: "Ecuador", icon: "", lat: -1.0, lng: -78.0, category: "verbs", verbLetter: "I", verbStyle: { bg: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" }, bgColor: "#2E7D32" },
-  { sectionId: "preterite", label: "Quick Past", country: "Peru", icon: "⏪", lat: -10.0, lng: -76.0, category: "verbs", bgColor: "#C2185B" },
-  { sectionId: "imperfecto", label: "Long Past", country: "Bolivia", icon: "🔄", lat: -17.0, lng: -65.0, category: "verbs", bgColor: "#1976D2" },
-  { sectionId: "futuro", label: "Future", country: "Paraguay", icon: "⏩", lat: -23.0, lng: -57.0, category: "verbs", bgColor: "#7B1FA2" },
-  { sectionId: "conditional", label: "Conditional", country: "Uruguay", icon: "🤔", lat: -33.0, lng: -55.0, category: "verbs", bgColor: "#1A237E" },
-  { sectionId: "pronouns", label: "Pronoun", country: "Chile", icon: "👥", lat: -30.0, lng: -71.0, category: "verbs", bgColor: "#2E7D32" },
-  { sectionId: "advanced", label: "Advanced", country: "Argentina", icon: "🎓", lat: -37.0, lng: -63.0, category: "verbs", bgColor: "#C2185B" },
+  { sectionId: "ar-verbs", label: "AR Verbs", country: "Colombia", icon: "", lat: 5.0, lng: -73.0, category: "verbs", verbLetter: "A", verbStyle: { bg: "linear-gradient(135deg,#1e1b4b,#312e81)", color: "#fbbf24" }, bgColor: "#f0d030" },
+  { sectionId: "er-verbs", label: "ER Verbs", country: "Venezuela", icon: "", lat: 6.5, lng: -65.0, category: "verbs", verbLetter: "E", verbStyle: { bg: "linear-gradient(135deg,#164e63,#0e7490)", color: "#6ee7b7" }, bgColor: "#309040" },
+  { sectionId: "ir-verbs", label: "IR Verbs", country: "Ecuador", icon: "", lat: -1.0, lng: -78.0, category: "verbs", verbLetter: "I", verbStyle: { bg: "linear-gradient(135deg,#4a1942,#831843)", color: "#f9a8d4" }, bgColor: "#c01060" },
+  { sectionId: "preterite", label: "Quick Past", country: "Peru", icon: "⏪", lat: -10.0, lng: -76.0, category: "verbs", bgColor: "#f07000" },
+  { sectionId: "imperfecto", label: "Long Past", country: "Bolivia", icon: "🔄", lat: -17.0, lng: -65.0, category: "verbs", bgColor: "#2090f0" },
+  { sectionId: "futuro", label: "Future", country: "Paraguay", icon: "⏩", lat: -23.0, lng: -57.0, category: "verbs", bgColor: "#7020a0" },
+  { sectionId: "conditional", label: "Conditional", country: "Uruguay", icon: "🤔", lat: -33.0, lng: -55.0, category: "verbs", bgColor: "#202080" },
+  { sectionId: "pronouns", label: "Pronoun", country: "Chile", icon: "👥", lat: -30.0, lng: -71.0, category: "verbs", bgColor: "#00c0d0" },
+  { sectionId: "advanced", label: "Advanced", country: "Argentina", icon: "🎓", lat: -37.0, lng: -63.0, category: "verbs", bgColor: "#f02060" },
 ]
 
 const NOUN_NODES = MAP_NODES.filter(n => n.category === "nouns")
@@ -359,7 +359,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           display: flex;
           align-items: center;
           justify-content: center;
-          background: url('/images/serape-bg.jpg') center/cover;
+          background: ${node.bgColor || "#7B1FA2"};
           border: 3px solid rgba(255,255,255,0.9);
           box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
           transition: border 0.25s ease, box-shadow 0.25s ease;
@@ -385,7 +385,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         const label = document.createElement("div")
         label.style.cssText = `
-          background: url('/images/serape-bg.jpg') center/cover;
+          background: ${node.bgColor || "#7B1FA2"};
           backdrop-filter: blur(6px);
           border-radius: 6px;
           padding: ${isMob ? "2px 6px" : "3px 10px"};
@@ -409,7 +409,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           white-space: nowrap;
           text-align: center;
           font-family: system-ui, -apple-system, sans-serif;
-          background: url('/images/serape-bg.jpg') center/cover;
+          background: ${node.bgColor || "#7B1FA2"};
           backdrop-filter: blur(4px);
           border-radius: 4px;
           padding: 1px 6px;
@@ -421,7 +421,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         if (isMob) {
           // Mobile: compact text button, no icon circle
           label.style.cssText = `
-            background: url('/images/serape-bg.jpg') center/cover;
+            background: ${node.bgColor || "#7B1FA2"};
             color: white;
             border-radius: 12px;
             padding: 6px 10px;
@@ -506,7 +506,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           top: 16,
           left: "50%",
           transform: "translateX(-50%)",
-          background: "url('/images/serape-bg.jpg') center/cover",
+          background: activeRegion === "nouns"
+            ? "#2090f0"
+            : "#7020a0",
           color: "white",
           padding: "10px 24px",
           borderRadius: 16,
@@ -547,9 +549,11 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
                 padding: window.innerWidth < 768 ? "5px 12px" : "8px 20px",
                 borderRadius: 20,
                 border: isActive ? "2px solid white" : "2px solid rgba(255,255,255,0.5)",
-                background: "url('/images/serape-bg.jpg') center/cover",
-                color: "white",
-                textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+                background: isActive
+                  ? (region === "nouns" ? "#2090f0" : "#7020a0")
+                  : "rgba(255,255,255,0.85)",
+                color: isActive ? "white" : "#374151",
+                textShadow: isActive ? "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000" : "none",
                 fontWeight: 700,
                 fontSize: window.innerWidth < 768 ? 11 : 13,
                 cursor: "pointer",

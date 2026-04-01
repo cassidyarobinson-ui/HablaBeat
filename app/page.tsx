@@ -76,25 +76,27 @@ const COUNTRY_FLAG: Record<string, { url: string; pos: string; size: string }> =
 
 // ── SECTION GRADIENTS (fallback) ────────────────────────────────────────────
 const SECTION_GRADIENTS: Record<string, string> = {
-  "alphabet-vowels":  "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "the-self":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "body-world":       "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "roles-world":      "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "pets-syllables":   "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "places":           "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "numbers":          "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "numbers-time":     "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "colors-feelings":  "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "foods":            "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "ar-verbs":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "er-verbs":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "ir-verbs":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "preterite":        "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "imperfecto":       "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "futuro":           "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "conditional":      "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "pronouns":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
-  "advanced":         "linear-gradient(135deg, #7ba3e8, #4a7cdb)",
+  "alphabet-vowels":  "#a020b0",
+  "the-self":         "#a020b0",
+  "body-world":       "#2090f0",
+  "roles-world":      "#50b050",
+  "pets-syllables":   "#f06090",
+  "places":           "#00c0d0",
+  "numbers":          "#8020a0",
+  "numbers-time":     "#1060c0",
+  "colors-feelings":  "#f09000",
+  "colors":           "#f09000",
+  "feelings":         "#e03030",
+  "foods":            "#40a040",
+  "ar-verbs":         "#f0d030",
+  "er-verbs":         "#309040",
+  "ir-verbs":         "#c01060",
+  "preterite":        "#f07000",
+  "imperfecto":       "#2090f0",
+  "futuro":           "#7020a0",
+  "conditional":      "#202080",
+  "pronouns":         "#00c0d0",
+  "advanced":         "#f02060",
 }
 
 // ── RECALL BREAKS: mid-song vocabulary quizzes per song ──────────────────────
@@ -4092,11 +4094,12 @@ export default function HablaBeat() {
             )}
             {false && curriculumData.map((category, catIdx) => {
               const isOpen = openCategoryId === category.id
+              const catBg = catIdx === 0 ? "#2090f0" : "#7020a0"
               const catGlow = "0 2px 8px rgba(0,0,0,0.2)"
 
               return (
                 <div key={category.id} className="rounded-3xl transition-all duration-300"
-                  style={{ backgroundImage: "url('/images/serape-bg.jpg')", backgroundSize: "cover", backgroundPosition: "center", boxShadow: catGlow, border: `2px solid rgba(255,255,255,0.6)`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
+                  style={{ background: catBg, boxShadow: catGlow, border: `2px solid rgba(255,255,255,0.6)`, overflow: isOpen ? "visible" : "hidden", borderRadius: "24px" }}>
 
                   {/* ── Header row — always visible ── */}
                   <button
@@ -4179,9 +4182,7 @@ export default function HablaBeat() {
                               onTouchStart={playWorldHover}
                               className="world-btn relative flex items-center justify-center rounded-full w-full h-full overflow-hidden"
                               style={{
-                                backgroundImage: "url('/images/serape-bg.jpg')",
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
+                                background: sectionGradient,
                                 border: "3px solid rgba(255,255,255,0.6)",
                                 boxShadow: "0 3px 12px rgba(74,124,219,0.3)",
                               }}
