@@ -3607,7 +3607,7 @@ export default function HablaBeat() {
 
           {/* ── HEADER — Dia de los Muertos style ── */}
           <div style={{ background: "url('/images/serape-bg.jpg') repeat center/cover" }}>
-            {/* Desktop: single compact row */}
+            {/* Desktop: single compact row with stats */}
             {isDesktop ? (
               <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -3617,6 +3617,24 @@ export default function HablaBeat() {
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" />
+                <div className="flex-1" />
+                <div className="flex items-center gap-6 px-4 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(4px)" }}>
+                  <div className="flex items-center gap-1">
+                    <span className="emoji-fire text-sm">🔥</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Streak</span>
+                    <span className="font-black text-xs" style={{ color: "#1e293b" }}>{dailyStreak > 0 ? dailyStreak : "0"}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="emoji-lightning text-sm">⚡</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Flow</span>
+                    <span className="font-black text-xs" style={{ color: "#1e293b" }}>{bestFlow}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm">💰</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Bank</span>
+                    <span className="font-black text-xs" style={{ color: "#1e293b" }}>{totalVocabBank}</span>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="flex items-center justify-center px-4 pt-3 pb-2 gap-3">
@@ -3634,27 +3652,9 @@ export default function HablaBeat() {
             )}
           </div>
 
-          {/* Stats bar — white background, full width */}
-          <div className="w-full" style={{ background: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
-            {isDesktop ? (
-              <div className="flex items-center justify-end gap-8 px-6 py-2">
-                <div className="flex items-center gap-1">
-                  <span className="emoji-fire text-sm">🔥</span>
-                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Streak</span>
-                  <span className="font-black text-xs" style={{ color: "#1e293b" }}>{dailyStreak > 0 ? dailyStreak : "0"}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="emoji-lightning text-sm">⚡</span>
-                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Flow</span>
-                  <span className="font-black text-xs" style={{ color: "#1e293b" }}>{bestFlow}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">💰</span>
-                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Bank</span>
-                  <span className="font-black text-xs" style={{ color: "#1e293b" }}>{totalVocabBank}</span>
-                </div>
-              </div>
-            ) : (
+          {/* Stats bar — mobile only, white background */}
+          {!isDesktop && (
+            <div className="w-full" style={{ background: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
               <div className="grid grid-cols-3 px-2 py-2">
                 <div className="flex items-center justify-center gap-1">
                   <span className="emoji-fire text-base">🔥</span>
@@ -3672,8 +3672,8 @@ export default function HablaBeat() {
                   <span className="font-black text-sm" style={{ color: "#1e293b" }}>{totalVocabBank}</span>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* ✨ World overlay — immersive carousel (both mobile & desktop) */}
           {(() => {
