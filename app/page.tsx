@@ -3637,7 +3637,7 @@ export default function HablaBeat() {
           {/* Stats bar — white background, full width */}
           <div className="w-full" style={{ background: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
             {isDesktop ? (
-              <div className="flex items-center justify-center gap-8 px-4 py-2">
+              <div className="flex items-center justify-end gap-8 px-6 py-2">
                 <div className="flex items-center gap-1">
                   <span className="emoji-fire text-sm">🔥</span>
                   <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1e293b" }}>Streak</span>
