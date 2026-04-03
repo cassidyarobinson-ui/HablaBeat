@@ -499,10 +499,33 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           onHoverSoundRef.current?.()
         })
         el.addEventListener("touchstart", () => {
+          // Same hover effects as desktop
+          inner.style.transform = "scale(1.6)"
+          inner.style.filter = "drop-shadow(0 0 24px rgba(251,191,36,0.5))"
+          circle.style.border = "4px solid #fbbf24"
+          circle.style.boxShadow = "0 0 28px rgba(251,191,36,0.6), 0 6px 16px rgba(0,0,0,0.25)"
+          label.style.border = "2px solid #fbbf24"
+          label.style.boxShadow = "0 0 12px rgba(251,191,36,0.4), 0 2px 8px rgba(0,0,0,0.15)"
+          country.style.border = "1px solid #fbbf24"
+          el.style.zIndex = "100"
+          // Bunny hop animation
+          bunny.style.opacity = ""
           bunny.classList.remove("bunny-drop")
           void bunny.offsetWidth
           bunny.classList.add("bunny-drop")
-          setTimeout(() => { bunny.style.opacity = "0"; bunny.classList.remove("bunny-drop") }, 1500)
+          // Reset after delay
+          setTimeout(() => {
+            bunny.classList.remove("bunny-drop")
+            bunny.style.opacity = "0"
+            inner.style.transform = "scale(1)"
+            inner.style.filter = "none"
+            circle.style.border = `3px solid ${node.bgColor || "#7B1FA2"}`
+            circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
+            label.style.border = `2px solid ${node.bgColor || "#7B1FA2"}`
+            label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)"
+            country.style.border = `1px solid ${node.bgColor || "#7B1FA2"}`
+            el.style.zIndex = "10"
+          }, 1500)
           onHoverSoundRef.current?.()
         }, { passive: true })
         el.addEventListener("mouseleave", () => {
