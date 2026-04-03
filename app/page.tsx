@@ -1644,100 +1644,6 @@ function compressPhoto(file: File): Promise<string> {
   })
 }
 
-// ── Peeking bunny behind cards ──────────────────────────────────────────
-function PeekingBunny({ songIdx }: { songIdx: number }) {
-  const [peekState, setPeekState] = useState<"top" | "left" | "right" | "hidden">("hidden")
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const mountRef = useRef(true)
-
-  useEffect(() => {
-    // Reset on song change
-    mountRef.current = true
-    setPeekState("top")
-
-    // After initial top peek, cycle through random side peeks
-    const startCycle = () => {
-      const scheduleNext = () => {
-        if (!mountRef.current) return
-        const delay = 2500 + Math.random() * 3000
-        timerRef.current = setTimeout(() => {
-          if (!mountRef.current) return
-          const side = Math.random() > 0.5 ? "left" : "right"
-          setPeekState(side)
-          // Hide after peeking
-          timerRef.current = setTimeout(() => {
-            if (!mountRef.current) return
-            setPeekState("hidden")
-            // Schedule next peek
-            timerRef.current = setTimeout(scheduleNext, 1000 + Math.random() * 2000)
-          }, 1800)
-        }, delay)
-      }
-      // Hide initial top peek after a moment, then start cycling
-      timerRef.current = setTimeout(() => {
-        if (!mountRef.current) return
-        setPeekState("hidden")
-        timerRef.current = setTimeout(scheduleNext, 1500)
-      }, 2000)
-    }
-    startCycle()
-
-    return () => {
-      mountRef.current = false
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
-  }, [songIdx])
-
-  const bunnySize = 48
-  const baseStyle: React.CSSProperties = {
-    position: "absolute",
-    width: bunnySize,
-    height: bunnySize,
-    objectFit: "contain",
-    pointerEvents: "none",
-    zIndex: 20,
-    transition: "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease",
-  }
-
-  if (peekState === "top") {
-    return (
-      /* eslint-disable-next-line @next/next/no-img-element */
-      <img src="/images/super-bunny-heart.gif" alt="" style={{
-        ...baseStyle,
-        top: -bunnySize * 0.45,
-        left: "50%",
-        transform: "translateX(-50%) scaleX(-1)",
-        opacity: 1,
-      }} />
-    )
-  }
-  if (peekState === "left") {
-    return (
-      /* eslint-disable-next-line @next/next/no-img-element */
-      <img src="/images/super-bunny-heart.gif" alt="" style={{
-        ...baseStyle,
-        top: "30%",
-        left: -bunnySize * 0.45,
-        transform: "scaleX(1)",
-        opacity: 1,
-      }} />
-    )
-  }
-  if (peekState === "right") {
-    return (
-      /* eslint-disable-next-line @next/next/no-img-element */
-      <img src="/images/super-bunny-heart.gif" alt="" style={{
-        ...baseStyle,
-        top: "30%",
-        right: -bunnySize * 0.45,
-        transform: "scaleX(-1)",
-        opacity: 1,
-      }} />
-    )
-  }
-  return null
-}
-
 export default function HablaBeat() {
   const [showSplash, setShowSplash] = useState(true)
   const [splashFading, setSplashFading] = useState(false)
@@ -1772,6 +1678,7 @@ export default function HablaBeat() {
   const [openSectionId, setOpenSectionId] = useState<string>("")
   const [worldClosing, setWorldClosing] = useState(false)
   const [worldZoomOrigin, setWorldZoomOrigin] = useState({ x: "50%", y: "50%" })
+  const [bunnyHopping, setBunnyHopping] = useState(false)
   // World song view pad navigation: [songIndex, modeIndex (0=sing,1=dance,2=fly)]
   const [worldSongIdx, setWorldSongIdx] = useState(0)
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
@@ -3613,6 +3520,13 @@ export default function HablaBeat() {
             100% { transform: rotate(720deg) scale(1); }
           }
           .bunny-spin { animation: bunnySpin 0.6s ease-in-out; }
+          @keyframes bunnyHopOut {
+            0%   { transform: scaleX(-1) translateY(0) scale(1); opacity: 1; }
+            20%  { transform: scaleX(-1) translateY(8px) scale(1.1); opacity: 1; }
+            50%  { transform: scaleX(-1) translateY(-40px) rotate(15deg) scale(1.15); opacity: 1; }
+            100% { transform: scaleX(-1) translateY(-120px) rotate(30deg) scale(0.6); opacity: 0; }
+          }
+          .bunny-hop-out { animation: bunnyHopOut 0.4s ease-in forwards; }
           @keyframes worldFloat {
             0%, 100% { transform: translateY(0px); }
             50%       { transform: translateY(-4px); }
@@ -3706,9 +3620,9 @@ export default function HablaBeat() {
             {isDesktop ? (
               <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[40px] h-[40px] object-contain flex-shrink-0" style={{ cursor: "pointer" }}
-                  onMouseEnter={(e) => { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") }}
-                  onAnimationEnd={(e) => e.currentTarget.classList.remove("bunny-spin")}
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className={`w-[40px] h-[40px] object-contain flex-shrink-0 ${bunnyHopping ? "bunny-hop-out" : ""}`} style={{ cursor: "pointer" }}
+                  onMouseEnter={(e) => { if (!bunnyHopping) { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") } }}
+                  onAnimationEnd={(e) => { if (!bunnyHopping) e.currentTarget.classList.remove("bunny-spin") }}
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[36px] object-contain" />
@@ -3735,10 +3649,10 @@ export default function HablaBeat() {
               <div className="flex items-center justify-center px-4 pt-3 pb-2 gap-3">
                 <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-[60px] h-[60px] object-contain" style={{ cursor: "pointer" }}
-                    onTouchStart={(e) => { const el = e.currentTarget; el.classList.remove("bunny-spin"); void el.offsetWidth; el.classList.add("bunny-spin") }}
-                    onMouseEnter={(e) => { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") }}
-                    onAnimationEnd={(e) => e.currentTarget.classList.remove("bunny-spin")}
+                  <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className={`w-[60px] h-[60px] object-contain ${bunnyHopping ? "bunny-hop-out" : ""}`} style={{ cursor: "pointer" }}
+                    onTouchStart={(e) => { if (!bunnyHopping) { const el = e.currentTarget; el.classList.remove("bunny-spin"); void el.offsetWidth; el.classList.add("bunny-spin") } }}
+                    onMouseEnter={(e) => { if (!bunnyHopping) { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") } }}
+                    onAnimationEnd={(e) => { if (!bunnyHopping) e.currentTarget.classList.remove("bunny-spin") }}
                   />
                 </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -3917,13 +3831,10 @@ export default function HablaBeat() {
                                   ? "0 0 100px rgba(74,124,219,0.5), 0 30px 80px rgba(0,0,0,0.8)"
                                   : "0 10px 40px rgba(0,0,0,0.6)",
                                 border: offset === 0 ? "3px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
-                                position: "relative",
                               }}>
                                 <img src={`/images/backgrounds/song-${s.number}.jpg`} alt={s.title}
                                   style={{ width: "100%", height: "100%", objectFit: "cover" }} draggable={false} />
                               </div>
-                              {/* Peeking bunny — only on selected card */}
-                              {offset === 0 && <PeekingBunny songIdx={selectedIdx} />}
                             </div>
                           )
                         })}
@@ -4034,7 +3945,12 @@ export default function HablaBeat() {
                     setWorldZoomOrigin({ x: cx, y: cy })
                     setWorldSongIdx(0)
                     setWorldModeIdx(1) // default to Dance
-                    setOpenSectionId(sectionId)
+                    // Bunny hops out, then open overlay
+                    setBunnyHopping(true)
+                    setTimeout(() => {
+                      setOpenSectionId(sectionId)
+                      setBunnyHopping(false)
+                    }, 350)
                   }}
                   isSectionBadgeUnlocked={isSectionBadgeUnlocked}
                   openSectionId={openSectionId}
