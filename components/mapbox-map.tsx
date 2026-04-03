@@ -441,9 +441,30 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           inner.appendChild(label)
           inner.appendChild(country)
         }
+        // Bunny that appears on hover
+        const bunny = document.createElement("img")
+        bunny.src = "/images/super-bunny-heart.gif"
+        bunny.alt = ""
+        const bunnySize = isMob ? 30 : 44
+        bunny.style.cssText = `
+          width: ${bunnySize}px;
+          height: ${bunnySize}px;
+          object-fit: contain;
+          position: absolute;
+          top: ${isMob ? "-24px" : "-36px"};
+          left: 50%;
+          transform: translateX(-50%);
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          z-index: 20;
+        `
+        inner.style.position = "relative"
+        inner.appendChild(bunny)
+
         el.appendChild(inner)
 
-        // Hover effects — bigger scale + pop sound + golden borders
+        // Hover effects — bigger scale + pop sound + golden borders + bunny
         el.addEventListener("mouseenter", () => {
           inner.style.transform = "scale(1.6)"
           inner.style.filter = "drop-shadow(0 0 24px rgba(251,191,36,0.5))"
@@ -452,10 +473,13 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           label.style.border = "2px solid #fbbf24"
           label.style.boxShadow = "0 0 12px rgba(251,191,36,0.4), 0 2px 8px rgba(0,0,0,0.15)"
           country.style.border = "1px solid #fbbf24"
+          bunny.style.opacity = "1"
           el.style.zIndex = "100"
           onHoverSoundRef.current?.()
         })
         el.addEventListener("touchstart", () => {
+          bunny.style.opacity = "1"
+          setTimeout(() => { bunny.style.opacity = "0" }, 1500)
           onHoverSoundRef.current?.()
         }, { passive: true })
         el.addEventListener("mouseleave", () => {
@@ -470,6 +494,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             label.style.border = `2px solid ${node.bgColor || "#7B1FA2"}`
             label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)"
             country.style.border = `1px solid ${node.bgColor || "#7B1FA2"}`
+            bunny.style.opacity = "0"
             el.style.zIndex = "10"
           }
         })

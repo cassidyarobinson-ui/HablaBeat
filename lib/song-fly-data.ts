@@ -17,59 +17,8 @@ export interface SongFlyEntry {
 
 export const SONG_FLY_DATA: Record<number, SongFlyEntry> = {
   // ═══════════════════════════════════════════════════════════════
-  // ALPHABET WORLD (Songs 1-3) — letter-based, uses AlphabetFly
+  // ALPHABET WORLD (Songs 1-3) — fly games removed
   // ═══════════════════════════════════════════════════════════════
-  1: {
-    songNumber: 1,
-    title: "El Abecedario",
-    icon: "📚",
-    isAlphabet: true,
-    // No filter — all 27 letters
-    phaseConfig: {
-      words: [],
-      speedBase: 0.28, speedVariance: 0.10, waveInterval: 4200,
-      label: "A – Z",
-      bgGradient: "linear-gradient(180deg,#1a0f00 0%,#78350f 30%,#b45309 65%,#f59e0b 100%)",
-      bubbleBg: "#fef3c7", bubbleText: "#92400e",
-      progressGrad: "linear-gradient(90deg,#fbbf24,#f59e0b)",
-      badgeColor: "rgba(180,83,9,0.5)",
-    },
-    accentColor: "linear-gradient(135deg,#f59e0b,#d97706)",
-  },
-  2: {
-    songNumber: 2,
-    title: "Ñ, CH, RR, LL",
-    icon: "📚",
-    isAlphabet: true,
-    alphabetFilter: (entry) => entry.category === "special",
-    phaseConfig: {
-      words: [],
-      speedBase: 0.26, speedVariance: 0.08, waveInterval: 4500,
-      label: "Special Letters",
-      bgGradient: "linear-gradient(180deg,#1a0f00 0%,#78350f 30%,#b45309 65%,#f59e0b 100%)",
-      bubbleBg: "#fef3c7", bubbleText: "#92400e",
-      progressGrad: "linear-gradient(90deg,#fbbf24,#f59e0b)",
-      badgeColor: "rgba(180,83,9,0.5)",
-    },
-    accentColor: "linear-gradient(135deg,#f59e0b,#d97706)",
-  },
-  3: {
-    songNumber: 3,
-    title: "A, E, I, O, U",
-    icon: "📚",
-    isAlphabet: true,
-    alphabetFilter: (entry) => entry.category === "vowel",
-    phaseConfig: {
-      words: [],
-      speedBase: 0.26, speedVariance: 0.08, waveInterval: 4500,
-      label: "Vowels",
-      bgGradient: "linear-gradient(180deg,#1a0f00 0%,#78350f 30%,#b45309 65%,#f59e0b 100%)",
-      bubbleBg: "#fef3c7", bubbleText: "#92400e",
-      progressGrad: "linear-gradient(90deg,#fbbf24,#f59e0b)",
-      badgeColor: "rgba(180,83,9,0.5)",
-    },
-    accentColor: "linear-gradient(135deg,#f59e0b,#d97706)",
-  },
 
   // ═══════════════════════════════════════════════════════════════
   // BODY WORLD (Songs 4-5)
