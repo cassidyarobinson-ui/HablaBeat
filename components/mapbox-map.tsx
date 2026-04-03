@@ -333,6 +333,22 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
     mapRef.current = map
 
     map.on("load", () => {
+      // Inject bunny animation styles once
+      if (!document.getElementById("bunny-map-styles")) {
+        const style = document.createElement("style")
+        style.id = "bunny-map-styles"
+        style.textContent = `
+          @keyframes bunnyDrop {
+            0%   { opacity: 0; transform: translateX(-50%) translateY(-80px) rotate(0deg) scale(0.5); }
+            60%  { opacity: 1; transform: translateX(-50%) translateY(4px) rotate(360deg) scale(1.1); }
+            80%  { transform: translateX(-50%) translateY(-3px) rotate(380deg) scale(1); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0px) rotate(360deg) scale(1); }
+          }
+          .bunny-drop { animation: bunnyDrop 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        `
+        document.head.appendChild(style)
+      }
+
       MAP_NODES.forEach((node) => {
         const isVerb = node.category === "verbs"
         const isUnlocked = isSectionBadgeUnlocked({ id: node.sectionId })
@@ -441,7 +457,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           inner.appendChild(label)
           inner.appendChild(country)
         }
-        // Bunny that appears on hover
+        // Bunny that drops in on hover
         const bunny = document.createElement("img")
         bunny.src = "/images/super-bunny-heart.gif"
         bunny.alt = ""
@@ -455,7 +471,6 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           left: 50%;
           transform: translateX(-50%);
           opacity: 0;
-          transition: opacity 0.2s ease;
           pointer-events: none;
           z-index: 20;
         `
@@ -464,7 +479,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
 
         el.appendChild(inner)
 
-        // Hover effects — bigger scale + pop sound + golden borders + bunny
+        // Hover effects — bigger scale + pop sound + golden borders + bunny drop
         el.addEventListener("mouseenter", () => {
           inner.style.transform = "scale(1.6)"
           inner.style.filter = "drop-shadow(0 0 24px rgba(251,191,36,0.5))"
@@ -473,13 +488,18 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           label.style.border = "2px solid #fbbf24"
           label.style.boxShadow = "0 0 12px rgba(251,191,36,0.4), 0 2px 8px rgba(0,0,0,0.15)"
           country.style.border = "1px solid #fbbf24"
-          bunny.style.opacity = "1"
+          // Trigger bunny drop animation
+          bunny.classList.remove("bunny-drop")
+          void bunny.offsetWidth
+          bunny.classList.add("bunny-drop")
           el.style.zIndex = "100"
           onHoverSoundRef.current?.()
         })
         el.addEventListener("touchstart", () => {
-          bunny.style.opacity = "1"
-          setTimeout(() => { bunny.style.opacity = "0" }, 1500)
+          bunny.classList.remove("bunny-drop")
+          void bunny.offsetWidth
+          bunny.classList.add("bunny-drop")
+          setTimeout(() => { bunny.style.opacity = "0"; bunny.classList.remove("bunny-drop") }, 1500)
           onHoverSoundRef.current?.()
         }, { passive: true })
         el.addEventListener("mouseleave", () => {
@@ -495,6 +515,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)"
             country.style.border = `1px solid ${node.bgColor || "#7B1FA2"}`
             bunny.style.opacity = "0"
+            bunny.classList.remove("bunny-drop")
             el.style.zIndex = "10"
           }
         })

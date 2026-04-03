@@ -3514,8 +3514,9 @@ export default function HablaBeat() {
           }
           .bunny-tilt { animation: bunnyTilt 4s ease-in-out infinite; }
           @keyframes bunnySpin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            0%   { transform: rotate(0deg) scale(1); }
+            50%  { transform: rotate(360deg) scale(1.2); }
+            100% { transform: rotate(720deg) scale(1); }
           }
           .bunny-spin { animation: bunnySpin 0.6s ease-in-out; }
           @keyframes worldFloat {
