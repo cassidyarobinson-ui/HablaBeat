@@ -339,12 +339,15 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         style.id = "bunny-map-styles"
         style.textContent = `
           @keyframes bunnyDrop {
-            0%   { opacity: 0; transform: translateX(-50%) translateY(-80px) rotate(0deg) scale(0.5); }
-            60%  { opacity: 1; transform: translateX(-50%) translateY(4px) rotate(360deg) scale(1.1); }
-            80%  { transform: translateX(-50%) translateY(-3px) rotate(380deg) scale(1); }
-            100% { opacity: 1; transform: translateX(-50%) translateY(0px) rotate(360deg) scale(1); }
+            0%   { opacity: 0; transform: translateX(-50%) translate(-40px, -60px) scaleX(-1) scale(0.6); }
+            30%  { opacity: 1; transform: translateX(-50%) translate(-12px, -20px) scaleX(-1) scale(0.9); }
+            50%  { opacity: 1; transform: translateX(-50%) translate(0px, 4px) scaleX(-1) scale(1.05); }
+            65%  { transform: translateX(-50%) translate(0px, -8px) scaleX(-1) scale(1); }
+            80%  { transform: translateX(-50%) translate(0px, 2px) scaleX(-1) scale(1.02); }
+            90%  { transform: translateX(-50%) translate(0px, -2px) scaleX(-1) scale(1); }
+            100% { opacity: 1; transform: translateX(-50%) translate(0px, 0px) scaleX(-1) scale(1); }
           }
-          .bunny-drop { animation: bunnyDrop 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+          .bunny-drop { animation: bunnyDrop 0.55s cubic-bezier(0.22,0.68,0.36,1) forwards; }
         `
         document.head.appendChild(style)
       }
