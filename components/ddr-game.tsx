@@ -202,7 +202,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     } catch {}
   }
 
-  const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "recall_break" | "ended">("loading")
+  const [gameState, setGameState] = useState<"loading" | "setup" | "tutorial" | "playing" | "recall_break" | "ended">("loading")
+  const [tutorialStep, setTutorialStep] = useState(0) // 0=left, 1=right, 2=up, 3=down
+  const [tutorialComplete, setTutorialComplete] = useState(false)
+  const tutorialStepRef = useRef(0)
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
@@ -622,6 +625,38 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     checkEncouragement(comboRef.current)
   }, [activePointer, showTranslations])
 
+  // Tutorial keyboard/touch input
+  const tutorialLanes = [0, 3, 2, 1] // left, right, up, down
+  const tutorialLabels = ["← LEFT", "→ RIGHT", "↑ UP", "↓ DOWN"]
+  const handleTutorialHit = useCallback((lane: number) => {
+    const expectedLane = tutorialLanes[tutorialStepRef.current]
+    if (lane !== expectedLane) return
+    const nextStep = tutorialStepRef.current + 1
+    if (nextStep >= 4) {
+      setTutorialStep(4)
+      tutorialStepRef.current = 4
+      setTutorialComplete(true)
+      setTimeout(() => startGame(), 1200)
+    } else {
+      setTutorialStep(nextStep)
+      tutorialStepRef.current = nextStep
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (gameState !== "tutorial") return
+    const laneMap: Record<string, number> = { ArrowLeft: 0, ArrowDown: 1, ArrowUp: 2, ArrowRight: 3 }
+    const handleKey = (e: KeyboardEvent) => {
+      const lane = laneMap[e.key]
+      if (lane === undefined) return
+      e.preventDefault()
+      handleTutorialHit(lane)
+    }
+    window.addEventListener("keydown", handleKey)
+    return () => window.removeEventListener("keydown", handleKey)
+  }, [gameState, handleTutorialHit])
+
   // Keyboard input
   useEffect(() => {
     if (gameState !== "playing") return
@@ -661,7 +696,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       setPadConnected(true)
       setTimeout(() => setPadDebug(""), 800)
       if (calibrating) return // ignore mapped presses during calibration
-      if (gameState === "playing") {
+      if (gameState === "tutorial") {
+        const lane = padLaneMap[btn]
+        if (lane !== undefined) handleTutorialHit(lane)
+      } else if (gameState === "playing") {
         if (btn === "start") { togglePause(); return }
         const lane = padLaneMap[btn]
         if (lane !== undefined) handleLaneHit(lane)
@@ -714,7 +752,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         return speeds[Math.min(speeds.length - 1, idx + 1)]
       })
     } else if (btn === "start") {
-      startGame()
+      if (gameState === "setup") { setTutorialStep(0); tutorialStepRef.current = 0; setTutorialComplete(false); setGameState("tutorial") }
+      else if (gameState === "tutorial") { /* handled by tutorial input */ }
     } else if (btn === "select") {
       onBack()
     }
@@ -1156,6 +1195,111 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     )
   }
 
+  // TUTORIAL STATE
+  if (gameState === "tutorial") {
+    const TUTORIAL_LANE_COLORS = ["#22c55e", "#ef4444", "#facc15", "#a855f7"]
+    const TUTORIAL_ARROWS = ["◀", "▼", "▲", "▶"]
+    const currentLane = tutorialStep < 4 ? tutorialLanes[tutorialStep] : -1
+    const currentLabel = tutorialStep < 4 ? tutorialLabels[tutorialStep] : ""
+
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+        style={{ background: "linear-gradient(180deg, #0a0a1a 0%, #1a1a3e 50%, #0f0f2a 100%)" }}
+        // Touch handler for mobile — detect which lane was tapped
+        onTouchStart={(e) => {
+          const x = e.touches[0].clientX
+          const w = window.innerWidth
+          const lane = x < w * 0.25 ? 0 : x < w * 0.5 ? 1 : x < w * 0.75 ? 2 : 3
+          handleTutorialHit(lane)
+        }}
+      >
+        {/* Instruction text */}
+        <div className="text-center mb-12 px-6">
+          <p className="text-white/90 text-lg md:text-xl font-bold mb-2">
+            🎯 Hit the correct arrows when they reach the bottom!
+          </p>
+          {!tutorialComplete && (
+            <p className="text-2xl md:text-3xl font-black" style={{ color: TUTORIAL_LANE_COLORS[currentLane] || "#fff" }}>
+              {currentLabel}
+            </p>
+          )}
+        </div>
+
+        {tutorialComplete ? (
+          /* Bien Hecho celebration */
+          <div className="flex flex-col items-center gap-4 animate-bounce">
+            <div className="text-6xl md:text-8xl font-black text-white" style={{ textShadow: "0 0 40px rgba(251,191,36,0.8), 0 0 80px rgba(251,191,36,0.4)" }}>
+              ¡Bien Hecho!
+            </div>
+            <div className="text-2xl">🎉🐰🎉</div>
+          </div>
+        ) : (
+          /* 4 lanes with target arrows at bottom */
+          <div className="relative w-full flex-1 flex" style={{ maxHeight: "60vh" }}>
+            {[0, 1, 2, 3].map((lane) => {
+              const isActive = lane === currentLane
+              const isDone = tutorialLanes.indexOf(lane) < tutorialStep
+              const color = TUTORIAL_LANE_COLORS[lane]
+              return (
+                <div key={lane} className="flex-1 relative flex items-end justify-center pb-8"
+                  style={{ borderRight: lane < 3 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                  {/* Completed checkmark */}
+                  {isDone && (
+                    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-4xl opacity-60">✅</div>
+                  )}
+                  {/* Falling arrow — only for current step */}
+                  {isActive && (
+                    <div className="absolute left-1/2 -translate-x-1/2" style={{
+                      animation: "tutorialFall 1.5s ease-in infinite",
+                      width: "60px", height: "60px",
+                    }}>
+                      <div className="w-full h-full rounded-xl flex items-center justify-center text-3xl font-black"
+                        style={{ background: color, color: lane === 2 ? "#000" : "#fff", boxShadow: `0 0 20px ${color}80` }}>
+                        {TUTORIAL_ARROWS[lane]}
+                      </div>
+                    </div>
+                  )}
+                  {/* Target zone at bottom */}
+                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl border-2 flex items-center justify-center text-2xl font-black"
+                    style={{
+                      borderColor: isActive ? color : "rgba(255,255,255,0.15)",
+                      color: isActive ? color : "rgba(255,255,255,0.2)",
+                      background: isActive ? `${color}15` : "transparent",
+                      transition: "all 0.3s ease",
+                    }}>
+                    {TUTORIAL_ARROWS[lane]}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Progress dots */}
+        {!tutorialComplete && (
+          <div className="flex gap-3 mt-8 mb-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="w-3 h-3 rounded-full transition-all" style={{
+                background: i < tutorialStep ? "#22c55e" : i === tutorialStep ? TUTORIAL_LANE_COLORS[tutorialLanes[i]] : "rgba(255,255,255,0.2)",
+                boxShadow: i === tutorialStep ? `0 0 10px ${TUTORIAL_LANE_COLORS[tutorialLanes[i]]}` : "none",
+              }} />
+            ))}
+          </div>
+        )}
+
+        <style>{`
+          @keyframes tutorialFall {
+            0% { top: 5%; opacity: 0; transform: translateX(-50%) scale(0.7); }
+            15% { opacity: 1; }
+            85% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+            95% { top: calc(100% - 80px); transform: translateX(-50%) scale(1); }
+            100% { top: calc(100% - 80px); opacity: 0.3; transform: translateX(-50%) scale(0.9); }
+          }
+        `}</style>
+      </div>
+    )
+  }
+
   // LOADING STATE
   if (gameState === "loading") {
     return (
@@ -1244,7 +1388,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             )}
 
             {/* Start button */}
-            <button onClick={startGame}
+            <button onClick={() => { setTutorialStep(0); tutorialStepRef.current = 0; setTutorialComplete(false); setGameState("tutorial") }}
               className="w-full py-4 rounded-full font-black text-xl text-white transition-all active:scale-95"
               style={{
                 background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
@@ -1467,7 +1611,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             boxShadow: "0 0 0 3px rgba(255,255,255,0.35), 0 8px 32px rgba(74,124,219,0.4)"
           }}>
             <button
-              onClick={startGame}
+              onClick={() => { setTutorialStep(0); tutorialStepRef.current = 0; setTutorialComplete(false); setGameState("tutorial") }}
               className="w-full py-5 rounded-full font-black text-2xl text-white transition-all active:scale-95 flex items-center justify-center gap-3"
               style={{
                 background: "linear-gradient(135deg, #5b9be6, #4a7cdb, #3d6bc4)",
