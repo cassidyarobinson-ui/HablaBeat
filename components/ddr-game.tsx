@@ -2222,13 +2222,17 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                   </div>
                 ) : (
                   <>
-                    {/* Instruction text — top center */}
-                    <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center z-[60] px-4">
-                      <p className="text-white text-base md:text-lg font-bold mb-1" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
-                        🎯 Hit the correct arrows when they reach the bottom!
+                    {/* Instruction text — top center with background pill */}
+                    <div className="absolute top-6 left-1/2 -translate-x-1/2 text-center z-[60] px-6 py-4 rounded-2xl" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", maxWidth: "90vw" }}>
+                      <p className="text-white text-lg md:text-xl font-black mb-1" style={{ textShadow: "0 2px 6px rgba(0,0,0,0.5)" }}>
+                        🎯 Let&apos;s practice!
                       </p>
-                      <p className="text-2xl md:text-3xl font-black" style={{ color: TUT_COLORS[currentLane] || "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
-                        {currentLabel}
+                      <p className="text-white/80 text-sm md:text-base font-semibold mb-3">
+                        Words will fall down — press the matching arrow key<br />
+                        <span className="text-white/60 text-xs">(or tap the correct lane on mobile)</span>
+                      </p>
+                      <p className="text-xl md:text-2xl font-black" style={{ color: TUT_COLORS[currentLane] || "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
+                        Press {currentLabel}
                       </p>
                     </div>
 

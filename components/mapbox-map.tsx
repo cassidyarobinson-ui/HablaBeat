@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback, useMemo } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
@@ -52,18 +52,36 @@ interface MapboxMapProps {
   flyToSectionId?: string // when set, map flies to this section's country
 }
 
-// Region presets — zoom adjusts for mobile, computed fresh each call
-function getRegions() {
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
-  return {
-    nouns: { center: (isMobile ? [-81, 16] : [-79, 12]) as [number, number], zoom: isMobile ? 2.7 : 4.0, label: "🌎 NOUNS", subtitle: "North & Central America" },
-    verbs: { center: (isMobile ? [-65, -14] : [-68, -7]) as [number, number], zoom: isMobile ? 2.3 : 2.7, label: "🌍 VERBS", subtitle: "South America" },
+// Compute bounding box from marker nodes
+function computeBounds(nodes: typeof MAP_NODES): [[number, number], [number, number]] {
+  let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity
+  for (const n of nodes) {
+    if (n.lng < minLng) minLng = n.lng
+    if (n.lng > maxLng) maxLng = n.lng
+    if (n.lat < minLat) minLat = n.lat
+    if (n.lat > maxLat) maxLat = n.lat
   }
+  return [[minLng, minLat], [maxLng, maxLat]]
 }
 
+// Region labels (no hardcoded center/zoom)
+const REGION_LABELS = {
+  nouns: { label: "🌎 NOUNS", subtitle: "North & Central America" },
+  verbs: { label: "🌍 VERBS", subtitle: "South America" },
+}
+
+// Padding for fitBounds — accounts for header, side panels, NOUNS/VERBS buttons
+function getBoundsPadding() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+  return isMobile
+    ? { top: 20, right: 20, bottom: 100, left: 20 }
+    : { top: 60, right: 200, bottom: 60, left: 40 }
+}
+
+// REGIONS object for labels and the fitToRegion helper
+const REGIONS: Record<"nouns" | "verbs", { label: string; subtitle: string }> = REGION_LABELS
+
 export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId, onHoverSound, flyToSectionId }: MapboxMapProps) {
-  // Compute regions fresh on mount (client-side) so window.innerWidth is accurate
-  const REGIONS = useMemo(() => getRegions(), [])
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<{ marker: maplibregl.Marker; inner: HTMLDivElement; circle: HTMLDivElement; category: "nouns" | "verbs"; sectionId: string }[]>([])
@@ -75,6 +93,21 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
   const onHoverSoundRef = useRef(onHoverSound)
   onSelectSectionRef.current = onSelectSection
   onHoverSoundRef.current = onHoverSound
+
+  // Fit map to show all markers for a given region
+  const fitToRegion = useCallback((region: "nouns" | "verbs", options?: { duration?: number; animate?: boolean }) => {
+    const map = mapRef.current
+    if (!map) return
+    const nodes = region === "nouns" ? NOUN_NODES : VERB_NODES
+    const bounds = computeBounds(nodes)
+    const padding = getBoundsPadding()
+    map.fitBounds(bounds as [[number, number], [number, number]], {
+      padding,
+      duration: options?.duration ?? 1200,
+      animate: options?.animate ?? true,
+      maxZoom: 6,
+    })
+  }, [])
 
   // Zoom into country, then open the overlay
   const zoomAndOpen = useCallback((node: typeof MAP_NODES[number]) => {
@@ -158,9 +191,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
       circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
       inner.parentElement!.style.zIndex = "10"
     })
-    const r = REGIONS[region]
-    map.flyTo({ center: r.center, zoom: r.zoom, duration: 1200, essential: true })
-  }, [showMarkersForRegion])
+    fitToRegion(region, { duration: 1200 })
+  }, [showMarkersForRegion, fitToRegion])
 
   // Dance pad navigation
   // Navigate through ALL nodes in order (nouns then verbs), auto-switching region
@@ -175,8 +207,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
       setActiveRegion(targetRegion)
       activeRegionRef.current = targetRegion
       showMarkersForRegion(targetRegion)
-      const r = REGIONS[targetRegion]
-      mapRef.current?.flyTo({ center: r.center, zoom: r.zoom, duration: 800, essential: true })
+      fitToRegion(targetRegion, { duration: 800 })
       // After region switch animation, highlight and pan to the node
       setTimeout(() => {
         const regionNodes = targetRegion === "nouns" ? NOUN_NODES : VERB_NODES
@@ -276,8 +307,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
       map.keyboard.enable()
       // Fly back to region view and restore markers
       if (prevOpenRef.current) {
-        const r = REGIONS[activeRegionRef.current]
-        map.flyTo({ center: r.center, zoom: r.zoom, duration: 800, essential: true })
+        fitToRegion(activeRegionRef.current, { duration: 800 })
       }
       // Restore markers for active region
       showMarkersForRegion(activeRegionRef.current)
@@ -319,8 +349,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           },
         ],
       },
-      center: REGIONS.nouns.center,
-      zoom: REGIONS.nouns.zoom,
+      center: [-79, 12] as [number, number], // temporary — fitBounds called on load
+      zoom: 3,
       minZoom: 1.5,
       maxZoom: 8,
       pitchWithRotate: false,
@@ -563,6 +593,15 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           el.style.opacity = "0"
           el.style.pointerEvents = "none"
         }
+      })
+
+      // Initial fit to nouns region bounds
+      const nounBounds = computeBounds(NOUN_NODES)
+      map.fitBounds(nounBounds as [[number, number], [number, number]], {
+        padding: getBoundsPadding(),
+        duration: 0,
+        animate: false,
+        maxZoom: 6,
       })
     })
 
