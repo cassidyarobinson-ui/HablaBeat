@@ -1721,15 +1721,15 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         {/* Rainbow ribbon header */}
         <div className="absolute top-0 left-0 right-0 h-1.5 pointer-events-none" style={{ background: "linear-gradient(90deg, #fbbf24, #4a7cdb, #3b82f6, #06b6d4, #34d399)" }} />
 
-        <div className="max-w-md mx-auto px-4 py-4 text-center relative z-10 flex flex-col items-center w-full overflow-y-auto" style={{ maxHeight: "100dvh" }}>
+        <div className="max-w-md mx-auto px-4 py-2 text-center relative z-10 flex flex-col items-center w-full overflow-hidden" style={{ maxHeight: "100dvh" }}>
 
           {/* Song title pill */}
-          <div className="mb-3 px-4 py-1.5 rounded-full text-xs font-black tracking-wider uppercase" style={{ background: "rgba(255,255,255,0.6)", border: "1px solid rgba(74,124,219,0.25)", color: "#4a7cdb" }}>
+          <div className="mb-2 px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase" style={{ background: "rgba(255,255,255,0.6)", border: "1px solid rgba(74,124,219,0.25)", color: "#4a7cdb" }}>
             {songTitle}
           </div>
 
-          {/* Trophy centered, larger, bouncing */}
-          <div className="relative w-32 h-32 md:w-44 md:h-44 flex-shrink-0 mx-auto mb-2" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
+          {/* Trophy centered */}
+          <div className="relative w-24 h-24 md:w-32 md:h-32 flex-shrink-0 mx-auto mb-1" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
             <Image
               src="/images/trophy.png"
               alt="Trophy"
@@ -1753,23 +1753,23 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
           {/* Encouraging message for F grade */}
           {grade === "F" && (
-            <p className="text-center text-lg font-black mb-2" style={{ color: "#4a7cdb" }}>You'll get there! 💪</p>
+            <p className="text-center text-sm font-black mb-1" style={{ color: "#4a7cdb" }}>You'll get there! 💪</p>
           )}
 
           {/* Stats row - frosted glass cards */}
-          <div className="flex gap-3 w-full mb-4">
-            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
-              <div className="flex flex-col items-center gap-0.5">
-                <span className="text-2xl">🔥</span>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Flow</span>
-                <span className="font-black text-gray-800 text-2xl">{maxCombo}</span>
+          <div className="flex gap-2 w-full mb-2">
+            <div className="flex-1 rounded-2xl px-3 py-2" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
+              <div className="flex flex-col items-center gap-0">
+                <span className="text-lg">🔥</span>
+                <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Flow</span>
+                <span className="font-black text-gray-800 text-xl">{maxCombo}</span>
               </div>
             </div>
-            <div className="flex-1 rounded-2xl px-3 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
-              <div className="flex flex-col items-center gap-0.5">
-                <span className="text-2xl">💰</span>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Bank</span>
-                <span className="font-black text-gray-800 text-2xl">{score}</span>
+            <div className="flex-1 rounded-2xl px-3 py-2" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
+              <div className="flex flex-col items-center gap-0">
+                <span className="text-lg">💰</span>
+                <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Bank</span>
+                <span className="font-black text-gray-800 text-xl">{score}</span>
               </div>
             </div>
           </div>
@@ -1796,11 +1796,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </div>
           )}
 
-          <div className="space-y-2.5 w-full mb-3">
+          <div className="space-y-2 w-full mb-2">
             {/* Play Again */}
             <button
               onClick={resetGame}
-              className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full font-black text-base text-white transition-all active:scale-95 flex items-center justify-center gap-2"
               style={{ background: "#4a7cdb", boxShadow: "0 4px 14px rgba(74,124,219,0.35)" }}
             >
               <span style={{ display: "inline-block", animation: "btnBounce 0.7s ease-in-out infinite" }}>🥕</span> Play Again!
@@ -1809,7 +1809,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {/* Challenge a Friend */}
             <button
               onClick={handleChallenge}
-              className="w-full py-4 rounded-full font-black text-lg text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full font-black text-base text-white transition-all active:scale-95 flex items-center justify-center gap-2"
               style={linkCopied
                 ? { background: "#16a34a", boxShadow: "0 4px 14px rgba(22,163,74,0.35)" }
                 : { background: "#4a7cdb", boxShadow: "0 4px 14px rgba(74,124,219,0.35)" }
@@ -1843,7 +1843,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
           {/* Super Bunny below buttons */}
           <div className="relative flex flex-col items-center">
-            <div className="relative w-20 h-20 md:w-28 md:h-28">
+            <div className="relative w-14 h-14 md:w-20 md:h-20">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/super-bunny-heart.gif"
