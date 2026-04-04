@@ -2197,12 +2197,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           {/* Tutorial overlay — shown at start before song plays */}
           {tutorialStep < 5 && (() => {
             const TUT_COLORS = ["#22c55e", "#ef4444", "#facc15", "#a855f7"]
-            const TUT_ARROWS = ["◀", "▼", "▲", "▶"]
+            const TUT_WORDS = ["LEFT", "RIGHT", "UP", "DOWN"]
+            const TUT_SPANISH = ["Izquierda", "Derecha", "Arriba", "Abajo"]
             const currentLane = tutorialStep < 4 ? tutorialLanes[tutorialStep] : -1
             const currentLabel = tutorialStep < 4 ? tutorialLabels[tutorialStep] : ""
             return (
-              <div className="absolute inset-0 z-[50] flex flex-col items-center justify-center"
-                style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(2px)" }}
+              <div className="absolute inset-0 z-[50]"
                 onTouchStart={(e) => {
                   if (tutorialStep >= 4) return
                   const x = e.touches[0].clientX
@@ -2212,51 +2212,48 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 }}
               >
                 {tutorialComplete ? (
-                  <div className="flex flex-col items-center gap-4 animate-bounce">
-                    <div className="text-5xl md:text-7xl font-black text-white" style={{ textShadow: "0 0 40px rgba(251,191,36,0.8), 0 0 80px rgba(251,191,36,0.4)" }}>
-                      ¡Bien Hecho!
+                  <div className="absolute inset-0 flex items-center justify-center z-[60]">
+                    <div className="flex flex-col items-center gap-4 animate-bounce">
+                      <div className="text-5xl md:text-7xl font-black text-white" style={{ textShadow: "0 0 40px rgba(251,191,36,0.8), 0 0 80px rgba(251,191,36,0.4)" }}>
+                        ¡Bien Hecho!
+                      </div>
+                      <div className="text-2xl">🎉🐰🎉</div>
                     </div>
-                    <div className="text-2xl">🎉🐰🎉</div>
                   </div>
                 ) : (
                   <>
-                    <div className="text-center mb-6 px-4">
-                      <p className="text-white/90 text-base md:text-lg font-bold mb-2">
+                    {/* Instruction text — top center */}
+                    <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center z-[60] px-4">
+                      <p className="text-white text-base md:text-lg font-bold mb-1" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
                         🎯 Hit the correct arrows when they reach the bottom!
                       </p>
-                      <p className="text-2xl md:text-3xl font-black" style={{ color: TUT_COLORS[currentLane] || "#fff" }}>
+                      <p className="text-2xl md:text-3xl font-black" style={{ color: TUT_COLORS[currentLane] || "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
                         {currentLabel}
                       </p>
                     </div>
 
-                    {/* Falling tutorial arrow over the real lanes */}
-                    <div className="absolute inset-0 flex pointer-events-none">
-                      {[0, 1, 2, 3].map((lane) => {
-                        const isActive = lane === currentLane
-                        const isDone = tutorialLanes.indexOf(lane) < tutorialStep
-                        return (
-                          <div key={lane} className="flex-1 relative">
-                            {isDone && (
-                              <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-3xl opacity-50">✅</div>
-                            )}
-                            {isActive && (
-                              <div className="absolute left-1/2 -translate-x-1/2" style={{
-                                animation: "tutorialFall 1.5s ease-in infinite",
-                                width: "56px", height: "56px",
-                              }}>
-                                <div className="w-full h-full rounded-xl flex items-center justify-center text-2xl font-black"
-                                  style={{ background: TUT_COLORS[lane], color: lane === 2 ? "#000" : "#fff", boxShadow: `0 0 20px ${TUT_COLORS[lane]}80` }}>
-                                  {TUT_ARROWS[lane]}
-                                </div>
-                              </div>
-                            )}
+                    {/* Falling tutorial bubble — styled like real game notes */}
+                    {currentLane >= 0 && (
+                      <div className="absolute pointer-events-none" style={{
+                        left: `${currentLane * 25}%`,
+                        width: "25%",
+                        animation: "tutorialNoteFall 1.8s ease-in infinite",
+                        zIndex: 55,
+                      }}>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
+                          <div style={{ fontSize: "clamp(11px,2.5vw,15px)", fontWeight: 700, color: "#fde68a", textShadow: "0 1px 4px rgba(0,0,0,0.7)", lineHeight: 1, textAlign: "center", marginBottom: "2px" }}>
+                            {TUT_WORDS[currentLane]}
                           </div>
-                        )
-                      })}
-                    </div>
+                          <div style={{ fontSize: "clamp(16px,4vw,26px)", fontWeight: 900, color: "#ffffff", textShadow: "0 2px 6px rgba(0,0,0,0.6),0 0 12px rgba(0,0,0,0.3)", lineHeight: 1.2, textAlign: "center", marginBottom: "4px" }}>
+                            {TUT_SPANISH[currentLane]}
+                          </div>
+                          <div style={{ width: "80%", maxWidth: "140px", height: "4px", borderRadius: "2px", background: TUT_COLORS[currentLane], boxShadow: `0 0 8px ${TUT_COLORS[currentLane]}80, 0 0 16px ${TUT_COLORS[currentLane]}40` }} />
+                        </div>
+                      </div>
+                    )}
 
                     {/* Progress dots */}
-                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-3">
+                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-3 z-[60]">
                       {[0, 1, 2, 3].map((i) => (
                         <div key={i} className="w-3 h-3 rounded-full transition-all" style={{
                           background: i < tutorialStep ? "#22c55e" : i === tutorialStep ? TUT_COLORS[tutorialLanes[i]] : "rgba(255,255,255,0.2)",
@@ -2268,12 +2265,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 )}
 
                 <style>{`
-                  @keyframes tutorialFall {
-                    0% { top: 10%; opacity: 0; transform: translateX(-50%) scale(0.7); }
-                    15% { opacity: 1; }
-                    85% { opacity: 1; transform: translateX(-50%) scale(1.1); }
-                    95% { top: calc(100% - 90px); transform: translateX(-50%) scale(1); }
-                    100% { top: calc(100% - 90px); opacity: 0.3; transform: translateX(-50%) scale(0.9); }
+                  @keyframes tutorialNoteFall {
+                    0% { top: 5%; opacity: 0; transform: translateY(-50%) scale(0.45) perspective(800px) rotateX(35deg); }
+                    15% { opacity: 0.6; }
+                    50% { opacity: 1; transform: translateY(-50%) scale(0.9) perspective(800px) rotateX(15deg); }
+                    85% { opacity: 1; transform: translateY(-50%) scale(1.2) perspective(800px) rotateX(3deg); }
+                    95% { top: 82%; transform: translateY(-50%) scale(1.3) perspective(800px) rotateX(0deg); }
+                    100% { top: 82%; opacity: 0.3; transform: translateY(-50%) scale(1.2) perspective(800px) rotateX(0deg); }
                   }
                 `}</style>
               </div>
