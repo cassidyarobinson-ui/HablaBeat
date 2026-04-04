@@ -57,7 +57,7 @@ function getRegions() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
   return {
     nouns: { center: (isMobile ? [-81, 16] : [-79, 15]) as [number, number], zoom: isMobile ? 2.7 : 4.2, label: "🌎 NOUNS", subtitle: "North & Central America" },
-    verbs: { center: (isMobile ? [-65, -14] : [-70, -10]) as [number, number], zoom: isMobile ? 2.3 : 3.4, label: "🌍 VERBS", subtitle: "South America" },
+    verbs: { center: (isMobile ? [-65, -14] : [-68, -16]) as [number, number], zoom: isMobile ? 2.3 : 3.1, label: "🌍 VERBS", subtitle: "South America" },
   }
 }
 const REGIONS = getRegions()
