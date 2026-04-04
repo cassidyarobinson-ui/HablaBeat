@@ -2242,6 +2242,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                       <div className="absolute pointer-events-none" style={{
                         left: `${currentLane * 25}%`,
                         width: "25%",
+                        top: "5%",
+                        opacity: 0,
                         animation: "tutorialNoteFall 1.8s ease-in infinite",
                         zIndex: 55,
                       }}>
