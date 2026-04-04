@@ -444,8 +444,8 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           color: #1e293b;
           white-space: nowrap;
           text-align: center;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          border: 2px solid ${node.bgColor || "#7B1FA2"};
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+          border: 2.5px solid ${node.bgColor || "#7B1FA2"};
           font-family: system-ui, -apple-system, sans-serif;
           text-transform: uppercase;
           letter-spacing: 0.08em;
@@ -464,7 +464,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
           backdrop-filter: blur(4px);
           border-radius: 4px;
           padding: 1px 6px;
-          border: 1px solid ${node.bgColor || "#7B1FA2"};
+          border: 1.5px solid ${node.bgColor || "#7B1FA2"};
         `
         country.textContent = node.country
 
@@ -552,9 +552,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             inner.style.filter = "none"
             circle.style.border = `3px solid ${node.bgColor || "#7B1FA2"}`
             circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
-            label.style.border = `2px solid ${node.bgColor || "#7B1FA2"}`
-            label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)"
-            country.style.border = `1px solid ${node.bgColor || "#7B1FA2"}`
+            label.style.border = `2.5px solid ${node.bgColor || "#7B1FA2"}`
+            label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.12)"
+            country.style.border = `1.5px solid ${node.bgColor || "#7B1FA2"}`
             el.style.zIndex = "10"
           }, 1500)
           onHoverSoundRef.current?.()
@@ -568,9 +568,9 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
             inner.style.filter = "none"
             circle.style.border = `3px solid ${node.bgColor || "#7B1FA2"}`
             circle.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)"
-            label.style.border = `2px solid ${node.bgColor || "#7B1FA2"}`
-            label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)"
-            country.style.border = `1px solid ${node.bgColor || "#7B1FA2"}`
+            label.style.border = `2.5px solid ${node.bgColor || "#7B1FA2"}`
+            label.style.boxShadow = "0 2px 8px rgba(0,0,0,0.12)"
+            country.style.border = `1.5px solid ${node.bgColor || "#7B1FA2"}`
             bunny.style.opacity = "0"
             bunny.classList.remove("bunny-drop")
             el.style.zIndex = "10"
