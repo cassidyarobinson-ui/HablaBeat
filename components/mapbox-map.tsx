@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef, useState, useCallback, useMemo } from "react"
 import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
@@ -52,7 +52,7 @@ interface MapboxMapProps {
   flyToSectionId?: string // when set, map flies to this section's country
 }
 
-// Region presets — zoom adjusts for mobile
+// Region presets — zoom adjusts for mobile, computed fresh each call
 function getRegions() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
   return {
@@ -60,9 +60,10 @@ function getRegions() {
     verbs: { center: (isMobile ? [-65, -14] : [-68, -8]) as [number, number], zoom: isMobile ? 2.3 : 2.8, label: "🌍 VERBS", subtitle: "South America" },
   }
 }
-const REGIONS = getRegions()
 
 export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, openSectionId, onHoverSound, flyToSectionId }: MapboxMapProps) {
+  // Compute regions fresh on mount (client-side) so window.innerWidth is accurate
+  const REGIONS = useMemo(() => getRegions(), [])
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<{ marker: maplibregl.Marker; inner: HTMLDivElement; circle: HTMLDivElement; category: "nouns" | "verbs"; sectionId: string }[]>([])
