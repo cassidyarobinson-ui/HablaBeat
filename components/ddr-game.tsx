@@ -39,6 +39,129 @@ interface Note {
   hit: boolean
   missed: boolean
   id: string
+  isFill?: boolean
+}
+
+// ── Rhythmic Step Pattern Generator ─────────────────────────────────────
+// Generates danceable lane patterns using templates instead of sequential modulo
+
+// Direction pairs: [A, B] mapped to lane numbers
+const DIRECTION_PAIRS: [number, number][] = [
+  [0, 3], // left ↔ right (horizontal)
+  [1, 2], // down ↔ up (vertical)
+  [0, 1], // left ↔ down (adjacent)
+  [3, 2], // right ↔ up (adjacent)
+]
+
+// Pattern templates with weights
+// 60% alternating, 25% anchored, 15% mixed
+const PATTERN_TEMPLATES: { pattern: string; weight: number }[] = [
+  // Alternating (60%)
+  { pattern: "ABAB", weight: 20 },
+  { pattern: "ABBA", weight: 15 },
+  { pattern: "BABA", weight: 15 },
+  { pattern: "BAAB", weight: 10 },
+  // Anchored repeats (25%)
+  { pattern: "AABA", weight: 8 },
+  { pattern: "AAAB", weight: 5 },
+  { pattern: "BBAB", weight: 7 },
+  { pattern: "AABB", weight: 5 },
+  // Mixed short (15%)
+  { pattern: "ABA", weight: 8 },
+  { pattern: "BAB", weight: 7 },
+]
+
+const TOTAL_WEIGHT = PATTERN_TEMPLATES.reduce((s, t) => s + t.weight, 0)
+
+function pickWeightedPattern(): string {
+  let r = Math.random() * TOTAL_WEIGHT
+  for (const t of PATTERN_TEMPLATES) {
+    r -= t.weight
+    if (r <= 0) return t.pattern
+  }
+  return "ABAB"
+}
+
+function generateLanePattern(noteCount: number): number[] {
+  const lanes: number[] = []
+  let phraseLen = 0
+
+  while (lanes.length < noteCount) {
+    // Pick a new direction pair and pattern every phrase (8-16 notes)
+    if (phraseLen <= 0) {
+      phraseLen = 8 + Math.floor(Math.random() * 9) // 8-16 notes per phrase
+    }
+
+    const pair = DIRECTION_PAIRS[Math.floor(Math.random() * DIRECTION_PAIRS.length)]
+    const template = pickWeightedPattern()
+
+    // 10% chance to mirror (swap A↔B)
+    const mirror = Math.random() < 0.1
+    const [a, b] = mirror ? [pair[1], pair[0]] : pair
+
+    // Expand template to fill phrase
+    for (let i = 0; i < phraseLen && lanes.length < noteCount; i++) {
+      const ch = template[i % template.length]
+      lanes.push(ch === "A" ? a : b)
+    }
+
+    phraseLen = 0 // reset for next phrase
+  }
+
+  return lanes
+}
+
+// ── Gap-Filling System ──────────────────────────────────────────────────
+// Inserts groove notes during long gaps between lyrics
+
+const FILL_ARROWS = ["◀", "▼", "▲", "▶"]
+const GAP_THRESHOLD_MIN = 1.5  // seconds — gaps shorter than this are fine
+const GAP_FILL_SPACING = 0.5   // seconds between fill notes
+
+function fillGaps(notes: Note[]): Note[] {
+  if (notes.length < 2) return notes
+
+  // Sort by timestamp
+  const sorted = [...notes].sort((a, b) => a.timestamp - b.timestamp)
+  const fills: Note[] = []
+
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const gapStart = sorted[i].timestamp + (sorted[i].duration || 0.2)
+    const gapEnd = sorted[i + 1].timestamp
+    const gapLen = gapEnd - gapStart
+
+    if (gapLen < GAP_THRESHOLD_MIN) continue
+
+    // Determine how many fills to insert
+    const maxFills = gapLen > 5 ? 6 : gapLen > 3 ? 4 : 2
+    const fillCount = Math.min(maxFills, Math.floor(gapLen / GAP_FILL_SPACING) - 1)
+    if (fillCount <= 0) continue
+
+    // Space fills evenly within the gap (with margin at edges)
+    const margin = 0.3
+    const usableGap = gapLen - margin * 2
+    const step = usableGap / (fillCount + 1)
+
+    // Pick a simple alternating pattern for fills
+    const pair = DIRECTION_PAIRS[Math.floor(Math.random() * 2)] // prefer horizontal/vertical
+    for (let f = 0; f < fillCount; f++) {
+      const t = gapStart + margin + step * (f + 1)
+      const lane = pair[f % 2]
+      fills.push({
+        text: FILL_ARROWS[lane],
+        english: "",
+        timestamp: t,
+        duration: 0.15,
+        lane,
+        hit: false,
+        missed: false,
+        id: `fill-${i}-${f}`,
+        isFill: true,
+      })
+    }
+  }
+
+  return [...sorted, ...fills].sort((a, b) => a.timestamp - b.timestamp)
 }
 
 interface DDRGameProps {
@@ -302,22 +425,20 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     const keywordSet = speed === "keywords" ? (SONG_KEYWORDS[songNumber] ?? null) : null
     const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
 
-    const allNotes: Note[] = []
+    // Collect all word notes first (without lane assignment)
+    const wordNotes: Omit<Note, "lane">[] = []
     timingData.lyrics.forEach((line, lineIndex) => {
       line.words.forEach((word, wordIndex) => {
         if (keywordSet) {
           const stripped = stripPunct(word.text)
           if (!keywordSet.has(stripped)) return
-          // Skip single-char keywords (like "a","y","e") in multi-word lines —
-          // they're grammar words (prepositions/conjunctions), not vocab being taught
           if (stripped.length <= 1 && line.words.length > 1) return
         }
-        allNotes.push({
+        wordNotes.push({
           text: word.text,
           english: translateWord(word.text),
           timestamp: word.timestamp,
           duration: word.duration,
-          lane: (lineIndex + wordIndex) % 4,
           hit: false,
           missed: false,
           id: `${lineIndex}-${wordIndex}`,
@@ -325,7 +446,15 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       })
     })
 
-    return allNotes
+    // Generate rhythmic lane pattern instead of sequential modulo
+    const lanePattern = generateLanePattern(wordNotes.length)
+    const allNotes: Note[] = wordNotes.map((note, i) => ({
+      ...note,
+      lane: lanePattern[i],
+    }))
+
+    // Fill gaps with groove notes (especially useful in Keywords mode)
+    return fillGaps(allNotes)
   }, [timingData, speed, songNumber])
 
   // Start game — create audio directly in click handler (required for autoplay)
