@@ -2087,7 +2087,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                       </filter>
                     </defs>
                     <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`} filter={`url(#glow-${lane})`}>
-                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} strokeLinejoin="round" />
+                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
                     </g>
                   </svg>
                 </div>
