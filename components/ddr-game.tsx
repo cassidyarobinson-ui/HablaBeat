@@ -2229,7 +2229,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                         🎯 Let&apos;s practice!
                       </p>
                       <p className="text-white/80 text-sm md:text-base font-semibold mb-3">
-                        Words will fall down — press the matching arrow key<br />
+                        Press the matching arrow key when it reaches the bottom line.<br />
                         <span className="text-white/60 text-xs">(or tap the correct lane on mobile)</span>
                       </p>
                       <p className="text-xl md:text-2xl font-black" style={{ color: TUT_COLORS[currentLane] || "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
