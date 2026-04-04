@@ -75,7 +75,7 @@ function getBoundsPadding() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
   return isMobile
     ? { top: 30, right: 30, bottom: 140, left: 30 }
-    : { top: 60, right: 200, bottom: 60, left: 40 }
+    : { top: 120, right: 200, bottom: 40, left: 40 }
 }
 
 // REGIONS object for labels and the fitToRegion helper
