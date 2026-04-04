@@ -2081,13 +2081,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 <div className="ddr-arrow absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-all duration-100" style={{ bottom: "2%", width: "min(70%, 90px)", aspectRatio: "1" }}>
                   <svg viewBox="0 0 48 48" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                      <filter id={`glow-${lane}`}>
-                        <feGaussianBlur stdDeviation="2" result="blur" />
-                        <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                      <filter id={`glow-${lane}`} x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.6)" />
+                        <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor={LANE_HEX[lane]} floodOpacity="0.4" />
                       </filter>
                     </defs>
                     <g transform={`rotate(${[270, 180, 0, 90][lane]}, 24, 24)`} filter={`url(#glow-${lane})`}>
-                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
+                      <polygon points="24,8 40,32 8,32" fill={LANE_HEX[lane]} strokeLinejoin="round" />
                     </g>
                   </svg>
                 </div>
