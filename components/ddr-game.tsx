@@ -2366,7 +2366,22 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                       </p>
                     </div>
 
-                    {/* Falling tutorial bubble — styled like real game notes */}
+                    {/* Highlighted hit zone rectangle — shows user where to aim */}
+                    <div className="absolute left-0 right-0 z-[52] pointer-events-none" style={{
+                      bottom: 0,
+                      height: "15%",
+                      border: "2px solid rgba(255,255,255,0.6)",
+                      borderBottom: "none",
+                      borderRadius: "12px 12px 0 0",
+                      background: "rgba(255,255,255,0.08)",
+                      animation: "tutorialZonePulse 1.5s ease-in-out infinite",
+                    }}>
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full px-3 py-1 rounded-t-lg text-xs font-bold text-white/80" style={{ background: "rgba(0,0,0,0.5)" }}>
+                        ▼ Hit here ▼
+                      </div>
+                    </div>
+
+                    {/* Falling tutorial bubble — falls into the actual hit zone */}
                     {currentLane >= 0 && (
                       <div key={`tut-arrow-${tutorialStep}`} className="absolute pointer-events-none" style={{
                         left: `${currentLane * 25}%`,
@@ -2388,8 +2403,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                       </div>
                     )}
 
-                    {/* Progress dots */}
-                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-3 z-[60]">
+                    {/* Progress dots — above the hit zone */}
+                    <div className="absolute flex gap-3 z-[60]" style={{ bottom: "17%", left: "50%", transform: "translateX(-50%)" }}>
                       {[0, 1, 2, 3].map((i) => (
                         <div key={i} className="w-3 h-3 rounded-full transition-all" style={{
                           background: i < tutorialStep ? "#22c55e" : i === tutorialStep ? TUT_COLORS[tutorialLanes[i]] : "rgba(255,255,255,0.2)",
@@ -2406,8 +2421,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                     15% { opacity: 0.6; }
                     50% { opacity: 1; transform: translateY(-50%) scale(0.9) perspective(800px) rotateX(15deg); }
                     85% { opacity: 1; transform: translateY(-50%) scale(1.2) perspective(800px) rotateX(3deg); }
-                    95% { top: 82%; transform: translateY(-50%) scale(1.3) perspective(800px) rotateX(0deg); }
-                    100% { top: 82%; opacity: 0.3; transform: translateY(-50%) scale(1.2) perspective(800px) rotateX(0deg); }
+                    92% { top: 86%; opacity: 1; transform: translateY(-50%) scale(1.3) perspective(800px) rotateX(0deg); }
+                    100% { top: 86%; opacity: 0; transform: translateY(-50%) scale(1.5) perspective(800px) rotateX(0deg); }
+                  }
+                  @keyframes tutorialZonePulse {
+                    0%, 100% { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); }
+                    50% { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.12); }
                   }
                 `}</style>
               </div>
