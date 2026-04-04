@@ -74,7 +74,7 @@ const REGION_LABELS = {
 function getBoundsPadding() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
   return isMobile
-    ? { top: 20, right: 20, bottom: 100, left: 20 }
+    ? { top: 30, right: 30, bottom: 140, left: 30 }
     : { top: 60, right: 200, bottom: 60, left: 40 }
 }
 
