@@ -2239,7 +2239,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
                     {/* Falling tutorial bubble — styled like real game notes */}
                     {currentLane >= 0 && (
-                      <div className="absolute pointer-events-none" style={{
+                      <div key={`tut-arrow-${tutorialStep}`} className="absolute pointer-events-none" style={{
                         left: `${currentLane * 25}%`,
                         width: "25%",
                         top: "5%",
