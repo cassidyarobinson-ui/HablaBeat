@@ -3767,7 +3767,7 @@ export default function HablaBeat() {
                   )}
 
                   {/* Main content — vertically centered */}
-                  <div className="flex-1 flex flex-col items-center justify-center pb-16">
+                  <div className="flex-1 flex flex-col items-center justify-center pt-8 md:pt-16 pb-16">
 
                     {/* Song title sitting above the cards */}
                     <div className="text-center mb-8">
