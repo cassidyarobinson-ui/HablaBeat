@@ -1657,8 +1657,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   if (gameState === "ended") {
     const { grade, color: gradeColor } = getGrade()
     return (
-      <div className="h-[100dvh] text-gray-800 flex items-center justify-center relative overflow-hidden" style={{
-        background: "linear-gradient(160deg, #e8f0fe 0%, #dbe6f8 20%, #c9d9f2 40%, #b8cded 60%, #a7c1e8 80%, #96b5e3 100%)"
+      <div className="fixed inset-0 text-gray-800 flex items-center justify-center overflow-hidden" style={{
+        background: "linear-gradient(160deg, #e8f0fe 0%, #dbe6f8 20%, #c9d9f2 40%, #b8cded 60%, #a7c1e8 80%, #96b5e3 100%)",
+        zIndex: 50,
       }}>
         {/* Falling gold coins — interactive, matching setup page */}
         <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
