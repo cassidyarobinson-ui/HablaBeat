@@ -3939,7 +3939,7 @@ export default function HablaBeat() {
             `}</style>
             {/* ── Americas Map (both desktop and mobile) ── */}
             {(
-              <div className="w-full relative" style={{ height: isDesktop ? "calc(100vh - 90px)" : "calc(100dvh - 120px)" }}>
+              <div className="w-full relative" style={{ height: isDesktop ? "calc(100vh - 56px)" : "calc(100dvh - 120px)" }}>
                 <MapboxMap
                   onSelectSection={(sectionId, cx, cy) => {
                     setWorldZoomOrigin({ x: cx, y: cy })
