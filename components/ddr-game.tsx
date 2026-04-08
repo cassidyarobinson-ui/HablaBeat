@@ -243,44 +243,44 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   20: new Set(["sed","hambre","frío","calor","sueño","miedo","tos","prisa","tengo"]),
   // ── Food World ──
   21: new Set(["frutas","manzana","frutilla","naranja","papaya","sandía","durazno","banana","melón","piña","pera","guayaba","uva","ciruela","mora","arándano","higo","tamarindo"]),
-  22: new Set(["verduras","tomate","pimiento","zanahoria","maíz","papa","lechuga","berenjena","cebolla","acelga"]),
-  23: new Set(["desayuno","almuerzo","cena","mañana","tarde","noche","leche","pan","fruta","huevo","sopa","arroz","pollo","ensalada","pasta","pescado","verdura","avena","comidas"]),
-  24: new Set(["pedir","favor","jugo","arroz","tenedor","cuchillo","plato","cuchara","sopa","servilleta","gracias","cenar","restaurante","hola","terminar"]),
+  22: new Set(["verduras","tomate","pimiento","zanahoria","maíz","papa","lechuga","berenjena","cebolla","acelga","rojo","verde","naranja","amarillo","morada","comer","come","crecer","crecerás","cantar","gustar","gusta","bailar","jugoso","dulce","sabroso","crujiente","suave","fresca","bonita","genial","fuerte","feliz"]),
+  23: new Set(["desayuno","almuerzo","cena","mañana","tarde","noche","leche","pan","fruta","huevo","sopa","arroz","pollo","ensalada","pasta","pescado","verdura","avena","rico","sano","problema"]),
+  24: new Set(["hola","estás","bien","gracias","tú","quiero","pedir","favor","jugo","arroz","mejor","tenedor","cuchillo","olvida","plato","cuchara","sopa","servilleta","ropa","terminar","listo","cenar"]),
   // ── AR World ──
   25: new Set(["hablar","bailar","cantar","estudiar","jugar","trabajar","nadar","dibujar","ayudar","caminar","escuchar","yo","tú","él","ella","nosotros","ellos"]),
-  26: new Set(["gustar","gusta","cantar","bailar","comer","correr","chocolate","tomate","lechuga","frutas","verduras","ojos","nariz","camisa","pantalones","zapatos","me","te","le","nos","les"]),
-  27: new Set(["estoy","estás","está","estamos","están","estar","feliz","enfermo","nerviosa","cansados","contentos","enojados","aburridos","aquí","allí","tren"]),
+  26: new Set(["me","te","le","nos","les","tú","mi","mis","tu","gusta","gustan","cantar","bailar","comer","correr","decir","disfruta","preguntas","respondes","chocolate","tomate","lechuga","frutas","verduras","ojos","nariz","camisa","pantalones","zapatos","verbo","mundo","fácil","otra","bien","así","se","ahora","también","qué","con","todo","dice","vez"]),
+  27: new Set(["yo","tú","él","ella","ellos","ellas","nosotros","nosotras","ustedes","estoy","estás","está","estamos","están","feliz","enfermo","nerviosa","cansados","contentos","aburridos","ocupado","fenomenal","genial","bien","escuela","novela","tren","aquí","allí","describe","preguntas","respondes","lograr","así","dice","cómo","dónde","vez","más","sin","afán","con","verbo"]),
   // ── ER World ──
-  28: new Set(["beber","comer","leer","aprender","correr"]),
-  29: new Set(["tengo","tienes","tiene","tenemos","tienen","leer","saltar","pensar","ayudar","escuchar","trabajar"]),
-  30: new Set(["soy","eres","es","somos","son","ser","estudiante","cocinero","españa","artista","amiga","suave"]),
+  28: new Set(["bebo","bebes","bebe","bebemos","beben","como","comes","come","comemos","comen","leo","lees","lee","leemos","leen","aprendo","aprendes","aprende","aprendemos","aprenden","corro","corres","corre","corremos","corren"]),
+  29: new Set(["tengo","tienes","tiene","tenemos","tienen","tener","leer","saltar","pensar","ayudar","escuchar","todos","trabajar","también","vamos","tren","repite","día","ritmo","alegría","verbo","melodía"]),
+  30: new Set(["vamos","aprender","verbo","ser","soy","eres","es","somos","son","número","uno","cántalo","fuerte","canta","montón","quién","niño","amiga","qué","estudiante","cocinero","elegante","dónde","españa","artistas","mucha","maña","cómo","divertida","perrito","suave","toda","vida","corazón","decir","siempre","cambiar","igual","dudes","vas","brillar"]),
   // ── IR World ──
-  31: new Set(["vivir","escribir","abrir","asistir","decidir"]),
-  32: new Set(["voy","vas","va","vamos","van","ir","parque","baño","escuela","cuarto","cine","mercado","playa","restaurante","biblioteca","fiesta","supermercado","gimnasio","hospital"]),
-  33: new Set(["digo","dices","dice","decimos","dicen","decir","hola","sí","aquí","verdad","felicidad","explicar","nombre","chiste"]),
+  31: new Set(["verbos","terminan","así","con","sí","yo","vivo","tú","vives","vive","nosotros","vivimos","ellos","viven","escribo","escribes","escribe","escribimos","escriben","todos","cantar","abro","abres","abre","abrimos","abren","qué","bien","suena","ya","asisto","asistes","asiste","asistimos","asisten","vamos","aprender","decido","decides","decide","decidimos","deciden"]),
+  32: new Set(["vamos","aprender","verbo","ir","preguntas","respuestas","repite","conmigo","adónde","voy","yo","parque","vas","tú","baño","va","él","escuela","ella","cuarto","nosotros","cine","ellos","van","mercado","vez","más","todo","está","bien","ustedes"]),
+  33: new Set(["hola","amigos","palabras","bonitas","chiste","canción","digo","dices","dice","decimos","dicen","verbo","decir","tú","yo","gracias","él","ella","aquí","nosotros","buenos","días","ellos","alegría","qué","verdad","felicidad","jugar","cantar","todos","fácil","repites","hablar","contar","explicar","nombre","todo","existe","ahora","di","quieras","divertir","juntos"]),
   // ── Quick Past World ──
-  34: new Set(["ayer","anoche","hablé","comiste","corrió","escribió","bailamos","vivieron","pretérito","repente"]),
-  35: new Set(["hablar","caminar","cocinar","mirar","hablé","caminó","cocinamos","miraron"]),
+  34: new Set(["hola","amigos","qué","gusta","decir","palabras","bonitas","chiste","canción","vamos","usar","verbo","montón","digo","dices","dice","decimos","dicen","puedes","quieres","yo","tú","sí","él","gracias","ella","aquí","nosotros","buenos","días","alegría","verdad","felicidad","jugar","cantar","fácil","repites","hablar","explicar","contar","nombre","todo","existe","ahora","di","divertir","juntos","olviden"]),
+  35: new Set(["é","aste","ó","amos","aron","vámonos","verbos","pretérito","acciones","hicieron","verbo","hablar","conversar","pasado","conjugar","yo","hablé","mamá","tú","hablaste","papá","él","habló","ella","nosotros","hablamos","todo","pasó","ellos","hablaron","ellas","también","cinco","formas","aprenden","bien","caminar","pie","ayer","caminé","caminaste","ciudad","caminó","tranquilidad","caminamos","rincón","caminaron","callejón","ya","estamos","hablando","cantando","cocinar","preparar","comida","hicimos","así","vida","cociné","arroz","pan","cocinaste","hermana","fran","cocinó","sopa","limón","sazón","cocinamos","emoción","cocinaron","reunión","mirar","observar","vamos","miré","nubes","pasar"]),
   36: new Set(["comer","beber","escribir","vivir","comí","bebiste","escribió","vivimos","comieron"]),
-  37: new Set(["estar","poder","poner","saber","tener","venir","querer","hacer","decir","traer","conducir","estuv","pud","pus","sup","tuv","vin","quis","hic","dij","traj","conduj"]),
+  37: new Set(["vamos","explorar","verbos","pretérito","irregular","escucha","bien","comienzos","verbo","ya","estar","estuv","poder","pud","poner","pus","saber","sup","tener","tuv","venir","vin","querer","quis","hacer","hic","decir","dij","traer","traj","conducir","conduj","ahora","terminaciones","para","los","é","aste","ó","amos","aron","í","iste","ió","imos","ieron"]),
   // ── Long Past World ──
-  38: new Set(["era","iba","veía","aba","abas","ábamos","aban","ía","ías","íamos","ían","imperfecto"]),
-  39: new Set(["era","eras","éramos","eran","iba","ibas","íbamos","iban","veía","veías","veíamos","veían"]),
-  40: new Set(["era","fue","iba","fui","hacía","hizo","tenía","tuvo","siempre","repente","imperfecto","pretérito"]),
+  38: new Set(["vamos","cantar","sobre","cuándo","usar","imperfecto","cuando","era","niño","usaba","pantalón","para","descripciones","esa","razón","hábitos","pasado","sin","decir","final","cosas","repetidas","genial","acción","duraba","importa","fin","como","llovía","mucho","dices","así","edad","tiempo","emociones","también","usa","vas","estar","bien","terminaciones","verbos","jugar","caminar","yo","aba","tú","abas","él","nosotros","ábamos","ellos","aban","otra","vez","ía","ías","íamos","ían","acciones","rutina","complicado","solo","hay","triunfar"]),
+  39: new Set(["vamos","cantar","sobre","verbos","irregulares","imperfecto","solamente","hay","tres","qué","fácil","ser","para","hablar","quién","eres","cómo","yo","era","tú","eras","él","nosotros","éramos","ellos","eran","verbo","escapan","ir","decir","dónde","vas","camino","tomas","iba","ibas","ella","íbamos","iban","siempre","clavan","ver","captas","ojos","veía","veías","veíamos","veían","dominan","verso","final","recordar","solo","todo","canción","ya","estás","modo"]),
+  40: new Set(["quieres","hablar","futuro","escúchame","bien","juro","cualquier","verbo","sin","dudar","terminación","vas","agregar","é","ás","á","emos","án","esos","son","finales","van","para","nada","más","ar","er","ir","también","no","hay","quitar","solo","añadir","toma","tal","como","está","final","da","cantar","yo","cantaré","tú","cantarás","él","cantará","qué","harás","nosotros","cantaremos","ellos","cantarán","así","cantamos"]),
   // ── Future World ──
-  41: new Set(["cantaré","comeré","viviré","futuro","hablaré","escribiré"]),
-  42: new Set(["tendré","diré","haré","saldré","vendré","querré","sabré","pondré","podré","habré","cabré","valdré"]),
+  41: new Set(["futuro","saber","algunos","verbos","van","cambiar","usan","raíz","normal","otra","para","conjugar","tener","tendr","tendré","tendrás","tendrá","tendremos","tendrán","poner","pondr","pondré","pondrás","pondrá","pondremos","pondrán","salir","saldr","saldré","saldrás","saldrá","saldremos","saldrán","venir","vendr","vendré","vendrás","vendrá","vendremos","vendrán","poder","podr","podré","podrás","podrá","podremos","podrán","sabr","sabré","sabrás","sabrá","sabremos","sabrán","querer","querr","querré","querrás","querrá","querremos","querrán","haber","habr","habré","habrás","habrá","habremos","habrán","decir","dir","diré","dirás","dirá","diremos","dirán","hacer","har","haré","harás","hará","haremos","harán","caber","cabr","cabré","cabrás","cabrá","cabremos","cabrán","valer","valdr","valdré","valdrás","valdrá","valdremos","valdrán","recuerda","bien","lección","irregulares","cambian","forma","igual","é","ás","así","feliz"]),
+  42: new Set(["futuro","saber","algunos","verbos","van","cambiar","usan","raíz","normal","otra","para","conjugar","tener","tendr","tendré","tendrás","tendrá","tendremos","tendrán","poner","pondr","pondré","pondrás","pondrá","pondremos","pondrán","salir","saldr","saldré","saldrás","saldrá","saldremos","saldrán","venir","vendr","vendré","vendrás","vendrá","vendremos","vendrán","poder","podr","podré","podrás","podrá","podremos","podrán","sabr","sabré","sabrás","sabrá","sabremos","sabrán","querer","querr","querré","querrás","querrá","querremos","querrán","haber","habr","habré","habrás","habrá","habremos","habrán","decir","dir","diré","dirás","dirá","diremos","dirán","hacer","har","haré","harás","hará","haremos","harán","caber","cabr","cabré","cabrás","cabrá","cabremos","cabrán","valer","valdr","valdré","valdrás","valdrá","valdremos","valdrán","recuerda","bien","lección","irregulares","cambian","forma","igual","é","ás","así","feliz"]),
   // ── Conditional World ──
-  43: new Set(["cantaría","comerías","viviría","condicional","hablaría","escribiría"]),
-  44: new Set(["tendría","diría","haría","saldría","vendría","querría","sabría","pondría","podría","habría","valdría"]),
+  43: new Set(["condicional","verbo","terminación","finales","añadir","quitar","tomar","dar","ía","ías","íamos","ían","yo","tú","él","ella","nosotros","ellos","hablar","cantar","comer","vivir","agregar","cantaría","cantarías","cantaríamos","cantarían","comería","comerías","comeríamos","comerían","viviría","vivirías","viviríamos","vivirían"]),
+  44: new Set(["condicional","futuro","irregulares","raíz","base","terminación","formas","cambia","ía","ías","íamos","ían","tendr","dir","har","saldr","vendr","querr","sabr","pondr","podr","habr","valdr","tener","decir","hacer","salir","venir","querer","saber","poner","poder","haber","valer","tendría","diría","haría","saldría","vendría","querría","sabría","pondría","podría","habría","valdría","practícalos","todos","días"]),
   // ── Pronoun World ──
-  45: new Set(["despertarse","irse","prepararse","cepillarse","lavarse","peinarse","dormirse","me","te","se","nos","reflexivo"]),
-  46: new Set(["dar","mandar","explicar","mostrar","traer","lo","la","los","las","le","les","me","te","nos","se"]),
+  45: new Set(["pronombres","personales","reflexivos","frases","expresar","yo","tú","él","ella","nosotros","vosotros","ellos","ellas","me","te","se","nos","despertarse","llamar","ir","prepararse","cepillarse","poner","lavarse","peinarse","dormirse","despierto","llamo","va","preparamos","cepillas","pongo","laváis","peinan","dormir","temprano","teléfono","trabajo","día","dientes","pensar","manos","cabello","repetir","practicar","todos","días"]),
+  46: new Set(["dar","mandar","explicar","mostrar","traer","lo","la","los","las","le","les","me","te","nos","se","dicen","enviará","sin","complicar","solo","escuchar","con","ejemplos","vas","triunfar"]),
   // ── Advanced World ──
-  47: new Set(["ven","habla","escribe","come","corre","haz","mira","corras","hables","toques","mientas","fumes","olvides","rindas","mandato"]),
-  48: new Set(["por","para","gracias"]),
-  49: new Set(["quiero","espero","importante","ojalá","temo","alegra","creo","subjuntivo"]),
-  50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","modo","comido","gordo"]),
+  47: new Set(["escribe","sonríe","haz","lávate","manos","hazlo","ven","mira","corre","dilo","escucha","campeón","campeona","corras","grites","saltes","fumes","hables","toques","mientas","olvides","bebas","rindas","casa","cuidado","peligroso","salud","primero","siempre","honesto","después","ahora","puedes","mandar","mandatos","comunicar","fuerza","temor","sigue","interés"]),
+  48: new Set(["por","para","lo","dicen","se","allí","amor","razón","uso","con","corazón","este","regalo","es","ti","pero","compré","ella","sí","trabajo","ayudar","hago","necesidad","quién","esto","qué","hiciste","mí","viajamos","españa","caminamos","centro","también","soñar","ganar","favor","vida","cambia","salida","memorizas","solo","cantas","hoy","son","parte","oy","canta","frases","repítelas","bien","usas","sin","estrés"]),
+  49: new Set(["alegra","aquí","conmigo","feliz","siempre","bueno","emoción","creo","malo","mentiras","digas","espero","quiero","ojalá","vengas","usar","subjuntivo","deseos","dudas","muy","natural","sea","verdad","estés","seas","con"]),
+  50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","frases","vas","encajar","feliz","también","libro","amigo","bien","chido","rollo","ruido","serio","va","creo","ajá","jerga","lugar","hablas","flow","natural","hablar","méxico","españa","chile","perú","eres","tú","bueno","parte","club","sí","ahora","hablo","viviera","cancún","preguntan","aprendiste","fácil","rola","listo"]),
 }
 
 export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer, danceMode = false, onOpenBank, recallBreaks }: DDRGameProps) {
@@ -336,7 +336,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const [totalHits, setTotalHits] = useState(0)
   const [speed, setSpeed] = useState<"slower" | "normal" | "keywords">("normal")
   const [showTranslations, setShowTranslations] = useState(true)
-  const [encouragement, setEncouragement] = useState<{ text: string; color: string } | null>(null)
+  const [encouragement, setEncouragement] = useState<{ text: string; english: string; color: string } | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
   const [showChallengeModal, setShowChallengeModal] = useState(false)
   const [challengePhone, setChallengePhone] = useState(initialChallengePhone)
@@ -1189,26 +1189,82 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   }
 
   const checkEncouragement = (currentCombo: number) => {
-    const spanishMessages: Record<number, { text: string; color: string }> = {
-      3: { text: "¡Vamos!", color: "text-green-300" },
-      5: { text: "¡Bien Hecho!", color: "text-green-400" },
-      8: { text: "¡Súper!", color: "text-cyan-400" },
-      10: { text: "¡Excelente!", color: "text-blue-400" },
-      13: { text: "¡Genial!", color: "text-indigo-400" },
-      15: { text: "¡Increíble!", color: "text-purple-400" },
-      18: { text: "¡Asombroso!", color: "text-violet-400" },
-      20: { text: "¡Fantástico!", color: "text-pink-400" },
-      25: { text: "¡Tremendo!", color: "text-rose-400" },
-      30: { text: "¡IMPRESIONANTE!", color: "text-yellow-300" },
-      35: { text: "¡MAGNÍFICO!", color: "text-amber-400" },
-      40: { text: "¡FENOMENAL!", color: "text-red-400" },
-      45: { text: "¡ESPECTACULAR!", color: "text-orange-300" },
-      50: { text: "¡ERES INCREÍBLE!", color: "text-yellow-400" },
+    // Country-specific encouragement phrases based on song number
+    const countryEncouragement: Record<string, { text: string; english: string }[]> = {
+      "Mexico":             [{text:"¡Órale!",english:"Wow!"},{text:"¡Chido!",english:"Cool!"},{text:"¡Qué padre!",english:"How awesome!"},{text:"¡Eso está de poca!",english:"That's awesome!"},{text:"¡Ánimo!",english:"Keep going!"}],
+      "Spain":              [{text:"¡Guay!",english:"Cool!"},{text:"¡Eso está genial!",english:"That's great!"},{text:"¡Muy bien!",english:"Very good!"},{text:"¡Fenomenal!",english:"Phenomenal!"},{text:"¡Ánimo!",english:"Keep going!"}],
+      "Argentina":          [{text:"¡Dale!",english:"Go for it!"},{text:"¡Qué copado!",english:"How cool!"},{text:"¡Buenísimo!",english:"Awesome!"},{text:"¡Vamos todavía!",english:"Let's go!"},{text:"¡Eso es, che!",english:"That's it, buddy!"}],
+      "Chile":              [{text:"¡Bacán!",english:"Awesome!"},{text:"¡Fome no!",english:"Not boring!"},{text:"¡Vamos po!",english:"Let's go!"},{text:"¡Brígido!",english:"Amazing!"},{text:"¡Bien ahí!",english:"Good job!"}],
+      "Colombia":           [{text:"¡Qué chévere!",english:"Cool!"},{text:"¡Excelente!",english:"Excellent!"},{text:"¡Muy bien, parce!",english:"Very good, friend!"},{text:"¡Bacano!",english:"Awesome!"},{text:"¡De una!",english:"Let's do it!"}],
+      "Venezuela":          [{text:"¡Chévere!",english:"Cool!"},{text:"¡Arrechísimo!",english:"Super awesome!"},{text:"¡Eso es!",english:"That's it!"},{text:"¡Pura vida!",english:"Full of life!"},{text:"¡Buenísimo!",english:"Great!"}],
+      "Peru":               [{text:"¡Bacán!",english:"Awesome!"},{text:"¡Bien ahí!",english:"Good job!"},{text:"¡Súper!",english:"Super!"},{text:"¡Qué chévere!",english:"Cool!"},{text:"¡Así se hace!",english:"That's how it's done!"}],
+      "Ecuador":            [{text:"¡Qué bestia!",english:"How amazing!"},{text:"¡Bacán!",english:"Cool!"},{text:"¡Muy bien!",english:"Very good!"},{text:"¡Súper bacán!",english:"Super cool!"},{text:"¡Eso es!",english:"That's it!"}],
+      "Bolivia":            [{text:"¡Chévere!",english:"Cool!"},{text:"¡Excelente!",english:"Excellent!"},{text:"¡Bien hecho!",english:"Well done!"},{text:"¡Qué chévere!",english:"How cool!"},{text:"¡Sigue así!",english:"Keep going!"}],
+      "Paraguay":           [{text:"¡Genial!",english:"Great!"},{text:"¡Muy bien!",english:"Very good!"},{text:"¡Bacán!",english:"Cool!"},{text:"¡Buenísimo!",english:"Awesome!"},{text:"¡Dale nomás!",english:"Go ahead!"}],
+      "Uruguay":            [{text:"¡Ta!",english:"Good!"},{text:"¡Qué bueno!",english:"How good!"},{text:"¡Dale!",english:"Go ahead!"},{text:"¡Vamos todavía!",english:"Let's go!"},{text:"¡Buenísimo!",english:"Awesome!"}],
+      "Cuba":               [{text:"¡Qué bolá!",english:"What's up!"},{text:"¡Asere, bien hecho!",english:"Friend, well done!"},{text:"¡Eso es!",english:"That's it!"},{text:"¡De puta madre!",english:"Awesome!"},{text:"¡Dale que va!",english:"Go for it!"}],
+      "Dominican Republic": [{text:"¡Jevi!",english:"Cool!"},{text:"¡Bacano!",english:"Awesome!"},{text:"¡Muy bien!",english:"Very good!"},{text:"¡Eso está dura!",english:"That's awesome!"},{text:"¡Dale, sigue!",english:"Keep going!"}],
+      "Puerto Rico":        [{text:"¡Nítido!",english:"Perfect!"},{text:"¡Buen trabajo!",english:"Good job!"},{text:"¡Chévere!",english:"Nice!"},{text:"¡Eso es!",english:"That's it!"},{text:"¡Vamos allá!",english:"Let's go!"}],
+      "Guatemala":          [{text:"¡Qué buena onda!",english:"How cool!"},{text:"¡Buenísimo!",english:"Awesome!"},{text:"¡Adelante!",english:"Go ahead!"},{text:"¡Muy bien!",english:"Very good!"},{text:"¡Súper!",english:"Super!"}],
+      "Honduras":           [{text:"¡Qué chido!",english:"Cool!"},{text:"¡Muy bien!",english:"Very good!"},{text:"¡Sigue así!",english:"Keep it up!"},{text:"¡Bien ahí!",english:"Good job!"},{text:"¡Vamos!",english:"Let's go!"}],
+      "El Salvador":        [{text:"¡Chivo!",english:"Awesome!"},{text:"¡Bien hecho!",english:"Well done!"},{text:"¡Dale!",english:"Keep going!"},{text:"¡Excelente!",english:"Excellent!"},{text:"¡Súper!",english:"Super!"}],
+      "Nicaragua":          [{text:"¡Bien ahí!",english:"Good job!"},{text:"¡Súper!",english:"Super!"},{text:"¡Eso es!",english:"That's it!"},{text:"¡Excelente!",english:"Excellent!"},{text:"¡Vamos, sigue!",english:"Go, keep going!"}],
+      "Costa Rica":         [{text:"¡Pura vida!",english:"Good vibes!"},{text:"¡Buenísimo!",english:"Great!"},{text:"¡Sigue así!",english:"Keep it up!"},{text:"¡De primera!",english:"Top-notch!"},{text:"¡Qué tuanis!",english:"How cool!"}],
+      "Panama":             [{text:"¡Tuanis!",english:"Awesome!"},{text:"¡Buen trabajo!",english:"Good job!"},{text:"¡Eso está chévere!",english:"That's great!"},{text:"¡Excelente!",english:"Excellent!"},{text:"¡Ánimo!",english:"Keep going!"}],
     }
 
-    // Always show Spanish encouragement messages
+    // Map song number to country
+    const songCountryMap: Record<number, string> = {
+      1: "Mexico", 2: "Mexico", 3: "Mexico",
+      4: "Guatemala", 5: "Guatemala",
+      6: "El Salvador", 7: "El Salvador",
+      8: "Honduras", 9: "Honduras", 10: "Honduras",
+      11: "Nicaragua", 12: "Nicaragua", 13: "Nicaragua",
+      14: "Costa Rica", 15: "Costa Rica",
+      16: "Panama", 17: "Panama",
+      18: "Puerto Rico", 19: "Puerto Rico",
+      20: "Dominican Republic",
+      21: "Cuba", 22: "Cuba", 23: "Cuba",
+      24: "Colombia", 25: "Colombia", 26: "Colombia", 27: "Colombia",
+      28: "Venezuela", 29: "Venezuela", 30: "Venezuela",
+      31: "Ecuador", 32: "Ecuador", 33: "Ecuador",
+      34: "Peru", 35: "Peru", 36: "Peru", 37: "Peru",
+      38: "Bolivia", 39: "Bolivia", 40: "Bolivia",
+      41: "Paraguay", 42: "Paraguay",
+      43: "Uruguay", 44: "Uruguay",
+      45: "Chile", 46: "Chile",
+      47: "Argentina", 48: "Argentina", 49: "Argentina", 50: "Argentina",
+    }
+
+    const country = songCountryMap[songNumber] || "Mexico"
+    const phrases = countryEncouragement[country] || countryEncouragement["Mexico"]
+    const colors = [
+      "text-green-300", "text-green-400", "text-cyan-400", "text-blue-400",
+      "text-indigo-400", "text-purple-400", "text-violet-400", "text-pink-400",
+      "text-rose-400", "text-yellow-300", "text-amber-400", "text-red-400",
+      "text-orange-300", "text-yellow-400",
+    ]
+
+    const spanishMessages: Record<number, { text: string; english: string; color: string }> = {
+      3:  { text: phrases[0].text, english: phrases[0].english, color: colors[0] },
+      5:  { text: phrases[1].text, english: phrases[1].english, color: colors[1] },
+      8:  { text: phrases[2].text, english: phrases[2].english, color: colors[2] },
+      10: { text: phrases[3].text, english: phrases[3].english, color: colors[3] },
+      13: { text: phrases[4].text, english: phrases[4].english, color: colors[4] },
+      15: { text: phrases[0].text, english: phrases[0].english, color: colors[5] },
+      18: { text: phrases[1].text, english: phrases[1].english, color: colors[6] },
+      20: { text: phrases[2].text, english: phrases[2].english, color: colors[7] },
+      25: { text: phrases[3].text, english: phrases[3].english, color: colors[8] },
+      30: { text: phrases[4].text.toUpperCase(), english: phrases[4].english, color: colors[9] },
+      35: { text: phrases[0].text.toUpperCase(), english: phrases[0].english, color: colors[10] },
+      40: { text: phrases[1].text.toUpperCase(), english: phrases[1].english, color: colors[11] },
+      45: { text: phrases[2].text.toUpperCase(), english: phrases[2].english, color: colors[12] },
+      50: { text: "¡ERES INCREÍBLE!", english: "You're incredible!", color: colors[13] },
+    }
+
     const messages = spanishMessages
-    const overflowMsg = { text: "¡IMPARABLE!", color: "text-orange-400" }
+    const rndPhrase = phrases[Math.floor(Math.random() * phrases.length)]
+    const overflowMsg = { text: rndPhrase.text.toUpperCase(), english: rndPhrase.english, color: "text-orange-400" }
 
     const msg = messages[currentCombo] || (currentCombo > 50 && currentCombo % 25 === 0 ? overflowMsg : null)
 
@@ -2148,9 +2204,22 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
       {/* Encouragement overlay - centered on screen for maximum impact */}
       {encouragement && (
-        <div className="absolute inset-0 flex items-start justify-center pointer-events-none z-40" style={{ paddingTop: "5%" }}>
+        <div className="absolute inset-0 flex flex-col items-center pointer-events-none z-40" style={{ paddingTop: "3%" }}>
+          {/* English translation above */}
           <div
-            className={`${encouragement.color} text-5xl md:text-7xl lg:text-8xl font-black px-8 py-4`}
+            className="text-white/70 text-lg md:text-2xl lg:text-3xl font-bold"
+            style={{
+              textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
+              animation: "streakBannerIn 0.4s ease-out",
+              fontFamily: "'Impact','Arial Black',sans-serif",
+              letterSpacing: "0.05em",
+            }}
+          >
+            {encouragement.english}
+          </div>
+          {/* Spanish phrase */}
+          <div
+            className={`${encouragement.color} text-5xl md:text-7xl lg:text-8xl font-black px-8 py-2`}
             style={{
               textShadow: "3px 3px 6px rgba(0,0,0,0.9), 0 0 30px currentColor, 0 0 60px currentColor",
               animation: "streakBannerIn 0.5s ease-out, streakGlow 1.5s ease-in-out 0.5s infinite, streakShake 0.6s ease-in-out 0.5s",
@@ -2161,7 +2230,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {encouragement.text}
           </div>
           {/* Combo number below the text */}
-          <div className="absolute" style={{ top: "18%", animation: "streakBannerIn 0.6s ease-out 0.15s both" }}>
+          <div style={{ animation: "streakBannerIn 0.6s ease-out 0.15s both", marginTop: "4px" }}>
             <div className="text-white/80 text-xl md:text-2xl font-black text-center" style={{ letterSpacing: "0.2em", fontFamily: "'Impact','Arial Black',sans-serif" }}>
               🔥 {combo} COMBO 🔥
             </div>
