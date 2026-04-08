@@ -247,7 +247,7 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   23: new Set(["desayuno","almuerzo","cena","mañana","tarde","noche","leche","pan","fruta","huevo","sopa","arroz","pollo","ensalada","pasta","pescado","verdura","avena","rico","sano","problema"]),
   24: new Set(["hola","estás","bien","gracias","tú","quiero","pedir","favor","jugo","arroz","mejor","tenedor","cuchillo","olvida","plato","cuchara","sopa","servilleta","ropa","terminar","listo","cenar"]),
   // ── AR World ──
-  25: new Set(["hablar","bailar","cantar","estudiar","jugar","trabajar","nadar","dibujar","ayudar","caminar","escuchar","yo","tú","él","ella","nosotros","ellos"]),
+  25: new Set(["hablar","hablan","bailar","bailan","cantar","cantan","estudiar","estudio","estudias","estudia","estudiamos","estudian","jugar","juego","juegas","juega","jugamos","juegan","trabajar","trabajo","trabajas","trabaja","trabajamos","trabajan","nadar","nado","nadas","nada","nadamos","nadan","dibujar","dibujo","dibujas","dibuja","dibujamos","dibujan","ayudar","ayudo","ayudas","ayuda","ayudamos","ayudan","caminar","camino","caminas","camina","caminamos","caminan","escuchar","escucho","escuchas","escucha","escuchamos","escuchan","yo","tú","él","ella","nosotros","ellos","sabiduría","conjugamos","saludan","verbos","entienden"]),
   26: new Set(["me","te","le","nos","les","tú","mi","mis","tu","gusta","gustan","cantar","bailar","comer","correr","decir","disfruta","preguntas","respondes","chocolate","tomate","lechuga","frutas","verduras","ojos","nariz","camisa","pantalones","zapatos","verbo","mundo","fácil","otra","bien","así","se","ahora","también","qué","con","todo","dice","vez"]),
   27: new Set(["yo","tú","él","ella","ellos","ellas","nosotros","nosotras","ustedes","estoy","estás","está","estamos","están","feliz","enfermo","nerviosa","cansados","contentos","aburridos","ocupado","fenomenal","genial","bien","escuela","novela","tren","aquí","allí","describe","preguntas","respondes","lograr","así","dice","cómo","dónde","vez","más","sin","afán","con","verbo"]),
   // ── ER World ──
@@ -261,12 +261,12 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   // ── Quick Past World ──
   34: new Set(["hola","amigos","qué","gusta","decir","palabras","bonitas","chiste","canción","vamos","usar","verbo","montón","digo","dices","dice","decimos","dicen","puedes","quieres","yo","tú","sí","él","gracias","ella","aquí","nosotros","buenos","días","alegría","verdad","felicidad","jugar","cantar","fácil","repites","hablar","explicar","contar","nombre","todo","existe","ahora","di","divertir","juntos","olviden"]),
   35: new Set(["é","aste","ó","amos","aron","vámonos","verbos","pretérito","acciones","hicieron","verbo","hablar","conversar","pasado","conjugar","yo","hablé","mamá","tú","hablaste","papá","él","habló","ella","nosotros","hablamos","todo","pasó","ellos","hablaron","ellas","también","cinco","formas","aprenden","bien","caminar","pie","ayer","caminé","caminaste","ciudad","caminó","tranquilidad","caminamos","rincón","caminaron","callejón","ya","estamos","hablando","cantando","cocinar","preparar","comida","hicimos","así","vida","cociné","arroz","pan","cocinaste","hermana","fran","cocinó","sopa","limón","sazón","cocinamos","emoción","cocinaron","reunión","mirar","observar","vamos","miré","nubes","pasar"]),
-  36: new Set(["comer","beber","escribir","vivir","comí","bebiste","escribió","vivimos","comieron"]),
+  36: new Set(["verbos","pretérito","í","iste","ió","imos","ieron","pasó","comparten","misma","conjugación","comer","masticar","pasado","conjugar","comí","decir","fui","fuiste","fue","fuimos","fueron","tener","hacer","estar","poder","querer","venir","ver"]),
   37: new Set(["vamos","explorar","verbos","pretérito","irregular","escucha","bien","comienzos","verbo","ya","estar","estuv","poder","pud","poner","pus","saber","sup","tener","tuv","venir","vin","querer","quis","hacer","hic","decir","dij","traer","traj","conducir","conduj","ahora","terminaciones","para","los","é","aste","ó","amos","aron","í","iste","ió","imos","ieron"]),
   // ── Long Past World ──
   38: new Set(["vamos","cantar","sobre","cuándo","usar","imperfecto","cuando","era","niño","usaba","pantalón","para","descripciones","esa","razón","hábitos","pasado","sin","decir","final","cosas","repetidas","genial","acción","duraba","importa","fin","como","llovía","mucho","dices","así","edad","tiempo","emociones","también","usa","vas","estar","bien","terminaciones","verbos","jugar","caminar","yo","aba","tú","abas","él","nosotros","ábamos","ellos","aban","otra","vez","ía","ías","íamos","ían","acciones","rutina","complicado","solo","hay","triunfar"]),
   39: new Set(["vamos","cantar","sobre","verbos","irregulares","imperfecto","solamente","hay","tres","qué","fácil","ser","para","hablar","quién","eres","cómo","yo","era","tú","eras","él","nosotros","éramos","ellos","eran","verbo","escapan","ir","decir","dónde","vas","camino","tomas","iba","ibas","ella","íbamos","iban","siempre","clavan","ver","captas","ojos","veía","veías","veíamos","veían","dominan","verso","final","recordar","solo","todo","canción","ya","estás","modo"]),
-  40: new Set(["quieres","hablar","futuro","escúchame","bien","juro","cualquier","verbo","sin","dudar","terminación","vas","agregar","é","ás","á","emos","án","esos","son","finales","van","para","nada","más","ar","er","ir","también","no","hay","quitar","solo","añadir","toma","tal","como","está","final","da","cantar","yo","cantaré","tú","cantarás","él","cantará","qué","harás","nosotros","cantaremos","ellos","cantarán","así","cantamos"]),
+  40: new Set(["acciones","final","ayer","jugué","divertí","fui","fiesta","terminé","feliz","principio","claras","contar","historia","larga","cuento","apurar","pasaba","describir","hablar","muchas","veces","cómo","eras","tú","usa","imperfecto","acción","tiempo","ya","pasó","recordé","hechos","reales","pasado","terminó","pretérito","puntual","cosas","dos","tiempos"]),
   // ── Future World ──
   41: new Set(["futuro","saber","algunos","verbos","van","cambiar","usan","raíz","normal","otra","para","conjugar","tener","tendr","tendré","tendrás","tendrá","tendremos","tendrán","poner","pondr","pondré","pondrás","pondrá","pondremos","pondrán","salir","saldr","saldré","saldrás","saldrá","saldremos","saldrán","venir","vendr","vendré","vendrás","vendrá","vendremos","vendrán","poder","podr","podré","podrás","podrá","podremos","podrán","sabr","sabré","sabrás","sabrá","sabremos","sabrán","querer","querr","querré","querrás","querrá","querremos","querrán","haber","habr","habré","habrás","habrá","habremos","habrán","decir","dir","diré","dirás","dirá","diremos","dirán","hacer","har","haré","harás","hará","haremos","harán","caber","cabr","cabré","cabrás","cabrá","cabremos","cabrán","valer","valdr","valdré","valdrás","valdrá","valdremos","valdrán","recuerda","bien","lección","irregulares","cambian","forma","igual","é","ás","así","feliz"]),
   42: new Set(["futuro","saber","algunos","verbos","van","cambiar","usan","raíz","normal","otra","para","conjugar","tener","tendr","tendré","tendrás","tendrá","tendremos","tendrán","poner","pondr","pondré","pondrás","pondrá","pondremos","pondrán","salir","saldr","saldré","saldrás","saldrá","saldremos","saldrán","venir","vendr","vendré","vendrás","vendrá","vendremos","vendrán","poder","podr","podré","podrás","podrá","podremos","podrán","sabr","sabré","sabrás","sabrá","sabremos","sabrán","querer","querr","querré","querrás","querrá","querremos","querrán","haber","habr","habré","habrás","habrá","habremos","habrán","decir","dir","diré","dirás","dirá","diremos","dirán","hacer","har","haré","harás","hará","haremos","harán","caber","cabr","cabré","cabrás","cabrá","cabremos","cabrán","valer","valdr","valdré","valdrás","valdrá","valdremos","valdrán","recuerda","bien","lección","irregulares","cambian","forma","igual","é","ás","así","feliz"]),
@@ -708,8 +708,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
     const mod = getPointer(activePointer).gameplayModifier
     const effectiveMissWindow = HIT_WINDOWS.MISS * mod.hitRadiusMultiplier
+    // Only allow hits when the note is at or past the hit zone (no early taps)
+    // A small early window (PERFECT size) lets players tap slightly before the exact timestamp
+    const earlyWindow = HIT_WINDOWS.PERFECT
     const candidates = notesRef.current.filter(
-      (n) => n.lane === lane && !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= effectiveMissWindow
+      (n) => n.lane === lane && !n.hit && !n.missed &&
+        (currentTime >= n.timestamp - earlyWindow) &&
+        (currentTime <= n.timestamp + effectiveMissWindow)
     )
 
     if (candidates.length === 0) return
@@ -927,8 +932,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           const currentTime = audio.currentTime
           const mod = getPointer(activePointer).gameplayModifier
           const effectiveMissWindow = HIT_WINDOWS.MISS * mod.hitRadiusMultiplier
+          const earlyWindow = HIT_WINDOWS.PERFECT
           const candidates = notesRef.current.filter(
-            (n) => !n.hit && !n.missed && Math.abs(n.timestamp - currentTime) <= effectiveMissWindow
+            (n) => !n.hit && !n.missed &&
+              (currentTime >= n.timestamp - earlyWindow) &&
+              (currentTime <= n.timestamp + effectiveMissWindow)
           )
           if (candidates.length === 0) continue
           const closest = candidates.reduce((a, b) =>
@@ -2097,18 +2105,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   return (
     <div className="h-[100dvh] text-white relative" style={{ background: gameBg, backgroundColor: "#1a0a2e" }}>
-      {/* Gamepad debug overlay — shows pad status + last button pressed (hidden on mobile) */}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] font-mono px-6 py-3 rounded-xl max-w-[90vw] hidden md:block" style={{
-        background: "rgba(0,0,0,0.9)",
-        color: padDebug ? "#4ade80" : "#f87171",
-        pointerEvents: "none",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
-        border: `2px solid ${padDebug ? "#4ade80" : "#f87171"}`,
-        fontSize: "14px",
-        whiteSpace: "nowrap",
-      }}>
-        {padDebug || (padConnected ? "🎮 PAD CONNECTED — step on arrows" : "🎮 NO PAD")}
-      </div>
+      {/* Gamepad debug overlay — moved to top bar next to gear button on desktop */}
       {/* Simple pause indicator (no loadout) */}
       {isPaused && !showLoadout && tutorialStep >= 5 && (
         <div className="absolute inset-0 z-[998] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.6)" }} onClick={togglePause}>
@@ -2247,20 +2244,31 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             </svg>
           </button>
 
-          {/* Gear button — tap to open loadout panel */}
-          <button
-            onClick={() => { setShowLoadout(true); if (!isPaused) togglePause() }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-white text-sm active:scale-90 transition-all"
-            style={{
-              background: "linear-gradient(135deg, rgba(168,85,247,0.85), rgba(99,102,241,0.85))",
-              border: "1.5px solid rgba(255,255,255,0.4)",
-              backdropFilter: "blur(8px)",
-              boxShadow: "0 2px 12px rgba(168,85,247,0.5)",
-            }}
-          >
-            <span style={{ fontSize: "16px" }}>{GAME_CATALOG.find(i => i.id === activePointer)?.emoji ?? "🥕"}</span>
-            <span style={{ fontSize: "13px" }}>⚙️</span>
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Gamepad status — desktop only */}
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs" style={{
+              background: "rgba(0,0,0,0.7)",
+              color: padDebug ? "#4ade80" : (padConnected ? "#4ade80" : "#f87171"),
+              border: `1.5px solid ${padDebug ? "#4ade80" : (padConnected ? "#4ade80" : "#f87171")}`,
+              whiteSpace: "nowrap",
+            }}>
+              {padDebug || (padConnected ? "🎮 PAD" : "🎮 NO PAD")}
+            </div>
+            {/* Gear button — tap to open loadout panel */}
+            <button
+              onClick={() => { setShowLoadout(true); if (!isPaused) togglePause() }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-white text-sm active:scale-90 transition-all"
+              style={{
+                background: "linear-gradient(135deg, rgba(168,85,247,0.85), rgba(99,102,241,0.85))",
+                border: "1.5px solid rgba(255,255,255,0.4)",
+                backdropFilter: "blur(8px)",
+                boxShadow: "0 2px 12px rgba(168,85,247,0.5)",
+              }}
+            >
+              <span style={{ fontSize: "16px" }}>{GAME_CATALOG.find(i => i.id === activePointer)?.emoji ?? "🥕"}</span>
+              <span style={{ fontSize: "13px" }}>⚙️</span>
+            </button>
+          </div>
         </div>
 
         {/* Game Area - lanes extend to edges (no rounded border, no top/bottom lines) */}
