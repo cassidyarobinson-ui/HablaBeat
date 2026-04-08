@@ -214,35 +214,35 @@ const LANE_HEX = ["#22c55e", "#ef4444", "#facc15", "#a855f7"]
 // Keywords per song for "Key Words" mode — words as they appear in the lyrics (lowercase, no punctuation)
 const SONG_KEYWORDS: Record<number, Set<string>> = {
   // ── Alphabet World ──
-  1: new Set(["a","b","c","d","e","f","g","h","i","j","k","l","m","n","ñ","o","p","q","r","s","t","u","v","w","x","y","z","abecedario"]),
-  2: new Set(["ñ","ch","rr","ll","niño","baño","churro","chico","muchacho","perro","carro","llama","lluvia","llorar","letras"]),
-  3: new Set(["a","e","i","o","u","vocales"]),
+  1: new Set(["a","b","c","d","e","f","g","h","i","j","k","l","m","n","ñ","o","p","q","r","s","t","u","v","w","x","y","z","abecedario","cántalo","bien","otra","vez","vamos","bailar","puedes","parar","manos","arriba","mueve","cintura","aprender","cumbia","mover","recordar","ritmo","igual","listos","gozar","dale","despacito"]),
+  2: new Set(["ñ","ch","rr","ll","niño","baño","churro","chico","muchacho","perro","carro","llama","lluvia","llorar","letras","ruge","tren","divertida","especial","genial","bonito","suena","hace","especiales"]),
+  3: new Set(["a","e","i","o","u","vocales","canta","ya","son","letras","dan","vida"]),
   // ── Body World ──
-  4: new Set(["cuerpo","cara","cabeza","pelo","cuello","garganta","hombros","brazos","codos","dedos","muñecas","manos","espalda","barriga","pierna","rodilla","pies","ojos","nariz","labios","dientes","oreja","boca","lengua","frente"]),
+  4: new Set(["cuerpo","cara","cabeza","pelo","cuello","garganta","hombros","brazos","codos","dedos","muñecas","manos","espalda","barriga","pierna","rodilla","pies","ojos","nariz","labios","dientes","oreja","boca","lengua","frente","vamos","tocar","toca","baila","ahora","bailar"]),
   // ── Roles World (Clothes + Family + Jobs) ──
-  5: new Set(["ropa","camisa","pantalón","zapatos","cinturón","gorra","guantes","calcetín","falda","suéter","chaqueta","bufanda","traje","vestido","pijama","botas","sandalias"]),
-  6: new Set(["familia","papá","mamá","hermano","hermana","tío","tía","abuela","abuelo","primo","prima","sobrino","sobrina","mascota"]),
+  5: new Set(["ropa","camisa","pantalón","zapatos","cinturón","gorra","guantes","calcetín","falda","suéter","chaqueta","bufanda","traje","vestido","pijama","botas","sandalias","linda","visto","estrella","frío","tío","cada","día","aprenderé"]),
+  6: new Set(["familia","papá","mamá","hermano","hermana","tío","tía","abuela","abuelo","primo","prima","sobrino","sobrina","mascota","contento","sana","mejor","camina","hola","vamos","cantar","voy","nombrar"]),
   7: new Set(["doctor","bombero","panadero","maestra","piloto","carpintero","cantante","chef","jardinero","dentista","artista","ingeniero","policía","granjero","pintor","actor","enfermera","escritor","veterinario","conductor","arquitecto","traductor","profesión","trabajos"]),
   // ── Pet World ──
-  8: new Set(["araña","elefante","iguana","oso","unicornio","búho","conejo","chivo","delfín","flamenco","gato","hipopótamo","jirafa","koala","león","mono","nutria","ñandú","pingüino","quetzal","rinoceronte","serpiente","tigre","vaca","wombat","xoloitzcuintle","yak","zorro","animales"]),
-  9: new Set(["perro","gato","conejo","pato","vaca","oveja","gallina","caballo","cabra","tortuga","mascotas"]),
-  10: new Set(["agua","cielo","bosque","montaña","pez","tortuga","rana","cangrejo","pájaro","águila","abeja","colibrí","oso","zorro","ardilla","araña","ciempiés","animales"]),
+  8: new Set(["araña","búho","conejo","chivo","delfín","elefante","flamenco","gato","hipopótamo","iguana","jirafa","koala","león","mono","nutria","ñandú","oso","grande","pingüino","quetzal","rinoceronte","serpiente","tigre","unicornio","vaca","wombat","xoloitzcuintle","yak","zorro","la","le","li","lo","lu","ma","me","mi","mo","mu","na","ne","ni","no","nu","ña","ñe","ñi","ño","ñu","pa","pe","pi","po","pu","que","qui","quo","ra","re","ri","ro","ru","sa","se","si","so","su","ta","te","ti","to","tu","va","ve","vi","vo","vu","wa","we","wi","wo","wu","xa","xe","xi","xo","xu","ya","ye","yi","yo","yu","za","ze","zi","zo","zu"]),
+  9: new Set(["perro","gato","conejo","pato","vaca","oveja","gallina","caballo","cabra","tortuga","mascotas","buen","vieja","grande","un","una","la","el","todos","me","tengo","viven","quieren","siento","abraza","qué","feliz","aquí"]),
+  10: new Set(["pez","tortuga","rana","cangrejo","pájaro","águila","abeja","colibrí","oso","zorro","ardilla","araña","ciempiés","agua","cielo","bosque","montaña","viven","nadan","vuelan","ven","aprende","vive","felices","libres","bien","también","sin","allí","este"]),
   // ── Travel World ──
-  11: new Set(["casa","sillón","taza","mesa","cocina","sartén","vitrina","plato","hornilla","baño","jabón","lavamanos","cuarto","cama","marco","lámpara","zapato","casita"]),
-  12: new Set(["dónde","baño","escuela","biblioteca","playa","parque","tienda","hospital","panadería","casa","cine","lugares"]),
-  13: new Set(["izquierda","derecha","arriba","abajo","delante","detrás","cerca","lejos","gira","vuelta","frente","atrás","direcciones"]),
+  11: new Set(["casa","casita","cocina","baño","cuarto","sillón","mesa","taza","plato","sartén","vitrina","hornilla","cama","lámpara","marco","zapato","toalla","lavamanos","jabón","bonita","feliz","hay","tiene","hace","mi","su","qué","es"]),
+  12: new Set(["dónde","está","baño","escuela","biblioteca","playa","parque","tienda","hospital","panadería","casa","cine","vamos","al","la","el","mi","tantos","lugares","visitar","juntos","caminar"]),
+  13: new Set(["izquierda","derecha","arriba","abajo","delante","detrás","cerca","lejos","gira","vuelta","pierdo","sé","pregunto","dicen","nunca","sueltas","manos","palmas","pecho","brazos","estirados","veces","despacio","así"]),
   // ── Numbers World ──
   14: new Set(["uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","números"]),
-  15: new Set(["diez","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa","cien","números"]),
+  15: new Set(["diez","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa","cien","contando","vamos","sin","parar","sube","sigue","bien"]),
   // ── Time World ──
-  16: new Set(["lunes","martes","miércoles","jueves","viernes","sábado","domingo","enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre","primavera","verano","otoño","invierno","días","semana","meses","estaciones"]),
-  17: new Set(["hora","reloj","una","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","cuarto","media","punto","menos"]),
+  16: new Set(["los","días","la","semana","lunes","martes","miércoles","jueves","viernes","sábado","domingo","meses","del","año","enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre","las","estaciones","primavera","flores","verás","verano","sol","más","otoño","hojas","caer","invierno","ay","qué","frío","cantamos","español","con","mil","emociones"]),
+  17: new Set(["qué","hora","es","mira","el","reloj","otra","vez","si","la","una","digo","así","son","las","dos","tres","cuatro","después","cinco","seis","siete","ocho","nueve","muy","fuerte","cuarto","media","en","punto","falta","menos","dímelo","tú","divertido","aprender"]),
   // ── Feelings & Colors World ──
-  18: new Set(["rojo","naranja","amarillo","verde","azul","morado","blanco","negro","gris","colores","roja","morada","blanca"]),
-  19: new Set(["feliz","triste","enojado","cansado","sorprendido","aburrido","contento","nervioso","sientes","sentimientos"]),
-  20: new Set(["sed","hambre","frío","calor","sueño","miedo","tos","prisa","tengo"]),
+  18: new Set(["rojo","naranja","amarillo","verde","azul","morado","blanco","negro","gris","colores","manzana","mariposa","sol","hoja","uva","nube","gato","piedra","qué","cool","bonitos","mira","brillan"]),
+  19: new Set(["feliz","triste","enojado","cansado","sorprendido","aburrido","contento","nervioso","salto","sonrío","lloro","frunzo","quiero","canto","hago","late","poquito","ceño","sueño","ojos","abiertos","cómo","sientes","dime","ya","tú","qué","más"]),
+  20: new Set(["tengo","sed","hambre","frío","calor","sueño","miedo","tos","prisa","beber","comer","poner","abrigo","dormir","salir","descansar","esperar","vamos","cantar","aprender","me","no","tú","qué","tienes","un","quiero"]),
   // ── Food World ──
-  21: new Set(["frutas","manzana","frutilla","naranja","papaya","sandía","durazno","banana","melón","piña","pera","guayaba","uva","ciruela","mora","arándano","higo","tamarindo"]),
+  21: new Set(["frutas","manzana","frutilla","naranja","papaya","sandía","durazno","banana","melón","piña","pera","guayaba","uva","ciruela","mora","arándano","higo","tamarindo","rojas","roja","naranjas","verdes","verde","amarillas","amarilla","azules","azul","moradas","morada","crujiente","dulce","suave","blando","fuerte","frío","pequeña","grande","raro","especial","rico","deliciosa","ácido","fresco","larga","cantar","comer","siéntete","disfrutar","juega","verás","muchos","colores","come","qué","sabor","desayuno","ayuno","buen","centro","siente","genial"]),
   22: new Set(["verduras","tomate","pimiento","zanahoria","maíz","papa","lechuga","berenjena","cebolla","acelga","rojo","verde","naranja","amarillo","morada","comer","come","crecer","crecerás","cantar","gustar","gusta","bailar","jugoso","dulce","sabroso","crujiente","suave","fresca","bonita","genial","fuerte","feliz"]),
   23: new Set(["desayuno","almuerzo","cena","mañana","tarde","noche","leche","pan","fruta","huevo","sopa","arroz","pollo","ensalada","pasta","pescado","verdura","avena","rico","sano","problema"]),
   24: new Set(["hola","estás","bien","gracias","tú","quiero","pedir","favor","jugo","arroz","mejor","tenedor","cuchillo","olvida","plato","cuchara","sopa","servilleta","ropa","terminar","listo","cenar"]),
