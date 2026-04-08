@@ -979,55 +979,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   }, [])
 
   const showLanePress = (lane: number) => {
-    const arrow = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
+    // Subtle lane flash on tap — no arrow animation
     const flash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
-
-    // Arrow pushes up a smidge then snaps back
-    if (arrow) {
-      arrow.style.transform = "translateY(-12px) scale(1.15)"
-      setTimeout(() => {
-        arrow.style.transform = "translateY(0) scale(1)"
-      }, 120)
-    }
     if (flash) {
-      flash.style.opacity = "0.25"
+      flash.style.opacity = "0.15"
       setTimeout(() => {
         flash.style.opacity = "0"
-      }, 150)
-    }
-
-    // Press-burst: fires on every tap (hit OR miss) for pointer-specific emojis
-    const gameContainer = containerRef.current
-    if (gameContainer) {
-      const laneLeft = lane * 25
-      const cx = laneLeft + 12.5
-      const pressEmojis: Record<string, string[]> = {
-        "pointer-carrot":    ["🥕","🥕","🌿"],
-        "pointer-banana":    ["🍌","🍌","✨"],
-        "pointer-water":     ["💧","💦","🌊"],
-        "pointer-lightning": ["⚡","⚡","💥"],
-        "pointer-ice":       ["❄️","❄️","🌨️"],
-        "pointer-rainbow":   ["🌈","✨","💫"],
-        "pointer-star":      ["⭐","🌟","💫"],
-        "pointer-dragon":    ["🔥","🐉","💨"],
-      }
-      const emojis = pressEmojis[activePointer]
-      if (emojis) {
-        for (let i = 0; i < 3; i++) {
-          const emoji = emojis[Math.floor(Math.random() * emojis.length)]
-          const e = document.createElement("div")
-          e.className = "absolute pointer-events-none"
-          const tx = (Math.random() - 0.5) * 40
-          const ty = -(24 + Math.random() * 44)
-          // Vary sizes noticeably: small (10px), medium (18px), large (28px), xl (36px)
-          const sizePick = [10, 14, 18, 22, 28, 34, 36][Math.floor(Math.random() * 7)]
-          const dur = 0.38 + Math.random() * 0.28
-          e.style.cssText = `left:calc(${cx}% - ${sizePick/2}px);bottom:18%;font-size:${sizePick}px;line-height:1;--tx:${tx}px;--ty:${ty}px;animation:emojiFloat ${dur}s ease-out forwards;z-index:95;`
-          e.textContent = emoji
-          gameContainer.appendChild(e)
-          setTimeout(() => e.remove(), Math.round(dur * 1000) + 30)
-        }
-      }
+      }, 120)
     }
   }
 
