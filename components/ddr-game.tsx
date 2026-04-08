@@ -334,7 +334,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const [combo, setCombo] = useState(0)
   const [maxCombo, setMaxCombo] = useState(0)
   const [totalHits, setTotalHits] = useState(0)
-  const [speed, setSpeed] = useState<"slower" | "normal" | "keywords">("normal")
+  const [speed, setSpeed] = useState<"slower" | "normal">("normal")
   const [showTranslations, setShowTranslations] = useState(true)
   const [encouragement, setEncouragement] = useState<{ text: string; english: string; color: string } | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
@@ -422,7 +422,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const createNotes = useCallback((): Note[] => {
     if (!timingData) return []
 
-    const keywordSet = (speed === "keywords" || speed === "slower") ? (SONG_KEYWORDS[songNumber] ?? null) : null
+    const keywordSet = SONG_KEYWORDS[songNumber] ?? null
     const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
 
     // Collect all word notes first (without lane assignment)
@@ -886,7 +886,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   })
 
   // Setup screen pad/keyboard navigation (dance mode)
-  const speeds = ["slower", "normal", "keywords"] as const
+  const speeds = ["slower", "normal"] as const
   const handleSetupNav = useCallback((btn: PadButton) => {
     if (gameState !== "setup") return
     if (btn === "left") {
@@ -1298,7 +1298,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   const totalNotes = (() => {
     if (!timingData) return 0
-    if (speed !== "keywords" && speed !== "slower") return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
     const keywordSet = SONG_KEYWORDS[songNumber] ?? null
     if (!keywordSet) return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
     const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
@@ -1406,7 +1405,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <div>
               <p className="text-white/60 font-bold text-sm mb-3 text-center">Choose Speed</p>
               <div className="flex gap-2">
-                {([["slower", "Slower"], ["normal", "Normal"], ["keywords", "Key Words"]] as const).map(([key, label]) => (
+                {([["slower", "Slower"], ["normal", "Normal"]] as const).map(([key, label]) => (
                   <button key={key} onClick={() => setSpeed(key)}
                     className="flex-1 py-3 rounded-full font-black text-sm transition-all active:scale-90"
                     style={speed === key ? {
@@ -1630,18 +1629,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 } : { background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef", boxShadow: "0 1px 2px rgba(74,124,219,0.08)" }}
               >
                 Normal
-              </button>
-              <button
-                onClick={() => setSpeed("keywords")}
-                className="flex-1 py-3.5 px-5 rounded-full font-black text-sm transition-all active:scale-90 flex items-center justify-center gap-1.5 whitespace-nowrap"
-                style={speed === "keywords" ? {
-                  background: "#dbe6f8",
-                  color: "#4a7cdb",
-                  boxShadow: "0 2px 8px rgba(74,124,219,0.2)",
-                  border: "2px solid #4a7cdb",
-                } : { background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef", boxShadow: "0 1px 2px rgba(74,124,219,0.08)" }}
-              >
-                Key Words
               </button>
             </div>
             <p className="text-center text-sm text-gray-500 mt-3">{totalNotes} vocab words</p>
