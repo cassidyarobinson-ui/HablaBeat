@@ -422,7 +422,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const createNotes = useCallback((): Note[] => {
     if (!timingData) return []
 
-    const keywordSet = speed === "keywords" ? (SONG_KEYWORDS[songNumber] ?? null) : null
+    const keywordSet = (speed === "keywords" || speed === "slower") ? (SONG_KEYWORDS[songNumber] ?? null) : null
     const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
 
     // Collect all word notes first (without lane assignment)
@@ -1298,7 +1298,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
   const totalNotes = (() => {
     if (!timingData) return 0
-    if (speed !== "keywords") return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
+    if (speed !== "keywords" && speed !== "slower") return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
     const keywordSet = SONG_KEYWORDS[songNumber] ?? null
     if (!keywordSet) return timingData.lyrics.reduce((sum, line) => sum + line.words.length, 0)
     const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
