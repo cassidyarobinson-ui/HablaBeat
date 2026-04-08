@@ -569,6 +569,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
       container.innerHTML = ""
 
+      // Don't render notes during tutorial — prevents bubbles stacking behind the overlay
+      if (tutorialStepRef.current < 5) return
+
       notesRef.current.forEach((note) => {
         if (!note.hit) {
           const timeUntilHit = note.timestamp - currentTime
