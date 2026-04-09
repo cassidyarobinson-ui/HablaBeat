@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  ...(process.env.CAPACITOR_BUILD === 'true' ? { output: 'export' } : {}),
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -10,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+}
+
+if (process.env.CAPACITOR_BUILD === 'true') {
+  nextConfig.output = 'export'
 }
 
 export default nextConfig
