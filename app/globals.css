@@ -18,6 +18,25 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* Force portrait orientation — show overlay when landscape */
+@media (orientation: landscape) and (max-height: 500px) {
+  body::after {
+    content: "Please rotate your phone to portrait mode 📱";
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 2rem;
+  }
+}
+
 body {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
