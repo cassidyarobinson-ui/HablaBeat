@@ -2774,68 +2774,52 @@ export default function HablaBeat() {
 
     const modes = [
       { key: "sing", label: "Sing", icon: "🎤", available: hasSing, score: null as number | null, color: "#8b5cf6" },
-      { key: "pop", label: "Dance", icon: "🥕", available: hasPop, score: popHighScores[currentSong.number] > 0 ? popHighScores[currentSong.number] : null, color: "#4a7cdb" },
+      { key: "pop", label: "Tap", icon: "🥕", available: hasPop, score: popHighScores[currentSong.number] > 0 ? popHighScores[currentSong.number] : null, color: "#4a7cdb" },
       { key: "fly", label: "Fly", icon: "☁️", available: hasFly, score: flyHighScores[currentSong.number] > 0 ? flyHighScores[currentSong.number] : null, color: "#06b6d4" },
     ]
 
     return (
-      <div className="h-[100dvh] flex flex-col overflow-hidden relative" style={{ background: "#0a0a0a" }}>
-        {/* Background image with dark overlay */}
+      <div className="h-[100dvh] flex flex-col overflow-hidden relative" style={{ background: "#ffffff" }}>
+        {/* Full-screen background image */}
         <div className="absolute inset-0 z-0">
           <img
             src={`/images/backgrounds/song-${currentSong.number}.jpg`}
-            alt=""
+            alt={currentSong.title}
             className="w-full h-full object-cover"
-            style={{ opacity: 0.25, filter: "blur(20px) saturate(1.4)" }}
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.8) 100%)" }} />
         </div>
 
-        {/* Back button */}
-        <div className="relative z-10 p-4 pt-8">
+        {/* Top white bar */}
+        <div className="relative z-10 flex items-center justify-between px-4 py-3" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)" }}>
           <button
             onClick={() => setCurrentView(songPageSource)}
-            className="flex items-center gap-1 text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-1 text-gray-600 active:scale-95 transition-all"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-5 w-5" />
             <span className="font-semibold text-sm">Back</span>
           </button>
+          <div className="text-center flex-1">
+            <p className="text-xs font-semibold text-gray-400">{currentSong.sectionIcon} {currentSong.sectionTitle}</p>
+          </div>
+          <div className="w-14" />
         </div>
 
-        {/* Main content — centered */}
-        <div className="flex-1 flex flex-col items-center justify-center relative z-10 px-6 -mt-8">
-          {/* Album art */}
-          <div style={{
-            width: "min(200px, 40vw)",
-            height: "min(200px, 40vw)",
-            borderRadius: "20px",
-            overflow: "hidden",
-            boxShadow: "0 0 80px rgba(74,124,219,0.3), 0 20px 60px rgba(0,0,0,0.6)",
-            border: "2px solid rgba(255,255,255,0.15)",
-          }}>
-            <img
-              src={`/images/backgrounds/song-${currentSong.number}.jpg`}
-              alt={currentSong.title}
-              className="w-full h-full object-cover"
-            />
+        {/* Spacer — image fills the middle */}
+        <div className="flex-1 relative z-0" />
+
+        {/* Bottom white bar with song info + buttons */}
+        <div className="relative z-10 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
+          {/* Song title and description */}
+          <div className="text-center mb-4">
+            <h1 className="text-2xl font-black text-gray-900">{currentSong.title}</h1>
+            <p className="text-sm text-gray-400 font-semibold mt-0.5">{description}</p>
+            <p className="text-xs text-gray-300 mt-0.5">Song {currentSong.number}</p>
           </div>
 
-          {/* Song info */}
-          <div className="text-center mt-5">
-            <h1 className="text-2xl md:text-3xl font-black text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
-              {currentSong.title}
-            </h1>
-            <div className="text-sm text-white/50 font-semibold mt-1">
-              {currentSong.sectionIcon} {currentSong.sectionTitle} &middot; Song {currentSong.number}
-            </div>
-            <div className="text-xs text-white/35 mt-0.5">{description}</div>
-          </div>
-
-          {/* Mode cards */}
-          <div className="flex gap-4 mt-8">
+          {/* Mode buttons */}
+          <div className="flex gap-3 justify-center">
             {modes.map((mode, i) => {
               if (!mode.available) return null
-              const isHighlighted = songPageHighlightedMode === i
               return (
                 <button
                   key={mode.key}
@@ -2850,50 +2834,21 @@ export default function HablaBeat() {
                       setFlySongNumber(currentSong.number)
                     }
                   }}
-                  className="flex flex-col items-center transition-all duration-200"
+                  className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-white text-sm active:scale-95 transition-all"
                   style={{
-                    background: isHighlighted ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.05)",
-                    border: isHighlighted ? `2px solid ${mode.color}` : "2px solid rgba(255,255,255,0.08)",
-                    borderRadius: "20px",
-                    padding: "20px 28px",
-                    transform: isHighlighted ? "scale(1.08)" : "scale(1)",
-                    boxShadow: isHighlighted ? `0 0 30px ${mode.color}40, 0 8px 32px rgba(0,0,0,0.4)` : "0 4px 16px rgba(0,0,0,0.3)",
-                    minWidth: "100px",
+                    background: mode.color,
+                    boxShadow: `0 4px 16px ${mode.color}40`,
                   }}
                 >
-                  <span className="text-3xl">{mode.icon}</span>
-                  <span className="text-white font-black text-base mt-2">{mode.label}</span>
+                  <span className="text-lg">{mode.icon}</span>
+                  <span>{mode.label}</span>
                   {mode.score !== null && (
-                    <span className="text-xs font-bold mt-1" style={{ color: "#fbbf24" }}>💰 {mode.score}</span>
-                  )}
-                  {bestGrades[currentSong.number] && mode.key === "pop" && (
-                    <span className="text-xs font-black mt-0.5 px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#93b5f0" }}>
-                      {bestGrades[currentSong.number]}
-                    </span>
+                    <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.7)" }}>💰{mode.score}</span>
                   )}
                 </button>
               )
             })}
           </div>
-
-          {/* Keyboard hint */}
-          <div className="text-xs text-white/25 mt-4">
-            ← → to pick mode &middot; Enter to play &middot; Esc to go back
-          </div>
-
-          {/* Key vocabulary */}
-          {keywords.length > 0 && (
-            <div className="mt-6 max-w-sm">
-              <div className="text-xs text-white/30 font-semibold uppercase tracking-wider mb-2 text-center">Key Vocabulary</div>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {keywords.map((word, i) => (
-                  <span key={i} className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    {word}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     )
@@ -3199,7 +3154,7 @@ export default function HablaBeat() {
               animation: "lbPulse 2s ease-in-out infinite",
             }}>
               <div className="px-5 py-4">
-                <p className="text-white font-black text-lg text-center mb-1">🎉 New {pendingLeaderboardEntry.mode === "fly" ? "Fly" : "Dance"} Score!</p>
+                <p className="text-white font-black text-lg text-center mb-1">🎉 New {pendingLeaderboardEntry.mode === "fly" ? "Fly" : "Tap"} Score!</p>
                 <div className="flex justify-center gap-4 mb-3">
                   {pendingLeaderboardEntry.mode === "fly" ? (
                     <span className="text-white/80 text-sm">💰 <span className="font-black text-yellow-300">{pendingLeaderboardEntry.bank}</span> Score</span>
@@ -3867,7 +3822,7 @@ export default function HablaBeat() {
                       {(() => {
                         const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
                         if (hasSing) modeButtons.push({ key: "sing", label: "Sing", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
-                        if (hasPop) modeButtons.push({ key: "dance", label: "Dance", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
+                        if (hasPop) modeButtons.push({ key: "dance", label: "Tap", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
                         if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
                         return (
                           <div className="flex gap-3 justify-center mb-3">
@@ -4081,7 +4036,7 @@ export default function HablaBeat() {
                                         style={{ background: "#f0f4ff", color: "#4a7cdb", border: "1.5px solid #bdd0ef" }}
                                       >
                                         <span className="text-lg">🥕</span>
-                                        <span>Dance</span>
+                                        <span>Tap</span>
                                         {popHighScores[song.number] > 0 && (
                                           <span className="text-xs font-bold" style={{ color: "#fbbf24" }}>💰 {popHighScores[song.number]}</span>
                                         )}

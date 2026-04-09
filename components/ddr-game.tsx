@@ -744,10 +744,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       judgmentColor = "text-blue-300"
     }
 
+    // Show Spanish direction word when arrow is popped
+    const LANE_SPANISH = ["¡Izquierda!", "¡Abajo!", "¡Arriba!", "¡Derecha!"]
     const englishWord = closest.english && closest.english.toLowerCase() !== closest.text.toLowerCase()
       ? closest.english
       : closest.text
-    judgment = englishWord
+    judgment = LANE_SPANISH[closest.lane] || englishWord
 
     closest.hit = true
     scoreRef.current += points
@@ -1439,13 +1441,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               </button>
             )}
 
-            {/* Rotate phone prompt — mobile only */}
-            {isMobile && (
-              <div className="flex items-center gap-3 px-4 py-3 rounded-2xl mb-2" style={{ background: "rgba(168,85,247,0.15)", border: "1px solid rgba(168,85,247,0.3)" }}>
-                <span className="text-3xl" style={{ display: "inline-block", animation: "rotateHint 2s ease-in-out infinite" }}>📱</span>
-                <p className="text-white/80 text-sm font-bold">Rotate your phone sideways for the best experience!</p>
-              </div>
-            )}
 
             {/* Start button */}
             <button onClick={() => { setTutorialStep(0); tutorialStepRef.current = 0; setTutorialComplete(false); startGame() }}
