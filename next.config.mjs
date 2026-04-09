@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  ...(process.env.CAPACITOR_BUILD === 'true' ? { output: 'export' } : {}),
   eslint: {
     ignoreDuringBuilds: true,
   },
