@@ -745,12 +745,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       judgmentColor = "text-blue-300"
     }
 
-    // Show Spanish direction word when arrow is popped
+    // Show English translation if available, otherwise show Spanish direction word
     const LANE_SPANISH = ["¡Izquierda!", "¡Abajo!", "¡Arriba!", "¡Derecha!"]
-    const englishWord = closest.english && closest.english.toLowerCase() !== closest.text.toLowerCase()
-      ? closest.english
-      : closest.text
-    judgment = LANE_SPANISH[closest.lane] || englishWord
+    const hasEnglish = closest.english && closest.english.toLowerCase() !== closest.text.toLowerCase()
+    judgment = hasEnglish ? closest.english : LANE_SPANISH[closest.lane] || closest.text
 
     closest.hit = true
     scoreRef.current += points
