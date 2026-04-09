@@ -1,32 +1,33 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import dynamic from "next/dynamic"
+import { Suspense } from "react"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const SongFly = dynamic(() => import("@/components/song-fly"), { ssr: false })
 
 interface ChallengeData {
-  mode?: "fly" | "pop"  // fly or pop (default pop for backwards compat)
-  s: number    // song number
-  t: string    // song title
-  sc: number   // challenger score
-  g?: string   // challenger grade (pop only)
-  fc?: number  // challenger flow combo (pop only)
-  n?: string   // challenger name
-  p?: string   // challenger photo base64
-  vb?: number  // total vocab bank
-  bf?: number  // best flow
-  cs?: number  // total challenges sent
-  cw?: number  // challenges won
-  str?: number // daily streak
+  mode?: "fly" | "pop"
+  s: number
+  t: string
+  sc: number
+  g?: string
+  fc?: number
+  n?: string
+  p?: string
+  vb?: number
+  bf?: number
+  cs?: number
+  cw?: number
+  str?: number
 }
 
 type Stage = "intro" | "playing" | "result"
 
-export default function ChallengePage() {
-  const params = useParams()
+function ChallengeContent() {
+  const searchParams = useSearchParams()
   const [challenge, setChallenge] = useState<ChallengeData | null>(null)
   const [error, setError] = useState(false)
   const [stage, setStage] = useState<Stage>("intro")
@@ -36,20 +37,26 @@ export default function ChallengePage() {
   const [lbName, setLbName] = useState("")
   const [lbPosted, setLbPosted] = useState(false)
 
-  // Decode the URL-safe base64 challenge payload
+  // Decode challenge data from ?d= query param or from hash (backwards compat with old /challenge/[id] links)
   useEffect(() => {
     try {
-      const id = Array.isArray(params.id) ? params.id[0] : params.id
-      const standard = id.replace(/-/g, "+").replace(/_/g, "/")
+      let encoded = searchParams.get("d")
+      // Fallback: check if the old /challenge/[id] format was used — the ID might be in the path
+      if (!encoded && typeof window !== "undefined") {
+        const path = window.location.pathname
+        const match = path.match(/\/challenge\/(.+)/)
+        if (match) encoded = match[1]
+      }
+      if (!encoded) { setError(true); return }
+      const standard = encoded.replace(/-/g, "+").replace(/_/g, "/")
       const padded = standard + "==".slice(0, (4 - standard.length % 4) % 4)
       const decoded = JSON.parse(atob(padded))
       setChallenge(decoded)
     } catch {
       setError(true)
     }
-  }, [params.id])
+  }, [searchParams])
 
-  // Load saved user name for leaderboard
   useEffect(() => {
     try {
       const saved = localStorage.getItem("hablabeat-user-name")
@@ -75,7 +82,6 @@ export default function ChallengePage() {
       updated.sort((a: { bank: number; flow: number }, b: { bank: number; flow: number }) => b.bank - a.bank || b.flow - a.flow)
       localStorage.setItem("hablabeat-leaderboard", JSON.stringify(updated.slice(0, 100)))
     } catch { /* ignore */ }
-    // Also save the name for future use
     localStorage.setItem("hablabeat-user-name", JSON.stringify(name))
     setLbPosted(true)
   }
@@ -97,7 +103,6 @@ export default function ChallengePage() {
     setStage("result")
   }
 
-  // ── Error state ──
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "linear-gradient(160deg, #2d5a9e 0%, #3d6bc4 30%, #4a7cdb 60%, #5b9be6 100%)" }}>
@@ -125,12 +130,10 @@ export default function ChallengePage() {
   const challengerName = challenge.n || "Someone"
   const challengerPhoto = challenge.p || ""
 
-  // ── Intro / accept screen ──
   if (stage === "intro") {
     const hasStats = challenge.vb || challenge.bf || challenge.cw || challenge.str
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #2d5a9e 0%, #3d6bc4 30%, #4a7cdb 60%, #5b9be6 100%)" }}>
-        {/* Floating decorative coins */}
         {[...Array(8)].map((_, i) => (
           <div key={i} className="absolute pointer-events-none" style={{
             left: `${10 + (i * 23) % 80}%`,
@@ -142,11 +145,9 @@ export default function ChallengePage() {
         ))}
 
         <div className="max-w-sm w-full text-center relative z-10">
-          {/* Challenger avatar + name */}
           <div className="mb-5">
             <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 shadow-2xl mb-3" style={{ borderColor: "rgba(255,255,255,0.4)", boxShadow: "0 0 30px rgba(74,124,219,0.4)" }}>
               {challengerPhoto ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={challengerPhoto} alt={challengerName} className="w-full h-full object-cover" />
               ) : (
                 <img src="/images/super-bunny-heart.gif" alt="Challenger" className="w-full h-full object-contain" style={{ background: "#4a7cdb" }} />
@@ -161,7 +162,6 @@ export default function ChallengePage() {
             )}
           </div>
 
-          {/* Score to beat card */}
           <div className="rounded-3xl p-5 mb-5" style={{ background: "rgba(255,255,255,0.08)", border: "1.5px solid rgba(255,255,255,0.15)", backdropFilter: "blur(12px)", boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
             <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-3">
               {isFly ? "🦋 Fly" : "🥕 Pop"} Score to Beat
@@ -190,7 +190,6 @@ export default function ChallengePage() {
               </div>
             )}
 
-            {/* Stats row */}
             {hasStats && (
               <div className="flex justify-center gap-3 mt-4 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                 {(challenge.vb ?? 0) > 0 && (
@@ -215,7 +214,6 @@ export default function ChallengePage() {
             )}
           </div>
 
-          {/* Accept button */}
           <div className="rounded-full p-[2px] mb-3" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", boxShadow: "0 6px 24px rgba(74,124,219,0.5)" }}>
             <button
               onClick={() => setStage("playing")}
@@ -246,7 +244,6 @@ export default function ChallengePage() {
     )
   }
 
-  // ── Playing ──
   if (stage === "playing") {
     if (isFly) {
       return (
@@ -269,7 +266,6 @@ export default function ChallengePage() {
     )
   }
 
-  // ── Result screen ──
   let outcome: "win" | "lose" | "tie"
 
   if (isFly) {
@@ -297,7 +293,6 @@ export default function ChallengePage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: resultConfig.grad }}>
-      {/* Floating particles */}
       {[...Array(10)].map((_, i) => (
         <div key={i} className="absolute pointer-events-none" style={{
           left: `${5 + (i * 19) % 85}%`,
@@ -309,20 +304,16 @@ export default function ChallengePage() {
       ))}
 
       <div className="max-w-sm w-full text-center relative z-10">
-        {/* Result emoji */}
         <p className="text-7xl mb-2" style={{ animation: "resultBounce 1s ease-in-out infinite" }}>{resultConfig.emoji}</p>
         <h1 className="text-4xl font-black mb-1" style={{ color: resultConfig.accent, textShadow: `0 0 30px ${resultConfig.glow}` }}>{resultConfig.headline}</h1>
         <p className="text-white/50 text-sm mb-6">{resultConfig.sub}</p>
 
-        {/* Score comparison card */}
         <div className="rounded-3xl p-5 mb-6" style={{ background: "rgba(255,255,255,0.08)", border: `1.5px solid ${resultConfig.border}`, backdropFilter: "blur(12px)", boxShadow: `0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)` }}>
-          {/* Column headers */}
           <div className="grid grid-cols-3 gap-2 text-center mb-3 items-center">
             <div></div>
             <div className="text-xs font-black text-white/60 uppercase tracking-wider">You</div>
             <div className="flex flex-col items-center gap-0.5">
               {challengerPhoto ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={challengerPhoto} alt={challengerName} className="w-7 h-7 rounded-full object-cover" style={{ border: "2px solid rgba(255,255,255,0.3)" }} />
               ) : (
                 <img src="/images/super-bunny-heart.gif" alt="Challenger" className="w-7 h-7 rounded-full object-contain" style={{ background: "#4a7cdb" }} />
@@ -358,7 +349,6 @@ export default function ChallengePage() {
           )}
         </div>
 
-        {/* Post to leaderboard */}
         {!lbPosted ? (
           <div className="rounded-2xl p-4 mb-4" style={{ background: "rgba(255,255,255,0.08)", border: "1.5px solid rgba(74,124,219,0.3)", backdropFilter: "blur(8px)" }}>
             <p className="text-white font-black text-sm text-center mb-2">🏆 Post to Leaderboard</p>
@@ -386,7 +376,6 @@ export default function ChallengePage() {
           </div>
         )}
 
-        {/* Action buttons */}
         <div className="space-y-2">
           <div className="rounded-full p-[2px]" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", boxShadow: `0 6px 20px ${resultConfig.glow}` }}>
             <button
@@ -432,5 +421,17 @@ export default function ChallengePage() {
         }
       `}</style>
     </div>
+  )
+}
+
+export default function ChallengePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(160deg, #2d5a9e 0%, #3d6bc4 30%, #4a7cdb 60%, #5b9be6 100%)" }}>
+        <p className="text-white/50 text-lg animate-pulse">Loading challenge…</p>
+      </div>
+    }>
+      <ChallengeContent />
+    </Suspense>
   )
 }
