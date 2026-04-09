@@ -2090,14 +2090,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <div className="text-6xl mb-3">⏸️</div>
             <p className="text-white text-2xl font-black">Paused</p>
             <p className="text-white/60 mt-1 text-sm mb-4">Tap outside to resume</p>
-            {onOpenBank && (
-              <button
-                onClick={() => { togglePause(); onOpenBank() }}
-                className="px-5 py-2.5 rounded-2xl font-black text-white text-sm transition-transform active:scale-95"
-                style={{ background: "linear-gradient(135deg, #D97706, #FBBF24)", boxShadow: "0 4px 16px rgba(251,191,36,0.4)" }}>
-                💰 Bank &amp; Store
-              </button>
-            )}
           </div>
         </div>
       )}
@@ -2115,14 +2107,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Header with coin balance */}
+            {/* Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
-              <div>
-                <p className="text-white text-xl font-black">⚙️ Arrows</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-yellow-300 font-black text-sm">💰 {totalVocabBank} coins</span>
-                </div>
-              </div>
+              <p className="text-white text-xl font-black">⚙️ Arrows</p>
               <button
                 onClick={() => { setShowLoadout(false); togglePause() }}
                 className="px-4 py-2 rounded-full font-black text-white text-sm active:scale-90 transition-all"
@@ -2130,43 +2117,26 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               >▶ Resume</button>
             </div>
 
-            {/* Items grid — scrollable */}
-            <div className="overflow-y-auto px-4 pb-6" style={{ WebkitOverflowScrolling: "touch" }}>
+            {/* Items grid */}
+            <div className="px-4 pb-6">
               <div className="grid grid-cols-3 gap-2">
                 {GAME_CATALOG.filter(i => i.category === "pointer").map((item) => {
-                  const owned = storeOwned.includes(item.id)
-                  const canAfford = totalVocabBank >= item.cost
                   const isActive = activePointer === item.id
-                  const unlocked = owned || canAfford
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        if (owned) {
-                          onEquipPointer?.(item.id)
-                        }
-                      }}
+                      onClick={() => { onEquipPointer?.(item.id) }}
                       className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-all active:scale-95"
                       style={{
                         background: isActive
                           ? "linear-gradient(135deg, rgba(168,85,247,0.45), rgba(99,102,241,0.45))"
-                          : unlocked ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)",
-                        border: isActive ? "2px solid rgba(168,85,247,0.9)" : unlocked ? "1.5px solid rgba(255,255,255,0.12)" : "1.5px solid rgba(255,255,255,0.05)",
-                        opacity: unlocked ? 1 : 0.4,
+                          : "rgba(255,255,255,0.08)",
+                        border: isActive ? "2px solid rgba(168,85,247,0.9)" : "1.5px solid rgba(255,255,255,0.12)",
                       }}
                     >
-                      <span style={{ fontSize: "28px", filter: unlocked ? "none" : "grayscale(1)" }}>{item.emoji}</span>
+                      <span style={{ fontSize: "28px" }}>{item.emoji}</span>
                       <span className="text-white text-[11px] font-bold text-center leading-tight">{item.name}</span>
                       {isActive && <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>}
-                      {!owned && item.cost > 0 && (
-                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{
-                          background: canAfford ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)",
-                          color: canAfford ? "#fbbf24" : "rgba(255,255,255,0.3)",
-                        }}>
-                          {canAfford ? "✨ " : "🔒 "}{item.cost} 💰
-                        </span>
-                      )}
-                      {owned && !isActive && <span className="text-[9px] text-white/30">Owned</span>}
                     </button>
                   )
                 })}
