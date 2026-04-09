@@ -191,15 +191,15 @@ interface DDRGameProps {
 
 // Mini catalog for in-game loadout UI (pointers only)
 const GAME_CATALOG = [
-  { id: "pointer-carrot",    name: "Carrot",           emoji: "🥕", category: "pointer", cost: 0 },
-  { id: "pointer-red-laser", name: "Red Laser",        emoji: "🔴", category: "pointer", cost: 250 },
-  { id: "pointer-banana",    name: "Banana Blaster",   emoji: "🍌", category: "pointer", cost: 500 },
-  { id: "pointer-water",     name: "Water Cannon",     emoji: "💧", category: "pointer", cost: 750 },
-  { id: "pointer-lightning", name: "Lightning Bolt",   emoji: "⚡", category: "pointer", cost: 1500 },
-  { id: "pointer-ice",       name: "Ice Blaster",      emoji: "❄️", category: "pointer", cost: 2000 },
-  { id: "pointer-rainbow",   name: "Rainbow Laser",    emoji: "🌈", category: "pointer", cost: 3500 },
-  { id: "pointer-rocket",    name: "Rocket Launcher",  emoji: "🚀", category: "pointer", cost: 5000 },
-  { id: "pointer-star",      name: "Star Shooter",     emoji: "⭐", category: "pointer", cost: 6500 },
+  { id: "pointer-bunny",     name: "Bunny",            emoji: "🐰", category: "pointer", cost: 0 },
+  { id: "pointer-dog",       name: "Dog",              emoji: "🐕", category: "pointer", cost: 0 },
+  { id: "pointer-cat",       name: "Cat",              emoji: "🐱", category: "pointer", cost: 0 },
+  { id: "pointer-hearts",    name: "Hearts",           emoji: "💗", category: "pointer", cost: 0 },
+  { id: "pointer-rainbow",   name: "Rainbow",          emoji: "🌈", category: "pointer", cost: 0 },
+  { id: "pointer-banana",    name: "Banana",           emoji: "🍌", category: "pointer", cost: 0 },
+  { id: "pointer-star",      name: "Stars",            emoji: "💫", category: "pointer", cost: 0 },
+  { id: "pointer-flower",    name: "Flowers",          emoji: "🌸", category: "pointer", cost: 0 },
+  { id: "pointer-space",     name: "Space",            emoji: "🪐", category: "pointer", cost: 0 },
 ]
 
 // Constants
@@ -283,7 +283,7 @@ const SONG_KEYWORDS: Record<number, Set<string>> = {
   50: new Set(["onda","padre","órale","manches","guay","chévere","bacán","vale","aguas","frases","vas","encajar","feliz","también","libro","amigo","bien","chido","rollo","ruido","serio","va","creo","ajá","jerga","lugar","hablas","flow","natural","hablar","méxico","españa","chile","perú","eres","tú","bueno","parte","club","sí","ahora","hablo","viviera","cancún","preguntan","aprendiste","fácil","rola","listo"]),
 }
 
-export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipTheme, onEquipPointer, danceMode = false, onOpenBank, recallBreaks }: DDRGameProps) {
+export default function DDRGame({ songNumber, songTitle, userName = "", userPhoto = "", totalChallengesSent = 0, challengesWon = 0, dailyStreak = 0, totalVocabBank = 0, bestFlow = 0, initialChallengePhone = "", onBack, onNextSong, onGameEnd, onChallengeSent, activeTheme = "theme-default", activePointer = "pointer-bunny", storeOwned = ["pointer-bunny"], onEquipTheme, onEquipPointer, danceMode = false, onOpenBank, recallBreaks }: DDRGameProps) {
   // Sound effects for interactive coins/carrots
   const playCoinSound = () => {
     try {
@@ -326,9 +326,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   }
 
   const [gameState, setGameState] = useState<"loading" | "setup" | "playing" | "recall_break" | "ended">("loading")
-  const [tutorialStep, setTutorialStep] = useState(0) // 0=left, 1=right, 2=up, 3=down
-  const [tutorialComplete, setTutorialComplete] = useState(false)
-  const tutorialStepRef = useRef(0)
+  const hasSeenTutorial = typeof window !== "undefined" && localStorage.getItem("hablabeat-tutorial-done") === "true"
+  const [tutorialStep, setTutorialStep] = useState(hasSeenTutorial ? 5 : 0)
+  const [tutorialComplete, setTutorialComplete] = useState(hasSeenTutorial)
+  const tutorialStepRef = useRef(hasSeenTutorial ? 5 : 0)
   const [timingData, setTimingData] = useState<TimingData | null>(null)
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
@@ -778,6 +779,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       setTutorialStep(4)
       tutorialStepRef.current = 4
       setTutorialComplete(true)
+      // Save that user has completed tutorial
+      try { localStorage.setItem("hablabeat-tutorial-done", "true") } catch {}
       // After celebration, unpause the song
       setTimeout(() => {
         setTutorialComplete(false)
@@ -902,7 +905,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         return speeds[Math.min(speeds.length - 1, idx + 1)]
       })
     } else if (btn === "start") {
-      if (gameState === "setup") { setTutorialStep(0); tutorialStepRef.current = 0; setTutorialComplete(false); startGame() }
+      if (gameState === "setup") { const skip = localStorage.getItem("hablabeat-tutorial-done") === "true"; setTutorialStep(skip ? 5 : 0); tutorialStepRef.current = skip ? 5 : 0; setTutorialComplete(false); startGame() }
     } else if (btn === "select") {
       onBack()
     }
@@ -981,13 +984,44 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   }, [])
 
   const showLanePress = (lane: number) => {
-    // Subtle lane flash on tap — no arrow animation
+    // Subtle lane flash on tap
     const flash = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-flash`) as HTMLElement
     if (flash) {
       flash.style.opacity = "0.15"
       setTimeout(() => {
         flash.style.opacity = "0"
       }, 120)
+    }
+
+    // Emoji burst — emojis determined by active pointer selection
+    const gameContainer = containerRef.current
+    if (gameContainer) {
+      const cx = lane * 25 + 12.5
+      const pressEmojis: Record<string, string[]> = {
+        "pointer-bunny":     ["🥕","🐰","🌿","✨"],
+        "pointer-dog":       ["🐶","🦴","✨"],
+        "pointer-cat":       ["🐱","🐟","✨"],
+        "pointer-hearts":    ["💗","💖","💕","💓","💘"],
+        "pointer-rainbow":   ["🌈","❤️","🧡","💛","💚","💙","💜","🤎","🖤","🤍"],
+        "pointer-banana":    ["🍌","✨"],
+        "pointer-star":      ["⭐","🌟","💫","✨","🍀"],
+        "pointer-flower":    ["🌸","🌺","🌻","🌷","🌹","💐","🌼","🏵️"],
+        "pointer-space":     ["🪐","🌙","🌕","🌏","☄️","🛸","👽"],
+      }
+      const emojis = pressEmojis[activePointer] || pressEmojis["pointer-bunny"]
+      for (let i = 0; i < 3; i++) {
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)]
+        const e = document.createElement("div")
+        e.className = "absolute pointer-events-none"
+        const tx = (Math.random() - 0.5) * 40
+        const ty = -(24 + Math.random() * 44)
+        const sizePick = [14, 18, 22, 28][Math.floor(Math.random() * 4)]
+        const dur = 0.38 + Math.random() * 0.28
+        e.style.cssText = `left:calc(${cx}% - ${sizePick/2}px);bottom:18%;font-size:${sizePick}px;line-height:1;--tx:${tx}px;--ty:${ty}px;animation:emojiFloat ${dur}s ease-out forwards;z-index:95;`
+        e.textContent = emoji
+        gameContainer.appendChild(e)
+        setTimeout(() => e.remove(), Math.round(dur * 1000) + 30)
+      }
     }
   }
 
@@ -1443,7 +1477,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
 
             {/* Start button */}
-            <button onClick={() => { setTutorialStep(0); tutorialStepRef.current = 0; setTutorialComplete(false); startGame() }}
+            <button onClick={() => { const skip = localStorage.getItem("hablabeat-tutorial-done") === "true"; setTutorialStep(skip ? 5 : 0); tutorialStepRef.current = skip ? 5 : 0; setTutorialComplete(false); startGame() }}
               className="w-full py-4 rounded-full font-black text-xl text-white transition-all active:scale-95"
               style={{
                 background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
@@ -1654,7 +1688,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             boxShadow: "0 0 0 3px rgba(255,255,255,0.35), 0 8px 32px rgba(74,124,219,0.4)"
           }}>
             <button
-              onClick={() => { setTutorialStep(0); tutorialStepRef.current = 0; setTutorialComplete(false); startGame() }}
+              onClick={() => { const skip = localStorage.getItem("hablabeat-tutorial-done") === "true"; setTutorialStep(skip ? 5 : 0); tutorialStepRef.current = skip ? 5 : 0; setTutorialComplete(false); startGame() }}
               className="w-full py-5 rounded-full font-black text-2xl text-white transition-all active:scale-95 flex items-center justify-center gap-3"
               style={{
                 background: "linear-gradient(135deg, #5b9be6, #4a7cdb, #3d6bc4)",
@@ -2084,7 +2118,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             {/* Header with coin balance */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
               <div>
-                <p className="text-white text-xl font-black">⚙️ Loadout</p>
+                <p className="text-white text-xl font-black">⚙️ Arrows</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-yellow-300 font-black text-sm">💰 {totalVocabBank} coins</span>
                 </div>
@@ -2179,13 +2213,17 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       )}
 
       <div className="max-w-lg md:max-w-none mx-auto h-full flex flex-col">
-        {/* Top bar: back arrow + loadout button */}
+        {/* Top bar: back arrow + country + loadout button */}
         <div className="flex items-center justify-between p-1 px-2 flex-shrink-0">
           <button onClick={onBack} className="text-white bg-black/40 rounded-full p-1.5 active:scale-90 transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
+          {/* Country name */}
+          <div className="px-3 py-1 rounded-full text-xs font-bold text-white/70" style={{ background: "rgba(0,0,0,0.4)" }}>
+            {({1:"Mexico",2:"Mexico",3:"Mexico",4:"Guatemala",5:"Guatemala",6:"El Salvador",7:"El Salvador",8:"Honduras",9:"Honduras",10:"Honduras",11:"Nicaragua",12:"Nicaragua",13:"Nicaragua",14:"Costa Rica",15:"Costa Rica",16:"Panama",17:"Panama",18:"Puerto Rico",19:"Puerto Rico",20:"Dominican Republic",21:"Cuba",22:"Cuba",23:"Cuba",24:"Colombia",25:"Colombia",26:"Colombia",27:"Colombia",28:"Venezuela",29:"Venezuela",30:"Venezuela",31:"Ecuador",32:"Ecuador",33:"Ecuador",34:"Peru",35:"Peru",36:"Peru",37:"Peru",38:"Bolivia",39:"Bolivia",40:"Bolivia",41:"Paraguay",42:"Paraguay",43:"Uruguay",44:"Uruguay",45:"Chile",46:"Chile",47:"Argentina",48:"Argentina",49:"Argentina",50:"Argentina"} as Record<number,string>)[songNumber] ?? "Latin America"}
+          </div>
 
           <div className="flex items-center gap-2">
             {/* Gamepad status — desktop only */}
@@ -2356,7 +2394,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 onTouchStart={(e) => {
                   if (tutorialStep >= 4) return
                   const x = e.touches[0].clientX
+                  const y = e.touches[0].clientY
                   const w = window.innerWidth
+                  const h = window.innerHeight
+                  // Only accept taps in the bottom hit zone (bottom 20% of screen)
+                  if (y < h * 0.80) return
                   const lane = x < w * 0.25 ? 0 : x < w * 0.5 ? 1 : x < w * 0.75 ? 2 : 3
                   handleTutorialHit(lane)
                 }}

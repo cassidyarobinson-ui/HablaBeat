@@ -149,7 +149,7 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
 const STORE_CATALOG: StoreItem[] = [
   // ── Pointer Arrows ──
   // 🟢 Common (easy to unlock early)
-  { id: "pointer-carrot",    name: "Carrot",          emoji: "🥕", cost: 0,    category: "pointer", description: "Default arrow",              previewEmoji: "🥕" },
+  { id: "pointer-bunny",    name: "Carrot",          emoji: "🥕", cost: 0,    category: "pointer", description: "Default arrow",              previewEmoji: "🥕" },
   { id: "pointer-red-laser", name: "Red Laser",       emoji: "🔴", cost: 250,  category: "pointer", description: "Precision beam. Feels sharp, not stronger", previewEmoji: "🔴" },
   { id: "pointer-banana",    name: "Banana Blaster",  emoji: "🍌", cost: 500,  category: "pointer", description: "Visible spinning banana. Playful chaos",    previewEmoji: "🍌" },
   { id: "pointer-water",     name: "Water Cannon",    emoji: "💧", cost: 750,  category: "pointer", description: "Splash burst. Micro slow on next bubble",   previewEmoji: "💧" },
@@ -164,7 +164,7 @@ const STORE_CATALOG: StoreItem[] = [
 
 // Rarity metadata for pointer store cards
 const POINTER_RARITY: Record<string, { label: string; color: string; bg: string; glow: string }> = {
-  "pointer-carrot":    { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#f0fdf4,#e0f7ff)",   glow: "none" },
+  "pointer-bunny":    { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#f0fdf4,#e0f7ff)",   glow: "none" },
   "pointer-red-laser": { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#1a0000,#330000)",   glow: "none" },
   "pointer-banana":    { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#fffbeb,#fef3c7)",   glow: "none" },
   "pointer-water":     { label: "Common",    color: "#9ca3af", bg: "linear-gradient(135deg,#e0f7ff,#bae6fd)",   glow: "none" },
@@ -1725,9 +1725,9 @@ export default function HablaBeat() {
 
   // Store state
   const [challengeCoins, setChallengeCoins] = useState(0)
-  const [storeOwned, setStoreOwned] = useState<string[]>(["pointer-carrot"])
+  const [storeOwned, setStoreOwned] = useState<string[]>(["pointer-bunny"])
   const [activeTheme, setActiveTheme] = useState("theme-default")
-  const [activePointer, setActivePointer] = useState("pointer-carrot")
+  const [activePointer, setActivePointer] = useState("pointer-bunny")
 
   // Singing detection state
   const [isMicActive, setIsMicActive] = useState(false)
@@ -1950,9 +1950,9 @@ export default function HablaBeat() {
     setTotalChallengesSent(loadPersisted("hablabeat-challenges-sent", 0))
     setChallengesWon(loadPersisted("hablabeat-challenges-won", 0))
     setChallengeCoins(loadPersisted("hablabeat-challenge-coins", 0))
-    setStoreOwned(loadPersisted("hablabeat-store-owned", ["pointer-carrot"]))
+    setStoreOwned(loadPersisted("hablabeat-store-owned", ["pointer-bunny"]))
     setActiveTheme(loadPersisted("hablabeat-active-theme", "theme-default"))
-    setActivePointer(loadPersisted("hablabeat-active-pointer", "pointer-carrot"))
+    setActivePointer(loadPersisted("hablabeat-active-pointer", "pointer-bunny"))
     setLunasPurse(loadPersisted("hablabeat-lunas-purse", []))
     setLeaderboard(loadPersisted("hablabeat-leaderboard", []))
     const savedStreak = loadPersisted("hablabeat-daily-streak", 0)
