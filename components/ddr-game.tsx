@@ -1166,13 +1166,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       }
     }
 
-    // English word burst — horizontally centered, slightly above the arrows
+    // English word burst — horizontally centered, just above arrows, fades out in place
     const el = document.createElement("div")
     el.className = `absolute pointer-events-none`
     el.style.cssText = `
-      left: 0; right: 0; bottom: 22%; text-align: center;
+      left: 0; right: 0; bottom: 15%; text-align: center;
       display: flex; justify-content: center;
-      animation: ddrJudgmentPop 2.5s ease-out forwards; z-index: 100;
+      animation: ddrJudgmentFade 1.5s ease-out forwards; z-index: 100;
     `
     el.innerHTML = `<span style="
       font-size: clamp(1.8rem, 5vw, 3.2rem);
@@ -2502,6 +2502,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           65% { transform: scale(1.1) translateY(-25px); opacity: 1; }
           80% { transform: scale(1.05) translateY(-35px); opacity: 0.9; }
           100% { transform: scale(0.9) translateY(-55px); opacity: 0; }
+        }
+        @keyframes ddrJudgmentFade {
+          0% { transform: scale(0); opacity: 0; }
+          10% { transform: scale(1.15); opacity: 1; }
+          20% { transform: scale(1); opacity: 1; }
+          70% { transform: scale(1); opacity: 1; }
+          100% { transform: scale(1); opacity: 0; }
         }
         @keyframes ddrEncouragementBounce {
           0% { transform: scale(0); opacity: 0; }
