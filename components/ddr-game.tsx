@@ -1166,11 +1166,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       }
     }
 
-    // English word burst — centered in the middle of the screen
+    // English word burst — horizontally centered, slightly above the arrows
     const el = document.createElement("div")
     el.className = `absolute pointer-events-none`
     el.style.cssText = `
-      left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center;
+      left: 0; right: 0; bottom: 22%; text-align: center;
       display: flex; justify-content: center;
       animation: ddrJudgmentPop 2.5s ease-out forwards; z-index: 100;
     `
@@ -2490,6 +2490,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         @keyframes beamPulse {
           0%, 100% { opacity: 0.7; box-shadow: 0 0 12px rgba(168,85,247,0.6), 0 0 30px rgba(99,102,241,0.3); }
           50% { opacity: 1; box-shadow: 0 0 20px rgba(168,85,247,0.8), 0 0 50px rgba(99,102,241,0.4), 0 0 80px rgba(168,85,247,0.2); }
+        }
+        @keyframes emojiFloat {
+          0% { transform: translate(0, 0) scale(1); opacity: 1; }
+          100% { transform: translate(var(--tx), var(--ty)) scale(0.4); opacity: 0; }
         }
         @keyframes ddrJudgmentPop {
           0% { transform: scale(0) translateY(0); opacity: 0; }
