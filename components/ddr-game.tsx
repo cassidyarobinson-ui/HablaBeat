@@ -1166,11 +1166,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       }
     }
 
-    // English word burst — large, bright text that pops out of the bubble
+    // English word burst — centered on screen, pops on top of the last word
     const el = document.createElement("div")
     el.className = `absolute pointer-events-none`
     el.style.cssText = `
-      left: ${lane * 25 - 8}%; width: 41%; bottom: 28%; text-align: center;
+      left: 0; right: 0; bottom: 28%; text-align: center;
       display: flex; justify-content: center;
       animation: ddrJudgmentPop 2.5s ease-out forwards; z-index: 100;
     `
