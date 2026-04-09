@@ -11,10 +11,12 @@
     "ios": "npx cap open ios",
     "sync": "npx cap sync"
   },
-  "dependencies": {
+  "devDependencies": {
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
-    "@capacitor/ios": "^8.3.0",
+    "@capacitor/ios": "^8.3.0"
+  },
+  "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "latest",
     "@radix-ui/react-alert-dialog": "latest",
