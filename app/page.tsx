@@ -101,6 +101,43 @@ const SECTION_GRADIENTS: Record<string, string> = {
 
 // ── RECALL BREAKS: mid-song vocabulary quizzes per song ──────────────────────
 const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: string; english: string }[]; label: string }[]> = {
+  4: [
+    {
+      timestamp: 33.5,
+      label: "Body Parts",
+      words: [
+        { spanish: "cabeza",   english: "head"     },
+        { spanish: "pelo",     english: "hair"     },
+        { spanish: "cuello",   english: "neck"     },
+        { spanish: "garganta", english: "throat"   },
+        { spanish: "hombros",  english: "shoulders"},
+        { spanish: "brazos",   english: "arms"     },
+        { spanish: "codos",    english: "elbows"   },
+        { spanish: "dedos",    english: "fingers"  },
+        { spanish: "muñecas",  english: "wrists"   },
+        { spanish: "manos",    english: "hands"    },
+        { spanish: "espalda",  english: "back"     },
+        { spanish: "barriga",  english: "belly"    },
+        { spanish: "pierna",   english: "leg"      },
+        { spanish: "rodilla",  english: "knee"     },
+        { spanish: "pies",     english: "feet"     },
+      ],
+    },
+    {
+      timestamp: 53.7,
+      label: "Face Parts",
+      words: [
+        { spanish: "ojos",    english: "eyes"   },
+        { spanish: "nariz",   english: "nose"   },
+        { spanish: "labios",  english: "lips"   },
+        { spanish: "dientes", english: "teeth"  },
+        { spanish: "oreja",   english: "ear"    },
+        { spanish: "boca",    english: "mouth"  },
+        { spanish: "lengua",  english: "tongue" },
+        { spanish: "frente",  english: "forehead"},
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
@@ -1669,6 +1706,8 @@ export default function HablaBeat() {
   const [searchQuery, setSearchQuery] = useState("")
   const [bestFlow, setBestFlow] = useState(0)
   const [totalVocabBank, setTotalVocabBank] = useState(0)
+  const [lastPlayedSongNumber, setLastPlayedSongNumber] = useState<number | null>(null)
+  const [lastPlayedMode, setLastPlayedMode] = useState<"sing" | "dance" | "fly" | null>(null)
 
   // Leaderboard state
   const [leaderboard, setLeaderboard] = useState<{ name: string; flow: number; bank: number; grade: string; song: string; date: string; mode?: "pop" | "fly" }[]>([])

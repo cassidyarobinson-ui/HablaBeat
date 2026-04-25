@@ -501,16 +501,23 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       }
     })
 
-    // Start audio but immediately pause for tutorial
-    audio.play().then(() => {
-      audio.pause()
+    // If user has seen tutorial, just play. Otherwise pause for tutorial overlay.
+    const skipTutorial = typeof window !== "undefined" && localStorage.getItem("hablabeat-tutorial-done") === "true"
+    if (skipTutorial) {
       audio.currentTime = 0
-    }).catch((err) => {
-      console.error("Audio play failed:", err)
-    })
-
-    // Set game state — tutorial overlay will show on top
-    setIsPaused(true)
+      audio.play().catch((err) => {
+        console.error("Audio play failed:", err)
+      })
+      setIsPaused(false)
+    } else {
+      audio.play().then(() => {
+        audio.pause()
+        audio.currentTime = 0
+      }).catch((err) => {
+        console.error("Audio play failed:", err)
+      })
+      setIsPaused(true)
+    }
     setGameState("playing")
   }, [timingData, createNotes, getSpeedRate])
 
@@ -1346,6 +1353,19 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   // RECALL BREAK STATE — bunny quiz between song sections
   if (gameState === "recall_break" && recallBreaks && currentBreakIndex >= 0) {
     const brk = recallBreaks[currentBreakIndex]
+    // Match the DDR background so the break feels like the same screen
+    const recallThemeBg: Record<string, string> = {
+      "theme-default":  `url(/images/backgrounds/song-${songNumber}.jpg) center/cover no-repeat fixed`,
+      "theme-galaxy":   "linear-gradient(135deg, #0f0520 0%, #1e1b4b 50%, #312e81 100%)",
+      "theme-cyber":    "linear-gradient(135deg, #0a0a1a 0%, #001a33 50%, #003355 100%)",
+      "theme-sunset":   "linear-gradient(135deg, #ff6b35 0%, #f7c59f 40%, #ffe0cc 100%)",
+      "theme-aurora":   "linear-gradient(135deg, #001a00 0%, #004d1a 30%, #002244 60%, #1a0033 100%)",
+      "theme-shadow":   "linear-gradient(135deg, #0a0000 0%, #1a0000 40%, #2d0a0a 100%)",
+      "theme-cloud":    "linear-gradient(135deg, #c9e8ff 0%, #e8f4ff 40%, #fff3e8 100%)",
+      "theme-gold":     "linear-gradient(135deg, #1a1200 0%, #4a3800 40%, #c9a227 100%)",
+      "theme-anime":    "linear-gradient(135deg, #ffe0f0 0%, #e0d4ff 50%, #c8e8ff 100%)",
+    }
+    const recallBg = recallThemeBg[activeTheme] ?? recallThemeBg["theme-default"]
     return (
       <div className="fixed inset-0 z-[300]">
         <VocabFly
@@ -1357,7 +1377,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             speedVariance: 0.10,
             waveInterval: 4200,
             label: brk.label,
-            bgGradient: "linear-gradient(180deg,#0a1535 0%,#0c2461 30%,#1e40af 65%,#3b82f6 100%)",
+            bgGradient: recallBg,
             bubbleBg: "#bfdbfe",
             bubbleText: "#1d4ed8",
             progressGrad: "linear-gradient(90deg,#60a5fa,#3b82f6)",
