@@ -951,7 +951,15 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               (currentTime >= n.timestamp - earlyWindow) &&
               (currentTime <= n.timestamp + effectiveMissWindow)
           )
-          if (candidates.length === 0) continue
+          if (candidates.length === 0) {
+            // No note in range — still emit emoji burst at touch position
+            const rect = container.getBoundingClientRect()
+            const touch = e.changedTouches[i]
+            const x = touch.clientX - rect.left
+            const lane = Math.max(0, Math.min(3, Math.floor((x / rect.width) * 4)))
+            showLanePress(lane)
+            continue
+          }
           const closest = candidates.reduce((a, b) =>
             Math.abs(a.timestamp - currentTime) < Math.abs(b.timestamp - currentTime) ? a : b
           )
