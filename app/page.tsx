@@ -2981,6 +2981,8 @@ export default function HablaBeat() {
   const [worldSlideDir, setWorldSlideDir] = useState<"next" | "prev" | null>(null)
   const [worldSwipeOffset, setWorldSwipeOffset] = useState(0)
   const [worldSwipeAnimating, setWorldSwipeAnimating] = useState(false)
+  // Home page mode — "dashboard" (default) or "map" (legacy view)
+  const [homeView, setHomeView] = useState<"dashboard" | "map">("dashboard")
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [worldFocus, setWorldFocus] = useState<"carousel" | "modes">("carousel")
   const worldSwipeRef = useRef<{ x: number; y: number } | null>(null)
@@ -4723,6 +4725,234 @@ export default function HablaBeat() {
     )
   }
 
+  // ── DASHBOARD VIEW — default home, with toggle to legacy map ────────────────
+  if (currentView === "songs" && homeView === "dashboard") {
+    const allSecs = curriculumData.flatMap(c => c.sections)
+    // Section progress: count of completed (popHighScore > 0) songs per section
+    const sectionProgress = (sec: any) => {
+      const total = sec.songs.length
+      const done = sec.songs.filter((s: any) => (popHighScores[s.number] ?? 0) > 0).length
+      return { done, total }
+    }
+    // Today's mission section: the section containing the last-played song,
+    // or the first not-fully-cleared section if nothing has been played yet.
+    let missionSec: any = null
+    let missionCat: any = null
+    if (lastPlayedSongNumber != null) {
+      for (const cat of curriculumData) {
+        const s = cat.sections.find((sec: any) => sec.songs.some((sg: any) => sg.number === lastPlayedSongNumber))
+        if (s) { missionSec = s; missionCat = cat; break }
+      }
+    }
+    if (!missionSec) {
+      for (const cat of curriculumData) {
+        const s = cat.sections.find((sec: any) => {
+          const { done, total } = sectionProgress(sec)
+          return done < total
+        })
+        if (s) { missionSec = s; missionCat = cat; break }
+      }
+    }
+    if (!missionSec) { missionSec = allSecs[0]; missionCat = curriculumData[0] }
+    const missionCountry = (missionSec as any)?.country ?? ""
+    const missionSongs = missionSec?.songs ?? []
+    const { done: missionDone, total: missionTotal } = sectionProgress(missionSec ?? { songs: [] })
+    // Next song to start in mission section
+    const missionNextSong = missionSongs.find((s: any) => (popHighScores[s.number] ?? 0) === 0) ?? missionSongs[0]
+    const allCleared = missionDone === missionTotal && missionTotal > 0
+
+    return (
+      <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #0f0d22 0%, #15123a 100%)", color: "#fff" }}>
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-4 pt-6 pb-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-8 h-8 object-contain" />
+            <span className="font-black text-lg tracking-wide">HablaBeat</span>
+          </div>
+          <button
+            onClick={() => setHomeView("map")}
+            className="text-xs font-black px-3 py-1.5 rounded-full active:scale-95 transition-all"
+            style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)" }}>
+            🗺️ Map view
+          </button>
+        </div>
+
+        <div className="px-4 pb-24 pt-4 max-w-md mx-auto space-y-4">
+
+          {/* ── HERO: Today's Mission ───────────────────────────────────────── */}
+          <div className="rounded-3xl p-4" style={{
+            background: "linear-gradient(135deg,#5b6cf2 0%,#8a5cf6 100%)",
+            boxShadow: "0 12px 32px rgba(91,108,242,0.35)",
+          }}>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-black" style={{ background: "rgba(255,255,255,0.18)" }}>Today's Mission</span>
+              <span className="px-2 py-1 rounded-full text-[11px] font-black" style={{ background: "#fbbf24", color: "#1e293b" }}>+{missionTotal * 50} 💰</span>
+            </div>
+            <h1 className="text-2xl font-black leading-tight mb-1">{missionSec?.title}{missionCountry ? ` · ${missionCountry}` : ""}</h1>
+            <p className="text-xs text-white/70 font-semibold mb-3">{missionTotal} {missionTotal === 1 ? "song" : "songs"} in this country</p>
+
+            {/* Song list with scores */}
+            <div className="space-y-1.5 mb-4">
+              {missionSongs.map((s: any, idx: number) => {
+                const score = popHighScores[s.number] ?? 0
+                const grade = bestGrades[s.number]
+                const isComplete = score > 0
+                const isNext = !isComplete && missionNextSong?.id === s.id
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      const cat = curriculumData.find(c => c.sections.some((sec: any) => sec.id === missionSec.id))!
+                      handlePlayDDR(s.id, cat.id, missionSec.id)
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-2xl text-left active:scale-[0.98] transition-all"
+                    style={{ background: isNext ? "rgba(251,191,36,0.18)" : "rgba(255,255,255,0.08)", border: isNext ? "1.5px solid rgba(251,191,36,0.6)" : "1px solid rgba(255,255,255,0.10)" }}>
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{
+                      background: isComplete ? "#22c55e" : isNext ? "#fbbf24" : "rgba(255,255,255,0.12)",
+                      color: isComplete || isNext ? "#1e293b" : "rgba(255,255,255,0.6)",
+                    }}>{isComplete ? "✓" : idx + 1}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-black text-sm truncate">{s.title}</div>
+                      <div className="text-[11px] text-white/60 font-semibold truncate">
+                        {isComplete ? `💰 ${score}` : isNext ? "Start now" : "Locked"}
+                      </div>
+                    </div>
+                    {grade && (
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(251,191,36,0.25)", color: "#fbbf24" }}>{grade}</span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            <button
+              onClick={() => {
+                if (!missionNextSong || allCleared) return
+                handlePlayDDR(missionNextSong.id, missionCat.id, missionSec.id)
+              }}
+              disabled={!missionNextSong || allCleared}
+              className="w-full py-3 rounded-full font-black text-base disabled:opacity-50 active:scale-95 transition-all"
+              style={{ background: "linear-gradient(180deg,#fde047,#f59e0b)", color: "#1e293b", boxShadow: "0 6px 18px rgba(251,191,36,0.4)" }}>
+              {allCleared ? "✨ Country cleared!" : `▶  Continue · ${missionNextSong?.title ?? ""}`}
+            </button>
+            {dailyStreak > 0 && !allCleared && (
+              <p className="text-center text-[11px] text-white/70 font-semibold mt-2">Finish today to extend your 🔥 {dailyStreak}-day streak</p>
+            )}
+          </div>
+
+          {/* ── QUICK ACTIONS ───────────────────────────────────────────────── */}
+          <div className="grid grid-cols-3 gap-2">
+            <button onClick={() => {
+              if (lastPlayedSongNumber == null) return
+              for (const cat of curriculumData) {
+                for (const sec of cat.sections) {
+                  const s = sec.songs.find((sg: any) => sg.number === lastPlayedSongNumber)
+                  if (s) { handlePlayDDR(s.id, cat.id, sec.id); return }
+                }
+              }
+            }}
+              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}>
+              <div className="text-xl">⏯️</div>
+              <div className="font-black text-sm">Resume</div>
+              <div className="text-[10px] text-white/60 font-semibold">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
+            </button>
+            <button onClick={() => {
+              const flat = allSecs.flatMap(s => s.songs.map((sg: any) => ({ sg, sec: s })))
+              const pick = flat[Math.floor(Math.random() * flat.length)]
+              const cat = curriculumData.find(c => c.sections.some(sec => sec.id === pick.sec.id))!
+              handlePlayDDR(pick.sg.id, cat.id, pick.sec.id)
+            }}
+              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}>
+              <div className="text-xl">🎲</div>
+              <div className="font-black text-sm">Surprise me</div>
+              <div className="text-[10px] text-white/60 font-semibold">Random song</div>
+            </button>
+            <button onClick={() => setCurrentView("coins")}
+              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}>
+              <div className="text-xl">⚔️</div>
+              <div className="font-black text-sm">Battle</div>
+              <div className="text-[10px] text-white/60 font-semibold">Challenge</div>
+            </button>
+          </div>
+
+          {/* ── STATS BAR ───────────────────────────────────────────────────── */}
+          <div className="rounded-2xl p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🔥</span>
+              <div>
+                <div className="text-[10px] text-white/60 font-black uppercase tracking-wider">Streak</div>
+                <div className="font-black text-base">{dailyStreak} days</div>
+              </div>
+            </div>
+            <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.10)" }} />
+            <div className="flex items-center gap-2">
+              <span className="text-xl">⚡</span>
+              <div>
+                <div className="text-[10px] text-white/60 font-black uppercase tracking-wider">Flow</div>
+                <div className="font-black text-base">{bestFlow}</div>
+              </div>
+            </div>
+            <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.10)" }} />
+            <div className="flex items-center gap-2">
+              <span className="text-xl">💰</span>
+              <div>
+                <div className="text-[10px] text-white/60 font-black uppercase tracking-wider">Bank</div>
+                <div className="font-black text-base">{totalVocabBank.toLocaleString()}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── WORLD TOUR ──────────────────────────────────────────────────── */}
+          <div>
+            <div className="flex items-center justify-between mb-2 px-1">
+              <h2 className="font-black text-base">Your world tour</h2>
+              <button onClick={() => setHomeView("map")} className="text-xs font-bold text-white/60 active:scale-95 transition-all">
+                See all {allSecs.length} →
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: "none" }}>
+              {allSecs.map((sec: any) => {
+                const { done, total } = sectionProgress(sec)
+                const pct = total > 0 ? Math.round((done / total) * 100) : 0
+                const cleared = done === total && total > 0
+                const isCurrent = sec.id === missionSec?.id
+                const country = (sec as any).country ?? ""
+                return (
+                  <button
+                    key={sec.id}
+                    onClick={() => {
+                      setOpenSectionId(sec.id)
+                      setWorldSongIdx(0)
+                    }}
+                    className="flex-shrink-0 w-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all"
+                    style={{ background: "rgba(255,255,255,0.05)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.6)" : "1px solid rgba(255,255,255,0.08)" }}>
+                    <div className="h-20 relative" style={{ background: cleared ? "linear-gradient(135deg,#a855f7,#7c3aed)" : "linear-gradient(135deg,#3b82f6,#06b6d4)" }}>
+                      {cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16" }}>Cleared</span>}
+                      {isCurrent && !cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b" }}>You are here</span>}
+                    </div>
+                    <div className="p-3">
+                      <div className="font-black text-sm truncate">{sec.title}</div>
+                      <div className="text-[11px] text-white/60 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
+                      {total > 0 && (
+                        <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.10)" }}>
+                          <div className="h-full" style={{ width: `${pct}%`, background: "linear-gradient(90deg,#fde047,#f59e0b)" }} />
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (currentView === "songs") {
     return (
       <div className={`swirl-bg ${isDesktop ? "h-screen overflow-hidden" : "min-h-screen"}`}>
@@ -4868,6 +5098,14 @@ export default function HablaBeat() {
             }}
           />
 
+
+          {/* Dashboard return chip — only on the legacy map view */}
+          <button
+            onClick={() => setHomeView("dashboard")}
+            className="absolute top-3 right-3 z-30 text-xs font-black px-3 py-1.5 rounded-full active:scale-95 transition-all"
+            style={{ background: "rgba(15,13,34,0.92)", color: "#fff", boxShadow: "0 4px 14px rgba(0,0,0,0.3)" }}>
+            ✨ Dashboard
+          </button>
 
           {/* ── HEADER — clean white background (rainbow stripe is splash-only) ── */}
           <div style={{ background: "#ffffff", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
