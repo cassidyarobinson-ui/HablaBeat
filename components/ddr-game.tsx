@@ -1024,6 +1024,15 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       }, 120)
     }
 
+    // Bump the target arrow at this lane
+    const arrowEl = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
+    if (arrowEl) {
+      arrowEl.style.animation = "none"
+      // force reflow so animation re-triggers if pressed rapidly
+      void arrowEl.offsetWidth
+      arrowEl.style.animation = "arrowBump 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+
     // Emoji burst — emojis determined by active pointer selection
     const gameContainer = containerRef.current
     if (gameContainer) {
@@ -1040,15 +1049,20 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         "pointer-space":     ["🪐","🌙","🌕","🌏","☄️","🛸","👽"],
       }
       const emojis = pressEmojis[activePointer] || pressEmojis["pointer-bunny"]
-      for (let i = 0; i < 3; i++) {
+      // Wider size range, more variety, more emojis per tap
+      const SIZES = [10, 12, 14, 18, 22, 28, 34, 40]
+      const count = 5 + Math.floor(Math.random() * 2) // 5–6 per tap
+      for (let i = 0; i < count; i++) {
         const emoji = emojis[Math.floor(Math.random() * emojis.length)]
         const e = document.createElement("div")
         e.className = "absolute pointer-events-none"
-        const tx = (Math.random() - 0.5) * 40
-        const ty = -(24 + Math.random() * 44)
-        const sizePick = [14, 18, 22, 28][Math.floor(Math.random() * 4)]
-        const dur = 0.38 + Math.random() * 0.28
-        e.style.cssText = `left:calc(${cx}% - ${sizePick/2}px);bottom:18%;font-size:${sizePick}px;line-height:1;--tx:${tx}px;--ty:${ty}px;animation:emojiFloat ${dur}s ease-out forwards;z-index:95;`
+        const tx = (Math.random() - 0.5) * 70
+        const ty = -(20 + Math.random() * 70)
+        const sizePick = SIZES[Math.floor(Math.random() * SIZES.length)]
+        const dur = 0.42 + Math.random() * 0.42
+        const r0 = (Math.random() - 0.5) * 30
+        const r1 = r0 + (Math.random() - 0.5) * 240
+        e.style.cssText = `left:calc(${cx}% - ${sizePick/2}px);bottom:18%;font-size:${sizePick}px;line-height:1;--tx:${tx}px;--ty:${ty}px;--r0:${r0}deg;--r1:${r1}deg;animation:emojiFloat ${dur}s ease-out forwards;z-index:95;`
         e.textContent = emoji
         gameContainer.appendChild(e)
         setTimeout(() => e.remove(), Math.round(dur * 1000) + 30)
@@ -2574,8 +2588,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           50% { opacity: 1; box-shadow: 0 0 20px rgba(168,85,247,0.8), 0 0 50px rgba(99,102,241,0.4), 0 0 80px rgba(168,85,247,0.2); }
         }
         @keyframes emojiFloat {
-          0% { transform: translate(0, 0) scale(1); opacity: 1; }
-          100% { transform: translate(var(--tx), var(--ty)) scale(0.4); opacity: 0; }
+          0% { transform: translate(0, 0) scale(1) rotate(var(--r0, 0deg)); opacity: 1; }
+          100% { transform: translate(var(--tx), var(--ty)) scale(0.35) rotate(var(--r1, 0deg)); opacity: 0; }
+        }
+        @keyframes arrowBump {
+          0%   { transform: translateX(-50%) scale(1); }
+          35%  { transform: translateX(-50%) scale(1.18); }
+          65%  { transform: translateX(-50%) scale(0.94); }
+          100% { transform: translateX(-50%) scale(1); }
         }
         @keyframes ddrJudgmentPop {
           0% { transform: scale(0) translateY(0); opacity: 0; }
