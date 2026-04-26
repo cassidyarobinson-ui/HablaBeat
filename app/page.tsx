@@ -4996,8 +4996,8 @@ export default function HablaBeat() {
                   {/* Back button — absolute top-left */}
                   <div className="absolute top-4 left-4 z-40">
                     <button onClick={closeWorld}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-black active:scale-95 transition-all"
-                      style={{ background: "rgba(255,255,255,0.95)", color: "#4a7cdb", border: "2px solid #4a7cdb" }}>
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-gray-700 text-sm font-bold active:scale-95 transition-all"
+                      style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.08)" }}>
                       ← Back
                     </button>
                   </div>
