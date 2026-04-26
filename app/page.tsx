@@ -5057,28 +5057,26 @@ export default function HablaBeat() {
                   {/* Spacer */}
                   <div className="flex-1 relative z-0" />
 
-                  {/* Bottom glass card — arrows on top, then Play (primary), then Practice (secondary) */}
-                  <div className="relative z-20 px-5 pt-4 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
-                    {/* Prev/next arrows row */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <button
-                        onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else if (hasPrevWorld) goToPrevWorld() }}
-                        disabled={selectedIdx === 0 && !hasPrevWorld}
-                        className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
-                        style={{ background: "rgba(0,0,0,0.06)", color: "#374151" }}
-                        aria-label="previous song">
-                        <ChevronLeft className="h-6 w-6" />
-                      </button>
-                      <button
-                        onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else if (hasNextWorld) goToNextWorld() }}
-                        disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
-                        className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
-                        style={{ background: "rgba(0,0,0,0.06)", color: "#374151" }}
-                        aria-label="next song">
-                        <ChevronRight className="h-6 w-6" />
-                      </button>
-                    </div>
+                  {/* Floating arrows — vertically centered on the image */}
+                  <button
+                    onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else if (hasPrevWorld) goToPrevWorld() }}
+                    disabled={selectedIdx === 0 && !hasPrevWorld}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", color: "#374151", boxShadow: "0 4px 14px rgba(0,0,0,0.2)" }}
+                    aria-label="previous song">
+                    <ChevronLeft className="h-7 w-7" />
+                  </button>
+                  <button
+                    onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else if (hasNextWorld) goToNextWorld() }}
+                    disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", color: "#374151", boxShadow: "0 4px 14px rgba(0,0,0,0.2)" }}
+                    aria-label="next song">
+                    <ChevronRight className="h-7 w-7" />
+                  </button>
 
+                  {/* Bottom glass card — Practice (secondary), Play (primary) */}
+                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
                     {/* Practice (secondary, blue outline) */}
                     {hasSing && (
                       <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
