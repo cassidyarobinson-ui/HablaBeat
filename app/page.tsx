@@ -449,6 +449,204 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  17: [
+    {
+      timestamp: 34.7,
+      label: "Time on the Hour",
+      words: [
+        { spanish: "la una",    english: "1 o'clock" },
+        { spanish: "las dos",   english: "2 o'clock" },
+        { spanish: "las tres",  english: "3 o'clock" },
+        { spanish: "las cuatro",english: "4 o'clock" },
+        { spanish: "las cinco", english: "5 o'clock" },
+      ],
+    },
+    {
+      timestamp: 58.6,
+      label: "Time Qualifiers",
+      words: [
+        { spanish: "y cuarto",     english: "quarter past" },
+        { spanish: "y media",      english: "half past"    },
+        { spanish: "en punto",     english: "on the dot"   },
+        { spanish: "menos cuarto", english: "quarter to"   },
+      ],
+    },
+  ],
+  18: [
+    {
+      timestamp: 14.0,
+      label: "Primary Colors",
+      words: [
+        { spanish: "rojo",     english: "red"    },
+        { spanish: "naranja",  english: "orange" },
+        { spanish: "amarillo", english: "yellow" },
+        { spanish: "verde",    english: "green"  },
+        { spanish: "azul",     english: "blue"   },
+      ],
+    },
+    {
+      timestamp: 28.5,
+      label: "More Colors",
+      words: [
+        { spanish: "morado", english: "purple" },
+        { spanish: "blanco", english: "white"  },
+        { spanish: "negro",  english: "black"  },
+        { spanish: "gris",   english: "gray"   },
+      ],
+    },
+  ],
+  19: [
+    {
+      timestamp: 41.0,
+      label: "Feelings",
+      words: [
+        { spanish: "feliz",        english: "happy"     },
+        { spanish: "triste",       english: "sad"       },
+        { spanish: "enojado",      english: "angry"     },
+        { spanish: "cansado",      english: "tired"     },
+        { spanish: "sorprendido",  english: "surprised" },
+        { spanish: "aburrido",     english: "bored"     },
+        { spanish: "contento",     english: "content"   },
+        { spanish: "nervioso",     english: "nervous"   },
+      ],
+    },
+  ],
+  20: [
+    {
+      timestamp: 24.5,
+      label: "Body Needs Pt 1",
+      words: [
+        { spanish: "sed",    english: "thirst" },
+        { spanish: "hambre", english: "hunger" },
+        { spanish: "frío",   english: "cold"   },
+        { spanish: "calor",  english: "heat"   },
+      ],
+    },
+    {
+      timestamp: 51.0,
+      label: "Body Needs Pt 2",
+      words: [
+        { spanish: "sueño", english: "sleepy" },
+        { spanish: "miedo", english: "fear"   },
+        { spanish: "tos",   english: "cough"  },
+        { spanish: "prisa", english: "hurry"  },
+      ],
+    },
+  ],
+  21: [
+    {
+      timestamp: 44.4,
+      label: "Red/Orange Fruits",
+      words: [
+        { spanish: "manzana",  english: "apple"     },
+        { spanish: "frutilla", english: "strawberry"},
+        { spanish: "naranja",  english: "orange"    },
+        { spanish: "papaya",   english: "papaya"    },
+        { spanish: "sandía",   english: "watermelon"},
+        { spanish: "durazno",  english: "peach"     },
+      ],
+    },
+    {
+      timestamp: 65.3,
+      label: "Yellow/Green Fruits",
+      words: [
+        { spanish: "banana",    english: "banana"     },
+        { spanish: "melón",     english: "melon"      },
+        { spanish: "piña",      english: "pineapple"  },
+        { spanish: "pera",      english: "pear"       },
+        { spanish: "guayaba",   english: "guava"      },
+        { spanish: "uva verde", english: "green grape"},
+      ],
+    },
+    {
+      timestamp: 98.8,
+      label: "Blue/Purple Fruits",
+      words: [
+        { spanish: "ciruela",     english: "plum"        },
+        { spanish: "uva morada",  english: "purple grape"},
+        { spanish: "mora azul",   english: "blueberry"   },
+        { spanish: "arándano",    english: "cranberry"   },
+        { spanish: "higo",        english: "fig"         },
+        { spanish: "tamarindo",   english: "tamarind"    },
+      ],
+    },
+  ],
+  22: [
+    {
+      timestamp: 54.8,
+      label: "Veggies Pt 1",
+      words: [
+        { spanish: "tomate",    english: "tomato"     },
+        { spanish: "pimiento",  english: "bell pepper"},
+        { spanish: "zanahoria", english: "carrot"     },
+        { spanish: "maíz",      english: "corn"       },
+        { spanish: "papa",      english: "potato"     },
+        { spanish: "lechuga",   english: "lettuce"    },
+      ],
+    },
+    {
+      timestamp: 78.8,
+      label: "Veggies Pt 2",
+      words: [
+        { spanish: "berenjena", english: "eggplant"    },
+        { spanish: "cebolla",   english: "onion"       },
+        { spanish: "acelga",    english: "swiss chard" },
+      ],
+    },
+  ],
+  23: [
+    {
+      timestamp: 12.5,
+      label: "Breakfast",
+      words: [
+        { spanish: "leche", english: "milk"  },
+        { spanish: "pan",   english: "bread" },
+        { spanish: "fruta", english: "fruit" },
+        { spanish: "huevo", english: "egg"   },
+      ],
+    },
+    {
+      timestamp: 19.0,
+      label: "Lunch",
+      words: [
+        { spanish: "sopa",     english: "soup"   },
+        { spanish: "arroz",    english: "rice"   },
+        { spanish: "pollo",    english: "chicken"},
+        { spanish: "ensalada", english: "salad"  },
+      ],
+    },
+    {
+      timestamp: 28.8,
+      label: "Dinner",
+      words: [
+        { spanish: "pasta",    english: "pasta"    },
+        { spanish: "pescado",  english: "fish"     },
+        { spanish: "verdura",  english: "vegetable"},
+        { spanish: "avena",    english: "oatmeal"  },
+      ],
+    },
+  ],
+  24: [
+    {
+      timestamp: 17.5,
+      label: "Utensils",
+      words: [
+        { spanish: "tenedor",  english: "fork"  },
+        { spanish: "cuchillo", english: "knife" },
+        { spanish: "plato",    english: "plate" },
+      ],
+    },
+    {
+      timestamp: 29.0,
+      label: "Manners & More",
+      words: [
+        { spanish: "cuchara",    english: "spoon"     },
+        { spanish: "servilleta", english: "napkin"    },
+        { spanish: "gracias",    english: "thank you" },
+        { spanish: "por favor",  english: "please"    },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
