@@ -4132,8 +4132,8 @@ export default function HablaBeat() {
                     boxShadow: `0 4px 16px ${mode.color}40`,
                   }}
                 >
-                  <span className="text-lg">{mode.icon}</span>
                   <span>{mode.label}</span>
+                  <span className="text-lg">{mode.icon}</span>
                   {mode.score !== null && (
                     <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.7)" }}>💰{mode.score}</span>
                   )}
@@ -5027,7 +5027,7 @@ export default function HablaBeat() {
                     </div>
 
                     {/* Carousel — same sizing as dance mode */}
-                    <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(45vh, 45vw)" }}
+                    <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(70vh, 95vw)" }}
                       onTouchStart={(e) => { worldSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }}
                       onTouchEnd={(e) => {
                         if (!worldSwipeRef.current) return
@@ -5059,7 +5059,7 @@ export default function HablaBeat() {
                         {songs.map((s, idx) => {
                           const offset = idx - selectedIdx
                           if (Math.abs(offset) > 4) return null
-                          const coverSize = "min(48vh, 48vw)"
+                          const coverSize = "min(70vh, 95vw)"
                           const translateX = offset * 320
                           const translateZ = -Math.abs(offset) * 200
                           const rotateY = offset * -30
@@ -5128,7 +5128,7 @@ export default function HablaBeat() {
                                     boxShadow: isHighlighted ? `0 0 0 3px #fbbf24, 0 4px 25px ${m.glow}` : `0 4px 25px ${m.glow}`,
                                     transform: isHighlighted ? "scale(1.1)" : undefined,
                                   }}>
-                                  {m.emoji} {m.label}{m.extra}
+                                  {m.label} {m.emoji}{m.extra}
                                 </button>
                               )
                             })}
@@ -5545,7 +5545,7 @@ export default function HablaBeat() {
           )}
 
           {/* Carousel with arrows on screen edges */}
-          <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(45vh, 45vw)" }}>
+          <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(70vh, 95vw)" }}>
             {/* Left arrow — on the edge of the screen */}
             {danceSelectedIndex > 0 && (
               <div className="fixed left-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200" style={{
@@ -5562,7 +5562,7 @@ export default function HablaBeat() {
                 const offset = idx - danceSelectedIndex
                 if (Math.abs(offset) > visibleRange) return null
 
-                const coverSize = "min(48vh, 48vw)"
+                const coverSize = "min(70vh, 95vw)"
                 const translateX = offset * 320
                 const translateZ = -Math.abs(offset) * 200
                 const rotateY = offset * -30
