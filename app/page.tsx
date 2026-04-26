@@ -8,6 +8,7 @@ import { LYRIC_TRANSLATIONS } from "@/lib/lyric-translations"
 import { SONG_FLY_DATA } from "@/lib/song-fly-data"
 import { useGamepad, type PadButton } from "@/hooks/use-gamepad"
 import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
+import { trackStart, trackComplete } from "@/lib/client/track"
 
 const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
@@ -3716,6 +3717,8 @@ export default function HablaBeat() {
       if (bank > (prev[songNum] || 0)) return { ...prev, [songNum]: bank }
       return prev
     })
+    // Mirror to backend (no-op when signed out)
+    trackComplete(songNum, "play", { score: bank, xp: flow })
     // Queue leaderboard entry — user will enter name on leaderboard page
     const songTitle = curriculumData.flatMap(c => c.sections.flatMap(s => s.songs)).find((s: any) => s.number === songNum)?.title ?? `Song ${songNum}`
     setPendingLeaderboardEntry({ flow, bank, grade, song: songTitle, mode: "pop" })
@@ -3763,6 +3766,7 @@ export default function HablaBeat() {
       setCurrentSongIndex(songIndex)
       setCurrentView("player")
       setIsPlaying(true)
+      trackStart(song.number, "practice")
     }
   }
 
@@ -3782,6 +3786,7 @@ export default function HablaBeat() {
         sectionId: sectionId,
       })
       setCurrentView("ddr")
+      trackStart(song.number, "play")
     }
   }
 
