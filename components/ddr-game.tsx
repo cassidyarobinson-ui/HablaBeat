@@ -417,6 +417,20 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     setRecallScores([])
   }, [songNumber])
 
+  // Auto-start the game when timing data is ready (skip the speed-selection setup screen)
+  const autoStartedRef = useRef(false)
+  useEffect(() => {
+    if (gameState === "setup" && timingData && !autoStartedRef.current) {
+      autoStartedRef.current = true
+      const skip = typeof window !== "undefined" && localStorage.getItem("hablabeat-tutorial-done") === "true"
+      setTutorialStep(skip ? 5 : 0)
+      tutorialStepRef.current = skip ? 5 : 0
+      setTutorialComplete(false)
+      startGame()
+    }
+    if (gameState !== "setup" && gameState !== "playing") autoStartedRef.current = false
+  }, [gameState, timingData])
+
   // Speed multiplier: affects playback rate (pitch preserved via Web Audio or playbackRate)
   const getSpeedRate = useCallback(() => {
     if (speed === "slower") return 0.85  // medium pace
@@ -1439,8 +1453,20 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     )
   }
 
-  // SETUP SCREEN
+  // SETUP STATE — auto-starts via useEffect, render loading view briefly
   if (gameState === "setup") {
+    return (
+      <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4 animate-pulse">🎵</div>
+          <p className="text-gray-500">Starting...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // (legacy setup screen — kept gated so unreachable but compilable)
+  if (false) {
     return (
       <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{
         background: "rgba(0,0,0,0.85)",
@@ -2140,7 +2166,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
-              <p className="text-white text-xl font-black">⚙️ Arrows</p>
+              <p className="text-white text-xl font-black">⚙️ Settings</p>
               <button
                 onClick={() => { setShowLoadout(false); togglePause() }}
                 className="px-4 py-2 rounded-full font-black text-white text-sm active:scale-90 transition-all"
@@ -2148,8 +2174,31 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               >▶ Resume</button>
             </div>
 
-            {/* Items grid */}
+            {/* Speed toggle */}
+            <div className="px-5 pb-3">
+              <p className="text-white/60 font-bold text-xs mb-2 uppercase tracking-wider">Speed</p>
+              <div className="flex gap-2">
+                {([["slower", "Slower"], ["normal", "Normal"]] as const).map(([key, label]) => (
+                  <button key={key} onClick={() => setSpeed(key)}
+                    className="flex-1 py-2.5 rounded-full font-black text-sm transition-all active:scale-95"
+                    style={speed === key ? {
+                      background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
+                      color: "white",
+                      border: "2px solid rgba(255,255,255,0.4)",
+                    } : {
+                      background: "rgba(255,255,255,0.08)",
+                      color: "rgba(255,255,255,0.6)",
+                      border: "1.5px solid rgba(255,255,255,0.15)",
+                    }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Arrow / pointer picker */}
             <div className="px-4 pb-6">
+              <p className="text-white/60 font-bold text-xs mb-2 uppercase tracking-wider px-1">Arrows</p>
               <div className="grid grid-cols-3 gap-2">
                 {GAME_CATALOG.filter(i => i.category === "pointer").map((item) => {
                   const isActive = activePointer === item.id
@@ -2157,8 +2206,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                     <button
                       key={item.id}
                       onClick={() => { onEquipPointer?.(item.id) }}
-                      className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-all active:scale-95"
+                      className="flex flex-col items-center justify-center gap-1.5 rounded-xl transition-all active:scale-95"
                       style={{
+                        height: 84,
                         background: isActive
                           ? "linear-gradient(135deg, rgba(168,85,247,0.45), rgba(99,102,241,0.45))"
                           : "rgba(255,255,255,0.08)",
@@ -2166,8 +2216,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                       }}
                     >
                       <span style={{ fontSize: "28px" }}>{item.emoji}</span>
-                      <span className="text-white text-[11px] font-bold text-center leading-tight">{item.name}</span>
-                      {isActive && <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(134,239,172,0.25)", color: "#86efac" }}>✓ Active</span>}
+                      <span className="text-white text-[11px] font-bold text-center leading-tight px-1">{item.name}</span>
                     </button>
                   )
                 })}
