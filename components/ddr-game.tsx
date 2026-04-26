@@ -411,6 +411,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       .catch((err) => {
         console.error("Failed to load timing data:", err)
       })
+    // Reset recall break fire-state so quizzes trigger fresh on each song
+    recallBreaksFiredRef.current = new Set()
+    setCurrentBreakIndex(-1)
+    setRecallScores([])
   }, [songNumber])
 
   // Speed multiplier: affects playback rate (pitch preserved via Web Audio or playbackRate)
