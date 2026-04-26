@@ -101,52 +101,6 @@ const SECTION_GRADIENTS: Record<string, string> = {
 
 // ── RECALL BREAKS: mid-song vocabulary quizzes per song ──────────────────────
 const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: string; english: string }[]; label: string }[]> = {
-  1: [
-    {
-      timestamp: 67.5,
-      label: "The Alphabet",
-      words: [
-        { spanish: "a", english: "a" },
-        { spanish: "b", english: "b" },
-        { spanish: "c", english: "c" },
-        { spanish: "d", english: "d" },
-        { spanish: "e", english: "e" },
-        { spanish: "f", english: "f" },
-        { spanish: "g", english: "g" },
-        { spanish: "abecedario", english: "alphabet" },
-      ],
-    },
-  ],
-  2: [
-    {
-      timestamp: 38.7,
-      label: "Special Letters",
-      words: [
-        { spanish: "ñ",      english: "ñ"        },
-        { spanish: "ch",     english: "ch"       },
-        { spanish: "rr",     english: "rr"       },
-        { spanish: "ll",     english: "ll"       },
-        { spanish: "niño",   english: "boy"      },
-        { spanish: "churro", english: "churro"   },
-        { spanish: "perro",  english: "dog"      },
-        { spanish: "letras", english: "letters"  },
-      ],
-    },
-  ],
-  3: [
-    {
-      timestamp: 29.7,
-      label: "The 5 Vowels",
-      words: [
-        { spanish: "a",        english: "a"      },
-        { spanish: "e",        english: "e"      },
-        { spanish: "i",        english: "i"      },
-        { spanish: "o",        english: "o"      },
-        { spanish: "u",        english: "u"      },
-        { spanish: "vocales",  english: "vowels" },
-      ],
-    },
-  ],
   4: [
     {
       timestamp: 33.5,
