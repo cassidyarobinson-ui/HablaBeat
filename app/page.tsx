@@ -138,6 +138,36 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  5: [
+    {
+      timestamp: 19.5,
+      label: "Everyday Clothes",
+      words: [
+        { spanish: "camisa",    english: "shirt"   },
+        { spanish: "pantalón",  english: "pants"   },
+        { spanish: "zapatos",   english: "shoes"   },
+        { spanish: "cinturón",  english: "belt"    },
+        { spanish: "gorra",     english: "cap"     },
+        { spanish: "guantes",   english: "gloves"  },
+        { spanish: "calcetín",  english: "sock"    },
+        { spanish: "falda",     english: "skirt"   },
+        { spanish: "suéter",    english: "sweater" },
+        { spanish: "chaqueta",  english: "jacket"  },
+      ],
+    },
+    {
+      timestamp: 30.5,
+      label: "Weather & Special",
+      words: [
+        { spanish: "bufanda",   english: "scarf"   },
+        { spanish: "traje",     english: "suit"    },
+        { spanish: "vestido",   english: "dress"   },
+        { spanish: "pijama",    english: "pajamas" },
+        { spanish: "botas",     english: "boots"   },
+        { spanish: "sandalias", english: "sandals" },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
