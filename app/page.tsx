@@ -5061,60 +5061,62 @@ export default function HablaBeat() {
                     }}
                   />
 
-                  {/* Top glass card with horizontal step indicator + title */}
+                  {/* Top glass card — title+subtitle on one line (left), step indicator (right) */}
                   <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: "0 0 24px 24px" }}>
-                    {/* Step indicator: shows progression through this country's songs */}
-                    <div className="flex items-center justify-center gap-0 mb-3 px-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-                      {songs.map((s: any, i: number) => {
-                        const isCurrent = i === selectedIdx
-                        const wasPlayed = popHighScores[s.number] > 0 || !!bestGrades[s.number]
-                        const isLast = i === songs.length - 1
-                        const stepBg = wasPlayed
-                          ? "linear-gradient(135deg,#22c55e,#16a34a)"
-                          : isCurrent
-                          ? "linear-gradient(135deg,#4a7cdb,#6366f1)"
-                          : "rgba(0,0,0,0.10)"
-                        const stepColor = wasPlayed || isCurrent ? "#fff" : "#94a3b8"
-                        const lineBg = wasPlayed ? "rgba(34,197,94,0.45)" : "rgba(74,124,219,0.2)"
-                        return (
-                          <React.Fragment key={s.id}>
-                            <button
-                              onClick={() => {
-                                if (i === selectedIdx) return
-                                setWorldSlideDir(i > selectedIdx ? "next" : "prev")
-                                setWorldSongIdx(i)
-                              }}
-                              className="flex-shrink-0 rounded-full flex items-center justify-center font-black transition-all active:scale-95"
-                              style={{
-                                width: isCurrent ? 32 : 24,
-                                height: isCurrent ? 32 : 24,
-                                background: stepBg,
-                                color: stepColor,
-                                fontSize: isCurrent ? 13 : 11,
-                                boxShadow: isCurrent
-                                  ? "0 4px 12px rgba(74,124,219,0.4), 0 0 0 3px rgba(74,124,219,0.18)"
-                                  : wasPlayed
-                                  ? "0 2px 6px rgba(34,197,94,0.25)"
-                                  : "none",
-                              }}
-                              aria-label={`Song ${s.number}: ${s.title}`}
-                            >
-                              {wasPlayed && !isCurrent ? "✓" : i + 1}
-                            </button>
-                            {!isLast && (
-                              <div className="flex-shrink-0 h-0.5 mx-1" style={{ width: 18, background: lineBg, borderRadius: 999 }} />
-                            )}
-                          </React.Fragment>
-                        )
-                      })}
-                    </div>
-
-                    <div className="text-center">
-                      <h1 className="text-xl font-black text-gray-900 leading-tight">{song.title}</h1>
-                      <p className="text-xs text-gray-500 font-semibold mt-0.5">
-                        {description || `${countryName}`}
-                        {songBestGrade && <span className="ml-2 text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
-                      </p>
+                    <div className="flex items-center justify-between gap-3">
+                      {/* Left: title and subtitle on the same line */}
+                      <div className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
+                        <h1 className="text-xl font-black text-gray-900 leading-tight truncate">{song.title}</h1>
+                        <p className="text-xs text-gray-500 font-semibold truncate">
+                          {description || `${countryName}`}
+                          {songBestGrade && <span className="ml-2 text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
+                        </p>
+                      </div>
+                      {/* Right: step indicator showing progression through this country's songs */}
+                      <div className="flex-shrink-0 flex items-center justify-end gap-0 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+                        {songs.map((s: any, i: number) => {
+                          const isCurrent = i === selectedIdx
+                          const wasPlayed = popHighScores[s.number] > 0 || !!bestGrades[s.number]
+                          const isLast = i === songs.length - 1
+                          const stepBg = wasPlayed
+                            ? "linear-gradient(135deg,#22c55e,#16a34a)"
+                            : isCurrent
+                            ? "linear-gradient(135deg,#4a7cdb,#6366f1)"
+                            : "rgba(0,0,0,0.10)"
+                          const stepColor = wasPlayed || isCurrent ? "#fff" : "#94a3b8"
+                          const lineBg = wasPlayed ? "rgba(34,197,94,0.45)" : "rgba(74,124,219,0.2)"
+                          return (
+                            <React.Fragment key={s.id}>
+                              <button
+                                onClick={() => {
+                                  if (i === selectedIdx) return
+                                  setWorldSlideDir(i > selectedIdx ? "next" : "prev")
+                                  setWorldSongIdx(i)
+                                }}
+                                className="flex-shrink-0 rounded-full flex items-center justify-center font-black transition-all active:scale-95"
+                                style={{
+                                  width: isCurrent ? 28 : 20,
+                                  height: isCurrent ? 28 : 20,
+                                  background: stepBg,
+                                  color: stepColor,
+                                  fontSize: isCurrent ? 12 : 10,
+                                  boxShadow: isCurrent
+                                    ? "0 3px 10px rgba(74,124,219,0.4), 0 0 0 2.5px rgba(74,124,219,0.18)"
+                                    : wasPlayed
+                                    ? "0 2px 5px rgba(34,197,94,0.25)"
+                                    : "none",
+                                }}
+                                aria-label={`Song ${s.number}: ${s.title}`}
+                              >
+                                {wasPlayed && !isCurrent ? "✓" : i + 1}
+                              </button>
+                              {!isLast && (
+                                <div className="flex-shrink-0 h-0.5 mx-0.5" style={{ width: 12, background: lineBg, borderRadius: 999 }} />
+                              )}
+                            </React.Fragment>
+                          )
+                        })}
+                      </div>
                     </div>
                   </div>
 
