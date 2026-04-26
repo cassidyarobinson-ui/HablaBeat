@@ -1484,7 +1484,7 @@ const THEME_GRADIENTS: Record<string, string> = {
 
 // Song descriptions for Song Page + Dance carousel
 const SONG_DESCRIPTIONS: Record<number, string> = {
-  1:"The Spanish alphabet letters",2:"The special letters in Spanish",3:"Spanish vowel sounds",4:"Body parts and face vocab",5:"Clothing words in Spanish",6:"Family members in Spanish",7:"Jobs and careers vocab",8:"Vowels with a unicorn twist",9:"Pets and animals vocab",10:"Animal habitats and homes",11:"Rooms in your house",12:"Where is it? location words",13:"Giving and following directions",14:"Numbers one through twenty",15:"Counting by tens to one hundred",16:"Days, months, and seasons",17:"Telling time in Spanish",18:"Colors in Spanish",19:"Feelings and emotions",20:"Hunger and thirst expressions",21:"Fruit names in Spanish",22:"Vegetable names in Spanish",23:"Breakfast, lunch, and dinner",24:"Ordering and asking for things",25:"AR verbs conjugation",26:"Gustar — to like something",27:"Estar — to be (temporary)",28:"ER verbs conjugation",29:"Tener — to have",30:"Ser — to be (permanent)",31:"IR verbs conjugation",32:"IR — to go places",33:"Decir — to say or tell",34:"When to use preterite tense",35:"AR verbs in the past",36:"ER and IR verbs in the past",37:"Irregular past tense verbs",38:"Imperfect tense for the past",39:"Irregular imperfect verbs",40:"Imperfect vs preterite tense",41:"Future tense in Spanish",42:"Irregular future tense verbs",43:"Conditional — would do something",44:"Irregular conditional verbs",45:"Personal and reflexive pronouns",46:"Direct and indirect object pronouns",47:"Commands and instructions",48:"Por vs para — tricky prepositions",49:"Subjunctive mood basics",50:"Fun phrases and expressions",
+  1:"The alphabet letters",2:"The special letters",3:"Vowel sounds",4:"Body parts and face vocab",5:"Clothing words",6:"Family members",7:"Jobs and careers vocab",8:"Vowels with a unicorn twist",9:"Pets and animals vocab",10:"Animal habitats and homes",11:"Rooms in your house",12:"Where is it? location words",13:"Giving and following directions",14:"Numbers one through twenty",15:"Counting by tens to one hundred",16:"Days, months, and seasons",17:"Telling time",18:"Colors",19:"Feelings and emotions",20:"Hunger and thirst expressions",21:"Fruit names",22:"Vegetable names",23:"Breakfast, lunch, and dinner",24:"Ordering and asking for things",25:"AR verbs conjugation",26:"Gustar — to like something",27:"Estar — to be (temporary)",28:"ER verbs conjugation",29:"Tener — to have",30:"Ser — to be (permanent)",31:"IR verbs conjugation",32:"IR — to go places",33:"Decir — to say or tell",34:"When to use preterite tense",35:"AR verbs in the past",36:"ER and IR verbs in the past",37:"Irregular past tense verbs",38:"Imperfect tense for the past",39:"Irregular imperfect verbs",40:"Imperfect vs preterite tense",41:"Future tense",42:"Irregular future tense verbs",43:"Conditional — would do something",44:"Irregular conditional verbs",45:"Personal and reflexive pronouns",46:"Direct and indirect object pronouns",47:"Commands and instructions",48:"Por vs para — tricky prepositions",49:"Subjunctive mood basics",50:"Fun phrases and expressions",
 }
 
 // Song keywords for display on Song Page (same data as in ddr-game.tsx)
@@ -5100,11 +5100,7 @@ export default function HablaBeat() {
                                   background: stepBg,
                                   color: stepColor,
                                   fontSize: isCurrent ? 12 : 10,
-                                  boxShadow: isCurrent
-                                    ? "0 3px 10px rgba(74,124,219,0.4)"
-                                    : wasPlayed
-                                    ? "0 2px 5px rgba(34,197,94,0.25)"
-                                    : "none",
+                                  boxShadow: "none",
                                 }}
                                 aria-label={`Song ${s.number}: ${s.title}`}
                               >
@@ -5127,22 +5123,22 @@ export default function HablaBeat() {
                   <button
                     onClick={() => { if (selectedIdx > 0) { setWorldSlideDir("prev"); setWorldSongIdx(selectedIdx - 1) } else if (hasPrevWorld) goToPrevWorld() }}
                     disabled={selectedIdx === 0 && !hasPrevWorld}
-                    className="absolute left-3 bottom-44 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
-                    style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", color: "#374151", boxShadow: "0 4px 14px rgba(0,0,0,0.2)" }}
+                    className="absolute left-3 bottom-24 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    style={{ color: "#fff", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.55))" }}
                     aria-label="previous song">
                     <ChevronLeft className="h-7 w-7" />
                   </button>
                   <button
                     onClick={() => { if (selectedIdx < songs.length - 1) { setWorldSlideDir("next"); setWorldSongIdx(selectedIdx + 1) } else if (hasNextWorld) goToNextWorld() }}
                     disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
-                    className="absolute right-3 bottom-44 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
-                    style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", color: "#374151", boxShadow: "0 4px 14px rgba(0,0,0,0.2)" }}
+                    className="absolute right-3 bottom-24 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    style={{ color: "#fff", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.55))" }}
                     aria-label="next song">
                     <ChevronRight className="h-7 w-7" />
                   </button>
 
                   {/* Bottom glass card — Practice (secondary) | Play (primary) side-by-side */}
-                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", borderRadius: "24px 24px 0 0" }}>
+                  <div className="relative z-20 px-4 pt-2 pb-3">
                     <div className="flex gap-3">
                       {hasSing && (
                         <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
