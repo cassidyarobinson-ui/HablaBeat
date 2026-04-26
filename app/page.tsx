@@ -3109,8 +3109,7 @@ export default function HablaBeat() {
         const modes: string[] = []
         if (song?.youtubeId && song.youtubeId !== "") modes.push("sing")
         if (selectedLanguage === "spanish") modes.push("dance")
-        if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number] && !SONG_RECALL_BREAKS[song?.number]) modes.push("fly")
-
+        
         if (worldFocus === "carousel") {
           if (btn === "left") {
             if (sidx <= 0) {
@@ -3190,8 +3189,7 @@ export default function HablaBeat() {
       const modes: string[] = []
       if (song?.youtubeId && song.youtubeId !== "") modes.push("sing")
       if (selectedLanguage === "spanish") modes.push("dance")
-      if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number] && !SONG_RECALL_BREAKS[song?.number]) modes.push("fly")
-
+      
       if (worldFocus === "carousel") {
         if (btn === "left") {
           if (idx <= 0) {
@@ -4062,7 +4060,6 @@ export default function HablaBeat() {
 
   // ── Song Page View ──
   if (currentView === "song" && currentSong) {
-    const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[currentSong.number] && !SONG_RECALL_BREAKS[currentSong.number]
     const hasPop = selectedLanguage === "spanish"
     const hasSing = currentSong.youtubeId && currentSong.youtubeId !== ""
     const keywords = SONG_KEYWORDS_DISPLAY[currentSong.number] ?? []
@@ -4071,7 +4068,6 @@ export default function HablaBeat() {
     const modes = [
       { key: "sing", label: "Sing", icon: "🎤", available: hasSing, score: null as number | null, color: "#8b5cf6" },
       { key: "pop", label: "Tap", icon: "🥕", available: hasPop, score: popHighScores[currentSong.number] > 0 ? popHighScores[currentSong.number] : null, color: "#4a7cdb" },
-      { key: "fly", label: "Fly", icon: "☁️", available: hasFly, score: flyHighScores[currentSong.number] > 0 ? flyHighScores[currentSong.number] : null, color: "#06b6d4" },
     ]
 
     return (
@@ -4978,7 +4974,7 @@ export default function HablaBeat() {
             const hasPrevWorld = currentSectionIdx > 0
             const nextWorldName = hasNextWorld ? (allSections[currentSectionIdx + 1] as any).country || allSections[currentSectionIdx + 1].title : ""
             const prevWorldName = hasPrevWorld ? (allSections[currentSectionIdx - 1] as any).country || allSections[currentSectionIdx - 1].title : ""
-            const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[song.number]
+            const hasFly = false
             const hasPop = selectedLanguage === "spanish"
             const hasSing = song.youtubeId && song.youtubeId !== ""
             const description = SONG_DESCRIPTIONS[song.number] ?? ""
@@ -5273,7 +5269,7 @@ export default function HablaBeat() {
                           <div className="space-y-4">
                             {openSection.songs.map((song, songIdx) => {
                               const songBestGrade = bestGrades[song.number]
-                              const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[song.number]
+                              const hasFly = false
                               const hasPop = selectedLanguage === "spanish"
                               const hasSing = song.youtubeId && song.youtubeId !== ""
                               const description = SONG_DESCRIPTIONS[song.number] ?? ""
