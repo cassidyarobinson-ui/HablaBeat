@@ -2977,6 +2977,7 @@ export default function HablaBeat() {
   const [bunnyHopping, setBunnyHopping] = useState(false)
   // World song view pad navigation: [songIndex, modeIndex (0=sing,1=dance,2=fly)]
   const [worldSongIdx, setWorldSongIdx] = useState(0)
+  const [worldSlideDir, setWorldSlideDir] = useState<"next" | "prev" | null>(null)
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [worldFocus, setWorldFocus] = useState<"carousel" | "modes">("carousel")
   const worldSwipeRef = useRef<{ x: number; y: number } | null>(null)
@@ -4957,6 +4958,7 @@ export default function HablaBeat() {
             const goToNextWorld = () => {
               if (currentSectionIdx < allSections.length - 1) {
                 const next = allSections[currentSectionIdx + 1]
+                setWorldSlideDir("next")
                 setOpenSectionId(next.id)
                 setWorldSongIdx(0)
                 setWorldFocus("carousel")
@@ -4965,6 +4967,7 @@ export default function HablaBeat() {
             const goToPrevWorld = () => {
               if (currentSectionIdx > 0) {
                 const prev = allSections[currentSectionIdx - 1]
+                setWorldSlideDir("prev")
                 setOpenSectionId(prev.id)
                 setWorldSongIdx(prev.songs.length - 1) // start at last song
                 setWorldFocus("carousel")
@@ -5014,12 +5017,23 @@ export default function HablaBeat() {
                   )}
 
                   {/* Full-screen background image of current song */}
-                  <div key={song.number} className="absolute inset-0 z-0">
+                  <div key={song.number} className="absolute inset-0 z-0 overflow-hidden">
+                    <style>{`
+                      @keyframes worldSlideInRight { from { transform: translateX(100%); opacity: 0.6; } to { transform: translateX(0); opacity: 1; } }
+                      @keyframes worldSlideInLeft  { from { transform: translateX(-100%); opacity: 0.6; } to { transform: translateX(0); opacity: 1; } }
+                    `}</style>
                     <img
                       src={`/images/backgrounds/song-${song.number}.jpg`}
                       alt={song.title}
                       className="w-full h-full object-cover"
                       draggable={false}
+                      style={{
+                        animation: worldSlideDir === "next"
+                          ? "worldSlideInRight 0.32s cubic-bezier(0.22, 1, 0.36, 1)"
+                          : worldSlideDir === "prev"
+                          ? "worldSlideInLeft 0.32s cubic-bezier(0.22, 1, 0.36, 1)"
+                          : undefined,
+                      }}
                     />
                   </div>
 
@@ -5034,10 +5048,10 @@ export default function HablaBeat() {
                       if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return
                       if (dx < 0) {
                         if (selectedIdx >= songs.length - 1) goToNextWorld()
-                        else setWorldSongIdx(prev => prev + 1)
+                        else { setWorldSlideDir("next"); setWorldSongIdx(prev => prev + 1) }
                       } else {
                         if (selectedIdx <= 0) goToPrevWorld()
-                        else setWorldSongIdx(prev => prev - 1)
+                        else { setWorldSlideDir("prev"); setWorldSongIdx(prev => prev - 1) }
                       }
                     }}
                   />
@@ -5059,17 +5073,17 @@ export default function HablaBeat() {
 
                   {/* Floating arrows — vertically centered on the image */}
                   <button
-                    onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else if (hasPrevWorld) goToPrevWorld() }}
+                    onClick={() => { if (selectedIdx > 0) { setWorldSlideDir("prev"); setWorldSongIdx(selectedIdx - 1) } else if (hasPrevWorld) goToPrevWorld() }}
                     disabled={selectedIdx === 0 && !hasPrevWorld}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    className="absolute left-3 bottom-44 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
                     style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", color: "#374151", boxShadow: "0 4px 14px rgba(0,0,0,0.2)" }}
                     aria-label="previous song">
                     <ChevronLeft className="h-7 w-7" />
                   </button>
                   <button
-                    onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else if (hasNextWorld) goToNextWorld() }}
+                    onClick={() => { if (selectedIdx < songs.length - 1) { setWorldSlideDir("next"); setWorldSongIdx(selectedIdx + 1) } else if (hasNextWorld) goToNextWorld() }}
                     disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    className="absolute right-3 bottom-44 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
                     style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", color: "#374151", boxShadow: "0 4px 14px rgba(0,0,0,0.2)" }}
                     aria-label="next song">
                     <ChevronRight className="h-7 w-7" />
