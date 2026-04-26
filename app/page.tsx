@@ -5003,7 +5003,7 @@ export default function HablaBeat() {
                   </div>
                   {countryName && (
                     <div className="absolute top-4 right-4 z-40 flex items-center gap-2">
-                      <span className="text-gray-700 text-sm font-bold">{countryName}</span>
+                      <span className="text-gray-700 text-sm font-bold">{openSection.title} in {countryName}</span>
                       {flagBg && (
                         <div className="w-10 h-6 rounded overflow-hidden" style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -5057,34 +5057,24 @@ export default function HablaBeat() {
                   {/* Spacer */}
                   <div className="flex-1 relative z-0" />
 
-                  {/* Bottom glass card — mode buttons row above, arrows row below */}
+                  {/* Bottom glass card — Practice on top, Play inline with arrows below */}
                   <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
-                    {/* Mode buttons row */}
-                    <div className="flex gap-3 justify-center mb-3">
-                      {(() => {
-                        const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
-                        if (hasSing) modeButtons.push({ key: "sing", label: "Practice", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
-                        if (hasPop) modeButtons.push({ key: "dance", label: "Play", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
-                        if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
-                        return modeButtons.map((m, i) => {
-                          const isHighlighted = worldFocus === "modes" && worldModeIdx === i
-                          return (
-                            <button key={m.key} onClick={m.onClick}
-                              className="px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
-                              style={{
-                                background: m.bg,
-                                boxShadow: isHighlighted ? `0 0 0 3px #fbbf24, 0 4px 25px ${m.glow}` : `0 4px 25px ${m.glow}`,
-                                transform: isHighlighted ? "scale(1.1)" : undefined,
-                              }}>
-                              {m.label} {m.emoji}{m.extra}
-                            </button>
-                          )
-                        })
-                      })()}
-                    </div>
+                    {hasSing && (
+                      <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
+                        className="w-full px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95 mb-3"
+                        style={{
+                          background: "linear-gradient(135deg, #7c3aed, #6d28d9)",
+                          boxShadow: worldFocus === "modes" && worldModeIdx === 0
+                            ? `0 0 0 3px #fbbf24, 0 4px 25px rgba(124,58,237,0.5)`
+                            : `0 4px 25px rgba(124,58,237,0.5)`,
+                          transform: worldFocus === "modes" && worldModeIdx === 0 ? "scale(1.05)" : undefined,
+                        }}>
+                        Practice 🎤
+                      </button>
+                    )}
 
-                    {/* Arrow row — left/right for swipe navigation */}
-                    <div className="flex items-center justify-between gap-2">
+                    {/* Bottom row — Play between the prev/next arrows */}
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else if (hasPrevWorld) goToPrevWorld() }}
                         disabled={selectedIdx === 0 && !hasPrevWorld}
@@ -5093,6 +5083,22 @@ export default function HablaBeat() {
                         aria-label="previous song">
                         <ChevronLeft className="h-6 w-6" />
                       </button>
+                      {hasPop && (
+                        <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
+                          className="flex-1 px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
+                          style={{
+                            background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
+                            boxShadow: worldFocus === "modes" && worldModeIdx === 1
+                              ? `0 0 0 3px #fbbf24, 0 4px 25px rgba(74,124,219,0.5)`
+                              : `0 4px 25px rgba(74,124,219,0.5)`,
+                            transform: worldFocus === "modes" && worldModeIdx === 1 ? "scale(1.05)" : undefined,
+                          }}>
+                          Play 🥕
+                          {popHighScores[song.number] > 0 && (
+                            <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span>
+                          )}
+                        </button>
+                      )}
                       <button
                         onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else if (hasNextWorld) goToNextWorld() }}
                         disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
