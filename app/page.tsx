@@ -4994,16 +4994,16 @@ export default function HablaBeat() {
               >
                 <div className="world-content-in h-[100dvh] flex flex-col overflow-hidden">
                   {/* Back button — absolute top-left */}
-                  <div className="absolute top-4 left-4 z-20">
+                  <div className="absolute top-4 left-4 z-40">
                     <button onClick={closeWorld}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white/80 text-sm font-bold active:scale-95 transition-all"
-                      style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-gray-700 text-sm font-bold active:scale-95 transition-all"
+                      style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.08)" }}>
                       ← Back
                     </button>
                   </div>
                   {countryName && (
-                    <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-                      <span className="text-white/70 text-sm font-bold">{countryName}</span>
+                    <div className="absolute top-4 right-4 z-40 flex items-center gap-2">
+                      <span className="text-gray-700 text-sm font-bold">{countryName}</span>
                       {flagBg && (
                         <div className="w-10 h-6 rounded overflow-hidden" style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -5042,36 +5042,9 @@ export default function HablaBeat() {
                     }}
                   />
 
-                  {/* Left arrow */}
-                  {(selectedIdx > 0 || hasPrevWorld) && (
-                    <div className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
-                      onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else goToPrevWorld() }}
-                      style={{ color: selectedIdx === 0 ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.9)", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}>
-                      <ChevronLeft className="h-10 w-10 md:h-20 md:w-20" />
-                      {selectedIdx === 0 && hasPrevWorld && (
-                        <div className="text-[10px] md:text-xs text-white/80 text-center mt-1 whitespace-nowrap">{prevWorldName}</div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Right arrow */}
-                  {(selectedIdx < songs.length - 1 || hasNextWorld) && (
-                    <div className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
-                      onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else goToNextWorld() }}
-                      style={{ color: selectedIdx === songs.length - 1 ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.9)", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}>
-                      <ChevronRight className="h-10 w-10 md:h-20 md:w-20" />
-                      {selectedIdx === songs.length - 1 && hasNextWorld && (
-                        <div className="text-[10px] md:text-xs text-white/80 text-center mt-1 whitespace-nowrap">{nextWorldName}</div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Spacer pushes the bottom card down */}
-                  <div className="flex-1 relative z-0" />
-
-                  {/* Bottom glass card with title + description + buttons */}
-                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
-                    <div className="text-center mb-4">
+                  {/* Top glass card with title + description + Song N of M */}
+                  <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "0 0 24px 24px" }}>
+                    <div className="text-center">
                       <h1 className="text-2xl font-black text-gray-900">{song.title}</h1>
                       <p className="text-sm text-gray-500 font-semibold mt-0.5">
                         {description || `${countryName}`}
@@ -5079,19 +5052,36 @@ export default function HablaBeat() {
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">Song {song.number} · {selectedIdx + 1} of {songs.length}</p>
                     </div>
+                  </div>
 
-                    {(() => {
-                      const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
-                      if (hasSing) modeButtons.push({ key: "sing", label: "Practice", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
-                      if (hasPop) modeButtons.push({ key: "dance", label: "Play", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
-                      if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
-                      return (
-                        <div className="flex gap-3 justify-center">
-                          {modeButtons.map((m, i) => {
+                  {/* Spacer */}
+                  <div className="flex-1 relative z-0" />
+
+                  {/* Bottom glass card with arrows + mode buttons */}
+                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
+                    <div className="flex items-center justify-between gap-2">
+                      {/* Left arrow */}
+                      <button
+                        onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else if (hasPrevWorld) goToPrevWorld() }}
+                        disabled={selectedIdx === 0 && !hasPrevWorld}
+                        className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                        style={{ background: "rgba(0,0,0,0.06)", color: "#374151" }}
+                        aria-label="previous song">
+                        <ChevronLeft className="h-6 w-6" />
+                      </button>
+
+                      {/* Mode buttons */}
+                      <div className="flex gap-3 justify-center flex-1">
+                        {(() => {
+                          const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
+                          if (hasSing) modeButtons.push({ key: "sing", label: "Practice", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
+                          if (hasPop) modeButtons.push({ key: "dance", label: "Play", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
+                          if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
+                          return modeButtons.map((m, i) => {
                             const isHighlighted = worldFocus === "modes" && worldModeIdx === i
                             return (
                               <button key={m.key} onClick={m.onClick}
-                                className="px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
+                                className="px-5 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
                                 style={{
                                   background: m.bg,
                                   boxShadow: isHighlighted ? `0 0 0 3px #fbbf24, 0 4px 25px ${m.glow}` : `0 4px 25px ${m.glow}`,
@@ -5100,10 +5090,20 @@ export default function HablaBeat() {
                                 {m.label} {m.emoji}{m.extra}
                               </button>
                             )
-                          })}
-                        </div>
-                      )
-                    })()}
+                          })
+                        })()}
+                      </div>
+
+                      {/* Right arrow */}
+                      <button
+                        onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else if (hasNextWorld) goToNextWorld() }}
+                        disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
+                        className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                        style={{ background: "rgba(0,0,0,0.06)", color: "#374151" }}
+                        aria-label="next song">
+                        <ChevronRight className="h-6 w-6" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
