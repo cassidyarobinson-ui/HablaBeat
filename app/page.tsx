@@ -2979,6 +2979,8 @@ export default function HablaBeat() {
   // World song view pad navigation: [songIndex, modeIndex (0=sing,1=dance,2=fly)]
   const [worldSongIdx, setWorldSongIdx] = useState(0)
   const [worldSlideDir, setWorldSlideDir] = useState<"next" | "prev" | null>(null)
+  // "list" = wizard / song-progression view; "carousel" = full-screen song view with Practice/Play
+  const [worldStage, setWorldStage] = useState<"list" | "carousel">("list")
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [worldFocus, setWorldFocus] = useState<"carousel" | "modes">("carousel")
   const worldSwipeRef = useRef<{ x: number; y: number } | null>(null)
@@ -4951,7 +4953,11 @@ export default function HablaBeat() {
             const flagBg = COUNTRY_FLAG[countryName]
             const closeWorld = () => {
               setWorldClosing(true)
-              setTimeout(() => { setOpenSectionId(""); setWorldClosing(false); setWorldSongIdx(0) }, 450)
+              setTimeout(() => { setOpenSectionId(""); setWorldClosing(false); setWorldSongIdx(0); setWorldStage("list") }, 450)
+            }
+            const handleBack = () => {
+              if (worldStage === "carousel") setWorldStage("list")
+              else closeWorld()
             }
             const songs = openSection.songs
             const selectedIdx = Math.min(worldSongIdx, songs.length - 1)
@@ -5003,13 +5009,13 @@ export default function HablaBeat() {
                 <div className="world-content-in h-[100dvh] flex flex-col overflow-hidden">
                   {/* Back button — absolute top-left */}
                   <div className="absolute top-4 left-4 z-40">
-                    <button onClick={closeWorld}
+                    <button onClick={handleBack}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-gray-700 text-sm font-bold active:scale-95 transition-all"
                       style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.08)" }}>
                       ← Back
                     </button>
                   </div>
-                  {countryName && (
+                  {countryName && worldStage === "carousel" && (
                     <div className="absolute top-4 right-4 z-40 flex items-center gap-2">
                       <span className="text-gray-700 text-sm font-bold">{openSection.title} in {countryName}</span>
                       {flagBg && (
@@ -5020,6 +5026,84 @@ export default function HablaBeat() {
                       )}
                     </div>
                   )}
+
+                  {/* ─────────────────────────────────────────────────────────────
+                       WIZARD LIST VIEW — stage "list"
+                       Shows the section's songs as an ordered progression. Tapping
+                       a row dives into the existing carousel/song view at that song.
+                  ───────────────────────────────────────────────────────────────*/}
+                  {worldStage === "list" && (
+                    <div className="absolute inset-0 z-10 flex flex-col" style={{
+                      background: "linear-gradient(180deg, #f5f7fb 0%, #e8eef9 100%)",
+                    }}>
+                      {/* Header */}
+                      <div className="pt-20 pb-4 px-5 text-center">
+                        <p className="text-xs font-bold uppercase tracking-wider text-gray-400">{openSection.title}{countryName ? ` in ${countryName}` : ""}</p>
+                        <h1 className="text-2xl font-black text-gray-900 mt-1">Choose a song</h1>
+                        <p className="text-sm text-gray-500 mt-1">{openSection.songs.length} {openSection.songs.length === 1 ? "song" : "songs"} in this world</p>
+                      </div>
+
+                      {/* Song list */}
+                      <div className="flex-1 overflow-y-auto px-5 pb-8">
+                        <div className="max-w-md mx-auto flex flex-col gap-0">
+                          {openSection.songs.map((s: any, idx: number) => {
+                            const grade = bestGrades[s.number]
+                            const completed = popHighScores[s.number] > 0 || !!grade
+                            const isLast = idx === openSection.songs.length - 1
+                            return (
+                              <div key={s.id}>
+                                <button
+                                  onClick={() => { setWorldSongIdx(idx); setWorldStage("carousel"); setWorldSlideDir(null) }}
+                                  className="w-full flex items-center gap-4 py-3 px-3 rounded-2xl text-left active:scale-[0.98] transition-all hover:bg-white"
+                                  style={{ background: "rgba(255,255,255,0.7)", border: "1.5px solid rgba(74,124,219,0.15)" }}>
+                                  {/* Step badge */}
+                                  <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-lg" style={{
+                                    background: completed
+                                      ? "linear-gradient(135deg,#22c55e,#16a34a)"
+                                      : "linear-gradient(135deg,#4a7cdb,#6366f1)",
+                                    boxShadow: completed
+                                      ? "0 4px 14px rgba(34,197,94,0.35)"
+                                      : "0 4px 14px rgba(74,124,219,0.35)",
+                                  }}>
+                                    {completed ? "✓" : idx + 1}
+                                  </div>
+                                  {/* Song details */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <h2 className="font-black text-gray-900 text-base truncate">{s.title}</h2>
+                                      {grade && (
+                                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(74,124,219,0.15)", color: "#4a7cdb" }}>{grade}</span>
+                                      )}
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-semibold truncate">
+                                      {SONG_DESCRIPTIONS[s.number] ?? "Vocabulary and grammar"}
+                                    </p>
+                                    {popHighScores[s.number] > 0 && (
+                                      <p className="text-[11px] text-gray-400 font-bold mt-0.5">💰 {popHighScores[s.number]}</p>
+                                    )}
+                                  </div>
+                                  <span className="flex-shrink-0 text-gray-400">
+                                    <ChevronRight className="h-5 w-5" />
+                                  </span>
+                                </button>
+                                {!isLast && (
+                                  <div className="ml-9 my-1 w-0.5 h-4" style={{
+                                    background: completed ? "rgba(34,197,94,0.4)" : "rgba(74,124,219,0.25)",
+                                  }} />
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ─────────────────────────────────────────────────────────────
+                       CAROUSEL VIEW — stage "carousel"
+                  ───────────────────────────────────────────────────────────────*/}
+                  {worldStage === "carousel" && (
+                    <React.Fragment>
 
                   {/* Full-screen background image of current song */}
                   <div key={song.number} className="absolute inset-0 z-0 overflow-hidden">
@@ -5128,6 +5212,8 @@ export default function HablaBeat() {
                       )}
                     </div>
                   </div>
+                  </React.Fragment>
+                  )}
                 </div>
               </div>
             )
