@@ -1397,6 +1397,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           }}
           accentColor="linear-gradient(135deg,#1d4ed8,#1e40af)"
           coins={recallCoins}
+          skipIntro
           onCoinsChange={(delta) => setRecallCoins((c) => c + delta)}
           onClose={() => {
             // Save a 0 score if user skips

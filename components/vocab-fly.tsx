@@ -44,6 +44,7 @@ export interface VocabFlyProps {
   activePointer?:  string
   storeOwned?:     string[]
   onEquipPointer?: (id: string) => void
+  skipIntro?:      boolean
 }
 
 // Mini catalog for fly loadout UI
@@ -178,6 +179,7 @@ export default function VocabFly({
   coins: initialCoins, onCoinsChange, onClose,
   speechEnabled, onGameEnd, onChallenge,
   activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipPointer,
+  skipIntro,
 }: VocabFlyProps) {
 
   // ── Stable computed values ────────────────────────────────────────────────
@@ -186,8 +188,7 @@ export default function VocabFly({
   const isSinglePhase = !phase2
 
   // ── Render state ──────────────────────────────────────────────────────────
-  const [gamePhase,    setGamePhase]    = useState<"instructions" | "countdown" | "playing" | "phase_transition" | "complete" | "practice_more">("instructions")
-  const [countdown,    setCountdown]    = useState(3)
+  const [gamePhase,    setGamePhase]    = useState<"instructions" | "playing" | "phase_transition" | "complete" | "practice_more">(skipIntro ? "playing" : "instructions")
   const [score,        setScore]        = useState(0)
   const [localCoins,   setLocalCoins]   = useState(initialCoins)
   const [wordIdx,      setWordIdx]      = useState(0)
@@ -407,22 +408,14 @@ export default function VocabFly({
     },
   })
 
-  // ── Countdown ─────────────────────────────────────────────────────────────
+  // ── Auto-spawn first question when entering playing phase ─────────────────
+  const spawnedRef = useRef(false)
   useEffect(() => {
-    if (gamePhase !== "countdown") return
-    if (countdown > 0) {
-      const t = setTimeout(() => setCountdown(c => c - 1), 1000)
-      return () => clearTimeout(t)
-    }
-    setCountdown(0)
-    const t = setTimeout(() => {
-      setGamePhase("playing")
-      gamePhaseRef.current = "playing"
-      spawnQuestion(0)
-      if (speechEnabledRef.current) speakSpanish(FULL_QUEUE[0].spanish)
-    }, 600)
-    return () => clearTimeout(t)
-  }, [gamePhase, countdown, spawnQuestion, FULL_QUEUE])
+    if (gamePhase !== "playing" || spawnedRef.current) return
+    spawnedRef.current = true
+    spawnQuestion(0)
+    if (speechEnabledRef.current) speakSpanish(FULL_QUEUE[0].spanish)
+  }, [gamePhase, spawnQuestion, FULL_QUEUE])
 
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER
@@ -709,7 +702,7 @@ export default function VocabFly({
               </button>
             </div>
             <button
-              onClick={() => { setGamePhase("countdown"); gamePhaseRef.current = "countdown" }}
+              onClick={() => { spawnedRef.current = false; setGamePhase("playing"); gamePhaseRef.current = "playing" }}
               className="px-8 py-4 rounded-2xl font-black text-white text-lg transition-transform active:scale-95"
               style={{background: accentColor, boxShadow:"0 4px 24px rgba(0,0,0,0.4)"}}>
               Let&apos;s Go! 🚀
@@ -728,27 +721,6 @@ export default function VocabFly({
           </div>
         )}
 
-        {/* ── Countdown ── */}
-        {gamePhase === "countdown" && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center"
-            style={{zIndex:30,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(6px)"}}>
-            <div className="text-white font-black text-center mb-8">
-              <div className="text-2xl mb-2 opacity-80">Get ready!</div>
-              <div className="text-8xl" style={{animation:"countdownPop 1s ease-out forwards"}}>
-                {countdown > 0 ? countdown : "🐰"}
-              </div>
-            </div>
-            <div className="px-6 py-3 rounded-2xl text-white/70 text-sm text-center max-w-xs"
-              style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)"}}>
-              {isTouchDevice
-                ? <><strong className="text-white">Tap</strong> the correct answer<br/></>
-                : <><strong className="text-white">Press ← ↑ →</strong> to pick an answer<br/></>
-              }
-              Fly 🐰 to the <span className="text-yellow-300 font-bold">correct Spanish word</span>!<br/>
-              <span className="text-xs opacity-60 mt-1 block">English prompt shown at bottom</span>
-            </div>
-          </div>
-        )}
 
         {/* ── Practice More screen — 5 wrong answers ── */}
         {gamePhase === "practice_more" && (
@@ -773,12 +745,13 @@ export default function VocabFly({
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
                 setWordIdx(0); wordIdxRef.current = 0
-                setAnswers([]); setCountdown(3); setFlashScreen(null); setShowHint(false)
+                setAnswers([]); setFlashScreen(null); setShowHint(false)
                 wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
                 halfSkullRef.current = false; setHalfSkull(false)
                 setAnswerFlash(null); setWaitingForNext(false); lockedRef.current = false
                 setBunnyPos({ x: BUNNY_HOME_X, y: BUNNY_HOME_Y }); setBunnyAnimating(false)
-                setGamePhase("countdown"); gamePhaseRef.current = "countdown"
+                spawnedRef.current = false
+                setGamePhase("playing"); gamePhaseRef.current = "playing"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
                 style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)"}}>
@@ -830,12 +803,13 @@ export default function VocabFly({
               <button onClick={() => {
                 setScore(0); scoreRef.current = 0
                 setWordIdx(0); wordIdxRef.current = 0
-                setAnswers([]); setCountdown(3); setFlashScreen(null); setShowHint(false)
+                setAnswers([]); setFlashScreen(null); setShowHint(false)
                 wrongCountRef.current = 0; setWrongCount(0); setMissedWords([])
                 halfSkullRef.current = false; setHalfSkull(false)
                 setAnswerFlash(null); setWaitingForNext(false); lockedRef.current = false
                 setBunnyPos({ x: BUNNY_HOME_X, y: BUNNY_HOME_Y }); setBunnyAnimating(false)
-                setGamePhase("countdown"); gamePhaseRef.current = "countdown"
+                spawnedRef.current = false
+                setGamePhase("playing"); gamePhaseRef.current = "playing"
               }}
                 className="px-6 py-3 rounded-2xl font-black text-white text-base transition-transform active:scale-95"
                 style={{background: accentColor, boxShadow:"0 4px 20px rgba(0,0,0,0.4)"}}>
