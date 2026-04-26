@@ -101,6 +101,52 @@ const SECTION_GRADIENTS: Record<string, string> = {
 
 // ── RECALL BREAKS: mid-song vocabulary quizzes per song ──────────────────────
 const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: string; english: string }[]; label: string }[]> = {
+  1: [
+    {
+      timestamp: 67.5,
+      label: "The Alphabet",
+      words: [
+        { spanish: "a", english: "a" },
+        { spanish: "b", english: "b" },
+        { spanish: "c", english: "c" },
+        { spanish: "d", english: "d" },
+        { spanish: "e", english: "e" },
+        { spanish: "f", english: "f" },
+        { spanish: "g", english: "g" },
+        { spanish: "abecedario", english: "alphabet" },
+      ],
+    },
+  ],
+  2: [
+    {
+      timestamp: 38.7,
+      label: "Special Letters",
+      words: [
+        { spanish: "ñ",      english: "ñ"        },
+        { spanish: "ch",     english: "ch"       },
+        { spanish: "rr",     english: "rr"       },
+        { spanish: "ll",     english: "ll"       },
+        { spanish: "niño",   english: "boy"      },
+        { spanish: "churro", english: "churro"   },
+        { spanish: "perro",  english: "dog"      },
+        { spanish: "letras", english: "letters"  },
+      ],
+    },
+  ],
+  3: [
+    {
+      timestamp: 29.7,
+      label: "The 5 Vowels",
+      words: [
+        { spanish: "a",        english: "a"      },
+        { spanish: "e",        english: "e"      },
+        { spanish: "i",        english: "i"      },
+        { spanish: "o",        english: "o"      },
+        { spanish: "u",        english: "u"      },
+        { spanish: "vocales",  english: "vowels" },
+      ],
+    },
+  ],
   4: [
     {
       timestamp: 33.5,
@@ -1120,6 +1166,278 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
         { spanish: "pasado",     english: "past"      },
         { spanish: "final",      english: "end"       },
         { spanish: "terminó",    english: "ended"     },
+      ],
+    },
+  ],
+  41: [
+    {
+      timestamp: 33.5,
+      label: "Future Endings",
+      words: [
+        { spanish: "cantaré", english: "I will sing" },
+        { spanish: "comeré",  english: "I will eat"  },
+        { spanish: "viviré",  english: "I will live" },
+        { spanish: "futuro",  english: "future"      },
+      ],
+    },
+    {
+      timestamp: 68.0,
+      label: "Cantar Future",
+      words: [
+        { spanish: "cantaré",     english: "I will sing"      },
+        { spanish: "cantarás",    english: "you will sing"    },
+        { spanish: "cantará",     english: "he/she will sing" },
+        { spanish: "cantaremos",  english: "we will sing"     },
+        { spanish: "cantarán",    english: "they will sing"   },
+      ],
+    },
+    {
+      timestamp: 96.0,
+      label: "Comer & Vivir Future",
+      words: [
+        { spanish: "comeré",   english: "I will eat"     },
+        { spanish: "comerás",  english: "you will eat"   },
+        { spanish: "viviré",   english: "I will live"    },
+        { spanish: "vivirás",  english: "you will live"  },
+        { spanish: "vivirán",  english: "they will live" },
+      ],
+    },
+  ],
+  42: [
+    {
+      timestamp: 45.0,
+      label: "Tener & Poner Future",
+      words: [
+        { spanish: "tendré",  english: "I will have"   },
+        { spanish: "tendrás", english: "you will have" },
+        { spanish: "tendrán", english: "they will have"},
+        { spanish: "pondré",  english: "I will put"    },
+        { spanish: "pondrás", english: "you will put"  },
+      ],
+    },
+    {
+      timestamp: 81.5,
+      label: "Salir, Venir, Querer",
+      words: [
+        { spanish: "saldré",  english: "I will leave"  },
+        { spanish: "vendré",  english: "I will come"   },
+        { spanish: "vendrás", english: "you will come" },
+        { spanish: "querré",  english: "I will want"   },
+        { spanish: "querrán", english: "they will want"},
+      ],
+    },
+    {
+      timestamp: 120.0,
+      label: "Decir & Hacer Future",
+      words: [
+        { spanish: "diré",   english: "I will say"   },
+        { spanish: "dirás",  english: "you will say" },
+        { spanish: "haré",   english: "I will do"    },
+        { spanish: "harás",  english: "you will do"  },
+        { spanish: "harán",  english: "they will do" },
+      ],
+    },
+  ],
+  43: [
+    {
+      timestamp: 53.0,
+      label: "Conditional Endings",
+      words: [
+        { spanish: "cantaría",    english: "I would sing"   },
+        { spanish: "cantarías",   english: "you would sing" },
+        { spanish: "comería",     english: "I would eat"    },
+        { spanish: "condicional", english: "conditional"    },
+      ],
+    },
+    {
+      timestamp: 91.5,
+      label: "Comer & Vivir Conditional",
+      words: [
+        { spanish: "comería",   english: "I would eat"     },
+        { spanish: "comerías",  english: "you would eat"   },
+        { spanish: "viviría",   english: "I would live"    },
+        { spanish: "vivirías",  english: "you would live"  },
+        { spanish: "vivirían",  english: "they would live" },
+      ],
+    },
+  ],
+  44: [
+    {
+      timestamp: 41.2,
+      label: "Irregular Conditionals",
+      words: [
+        { spanish: "tendría", english: "I would have"  },
+        { spanish: "diría",   english: "I would say"   },
+        { spanish: "haría",   english: "I would do"    },
+        { spanish: "saldría", english: "I would leave" },
+        { spanish: "vendría", english: "I would come"  },
+      ],
+    },
+    {
+      timestamp: 85.0,
+      label: "More Irregular Conditionals",
+      words: [
+        { spanish: "querría", english: "I would want"  },
+        { spanish: "sabría",  english: "I would know"  },
+        { spanish: "pondría", english: "I would put"   },
+        { spanish: "podría",  english: "I could"       },
+        { spanish: "habría",  english: "there would be"},
+      ],
+    },
+  ],
+  45: [
+    {
+      timestamp: 44.5,
+      label: "Reflexive Pronouns",
+      words: [
+        { spanish: "me",         english: "myself"         },
+        { spanish: "te",         english: "yourself"       },
+        { spanish: "se",         english: "himself/herself"},
+        { spanish: "nos",        english: "ourselves"      },
+        { spanish: "reflexivo",  english: "reflexive"      },
+      ],
+    },
+    {
+      timestamp: 81.0,
+      label: "Reflexive Verbs",
+      words: [
+        { spanish: "despertarse", english: "to wake up"          },
+        { spanish: "irse",        english: "to leave"            },
+        { spanish: "lavarse",     english: "to wash oneself"     },
+        { spanish: "peinarse",    english: "to comb one's hair"  },
+        { spanish: "cepillarse",  english: "to brush"            },
+      ],
+    },
+  ],
+  46: [
+    {
+      timestamp: 38.9,
+      label: "Object Pronouns",
+      words: [
+        { spanish: "me", english: "to me"        },
+        { spanish: "te", english: "to you"       },
+        { spanish: "nos",english: "to us"        },
+        { spanish: "lo", english: "it/him"       },
+        { spanish: "la", english: "it/her"       },
+        { spanish: "se", english: "to him/her"   },
+      ],
+    },
+    {
+      timestamp: 78.6,
+      label: "Verbs with Pronouns",
+      words: [
+        { spanish: "dar",      english: "to give"    },
+        { spanish: "mandar",   english: "to send"    },
+        { spanish: "decir",    english: "to say/tell"},
+        { spanish: "explicar", english: "to explain" },
+        { spanish: "mostrar",  english: "to show"    },
+      ],
+    },
+  ],
+  47: [
+    {
+      timestamp: 47.5,
+      label: "Affirmative Commands",
+      words: [
+        { spanish: "ven",     english: "come"  },
+        { spanish: "habla",   english: "speak" },
+        { spanish: "escribe", english: "write" },
+        { spanish: "come",    english: "eat"   },
+        { spanish: "corre",   english: "run"   },
+        { spanish: "mira",    english: "look"  },
+      ],
+    },
+    {
+      timestamp: 90.0,
+      label: "Negative Commands",
+      words: [
+        { spanish: "no corras",  english: "don't run"    },
+        { spanish: "no hables",  english: "don't speak"  },
+        { spanish: "no toques",  english: "don't touch"  },
+        { spanish: "no olvides", english: "don't forget" },
+        { spanish: "mandato",    english: "command"      },
+      ],
+    },
+  ],
+  48: [
+    {
+      timestamp: 42.9,
+      label: "Para — Purpose",
+      words: [
+        { spanish: "para",     english: "for/to"   },
+        { spanish: "estudiar", english: "to study" },
+        { spanish: "viajar",   english: "to travel"},
+        { spanish: "soñar",    english: "to dream" },
+        { spanish: "vivir",    english: "to live"  },
+      ],
+    },
+    {
+      timestamp: 85.5,
+      label: "Por — Reason",
+      words: [
+        { spanish: "por",      english: "for/by/through"},
+        { spanish: "gracias",  english: "thanks"        },
+        { spanish: "camino",   english: "I walk"        },
+        { spanish: "teléfono", english: "phone"         },
+        { spanish: "amor",     english: "love"          },
+      ],
+    },
+    {
+      timestamp: 117.5,
+      label: "Por vs Para",
+      words: [
+        { spanish: "por",     english: "for/by"  },
+        { spanish: "para",    english: "for/to"  },
+        { spanish: "gracias", english: "thanks"  },
+        { spanish: "favor",   english: "favor"   },
+        { spanish: "amor",    english: "love"    },
+      ],
+    },
+  ],
+  49: [
+    {
+      timestamp: 45.7,
+      label: "Subjunctive Triggers",
+      words: [
+        { spanish: "quiero",     english: "I want"      },
+        { spanish: "espero",     english: "I hope"      },
+        { spanish: "ojalá",      english: "hopefully"   },
+        { spanish: "subjuntivo", english: "subjunctive" },
+      ],
+    },
+    {
+      timestamp: 76.1,
+      label: "Emotion & Doubt",
+      words: [
+        { spanish: "deseo",      english: "I wish"        },
+        { spanish: "temo",       english: "I fear"        },
+        { spanish: "alegra",     english: "makes happy"   },
+        { spanish: "creo",       english: "I believe"     },
+        { spanish: "importante", english: "important"     },
+      ],
+    },
+  ],
+  50: [
+    {
+      timestamp: 41.2,
+      label: "Mexican Slang",
+      words: [
+        { spanish: "onda",   english: "vibe"        },
+        { spanish: "padre",  english: "cool"        },
+        { spanish: "órale",  english: "wow/let's go"},
+        { spanish: "chido",  english: "cool"        },
+        { spanish: "vale",   english: "okay"        },
+      ],
+    },
+    {
+      timestamp: 84.5,
+      label: "Regional Slang",
+      words: [
+        { spanish: "chévere",   english: "cool (Venezuela)" },
+        { spanish: "bacán",     english: "cool (Chile)"     },
+        { spanish: "guay",      english: "cool (Spain)"     },
+        { spanish: "no manches",english: "no way"           },
+        { spanish: "qué rollo", english: "what's up"        },
       ],
     },
   ],
