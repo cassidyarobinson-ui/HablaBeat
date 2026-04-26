@@ -195,6 +195,42 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  7: [
+    {
+      timestamp: 22.5,
+      label: "Jobs Part 1",
+      words: [
+        { spanish: "doctor",      english: "doctor"        },
+        { spanish: "bombero",     english: "firefighter"   },
+        { spanish: "panadero",    english: "baker"         },
+        { spanish: "maestra",     english: "teacher"       },
+        { spanish: "piloto",      english: "pilot"         },
+        { spanish: "carpintero",  english: "carpenter"     },
+        { spanish: "cantante",    english: "singer"        },
+        { spanish: "chef",        english: "chef"          },
+        { spanish: "jardinero",   english: "gardener"      },
+        { spanish: "dentista",    english: "dentist"       },
+        { spanish: "artista",     english: "artist"        },
+        { spanish: "ingeniero",   english: "engineer"      },
+      ],
+    },
+    {
+      timestamp: 33.2,
+      label: "Jobs Part 2",
+      words: [
+        { spanish: "policía",     english: "police officer"},
+        { spanish: "granjero",    english: "farmer"        },
+        { spanish: "pintor",      english: "painter"       },
+        { spanish: "actor",       english: "actor"         },
+        { spanish: "enfermera",   english: "nurse"         },
+        { spanish: "escritor",    english: "writer"        },
+        { spanish: "veterinario", english: "veterinarian"  },
+        { spanish: "conductor",   english: "driver"        },
+        { spanish: "arquitecto",  english: "architect"     },
+        { spanish: "traductor",   english: "translator"    },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
