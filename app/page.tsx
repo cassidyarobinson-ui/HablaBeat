@@ -497,17 +497,23 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
   ],
   19: [
     {
-      timestamp: 41.0,
-      label: "Feelings",
+      timestamp: 30.8,
+      label: "Feelings Pt 1",
       words: [
-        { spanish: "feliz",        english: "happy"     },
-        { spanish: "triste",       english: "sad"       },
-        { spanish: "enojado",      english: "angry"     },
-        { spanish: "cansado",      english: "tired"     },
-        { spanish: "sorprendido",  english: "surprised" },
-        { spanish: "aburrido",     english: "bored"     },
-        { spanish: "contento",     english: "content"   },
-        { spanish: "nervioso",     english: "nervous"   },
+        { spanish: "feliz",   english: "happy" },
+        { spanish: "triste",  english: "sad"   },
+        { spanish: "enojado", english: "angry" },
+        { spanish: "cansado", english: "tired" },
+      ],
+    },
+    {
+      timestamp: 41.0,
+      label: "Feelings Pt 2",
+      words: [
+        { spanish: "sorprendido", english: "surprised" },
+        { spanish: "aburrido",    english: "bored"     },
+        { spanish: "contento",    english: "content"   },
+        { spanish: "nervioso",    english: "nervous"   },
       ],
     },
   ],
