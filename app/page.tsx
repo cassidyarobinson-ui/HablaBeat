@@ -5043,7 +5043,7 @@ export default function HablaBeat() {
                   />
 
                   {/* Top glass card with title + description + Song N of M */}
-                  <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "0 0 24px 24px" }}>
+                  <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.72)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: "0 0 24px 24px" }}>
                     <div className="text-center">
                       <h1 className="text-xl font-black text-gray-900 leading-tight">{song.title}</h1>
                       <p className="text-xs text-gray-500 font-semibold mt-0.5">
@@ -5076,7 +5076,7 @@ export default function HablaBeat() {
                   </button>
 
                   {/* Bottom glass card — Practice (secondary), Play (primary) */}
-                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
+                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.72)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: "24px 24px 0 0" }}>
                     {/* Practice (secondary, blue outline) */}
                     {hasSing && (
                       <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
