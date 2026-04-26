@@ -4996,8 +4996,8 @@ export default function HablaBeat() {
                   {/* Back button — absolute top-left */}
                   <div className="absolute top-4 left-4 z-40">
                     <button onClick={closeWorld}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-gray-700 text-sm font-bold active:scale-95 transition-all"
-                      style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.08)" }}>
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-black active:scale-95 transition-all"
+                      style={{ background: "rgba(255,255,255,0.95)", color: "#4a7cdb", border: "2px solid #4a7cdb" }}>
                       ← Back
                     </button>
                   </div>
@@ -5079,10 +5079,25 @@ export default function HablaBeat() {
                       </button>
                     </div>
 
-                    {/* Play (primary) */}
+                    {/* Practice (secondary, blue outline) */}
+                    {hasSing && (
+                      <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
+                        className="w-full px-6 py-3 rounded-full font-black text-base transition-all hover:scale-[1.02] active:scale-95 mb-2"
+                        style={{
+                          background: worldFocus === "modes" && worldModeIdx === 0 ? "rgba(74,124,219,0.10)" : "transparent",
+                          color: "#4a7cdb",
+                          border: "2px solid #4a7cdb",
+                          boxShadow: worldFocus === "modes" && worldModeIdx === 0 ? "0 0 0 3px #fbbf24" : undefined,
+                          transform: worldFocus === "modes" && worldModeIdx === 0 ? "scale(1.02)" : undefined,
+                        }}>
+                        Practice 🎤
+                      </button>
+                    )}
+
+                    {/* Play (primary, blue gradient) */}
                     {hasPop && (
                       <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                        className="w-full px-6 py-4 rounded-full font-black text-lg text-white transition-all hover:scale-[1.02] active:scale-95 mb-2"
+                        className="w-full px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-[1.02] active:scale-95"
                         style={{
                           background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
                           boxShadow: worldFocus === "modes" && worldModeIdx === 1
@@ -5094,21 +5109,6 @@ export default function HablaBeat() {
                         {popHighScores[song.number] > 0 && (
                           <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span>
                         )}
-                      </button>
-                    )}
-
-                    {/* Practice (secondary) */}
-                    {hasSing && (
-                      <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                        className="w-full px-6 py-2.5 rounded-full font-bold text-sm transition-all hover:scale-[1.02] active:scale-95"
-                        style={{
-                          background: worldFocus === "modes" && worldModeIdx === 0 ? "rgba(124,58,237,0.12)" : "transparent",
-                          color: "#6d28d9",
-                          border: "1.5px solid rgba(124,58,237,0.35)",
-                          boxShadow: worldFocus === "modes" && worldModeIdx === 0 ? "0 0 0 3px #fbbf24" : undefined,
-                          transform: worldFocus === "modes" && worldModeIdx === 0 ? "scale(1.02)" : undefined,
-                        }}>
-                        Practice 🎤
                       </button>
                     )}
                   </div>
