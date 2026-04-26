@@ -1331,7 +1331,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     if (gameState === "ended") {
       if (onGameEnd) {
         const { grade } = getGrade()
-        onGameEnd(songNumber, maxComboRef.current, scoreRef.current, grade)
+        const recallSum = recallScores.reduce((s, r) => s + r.score, 0)
+        const combinedScore = scoreRef.current + recallSum
+        onGameEnd(songNumber, maxComboRef.current, combinedScore, grade)
       }
       if (initialChallengePhone) {
         // Auto-trigger challenge flow so score is built and modal opens
@@ -1997,45 +1999,57 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <p className="text-center text-sm font-black mb-1" style={{ color: "#4a7cdb" }}>You'll get there! 💪</p>
           )}
 
-          {/* Stats row - frosted glass cards */}
-          <div className="flex gap-2 w-full mb-2">
-            <div className="flex-1 rounded-2xl px-3 py-2" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
-              <div className="flex flex-col items-center gap-0">
-                <span className="text-lg">🔥</span>
-                <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Flow</span>
-                <span className="font-black text-gray-800 text-xl">{maxCombo}</span>
-              </div>
-            </div>
-            <div className="flex-1 rounded-2xl px-3 py-2" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
-              <div className="flex flex-col items-center gap-0">
-                <span className="text-lg">💰</span>
-                <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Bank</span>
-                <span className="font-black text-gray-800 text-xl">{score}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Recall Test Scores */}
-          {recallScores.length > 0 && (
-            <div className="w-full mb-4 rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
-              <div className="flex items-center gap-2 mb-2 justify-center">
-                <span className="text-lg">🐰</span>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Recall Test</span>
-              </div>
-              <div className="flex gap-2 justify-center flex-wrap">
-                {recallScores.map((rs, i) => (
-                  <div key={i} className="flex flex-col items-center rounded-xl px-3 py-2" style={{ background: "rgba(74,124,219,0.08)", minWidth: 80 }}>
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{rs.label}</span>
-                    <span className="font-black text-gray-800 text-xl">{rs.score}</span>
+          {/* Combined score header */}
+          {(() => {
+            const recallSum = recallScores.reduce((s, r) => s + r.score, 0)
+            const totalScore = score + recallSum
+            return (
+              <>
+                {/* Total score — primary callout */}
+                <div className="w-full mb-2 rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.7)", border: "1.5px solid rgba(74,124,219,0.3)" }}>
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span className="text-xl">💰</span>
+                    <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider">Total Score</span>
                   </div>
-                ))}
-              </div>
-              <div className="mt-2 pt-2 border-t border-gray-200/50 flex justify-center">
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider mr-2">Total</span>
-                <span className="font-black text-gray-800">{recallScores.reduce((sum, rs) => sum + rs.score, 0)}</span>
-              </div>
-            </div>
-          )}
+                  <div className="font-black text-gray-800 text-3xl text-center leading-none">{totalScore}</div>
+                  {recallScores.length > 0 && (
+                    <div className="mt-2 flex justify-center gap-3 text-[11px] font-bold text-gray-500">
+                      <span>Tapping <span className="text-gray-800">{score}</span></span>
+                      <span className="text-gray-300">•</span>
+                      <span>Recall <span className="text-gray-800">{recallSum}</span></span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Flow stat */}
+                <div className="w-full mb-2 rounded-2xl px-3 py-2" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
+                  <div className="flex flex-col items-center gap-0">
+                    <span className="text-lg">🔥</span>
+                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Flow</span>
+                    <span className="font-black text-gray-800 text-xl">{maxCombo}</span>
+                  </div>
+                </div>
+
+                {/* Recall Test detail (per-quiz breakdown) */}
+                {recallScores.length > 0 && (
+                  <div className="w-full mb-4 rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
+                    <div className="flex items-center gap-2 mb-2 justify-center">
+                      <span className="text-lg">🐰</span>
+                      <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Recall Test</span>
+                    </div>
+                    <div className="flex gap-2 justify-center flex-wrap">
+                      {recallScores.map((rs, i) => (
+                        <div key={i} className="flex flex-col items-center rounded-xl px-3 py-2" style={{ background: "rgba(74,124,219,0.08)", minWidth: 80 }}>
+                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{rs.label}</span>
+                          <span className="font-black text-gray-800 text-xl">{rs.score}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )
+          })()}
 
           <div className="space-y-2 w-full mb-2">
             {/* Play Again */}
