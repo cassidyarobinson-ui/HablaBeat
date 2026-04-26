@@ -5062,12 +5062,12 @@ export default function HablaBeat() {
                   />
 
                   {/* Top glass card — title+subtitle on one line (left), step indicator (right) */}
-                  <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: "0 0 24px 24px" }}>
+                  <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", borderRadius: "0 0 24px 24px" }}>
                     <div className="flex items-center justify-between gap-3">
-                      {/* Left: title and subtitle on the same line */}
-                      <div className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
+                      {/* Left: title above subtitle */}
+                      <div className="min-w-0 flex-1">
                         <h1 className="text-xl font-black text-gray-900 leading-tight truncate">{song.title}</h1>
-                        <p className="text-xs text-gray-500 font-semibold truncate">
+                        <p className="text-xs text-gray-500 font-semibold truncate mt-0.5">
                           {description || `${countryName}`}
                           {songBestGrade && <span className="ml-2 text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
                         </p>
@@ -5101,7 +5101,7 @@ export default function HablaBeat() {
                                   color: stepColor,
                                   fontSize: isCurrent ? 12 : 10,
                                   boxShadow: isCurrent
-                                    ? "0 3px 10px rgba(74,124,219,0.4), 0 0 0 2.5px rgba(74,124,219,0.18)"
+                                    ? "0 3px 10px rgba(74,124,219,0.4)"
                                     : wasPlayed
                                     ? "0 2px 5px rgba(34,197,94,0.25)"
                                     : "none",
@@ -5142,7 +5142,7 @@ export default function HablaBeat() {
                   </button>
 
                   {/* Bottom glass card — Practice (secondary) | Play (primary) side-by-side */}
-                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: "24px 24px 0 0" }}>
+                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", borderRadius: "24px 24px 0 0" }}>
                     <div className="flex gap-3">
                       {hasSing && (
                         <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
