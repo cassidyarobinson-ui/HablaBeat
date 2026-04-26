@@ -317,6 +317,138 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  11: [
+    {
+      timestamp: 24.6,
+      label: "Living & Kitchen",
+      words: [
+        { spanish: "sillón",   english: "couch"       },
+        { spanish: "mesa",     english: "table"       },
+        { spanish: "taza",     english: "cup"         },
+        { spanish: "sartén",   english: "frying pan"  },
+        { spanish: "vitrina",  english: "cabinet"     },
+        { spanish: "plato",    english: "plate"       },
+        { spanish: "hornilla", english: "stove"       },
+      ],
+    },
+    {
+      timestamp: 44.8,
+      label: "Bathroom & Bedroom",
+      words: [
+        { spanish: "jabón",     english: "soap"   },
+        { spanish: "toalla",    english: "towel"  },
+        { spanish: "lavamanos", english: "sink"   },
+        { spanish: "cama",      english: "bed"    },
+        { spanish: "marco",     english: "frame"  },
+        { spanish: "lámpara",   english: "lamp"   },
+        { spanish: "zapato",    english: "shoe"   },
+      ],
+    },
+  ],
+  12: [
+    {
+      timestamp: 19.0,
+      label: "Places Pt 1",
+      words: [
+        { spanish: "baño",        english: "bathroom" },
+        { spanish: "escuela",     english: "school"   },
+        { spanish: "biblioteca",  english: "library"  },
+        { spanish: "playa",       english: "beach"    },
+        { spanish: "parque",      english: "park"     },
+      ],
+    },
+    {
+      timestamp: 31.8,
+      label: "Places Pt 2",
+      words: [
+        { spanish: "tienda",     english: "store"   },
+        { spanish: "hospital",   english: "hospital"},
+        { spanish: "panadería",  english: "bakery"  },
+        { spanish: "casa",       english: "house"   },
+        { spanish: "cine",       english: "cinema"  },
+      ],
+    },
+  ],
+  13: [
+    {
+      timestamp: 26.3,
+      label: "Directions Pt 1",
+      words: [
+        { spanish: "izquierda", english: "left"  },
+        { spanish: "derecha",   english: "right" },
+        { spanish: "arriba",    english: "up"    },
+        { spanish: "abajo",     english: "down"  },
+      ],
+    },
+    {
+      timestamp: 35.95,
+      label: "Directions Pt 2",
+      words: [
+        { spanish: "delante", english: "in front" },
+        { spanish: "detrás",  english: "behind"   },
+        { spanish: "cerca",   english: "close"    },
+        { spanish: "lejos",   english: "far"      },
+      ],
+    },
+  ],
+  14: [
+    {
+      timestamp: 21.5,
+      label: "Numbers 1–10",
+      words: [
+        { spanish: "uno",    english: "one"   },
+        { spanish: "dos",    english: "two"   },
+        { spanish: "tres",   english: "three" },
+        { spanish: "cuatro", english: "four"  },
+        { spanish: "cinco",  english: "five"  },
+        { spanish: "seis",   english: "six"   },
+        { spanish: "siete",  english: "seven" },
+        { spanish: "ocho",   english: "eight" },
+        { spanish: "nueve",  english: "nine"  },
+        { spanish: "diez",   english: "ten"   },
+      ],
+    },
+    {
+      timestamp: 48.2,
+      label: "Numbers 11–20",
+      words: [
+        { spanish: "once",        english: "eleven"    },
+        { spanish: "doce",        english: "twelve"    },
+        { spanish: "trece",       english: "thirteen"  },
+        { spanish: "catorce",     english: "fourteen"  },
+        { spanish: "quince",      english: "fifteen"   },
+        { spanish: "dieciséis",   english: "sixteen"   },
+        { spanish: "diecisiete",  english: "seventeen" },
+        { spanish: "dieciocho",   english: "eighteen"  },
+        { spanish: "diecinueve",  english: "nineteen"  },
+        { spanish: "veinte",      english: "twenty"    },
+      ],
+    },
+  ],
+  15: [
+    {
+      timestamp: 21.0,
+      label: "Tens 10–50",
+      words: [
+        { spanish: "diez",       english: "ten"    },
+        { spanish: "veinte",     english: "twenty" },
+        { spanish: "treinta",    english: "thirty" },
+        { spanish: "cuarenta",   english: "forty"  },
+        { spanish: "cincuenta",  english: "fifty"  },
+      ],
+    },
+    {
+      timestamp: 46.5,
+      label: "Tens 60–100",
+      words: [
+        { spanish: "sesenta",  english: "sixty"   },
+        { spanish: "setenta",  english: "seventy" },
+        { spanish: "ochenta",  english: "eighty"  },
+        { spanish: "noventa",  english: "ninety"  },
+        { spanish: "cien",     english: "one hundred" },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
