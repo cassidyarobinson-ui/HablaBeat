@@ -5075,40 +5075,39 @@ export default function HablaBeat() {
                     <ChevronRight className="h-7 w-7" />
                   </button>
 
-                  {/* Bottom glass card — Practice (secondary), Play (primary) */}
+                  {/* Bottom glass card — Practice (secondary) | Play (primary) side-by-side */}
                   <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.72)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: "24px 24px 0 0" }}>
-                    {/* Practice (secondary, blue outline) */}
-                    {hasSing && (
-                      <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
-                        className="w-full px-6 py-3 rounded-full font-black text-base transition-all hover:scale-[1.02] active:scale-95 mb-2"
-                        style={{
-                          background: worldFocus === "modes" && worldModeIdx === 0 ? "rgba(74,124,219,0.10)" : "transparent",
-                          color: "#4a7cdb",
-                          border: "2px solid #4a7cdb",
-                          boxShadow: worldFocus === "modes" && worldModeIdx === 0 ? "0 0 0 3px #fbbf24" : undefined,
-                          transform: worldFocus === "modes" && worldModeIdx === 0 ? "scale(1.02)" : undefined,
-                        }}>
-                        Practice 🎤
-                      </button>
-                    )}
-
-                    {/* Play (primary, blue gradient) */}
-                    {hasPop && (
-                      <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
-                        className="w-full px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-[1.02] active:scale-95"
-                        style={{
-                          background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
-                          boxShadow: worldFocus === "modes" && worldModeIdx === 1
-                            ? `0 0 0 3px #fbbf24, 0 6px 30px rgba(74,124,219,0.55)`
-                            : `0 6px 30px rgba(74,124,219,0.55)`,
-                          transform: worldFocus === "modes" && worldModeIdx === 1 ? "scale(1.03)" : undefined,
-                        }}>
-                        Play 🥕
-                        {popHighScores[song.number] > 0 && (
-                          <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span>
-                        )}
-                      </button>
-                    )}
+                    <div className="flex gap-3">
+                      {hasSing && (
+                        <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
+                          className="flex-1 px-4 py-3 rounded-full font-black text-base transition-all hover:scale-[1.02] active:scale-95"
+                          style={{
+                            background: worldFocus === "modes" && worldModeIdx === 0 ? "rgba(74,124,219,0.10)" : "transparent",
+                            color: "#4a7cdb",
+                            border: "2px solid #4a7cdb",
+                            boxShadow: worldFocus === "modes" && worldModeIdx === 0 ? "0 0 0 3px #fbbf24" : undefined,
+                            transform: worldFocus === "modes" && worldModeIdx === 0 ? "scale(1.02)" : undefined,
+                          }}>
+                          Practice 🎤
+                        </button>
+                      )}
+                      {hasPop && (
+                        <button onClick={() => handlePlayDDR(song.id, openCategory!.id, openSection!.id)}
+                          className="flex-1 px-4 py-3 rounded-full font-black text-base text-white transition-all hover:scale-[1.02] active:scale-95"
+                          style={{
+                            background: "linear-gradient(135deg, #4a7cdb, #6366f1)",
+                            boxShadow: worldFocus === "modes" && worldModeIdx === 1
+                              ? `0 0 0 3px #fbbf24, 0 6px 30px rgba(74,124,219,0.55)`
+                              : `0 6px 30px rgba(74,124,219,0.55)`,
+                            transform: worldFocus === "modes" && worldModeIdx === 1 ? "scale(1.03)" : undefined,
+                          }}>
+                          Play 🥕
+                          {popHighScores[song.number] > 0 && (
+                            <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span>
+                          )}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
