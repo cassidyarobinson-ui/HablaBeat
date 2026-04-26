@@ -168,6 +168,33 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  6: [
+    {
+      timestamp: 20.0,
+      label: "Immediate Family",
+      words: [
+        { spanish: "papá",    english: "dad"     },
+        { spanish: "mamá",    english: "mom"     },
+        { spanish: "hermano", english: "brother" },
+        { spanish: "hermana", english: "sister"  },
+        { spanish: "tío",     english: "uncle"   },
+        { spanish: "tía",     english: "aunt"    },
+        { spanish: "abuela",  english: "grandma" },
+      ],
+    },
+    {
+      timestamp: 25.1,
+      label: "Extended Family",
+      words: [
+        { spanish: "abuelo",  english: "grandpa"   },
+        { spanish: "primo",   english: "cousin (m)"},
+        { spanish: "prima",   english: "cousin (f)"},
+        { spanish: "sobrino", english: "nephew"    },
+        { spanish: "sobrina", english: "niece"     },
+        { spanish: "mascota", english: "pet"       },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
