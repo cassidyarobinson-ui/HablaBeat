@@ -5013,134 +5013,97 @@ export default function HablaBeat() {
                     </div>
                   )}
 
-                  {/* Main content — vertically centered */}
-                  <div className="flex-1 flex flex-col items-center justify-center pt-8 md:pt-16 pb-16">
+                  {/* Full-screen background image of current song */}
+                  <div key={song.number} className="absolute inset-0 z-0">
+                    <img
+                      src={`/images/backgrounds/song-${song.number}.jpg`}
+                      alt={song.title}
+                      className="w-full h-full object-cover"
+                      draggable={false}
+                    />
+                  </div>
 
-                    {/* Song title sitting above the cards */}
-                    <div className="text-center mb-8">
-                      <div className="text-5xl md:text-6xl font-black text-white" style={{ textShadow: "0 2px 30px rgba(74,124,219,0.6)" }}>
-                        {song.title}
-                      </div>
-                      <div className="text-lg text-white/40 font-semibold mt-1">
-                        {openSection.title}
-                      </div>
-                    </div>
+                  {/* Swipe-capture overlay */}
+                  <div className="absolute inset-0 z-10"
+                    onTouchStart={(e) => { worldSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }}
+                    onTouchEnd={(e) => {
+                      if (!worldSwipeRef.current) return
+                      const dx = e.changedTouches[0].clientX - worldSwipeRef.current.x
+                      const dy = e.changedTouches[0].clientY - worldSwipeRef.current.y
+                      worldSwipeRef.current = null
+                      if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return
+                      if (dx < 0) {
+                        if (selectedIdx >= songs.length - 1) goToNextWorld()
+                        else setWorldSongIdx(prev => prev + 1)
+                      } else {
+                        if (selectedIdx <= 0) goToPrevWorld()
+                        else setWorldSongIdx(prev => prev - 1)
+                      }
+                    }}
+                  />
 
-                    {/* Carousel — same sizing as dance mode */}
-                    <div className="relative w-full flex items-center justify-center" style={{ perspective: "2000px", height: "min(70vh, 95vw)" }}
-                      onTouchStart={(e) => { worldSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }}
-                      onTouchEnd={(e) => {
-                        if (!worldSwipeRef.current) return
-                        const dx = e.changedTouches[0].clientX - worldSwipeRef.current.x
-                        const dy = e.changedTouches[0].clientY - worldSwipeRef.current.y
-                        worldSwipeRef.current = null
-                        if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return
-                        if (dx < 0) {
-                          if (selectedIdx >= songs.length - 1) goToNextWorld()
-                          else setWorldSongIdx(prev => prev + 1)
-                        } else {
-                          if (selectedIdx <= 0) goToPrevWorld()
-                          else setWorldSongIdx(prev => prev - 1)
-                        }
-                      }}>
-                      {/* Left arrow */}
-                      {(selectedIdx > 0 || hasPrevWorld) && (
-                        <div className="fixed left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer"
-                          onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else goToPrevWorld() }}
-                          style={{ color: selectedIdx === 0 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.5)" }}>
-                          <ChevronLeft className="h-10 w-10 md:h-20 md:w-20" />
-                          {selectedIdx === 0 && hasPrevWorld && (
-                            <div className="text-[10px] md:text-xs text-white/40 text-center mt-1 whitespace-nowrap">{prevWorldName}</div>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
-                        {songs.map((s, idx) => {
-                          const offset = idx - selectedIdx
-                          if (Math.abs(offset) > 4) return null
-                          const coverSize = "min(70vh, 95vw)"
-                          const translateX = offset * 320
-                          const translateZ = -Math.abs(offset) * 200
-                          const rotateY = offset * -30
-                          const scale = offset === 0 ? 1 : Math.max(0.4, 1 - Math.abs(offset) * 0.18)
-                          const opacity = offset === 0 ? 1 : Math.max(0.2, 1 - Math.abs(offset) * 0.25)
-                          return (
-                            <div key={s.id} className="absolute" style={{
-                              transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
-                              opacity, zIndex: 10 - Math.abs(offset),
-                              transition: "all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)",
-                              cursor: offset === 0 ? "pointer" : "pointer",
-                            }} onClick={() => { if (offset !== 0) setWorldSongIdx(idx) }}>
-                              <div style={{
-                                width: coverSize, height: coverSize, borderRadius: "16px", overflow: "hidden",
-                                boxShadow: offset === 0
-                                  ? "0 0 100px rgba(74,124,219,0.5), 0 30px 80px rgba(0,0,0,0.8)"
-                                  : "0 10px 40px rgba(0,0,0,0.6)",
-                                border: offset === 0 ? "3px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
-                              }}>
-                                <img src={`/images/backgrounds/song-${s.number}.jpg`} alt={s.title}
-                                  style={{ width: "100%", height: "100%", objectFit: "cover" }} draggable={false} />
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-
-                      {/* Right arrow */}
-                      {(selectedIdx < songs.length - 1 || hasNextWorld) && (
-                        <div className="fixed right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 transition-all duration-200 cursor-pointer"
-                          onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else goToNextWorld() }}
-                          style={{ color: selectedIdx === songs.length - 1 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.5)" }}>
-                          <ChevronRight className="h-10 w-10 md:h-20 md:w-20" />
-                          {selectedIdx === songs.length - 1 && hasNextWorld && (
-                            <div className="text-[10px] md:text-xs text-white/40 text-center mt-1 whitespace-nowrap">{nextWorldName}</div>
-                          )}
-                        </div>
+                  {/* Left arrow */}
+                  {(selectedIdx > 0 || hasPrevWorld) && (
+                    <div className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
+                      onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else goToPrevWorld() }}
+                      style={{ color: selectedIdx === 0 ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.9)", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}>
+                      <ChevronLeft className="h-10 w-10 md:h-20 md:w-20" />
+                      {selectedIdx === 0 && hasPrevWorld && (
+                        <div className="text-[10px] md:text-xs text-white/80 text-center mt-1 whitespace-nowrap">{prevWorldName}</div>
                       )}
                     </div>
+                  )}
 
-                    {/* Song info below carousel */}
-                    <div className="text-center mt-8">
-                      <div className="text-lg text-white/60 font-medium mb-1">
+                  {/* Right arrow */}
+                  {(selectedIdx < songs.length - 1 || hasNextWorld) && (
+                    <div className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
+                      onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else goToNextWorld() }}
+                      style={{ color: selectedIdx === songs.length - 1 ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.9)", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}>
+                      <ChevronRight className="h-10 w-10 md:h-20 md:w-20" />
+                      {selectedIdx === songs.length - 1 && hasNextWorld && (
+                        <div className="text-[10px] md:text-xs text-white/80 text-center mt-1 whitespace-nowrap">{nextWorldName}</div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Spacer pushes the bottom card down */}
+                  <div className="flex-1 relative z-0" />
+
+                  {/* Bottom glass card with title + description + buttons */}
+                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
+                    <div className="text-center mb-4">
+                      <h1 className="text-2xl font-black text-gray-900">{song.title}</h1>
+                      <p className="text-sm text-gray-500 font-semibold mt-0.5">
                         {description || `${countryName}`}
-                        {songBestGrade && <span className="ml-2 text-xs font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.3)", color: "#93c5fd" }}>{songBestGrade}</span>}
-                      </div>
-                      <div className="text-xl text-white/50 font-bold mb-3">
-                        Song {song.number} · {selectedIdx + 1} of {songs.length}
-                      </div>
-
-                      {/* Mode buttons — inline row with pad/keyboard selection */}
-                      {(() => {
-                        const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
-                        if (hasSing) modeButtons.push({ key: "sing", label: "Practice", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
-                        if (hasPop) modeButtons.push({ key: "dance", label: "Play", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
-                        if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
-                        return (
-                          <div className="flex gap-3 justify-center mb-3">
-                            {modeButtons.map((m, i) => {
-                              const isHighlighted = worldFocus === "modes" && worldModeIdx === i
-                              return (
-                                <button key={m.key} onClick={m.onClick}
-                                  className="px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
-                                  style={{
-                                    background: m.bg,
-                                    boxShadow: isHighlighted ? `0 0 0 3px #fbbf24, 0 4px 25px ${m.glow}` : `0 4px 25px ${m.glow}`,
-                                    transform: isHighlighted ? "scale(1.1)" : undefined,
-                                  }}>
-                                  {m.label} {m.emoji}{m.extra}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        )
-                      })()}
-
-                      <div className="text-sm text-white/30 hidden md:block">
-                        {worldFocus === "carousel" ? "← → to browse · ↓ to select mode" : "← → to pick mode · ↓ to play · ↑ back to songs"}
-                      </div>
-
+                        {songBestGrade && <span className="ml-2 text-xs font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">Song {song.number} · {selectedIdx + 1} of {songs.length}</p>
                     </div>
+
+                    {(() => {
+                      const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
+                      if (hasSing) modeButtons.push({ key: "sing", label: "Practice", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
+                      if (hasPop) modeButtons.push({ key: "dance", label: "Play", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
+                      if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
+                      return (
+                        <div className="flex gap-3 justify-center">
+                          {modeButtons.map((m, i) => {
+                            const isHighlighted = worldFocus === "modes" && worldModeIdx === i
+                            return (
+                              <button key={m.key} onClick={m.onClick}
+                                className="px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
+                                style={{
+                                  background: m.bg,
+                                  boxShadow: isHighlighted ? `0 0 0 3px #fbbf24, 0 4px 25px ${m.glow}` : `0 4px 25px ${m.glow}`,
+                                  transform: isHighlighted ? "scale(1.1)" : undefined,
+                                }}>
+                                {m.label} {m.emoji}{m.extra}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      )
+                    })()}
                   </div>
                 </div>
               </div>
