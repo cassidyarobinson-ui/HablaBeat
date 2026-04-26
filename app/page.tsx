@@ -5067,7 +5067,7 @@ export default function HablaBeat() {
                       {/* Left: title above subtitle */}
                       <div className="min-w-0 flex-1">
                         <h1 className="text-xl font-black text-gray-900 leading-tight truncate">{song.title}</h1>
-                        <p className="text-xs text-gray-500 font-semibold truncate mt-0.5">
+                        <p className="text-xs text-gray-900 font-semibold truncate mt-0.5">
                           {description || `${countryName}`}
                           {songBestGrade && <span className="ml-2 text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
                         </p>
