@@ -3109,7 +3109,7 @@ export default function HablaBeat() {
         const modes: string[] = []
         if (song?.youtubeId && song.youtubeId !== "") modes.push("sing")
         if (selectedLanguage === "spanish") modes.push("dance")
-        if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number]) modes.push("fly")
+        if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number] && !SONG_RECALL_BREAKS[song?.number]) modes.push("fly")
 
         if (worldFocus === "carousel") {
           if (btn === "left") {
@@ -3190,7 +3190,7 @@ export default function HablaBeat() {
       const modes: string[] = []
       if (song?.youtubeId && song.youtubeId !== "") modes.push("sing")
       if (selectedLanguage === "spanish") modes.push("dance")
-      if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number]) modes.push("fly")
+      if (selectedLanguage === "spanish" && SONG_FLY_DATA[song?.number] && !SONG_RECALL_BREAKS[song?.number]) modes.push("fly")
 
       if (worldFocus === "carousel") {
         if (btn === "left") {
@@ -4062,7 +4062,7 @@ export default function HablaBeat() {
 
   // ── Song Page View ──
   if (currentView === "song" && currentSong) {
-    const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[currentSong.number]
+    const hasFly = selectedLanguage === "spanish" && !!SONG_FLY_DATA[currentSong.number] && !SONG_RECALL_BREAKS[currentSong.number]
     const hasPop = selectedLanguage === "spanish"
     const hasSing = currentSong.youtubeId && currentSong.youtubeId !== ""
     const keywords = SONG_KEYWORDS_DISPLAY[currentSong.number] ?? []
