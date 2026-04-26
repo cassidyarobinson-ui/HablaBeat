@@ -2979,6 +2979,8 @@ export default function HablaBeat() {
   // World song view pad navigation: [songIndex, modeIndex (0=sing,1=dance,2=fly)]
   const [worldSongIdx, setWorldSongIdx] = useState(0)
   const [worldSlideDir, setWorldSlideDir] = useState<"next" | "prev" | null>(null)
+  const [worldSwipeOffset, setWorldSwipeOffset] = useState(0)
+  const [worldSwipeAnimating, setWorldSwipeAnimating] = useState(false)
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [worldFocus, setWorldFocus] = useState<"carousel" | "modes">("carousel")
   const worldSwipeRef = useRef<{ x: number; y: number } | null>(null)
@@ -4867,8 +4869,8 @@ export default function HablaBeat() {
           />
 
 
-          {/* ── HEADER — Dia de los Muertos style ── */}
-          <div style={{ background: "url('/images/serape-bg.jpg') repeat center/cover" }}>
+          {/* ── HEADER — clean white background (rainbow stripe is splash-only) ── */}
+          <div style={{ background: "#ffffff", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
             {/* Desktop: single compact row with stats */}
             {isDesktop ? (
               <div className="flex items-center px-4 py-2 gap-4">
@@ -5021,45 +5023,80 @@ export default function HablaBeat() {
                     </div>
                   )}
 
-                  {/* Full-screen background image of current song */}
-                  <div key={song.number} className="absolute inset-0 z-0 overflow-hidden">
-                    <style>{`
-                      @keyframes worldSlideInRight { from { transform: translateX(100%); opacity: 0.6; } to { transform: translateX(0); opacity: 1; } }
-                      @keyframes worldSlideInLeft  { from { transform: translateX(-100%); opacity: 0.6; } to { transform: translateX(0); opacity: 1; } }
-                    `}</style>
-                    <img
-                      src={`/images/backgrounds/song-${song.number}.jpg`}
-                      alt={song.title}
-                      className="w-full h-full object-cover"
-                      draggable={false}
-                      style={{
-                        animation: worldSlideDir === "next"
-                          ? "worldSlideInRight 0.32s cubic-bezier(0.22, 1, 0.36, 1)"
-                          : worldSlideDir === "prev"
-                          ? "worldSlideInLeft 0.32s cubic-bezier(0.22, 1, 0.36, 1)"
-                          : undefined,
-                      }}
-                    />
-                  </div>
-
-                  {/* Swipe-capture overlay */}
-                  <div className="absolute inset-0 z-10"
-                    onTouchStart={(e) => { worldSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }}
-                    onTouchEnd={(e) => {
+                  {/* Full-screen background — three image layers (prev / current / next) that
+                       follow the finger during a swipe and snap or commit on release. */}
+                  <div className="absolute inset-0 z-0 overflow-hidden"
+                    onTouchStart={(e) => {
+                      worldSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                      setWorldSwipeAnimating(false)
+                    }}
+                    onTouchMove={(e) => {
                       if (!worldSwipeRef.current) return
-                      const dx = e.changedTouches[0].clientX - worldSwipeRef.current.x
-                      const dy = e.changedTouches[0].clientY - worldSwipeRef.current.y
+                      const dx = e.touches[0].clientX - worldSwipeRef.current.x
+                      const dy = e.touches[0].clientY - worldSwipeRef.current.y
+                      // ignore primarily-vertical gestures so the page can scroll
+                      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12) return
+                      // mild damping when swiping past a world edge with no neighbor
+                      const atStart = selectedIdx === 0 && !hasPrevWorld
+                      const atEnd   = selectedIdx === songs.length - 1 && !hasNextWorld
+                      let damped = dx
+                      if ((atStart && dx > 0) || (atEnd && dx < 0)) damped = dx * 0.35
+                      setWorldSwipeOffset(damped)
+                    }}
+                    onTouchEnd={() => {
+                      if (!worldSwipeRef.current) return
+                      const dx = worldSwipeOffset
                       worldSwipeRef.current = null
-                      if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return
-                      if (dx < 0) {
-                        if (selectedIdx >= songs.length - 1) goToNextWorld()
-                        else { setWorldSlideDir("next"); setWorldSongIdx(prev => prev + 1) }
+                      const w = typeof window !== "undefined" ? window.innerWidth : 400
+                      const threshold = w * 0.22
+                      setWorldSwipeAnimating(true)
+                      if (dx <= -threshold) {
+                        // commit forward
+                        setWorldSwipeOffset(-w)
+                        window.setTimeout(() => {
+                          setWorldSwipeAnimating(false)
+                          setWorldSwipeOffset(0)
+                          if (selectedIdx >= songs.length - 1) goToNextWorld()
+                          else { setWorldSlideDir(null); setWorldSongIdx(prev => prev + 1) }
+                        }, 220)
+                      } else if (dx >= threshold) {
+                        setWorldSwipeOffset(w)
+                        window.setTimeout(() => {
+                          setWorldSwipeAnimating(false)
+                          setWorldSwipeOffset(0)
+                          if (selectedIdx <= 0) goToPrevWorld()
+                          else { setWorldSlideDir(null); setWorldSongIdx(prev => prev - 1) }
+                        }, 220)
                       } else {
-                        if (selectedIdx <= 0) goToPrevWorld()
-                        else { setWorldSlideDir("prev"); setWorldSongIdx(prev => prev - 1) }
+                        // snap back
+                        setWorldSwipeOffset(0)
+                        window.setTimeout(() => setWorldSwipeAnimating(false), 220)
                       }
                     }}
-                  />
+                  >
+                    {[
+                      { idx: selectedIdx - 1, base: -100 }, // prev (peeks from left)
+                      { idx: selectedIdx,     base: 0   },  // current
+                      { idx: selectedIdx + 1, base: 100 },  // next (peeks from right)
+                    ].map(({ idx, base }) => {
+                      const s = songs[idx]
+                      if (!s) return null
+                      return (
+                        <img
+                          key={`${s.id}-${idx}`}
+                          src={`/images/backgrounds/song-${s.number}.jpg`}
+                          alt={s.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          draggable={false}
+                          style={{
+                            transform: `translate3d(calc(${base}% + ${worldSwipeOffset}px), 0, 0)`,
+                            transition: worldSwipeAnimating ? "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)" : "none",
+                            willChange: "transform",
+                          }}
+                        />
+                      )
+                    })}
+                  </div>
 
                   {/* Top glass card — title+subtitle on one line (left), step indicator (right) */}
                   <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", borderRadius: "0 0 24px 24px" }}>
@@ -5123,7 +5160,7 @@ export default function HablaBeat() {
                   <button
                     onClick={() => { if (selectedIdx > 0) { setWorldSlideDir("prev"); setWorldSongIdx(selectedIdx - 1) } else if (hasPrevWorld) goToPrevWorld() }}
                     disabled={selectedIdx === 0 && !hasPrevWorld}
-                    className="absolute left-3 bottom-24 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    className="absolute left-3 bottom-14 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 hover:scale-125 transition-transform duration-150 disabled:opacity-30"
                     style={{ color: "#fff", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.55))" }}
                     aria-label="previous song">
                     <ChevronLeft className="h-7 w-7" />
@@ -5131,7 +5168,7 @@ export default function HablaBeat() {
                   <button
                     onClick={() => { if (selectedIdx < songs.length - 1) { setWorldSlideDir("next"); setWorldSongIdx(selectedIdx + 1) } else if (hasNextWorld) goToNextWorld() }}
                     disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
-                    className="absolute right-3 bottom-24 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-30"
+                    className="absolute right-3 bottom-14 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 hover:scale-125 transition-transform duration-150 disabled:opacity-30"
                     style={{ color: "#fff", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.55))" }}
                     aria-label="next song">
                     <ChevronRight className="h-7 w-7" />
