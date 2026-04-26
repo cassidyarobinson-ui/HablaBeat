@@ -653,6 +653,476 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  25: [
+    {
+      timestamp: 44.0,
+      label: "AR Verbs Pt 1",
+      words: [
+        { spanish: "hablo",    english: "I speak"      },
+        { spanish: "hablas",   english: "you speak"    },
+        { spanish: "habla",    english: "he/she speaks"},
+        { spanish: "hablamos", english: "we speak"     },
+        { spanish: "hablan",   english: "they speak"   },
+        { spanish: "bailo",    english: "I dance"      },
+        { spanish: "canto",    english: "I sing"       },
+      ],
+    },
+    {
+      timestamp: 104.0,
+      label: "AR Verbs Pt 2",
+      words: [
+        { spanish: "estudio", english: "I study" },
+        { spanish: "juego",   english: "I play"  },
+        { spanish: "trabajo", english: "I work"  },
+        { spanish: "nado",    english: "I swim"  },
+        { spanish: "dibujo",  english: "I draw"  },
+        { spanish: "ayudo",   english: "I help"  },
+      ],
+    },
+  ],
+  26: [
+    {
+      timestamp: 16.0,
+      label: "Gustar Conjugations",
+      words: [
+        { spanish: "me gusta",  english: "I like"        },
+        { spanish: "te gusta",  english: "you like"      },
+        { spanish: "le gusta",  english: "he/she likes"  },
+        { spanish: "nos gusta", english: "we like"       },
+        { spanish: "les gusta", english: "they like"     },
+      ],
+    },
+    {
+      timestamp: 56.0,
+      label: "Gustar Activities",
+      words: [
+        { spanish: "gusta cantar", english: "likes to sing"  },
+        { spanish: "gusta bailar", english: "likes to dance" },
+        { spanish: "gusta comer",  english: "likes to eat"   },
+        { spanish: "gusta correr", english: "likes to run"   },
+      ],
+    },
+  ],
+  27: [
+    {
+      timestamp: 29.5,
+      label: "Estar Conjugations",
+      words: [
+        { spanish: "estoy",   english: "I am"        },
+        { spanish: "estás",   english: "you are"     },
+        { spanish: "está",    english: "he/she is"   },
+        { spanish: "estamos", english: "we are"      },
+        { spanish: "están",   english: "they are"    },
+      ],
+    },
+    {
+      timestamp: 65.5,
+      label: "Estar Adjectives",
+      words: [
+        { spanish: "feliz",     english: "happy"   },
+        { spanish: "enfermo",   english: "sick"    },
+        { spanish: "nerviosa",  english: "nervous" },
+        { spanish: "contentos", english: "happy"   },
+        { spanish: "aburridos", english: "bored"   },
+        { spanish: "cansados",  english: "tired"   },
+      ],
+    },
+  ],
+  28: [
+    {
+      timestamp: 41.5,
+      label: "Beber & Comer",
+      words: [
+        { spanish: "bebo",  english: "I drink"        },
+        { spanish: "bebes", english: "you drink"      },
+        { spanish: "bebe",  english: "he/she drinks"  },
+        { spanish: "como",  english: "I eat"          },
+        { spanish: "comes", english: "you eat"        },
+        { spanish: "come",  english: "he/she eats"    },
+      ],
+    },
+    {
+      timestamp: 78.5,
+      label: "Aprender & Correr",
+      words: [
+        { spanish: "aprendo",   english: "I learn"      },
+        { spanish: "aprendes",  english: "you learn"    },
+        { spanish: "corro",     english: "I run"        },
+        { spanish: "corres",    english: "you run"      },
+        { spanish: "corremos",  english: "we run"       },
+      ],
+    },
+  ],
+  29: [
+    {
+      timestamp: 23.0,
+      label: "Tener Que",
+      words: [
+        { spanish: "tengo que",   english: "I have to"        },
+        { spanish: "tienes que",  english: "you have to"      },
+        { spanish: "tiene que",   english: "he/she has to"    },
+        { spanish: "tenemos que", english: "we have to"       },
+        { spanish: "tienen que",  english: "they have to"     },
+      ],
+    },
+    {
+      timestamp: 41.0,
+      label: "Action Verbs",
+      words: [
+        { spanish: "leer",     english: "to read"   },
+        { spanish: "saltar",   english: "to jump"   },
+        { spanish: "pensar",   english: "to think"  },
+        { spanish: "ayudar",   english: "to help"   },
+        { spanish: "escuchar", english: "to listen" },
+      ],
+    },
+  ],
+  30: [
+    {
+      timestamp: 25.5,
+      label: "Ser Conjugations",
+      words: [
+        { spanish: "soy",   english: "I am"        },
+        { spanish: "eres",  english: "you are"     },
+        { spanish: "es",    english: "he/she is"   },
+        { spanish: "somos", english: "we are"      },
+        { spanish: "son",   english: "they are"    },
+      ],
+    },
+    {
+      timestamp: 65.0,
+      label: "Identity Words",
+      words: [
+        { spanish: "niño",        english: "boy"        },
+        { spanish: "estudiante",  english: "student"    },
+        { spanish: "cocinero",    english: "cook"       },
+        { spanish: "divertida",   english: "fun"        },
+        { spanish: "de España",   english: "from Spain" },
+      ],
+    },
+  ],
+  31: [
+    {
+      timestamp: 39.5,
+      label: "Vivir, Escribir, Abrir",
+      words: [
+        { spanish: "vivo",     english: "I live"   },
+        { spanish: "vives",    english: "you live" },
+        { spanish: "escribo",  english: "I write"  },
+        { spanish: "escribes", english: "you write"},
+        { spanish: "abro",     english: "I open"   },
+        { spanish: "abres",    english: "you open" },
+      ],
+    },
+    {
+      timestamp: 66.5,
+      label: "Asistir & Decidir",
+      words: [
+        { spanish: "asisto",    english: "I attend"  },
+        { spanish: "asistes",   english: "you attend"},
+        { spanish: "decido",    english: "I decide"  },
+        { spanish: "decides",   english: "you decide"},
+        { spanish: "decidimos", english: "we decide" },
+      ],
+    },
+  ],
+  32: [
+    {
+      timestamp: 50.5,
+      label: "Ir Conjugations",
+      words: [
+        { spanish: "voy",   english: "I go"         },
+        { spanish: "vas",   english: "you go"       },
+        { spanish: "va",    english: "he/she goes"  },
+        { spanish: "vamos", english: "we go"        },
+        { spanish: "van",   english: "they go"      },
+      ],
+    },
+    {
+      timestamp: 77.5,
+      label: "Places Pt 1",
+      words: [
+        { spanish: "parque",   english: "park"       },
+        { spanish: "baño",     english: "bathroom"   },
+        { spanish: "escuela",  english: "school"     },
+        { spanish: "cuarto",   english: "room"       },
+        { spanish: "cine",     english: "cinema"     },
+        { spanish: "mercado",  english: "market"     },
+      ],
+    },
+    {
+      timestamp: 122.5,
+      label: "Places Pt 2",
+      words: [
+        { spanish: "playa",         english: "beach"        },
+        { spanish: "restaurante",   english: "restaurant"   },
+        { spanish: "biblioteca",    english: "library"      },
+        { spanish: "fiesta",        english: "party"        },
+        { spanish: "supermercado",  english: "supermarket"  },
+        { spanish: "gimnasio",      english: "gym"          },
+        { spanish: "hospital",      english: "hospital"     },
+      ],
+    },
+  ],
+  33: [
+    {
+      timestamp: 27.5,
+      label: "Decir Conjugations",
+      words: [
+        { spanish: "digo",    english: "I say"        },
+        { spanish: "dices",   english: "you say"      },
+        { spanish: "dice",    english: "he/she says"  },
+        { spanish: "decimos", english: "we say"       },
+        { spanish: "dicen",   english: "they say"     },
+      ],
+    },
+    {
+      timestamp: 54.5,
+      label: "What People Say",
+      words: [
+        { spanish: "hola",         english: "hello"          },
+        { spanish: "gracias",      english: "thank you"      },
+        { spanish: "buenos días",  english: "good morning"   },
+        { spanish: "aquí",         english: "here"           },
+        { spanish: "alegría",      english: "joy"            },
+      ],
+    },
+  ],
+  34: [
+    {
+      timestamp: 39.0,
+      label: "Time Markers",
+      words: [
+        { spanish: "ayer",        english: "yesterday"     },
+        { spanish: "anoche",      english: "last night"    },
+        { spanish: "una vez",     english: "one time"      },
+        { spanish: "de repente",  english: "suddenly"      },
+        { spanish: "hace tiempo", english: "a while ago"   },
+      ],
+    },
+    {
+      timestamp: 57.0,
+      label: "Pretérito Examples",
+      words: [
+        { spanish: "hablé",     english: "I spoke"   },
+        { spanish: "comiste",   english: "you ate"   },
+        { spanish: "corrió",    english: "he ran"    },
+        { spanish: "escribió",  english: "she wrote" },
+        { spanish: "bailamos",  english: "we danced" },
+        { spanish: "vivieron",  english: "they lived"},
+      ],
+    },
+    {
+      timestamp: 130.5,
+      label: "Concept Review",
+      words: [
+        { spanish: "pretérito", english: "preterite" },
+        { spanish: "pasado",    english: "past"      },
+        { spanish: "terminó",   english: "ended"     },
+        { spanish: "acción",    english: "action"    },
+        { spanish: "fin",       english: "end"       },
+      ],
+    },
+  ],
+  35: [
+    {
+      timestamp: 31.4,
+      label: "Hablar Past",
+      words: [
+        { spanish: "hablé",     english: "I spoke"        },
+        { spanish: "hablaste",  english: "you spoke"      },
+        { spanish: "habló",     english: "he/she spoke"   },
+        { spanish: "hablamos",  english: "we spoke"       },
+        { spanish: "hablaron",  english: "they spoke"     },
+      ],
+    },
+    {
+      timestamp: 70.0,
+      label: "Caminar Past",
+      words: [
+        { spanish: "caminé",     english: "I walked"      },
+        { spanish: "caminaste",  english: "you walked"    },
+        { spanish: "caminó",     english: "she walked"    },
+        { spanish: "caminamos",  english: "we walked"     },
+        { spanish: "caminaron",  english: "they walked"   },
+      ],
+    },
+    {
+      timestamp: 89.7,
+      label: "Cocinar Past",
+      words: [
+        { spanish: "cociné",     english: "I cooked"      },
+        { spanish: "cocinaste",  english: "you cooked"    },
+        { spanish: "cocinó",     english: "he cooked"     },
+        { spanish: "cocinamos",  english: "we cooked"     },
+        { spanish: "cocinaron",  english: "they cooked"   },
+      ],
+    },
+  ],
+  36: [
+    {
+      timestamp: 56.2,
+      label: "Comer Past",
+      words: [
+        { spanish: "comí",     english: "I ate"        },
+        { spanish: "comiste",  english: "you ate"      },
+        { spanish: "comió",    english: "he/she ate"   },
+        { spanish: "comimos",  english: "we ate"       },
+        { spanish: "comieron", english: "they ate"     },
+      ],
+    },
+    {
+      timestamp: 102.0,
+      label: "Beber Past",
+      words: [
+        { spanish: "bebí",     english: "I drank"      },
+        { spanish: "bebiste",  english: "you drank"    },
+        { spanish: "bebió",    english: "he/she drank" },
+        { spanish: "bebimos",  english: "we drank"     },
+        { spanish: "bebieron", english: "they drank"   },
+      ],
+    },
+    {
+      timestamp: 171.0,
+      label: "Escribir & Vivir Past",
+      words: [
+        { spanish: "escribí",     english: "I wrote"     },
+        { spanish: "escribiste",  english: "you wrote"   },
+        { spanish: "viví",        english: "I lived"     },
+        { spanish: "viviste",     english: "you lived"   },
+        { spanish: "vivieron",    english: "they lived"  },
+      ],
+    },
+  ],
+  37: [
+    {
+      timestamp: 53.3,
+      label: "Irregular Stems Pt 1",
+      words: [
+        { spanish: "estuv-",  english: "estar stem"  },
+        { spanish: "pud-",    english: "poder stem"  },
+        { spanish: "pus-",    english: "poner stem"  },
+        { spanish: "sup-",    english: "saber stem"  },
+        { spanish: "tuv-",    english: "tener stem"  },
+      ],
+    },
+    {
+      timestamp: 99.0,
+      label: "Irregular Stems Pt 2",
+      words: [
+        { spanish: "vin-",     english: "venir stem"    },
+        { spanish: "quis-",    english: "querer stem"   },
+        { spanish: "hic-",     english: "hacer stem"    },
+        { spanish: "dij-",     english: "decir stem"    },
+        { spanish: "traj-",    english: "traer stem"    },
+        { spanish: "conduj-",  english: "conducir stem" },
+      ],
+    },
+    {
+      timestamp: 137.9,
+      label: "Verbs Review",
+      words: [
+        { spanish: "estar", english: "to be"   },
+        { spanish: "poder", english: "can"     },
+        { spanish: "poner", english: "to put"  },
+        { spanish: "saber", english: "to know" },
+        { spanish: "tener", english: "to have" },
+      ],
+    },
+  ],
+  38: [
+    {
+      timestamp: 41.0,
+      label: "AR Imperfect Endings",
+      words: [
+        { spanish: "-aba",    english: "I/he was -ing"   },
+        { spanish: "-abas",   english: "you were -ing"   },
+        { spanish: "-ábamos", english: "we were -ing"    },
+        { spanish: "-aban",   english: "they were -ing"  },
+        { spanish: "jugar",   english: "to play"         },
+        { spanish: "caminar", english: "to walk"         },
+      ],
+    },
+    {
+      timestamp: 87.5,
+      label: "ER/IR Imperfect Endings",
+      words: [
+        { spanish: "-ía",     english: "I/he was -ing"  },
+        { spanish: "-ías",    english: "you were -ing"  },
+        { spanish: "-íamos",  english: "we were -ing"   },
+        { spanish: "-ían",    english: "they were -ing" },
+        { spanish: "comer",   english: "to eat"         },
+        { spanish: "vivir",   english: "to live"        },
+      ],
+    },
+  ],
+  39: [
+    {
+      timestamp: 27.5,
+      label: "Ser Imperfect",
+      words: [
+        { spanish: "era",     english: "I/he was"   },
+        { spanish: "eras",    english: "you were"   },
+        { spanish: "éramos",  english: "we were"    },
+        { spanish: "eran",    english: "they were"  },
+      ],
+    },
+    {
+      timestamp: 67.6,
+      label: "Ir Imperfect",
+      words: [
+        { spanish: "iba",     english: "I/he went"  },
+        { spanish: "ibas",    english: "you went"   },
+        { spanish: "íbamos",  english: "we went"    },
+        { spanish: "iban",    english: "they went"  },
+      ],
+    },
+    {
+      timestamp: 96.7,
+      label: "Ver Imperfect",
+      words: [
+        { spanish: "veía",    english: "I/he saw"   },
+        { spanish: "veías",   english: "you saw"    },
+        { spanish: "veíamos", english: "we saw"     },
+        { spanish: "veían",   english: "they saw"   },
+      ],
+    },
+  ],
+  40: [
+    {
+      timestamp: 38.7,
+      label: "Imperfect Markers",
+      words: [
+        { spanish: "era",     english: "I was"            },
+        { spanish: "jugaba",  english: "I used to play"   },
+        { spanish: "decía",   english: "I used to say"    },
+        { spanish: "hacía",   english: "I used to do"     },
+        { spanish: "sentía",  english: "I felt"           },
+      ],
+    },
+    {
+      timestamp: 87.0,
+      label: "Preterite Markers",
+      words: [
+        { spanish: "jugué",    english: "I played"     },
+        { spanish: "fui",      english: "I went"       },
+        { spanish: "terminé",  english: "I ended"      },
+        { spanish: "divertí",  english: "I had fun"    },
+        { spanish: "ayer",     english: "yesterday"    },
+      ],
+    },
+    {
+      timestamp: 124.0,
+      label: "Contrast",
+      words: [
+        { spanish: "imperfecto", english: "imperfect" },
+        { spanish: "pretérito",  english: "preterite" },
+        { spanish: "pasado",     english: "past"      },
+        { spanish: "final",      english: "end"       },
+        { spanish: "terminó",    english: "ended"     },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
