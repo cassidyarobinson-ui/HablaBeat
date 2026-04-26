@@ -5043,7 +5043,7 @@ export default function HablaBeat() {
                   />
 
                   {/* Top glass card with title + description + Song N of M */}
-                  <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.72)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: "0 0 24px 24px" }}>
+                  <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: "0 0 24px 24px" }}>
                     <div className="text-center">
                       <h1 className="text-xl font-black text-gray-900 leading-tight">{song.title}</h1>
                       <p className="text-xs text-gray-500 font-semibold mt-0.5">
@@ -5076,13 +5076,13 @@ export default function HablaBeat() {
                   </button>
 
                   {/* Bottom glass card — Practice (secondary) | Play (primary) side-by-side */}
-                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.72)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: "24px 24px 0 0" }}>
+                  <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: "24px 24px 0 0" }}>
                     <div className="flex gap-3">
                       {hasSing && (
                         <button onClick={() => handlePlaySong(song.id, openCategory!.id, openSection!.id)}
                           className="flex-1 px-4 py-3 rounded-full font-black text-base transition-all hover:scale-[1.02] active:scale-95"
                           style={{
-                            background: worldFocus === "modes" && worldModeIdx === 0 ? "rgba(74,124,219,0.10)" : "transparent",
+                            background: "#ffffff",
                             color: "#4a7cdb",
                             border: "2px solid #4a7cdb",
                             boxShadow: worldFocus === "modes" && worldModeIdx === 0 ? "0 0 0 3px #fbbf24" : undefined,
