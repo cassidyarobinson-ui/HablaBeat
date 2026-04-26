@@ -5045,22 +5045,46 @@ export default function HablaBeat() {
                   {/* Top glass card with title + description + Song N of M */}
                   <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "0 0 24px 24px" }}>
                     <div className="text-center">
-                      <h1 className="text-2xl font-black text-gray-900">{song.title}</h1>
-                      <p className="text-sm text-gray-500 font-semibold mt-0.5">
+                      <h1 className="text-xl font-black text-gray-900 leading-tight">{song.title}</h1>
+                      <p className="text-xs text-gray-500 font-semibold mt-0.5">
                         {description || `${countryName}`}
-                        {songBestGrade && <span className="ml-2 text-xs font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
+                        {songBestGrade && <span className="ml-2 text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
                       </p>
-                      <p className="text-xs text-gray-400 mt-0.5">Song {song.number} · {selectedIdx + 1} of {songs.length}</p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">Song {song.number} · {selectedIdx + 1} of {songs.length}</p>
                     </div>
                   </div>
 
                   {/* Spacer */}
                   <div className="flex-1 relative z-0" />
 
-                  {/* Bottom glass card with arrows + mode buttons */}
+                  {/* Bottom glass card — mode buttons row above, arrows row below */}
                   <div className="relative z-20 px-5 pt-5 pb-8" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderRadius: "24px 24px 0 0" }}>
+                    {/* Mode buttons row */}
+                    <div className="flex gap-3 justify-center mb-3">
+                      {(() => {
+                        const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
+                        if (hasSing) modeButtons.push({ key: "sing", label: "Practice", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
+                        if (hasPop) modeButtons.push({ key: "dance", label: "Play", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
+                        if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
+                        return modeButtons.map((m, i) => {
+                          const isHighlighted = worldFocus === "modes" && worldModeIdx === i
+                          return (
+                            <button key={m.key} onClick={m.onClick}
+                              className="px-6 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
+                              style={{
+                                background: m.bg,
+                                boxShadow: isHighlighted ? `0 0 0 3px #fbbf24, 0 4px 25px ${m.glow}` : `0 4px 25px ${m.glow}`,
+                                transform: isHighlighted ? "scale(1.1)" : undefined,
+                              }}>
+                              {m.label} {m.emoji}{m.extra}
+                            </button>
+                          )
+                        })
+                      })()}
+                    </div>
+
+                    {/* Arrow row — left/right for swipe navigation */}
                     <div className="flex items-center justify-between gap-2">
-                      {/* Left arrow */}
                       <button
                         onClick={() => { if (selectedIdx > 0) setWorldSongIdx(selectedIdx - 1); else if (hasPrevWorld) goToPrevWorld() }}
                         disabled={selectedIdx === 0 && !hasPrevWorld}
@@ -5069,32 +5093,6 @@ export default function HablaBeat() {
                         aria-label="previous song">
                         <ChevronLeft className="h-6 w-6" />
                       </button>
-
-                      {/* Mode buttons */}
-                      <div className="flex gap-3 justify-center flex-1">
-                        {(() => {
-                          const modeButtons: { key: string; label: string; emoji: string; onClick: () => void; bg: string; glow: string; extra?: React.ReactNode }[] = []
-                          if (hasSing) modeButtons.push({ key: "sing", label: "Practice", emoji: "🎤", onClick: () => handlePlaySong(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #7c3aed, #6d28d9)", glow: "rgba(124,58,237,0.5)" })
-                          if (hasPop) modeButtons.push({ key: "dance", label: "Play", emoji: "🥕", onClick: () => handlePlayDDR(song.id, openCategory!.id, openSection!.id), bg: "linear-gradient(135deg, #4a7cdb, #6366f1)", glow: "rgba(74,124,219,0.5)", extra: popHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{popHighScores[song.number]}</span> : undefined })
-                          if (hasFly) modeButtons.push({ key: "fly", label: "Fly", emoji: "☁️", onClick: () => setFlySongNumber(song.number), bg: "linear-gradient(135deg, #0891b2, #06b6d4)", glow: "rgba(8,145,178,0.5)", extra: flyHighScores[song.number] > 0 ? <span className="ml-1 text-xs font-bold" style={{ color: "#fbbf24" }}>💰{flyHighScores[song.number]}</span> : undefined })
-                          return modeButtons.map((m, i) => {
-                            const isHighlighted = worldFocus === "modes" && worldModeIdx === i
-                            return (
-                              <button key={m.key} onClick={m.onClick}
-                                className="px-5 py-3 rounded-full font-black text-base text-white transition-all hover:scale-105 active:scale-95"
-                                style={{
-                                  background: m.bg,
-                                  boxShadow: isHighlighted ? `0 0 0 3px #fbbf24, 0 4px 25px ${m.glow}` : `0 4px 25px ${m.glow}`,
-                                  transform: isHighlighted ? "scale(1.1)" : undefined,
-                                }}>
-                                {m.label} {m.emoji}{m.extra}
-                              </button>
-                            )
-                          })
-                        })()}
-                      </div>
-
-                      {/* Right arrow */}
                       <button
                         onClick={() => { if (selectedIdx < songs.length - 1) setWorldSongIdx(selectedIdx + 1); else if (hasNextWorld) goToNextWorld() }}
                         disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
