@@ -260,6 +260,30 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  9: [
+    {
+      timestamp: 20.0,
+      label: "House Pets",
+      words: [
+        { spanish: "perro",  english: "dog"    },
+        { spanish: "gato",   english: "cat"    },
+        { spanish: "conejo", english: "rabbit" },
+        { spanish: "pato",   english: "duck"   },
+      ],
+    },
+    {
+      timestamp: 52.8,
+      label: "Farm Animals",
+      words: [
+        { spanish: "vaca",    english: "cow"    },
+        { spanish: "oveja",   english: "sheep"  },
+        { spanish: "gallina", english: "hen"    },
+        { spanish: "caballo", english: "horse"  },
+        { spanish: "cabra",   english: "goat"   },
+        { spanish: "tortuga", english: "turtle" },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
