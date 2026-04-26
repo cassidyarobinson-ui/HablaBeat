@@ -284,6 +284,39 @@ const SONG_RECALL_BREAKS: Record<number, { timestamp: number; words: { spanish: 
       ],
     },
   ],
+  10: [
+    {
+      timestamp: 34.5,
+      label: "Water Animals",
+      words: [
+        { spanish: "pez",      english: "fish"   },
+        { spanish: "tortuga",  english: "turtle" },
+        { spanish: "rana",     english: "frog"   },
+        { spanish: "cangrejo", english: "crab"   },
+      ],
+    },
+    {
+      timestamp: 46.8,
+      label: "Sky Animals",
+      words: [
+        { spanish: "pájaro",  english: "bird"        },
+        { spanish: "águila",  english: "eagle"       },
+        { spanish: "abeja",   english: "bee"         },
+        { spanish: "colibrí", english: "hummingbird" },
+      ],
+    },
+    {
+      timestamp: 66.0,
+      label: "Forest Animals",
+      words: [
+        { spanish: "oso",      english: "bear"      },
+        { spanish: "zorro",    english: "fox"       },
+        { spanish: "ardilla",  english: "squirrel"  },
+        { spanish: "araña",    english: "spider"    },
+        { spanish: "ciempiés", english: "centipede" },
+      ],
+    },
+  ],
   16: [
     {
       timestamp: 20.0,
