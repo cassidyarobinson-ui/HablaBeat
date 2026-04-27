@@ -4785,10 +4785,8 @@ export default function HablaBeat() {
 
     return (
       <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
-        {/* Top bar — matches the legacy map header layout */}
+        {/* Top bar — logo flush-left (bunny moved to the active song row) */}
         <div className="flex items-center px-4 pt-4 pb-3 gap-3" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-9 h-9 object-contain flex-shrink-0" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
           <div className="flex-1" />
@@ -4861,6 +4859,15 @@ export default function HablaBeat() {
                     {grade && (
                       <span className="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(251,191,36,0.25)", color: "#fbbf24" }}>{grade}</span>
                     )}
+                    {isNext && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src="/images/super-bunny-heart.gif"
+                        alt="You are here"
+                        className="flex-shrink-0 w-10 h-10 object-contain pointer-events-none"
+                        style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.25))" }}
+                      />
+                    )}
                   </button>
                 )
               })}
@@ -4886,67 +4893,54 @@ export default function HablaBeat() {
             </div>
           </div>
 
-          {/* ── STATS BAR — edge-to-edge, sits flush against the hero image ─ */}
-          <div className="p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.95)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🔥</span>
-              <div>
-                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Streak</div>
-                <div className="font-black text-base text-gray-900">{dailyStreak} days</div>
-              </div>
-            </div>
-            <div className="w-px h-8" style={{ background: "rgba(0,0,0,0.08)" }} />
-            <div className="flex items-center gap-2">
-              <span className="text-xl">⚡</span>
-              <div>
-                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Flow</div>
-                <div className="font-black text-base text-gray-900">{bestFlow}</div>
-              </div>
-            </div>
-            <div className="w-px h-8" style={{ background: "rgba(0,0,0,0.08)" }} />
-            <div className="flex items-center gap-2">
-              <span className="text-xl">💰</span>
-              <div>
-                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Bank</div>
-                <div className="font-black text-base text-gray-900">{totalVocabBank.toLocaleString()}</div>
-              </div>
-            </div>
-          </div>
+          <div className="px-4 pt-4 space-y-2">
 
-          <div className="px-4 pt-4 space-y-4">
-
-          {/* ── QUICK ACTIONS — bold button style ──────────────────────────── */}
-          <div className="grid grid-cols-3 gap-2">
-            <button onClick={() => {
-              if (lastPlayedSongNumber == null) return
-              for (const cat of curriculumData) {
-                for (const sec of cat.sections) {
-                  const s = sec.songs.find((sg: any) => sg.number === lastPlayedSongNumber)
-                  if (s) { handlePlayDDR(s.id, cat.id, sec.id); return }
-                }
-              }
-            }}
-              className="flex flex-col items-center justify-center gap-1 px-3 py-4 rounded-2xl text-white active:scale-95 transition-all"
-              style={{ background: "linear-gradient(135deg,#4a7cdb,#6366f1)", boxShadow: "0 6px 18px rgba(74,124,219,0.35)" }}>
-              <div className="text-2xl">📘</div>
-              <div className="font-black text-sm">Passport</div>
-              <div className="text-[10px] font-bold opacity-80">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
-            </button>
-            <button onClick={() => setShowBestScores(true)}
-              className="flex flex-col items-center justify-center gap-1 px-3 py-4 rounded-2xl text-white active:scale-95 transition-all"
-              style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", boxShadow: "0 6px 18px rgba(245,158,11,0.35)" }}>
-              <div className="text-2xl">🏆</div>
-              <div className="font-black text-sm">Best scores</div>
-              <div className="text-[10px] font-bold opacity-80">{Object.keys(popHighScores).length} played</div>
-            </button>
-            <button onClick={() => setShowFavorites(true)}
-              className="flex flex-col items-center justify-center gap-1 px-3 py-4 rounded-2xl text-white active:scale-95 transition-all"
-              style={{ background: "linear-gradient(135deg,#a855f7,#7c3aed)", boxShadow: "0 6px 18px rgba(168,85,247,0.35)" }}>
-              <div className="text-2xl">⭐</div>
-              <div className="font-black text-sm">Favorites</div>
-              <div className="text-[10px] font-bold opacity-80">{favoriteSongs.size} saved</div>
-            </button>
-          </div>
+          {/* ── 2×3 grid: Streak / Time / Bank · Passport / Best scores / Favorites
+                All cells share the same white-card style with black text. */}
+          {(() => {
+            const totalPlayMinutes = Object.values(songPlayCounts).reduce((s: number, n: any) => s + (n as number), 0) * 3
+            const fmtTime = (m: number) => m < 60 ? `${m}m` : `${Math.floor(m/60)}h ${m%60}m`
+            const tile = (
+              key: string,
+              emoji: string,
+              label: string,
+              value: React.ReactNode,
+              onClick?: () => void,
+            ) => (
+              <button
+                key={key}
+                onClick={onClick}
+                disabled={!onClick}
+                className="flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-2xl active:scale-95 transition-all disabled:cursor-default disabled:active:scale-100"
+                style={{ background: "rgba(255,255,255,0.95)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
+                <div className="text-2xl">{emoji}</div>
+                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">{label}</div>
+                <div className="font-black text-sm text-gray-900 truncate max-w-full">{value}</div>
+              </button>
+            )
+            return (
+              <>
+                <div className="grid grid-cols-3 gap-2">
+                  {tile("streak", "🔥", "Streak", `${dailyStreak} days`)}
+                  {tile("time",   "⏱️", "Time",   fmtTime(totalPlayMinutes))}
+                  {tile("bank",   "💰", "Bank",   totalVocabBank.toLocaleString())}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {tile("passport", "📘", "Passport",   lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet", () => {
+                    if (lastPlayedSongNumber == null) return
+                    for (const cat of curriculumData) {
+                      for (const sec of cat.sections) {
+                        const s = sec.songs.find((sg: any) => sg.number === lastPlayedSongNumber)
+                        if (s) { handlePlayDDR(s.id, cat.id, sec.id); return }
+                      }
+                    }
+                  })}
+                  {tile("best",     "🏆", "Best",     `${Object.keys(popHighScores).length} played`, () => setShowBestScores(true))}
+                  {tile("favs",     "⭐", "Favorites",`${favoriteSongs.size} saved`,                () => setShowFavorites(true))}
+                </div>
+              </>
+            )
+          })()}
 
           {/* ── WORLD TOUR ──────────────────────────────────────────────────── */}
           <div>
@@ -5260,12 +5254,6 @@ export default function HablaBeat() {
               </div>
             ) : (
               <div className="flex items-center px-4 pt-4 pb-3 gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className={`w-9 h-9 object-contain flex-shrink-0 ${bunnyHopping ? "bunny-hop-out" : ""}`} style={{ cursor: "pointer" }}
-                  onTouchStart={(e) => { if (!bunnyHopping) { const el = e.currentTarget; el.classList.remove("bunny-spin"); void el.offsetWidth; el.classList.add("bunny-spin") } }}
-                  onMouseEnter={(e) => { if (!bunnyHopping) { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") } }}
-                  onAnimationEnd={(e) => { if (!bunnyHopping) e.currentTarget.classList.remove("bunny-spin") }}
-                />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
                 <div className="flex-1" />
