@@ -4950,7 +4950,7 @@ export default function HablaBeat() {
           {/* ── WORLD TOUR ──────────────────────────────────────────────────── */}
           <div>
             <div className="flex items-center justify-between mb-2 px-1">
-              <h2 className="font-black text-base text-gray-900">Your world tour</h2>
+              <h2 className="font-black text-base text-gray-900">Your Americas Tour</h2>
               <button onClick={() => setHomeView("map")} className="text-xs font-bold text-gray-500 active:scale-95 transition-all">
                 See all {allSecs.length} →
               </button>
@@ -4971,27 +4971,30 @@ export default function HablaBeat() {
                       setWorldSongIdx(0)
                       setWorldSlideDir(null)
                     }}
-                    className="flex-shrink-0 w-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all"
-                    style={{ background: "rgba(255,255,255,0.9)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.06)" }}>
-                    {/* Title block at the top — mirrors the Today's Mission card */}
-                    <div className="px-3 pt-3 pb-2">
+                    className="flex-shrink-0 w-44 h-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all relative"
+                    style={{ border: isCurrent ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.06)" }}>
+                    {/* Image fills the card */}
+                    {sec.songs[0]?.number != null && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`/images/backgrounds/song-${sec.songs[0].number}.jpg`}
+                        alt={sec.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        draggable={false}
+                      />
+                    )}
+                    {/* Translucent title block overlay — matches the hero card treatment */}
+                    <div className="absolute top-2 left-2 right-2 rounded-xl px-3 py-2" style={{
+                      background: "rgba(255,255,255,0.62)",
+                      backdropFilter: "blur(20px)",
+                      WebkitBackdropFilter: "blur(20px)",
+                      border: "1px solid rgba(255,255,255,0.6)",
+                    }}>
                       <div className="font-black text-sm truncate text-gray-900">{sec.title}</div>
-                      <div className="text-[11px] text-gray-500 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
+                      <div className="text-[11px] text-gray-700 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
                     </div>
-                    {/* Image below */}
-                    <div className="h-24 relative overflow-hidden">
-                      {sec.songs[0]?.number != null && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={`/images/backgrounds/song-${sec.songs[0].number}.jpg`}
-                          alt={sec.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          draggable={false}
-                        />
-                      )}
-                      {cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16" }}>Cleared</span>}
-                      {isCurrent && !cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b" }}>You are here</span>}
-                    </div>
+                    {cleared && <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16" }}>Cleared</span>}
+                    {isCurrent && !cleared && <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b" }}>You are here</span>}
                   </button>
                 )
               })}
