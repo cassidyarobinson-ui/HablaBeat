@@ -1025,12 +1025,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     }
 
     // Bump the target arrow at this lane
-    const arrowEl = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow`) as HTMLElement
-    if (arrowEl) {
-      arrowEl.style.animation = "none"
-      // force reflow so animation re-triggers if pressed rapidly
-      void arrowEl.offsetWidth
-      arrowEl.style.animation = "arrowBump 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)"
+    // Animate the inner <svg> so we don't fight the wrapper's translate-x-1/2 centering
+    const arrowSvg = document.querySelector(`[data-ddr-lane="${lane}"] .ddr-arrow svg`) as HTMLElement | null
+    if (arrowSvg) {
+      arrowSvg.style.animation = "none"
+      void arrowSvg.offsetWidth
+      arrowSvg.style.animation = "arrowBump 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)"
     }
 
     // Emoji burst — emojis determined by active pointer selection
@@ -2606,11 +2606,12 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           100% { transform: translate(var(--tx), var(--ty)) scale(0.35) rotate(var(--r1, 0deg)); opacity: 0; }
         }
         @keyframes arrowBump {
-          0%   { transform: translateX(-50%) scale(1); }
-          35%  { transform: translateX(-50%) scale(1.18); }
-          65%  { transform: translateX(-50%) scale(0.94); }
-          100% { transform: translateX(-50%) scale(1); }
+          0%   { transform: scale(1); }
+          35%  { transform: scale(1.18); }
+          65%  { transform: scale(0.94); }
+          100% { transform: scale(1); }
         }
+        .ddr-arrow svg { transform-origin: center; }
         @keyframes ddrJudgmentPop {
           0% { transform: scale(0) translateY(0); opacity: 0; }
           8% { transform: scale(1.8) translateY(0); opacity: 1; }
