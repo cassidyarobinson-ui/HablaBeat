@@ -4781,10 +4781,24 @@ export default function HablaBeat() {
         <div className="px-4 pb-24 pt-4 max-w-md mx-auto space-y-4">
 
           {/* ── HERO: Today's Mission ───────────────────────────────────────── */}
-          <div className="rounded-3xl p-4" style={{
-            background: "linear-gradient(135deg,#5b6cf2 0%,#8a5cf6 100%)",
+          <div className="rounded-3xl p-4 relative overflow-hidden" style={{
             boxShadow: "0 12px 32px rgba(91,108,242,0.35)",
           }}>
+            {/* Background image of the mission's next/first song */}
+            {(missionNextSong?.number ?? missionSongs[0]?.number) != null && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`/images/backgrounds/song-${missionNextSong?.number ?? missionSongs[0]?.number}.jpg`}
+                alt={missionSec?.title ?? ""}
+                className="absolute inset-0 w-full h-full object-cover"
+                draggable={false}
+              />
+            )}
+            {/* Tinted gradient overlay so text stays readable while the image bleeds through */}
+            <div className="absolute inset-0" style={{
+              background: "linear-gradient(135deg, rgba(91,108,242,0.78) 0%, rgba(138,92,246,0.82) 100%)",
+            }} />
+            <div className="relative">
             <div className="flex items-center gap-2 mb-3">
               <span className="px-2.5 py-1 rounded-full text-[11px] font-black" style={{ background: "rgba(255,255,255,0.18)" }}>Today's Mission</span>
               <span className="px-2 py-1 rounded-full text-[11px] font-black" style={{ background: "#fbbf24", color: "#1e293b" }}>+{missionTotal * 50} 💰</span>
@@ -4839,6 +4853,7 @@ export default function HablaBeat() {
             {dailyStreak > 0 && !allCleared && (
               <p className="text-center text-[11px] text-white/70 font-semibold mt-2">Finish today to extend your 🔥 {dailyStreak}-day streak</p>
             )}
+            </div>
           </div>
 
           {/* ── QUICK ACTIONS ───────────────────────────────────────────────── */}
@@ -4854,8 +4869,8 @@ export default function HablaBeat() {
             }}
               className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
               style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}>
-              <div className="text-xl">⏯️</div>
-              <div className="font-black text-sm">Resume</div>
+              <div className="text-xl">📘</div>
+              <div className="font-black text-sm">Passport</div>
               <div className="text-[10px] text-white/60 font-semibold">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
             </button>
             <button onClick={() => {
@@ -4925,8 +4940,10 @@ export default function HablaBeat() {
                   <button
                     key={sec.id}
                     onClick={() => {
+                      setHomeView("map")
                       setOpenSectionId(sec.id)
                       setWorldSongIdx(0)
+                      setWorldSlideDir(null)
                     }}
                     className="flex-shrink-0 w-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all"
                     style={{ background: "rgba(255,255,255,0.05)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.6)" : "1px solid rgba(255,255,255,0.08)" }}>
@@ -5328,15 +5345,11 @@ export default function HablaBeat() {
                     }}
                   >
                     <style>{`
-                      /* Carousel arrows: subtle press-in indent, no scale jump on tap.
-                         Hover-grow only on devices with real hover (desktop), so mobile taps
-                         don't fire phantom hover state. */
-                      .carousel-arrow { will-change: transform, filter; }
-                      .carousel-arrow:active { transform: scale(0.92); filter: brightness(0.85); transition: transform 0.06s ease, filter 0.06s ease; }
-                      @media (hover: hover) {
-                        .carousel-arrow:hover { transform: scale(1.12); }
-                        .carousel-arrow:hover:active { transform: scale(0.96); }
-                      }
+                      /* Carousel arrows: subtle "press-in" feel — they sink ~2px and dim
+                         slightly on tap. No scaling, no hover-grow, so they don't visibly
+                         jump around when tapped on mobile. */
+                      .carousel-arrow { will-change: transform, filter; transition: transform 0.08s ease, filter 0.08s ease; }
+                      .carousel-arrow:active { transform: translateY(2px); filter: brightness(0.8); }
                     `}</style>
                     {[
                       { idx: selectedIdx - 1, base: -100 }, // prev (peeks from left)
