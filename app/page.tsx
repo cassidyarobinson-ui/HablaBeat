@@ -5312,6 +5312,17 @@ export default function HablaBeat() {
                       }
                     }}
                   >
+                    <style>{`
+                      /* Carousel arrows: subtle press-in indent, no scale jump on tap.
+                         Hover-grow only on devices with real hover (desktop), so mobile taps
+                         don't fire phantom hover state. */
+                      .carousel-arrow { will-change: transform, filter; }
+                      .carousel-arrow:active { transform: scale(0.92); filter: brightness(0.85); transition: transform 0.06s ease, filter 0.06s ease; }
+                      @media (hover: hover) {
+                        .carousel-arrow:hover { transform: scale(1.12); }
+                        .carousel-arrow:hover:active { transform: scale(0.96); }
+                      }
+                    `}</style>
                     {[
                       { idx: selectedIdx - 1, base: -100 }, // prev (peeks from left)
                       { idx: selectedIdx,     base: 0   },  // current
@@ -5398,7 +5409,7 @@ export default function HablaBeat() {
                   <button
                     onClick={() => { if (selectedIdx > 0) { setWorldSlideDir("prev"); setWorldSongIdx(selectedIdx - 1) } else if (hasPrevWorld) goToPrevWorld() }}
                     disabled={selectedIdx === 0 && !hasPrevWorld}
-                    className="absolute left-3 bottom-14 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 hover:scale-125 transition-transform duration-150 disabled:opacity-30"
+                    className="absolute left-3 bottom-14 z-30 w-12 h-12 rounded-full flex items-center justify-center transition-transform duration-100 disabled:opacity-30 carousel-arrow"
                     style={{ color: "#fff", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.55))" }}
                     aria-label="previous song">
                     <ChevronLeft className="h-7 w-7" />
@@ -5406,7 +5417,7 @@ export default function HablaBeat() {
                   <button
                     onClick={() => { if (selectedIdx < songs.length - 1) { setWorldSlideDir("next"); setWorldSongIdx(selectedIdx + 1) } else if (hasNextWorld) goToNextWorld() }}
                     disabled={selectedIdx === songs.length - 1 && !hasNextWorld}
-                    className="absolute right-3 bottom-14 z-30 w-12 h-12 rounded-full flex items-center justify-center active:scale-95 hover:scale-125 transition-transform duration-150 disabled:opacity-30"
+                    className="absolute right-3 bottom-14 z-30 w-12 h-12 rounded-full flex items-center justify-center transition-transform duration-100 disabled:opacity-30 carousel-arrow"
                     style={{ color: "#fff", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.55))" }}
                     aria-label="next song">
                     <ChevronRight className="h-7 w-7" />
