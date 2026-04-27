@@ -4895,38 +4895,35 @@ export default function HablaBeat() {
 
           <div className="px-4 pt-4 space-y-2">
 
-          {/* ── 2×3 grid: Streak / Time / Bank · Passport / Best scores / Favorites
-                All cells share the same white-card style with black text. */}
+          {/* ── 2×3 grid: each tile is emoji + ONE line ─────────────────────── */}
           {(() => {
             const totalPlayMinutes = Object.values(songPlayCounts).reduce((s: number, n: any) => s + (n as number), 0) * 3
             const fmtTime = (m: number) => m < 60 ? `${m}m` : `${Math.floor(m/60)}h ${m%60}m`
             const tile = (
               key: string,
               emoji: string,
-              label: string,
-              value: React.ReactNode,
+              line: React.ReactNode,
               onClick?: () => void,
             ) => (
               <button
                 key={key}
                 onClick={onClick}
                 disabled={!onClick}
-                className="flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-2xl active:scale-95 transition-all disabled:cursor-default disabled:active:scale-100"
+                className="flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-2xl active:scale-95 transition-all disabled:cursor-default disabled:active:scale-100"
                 style={{ background: "rgba(255,255,255,0.95)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-                <div className="text-2xl">{emoji}</div>
-                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">{label}</div>
-                <div className="font-black text-sm text-gray-900 truncate max-w-full">{value}</div>
+                <div className="text-2xl leading-none">{emoji}</div>
+                <div className="font-black text-sm text-gray-900 truncate max-w-full">{line}</div>
               </button>
             )
             return (
               <>
                 <div className="grid grid-cols-3 gap-2">
-                  {tile("streak", "🔥", "Streak", `${dailyStreak} days`)}
-                  {tile("time",   "⏱️", "Time",   fmtTime(totalPlayMinutes))}
-                  {tile("bank",   "💰", "Bank",   totalVocabBank.toLocaleString())}
+                  {tile("streak", "🔥", `${dailyStreak} days`)}
+                  {tile("time",   "⏱️", fmtTime(totalPlayMinutes))}
+                  {tile("bank",   "💰", totalVocabBank.toLocaleString())}
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  {tile("passport", "📘", "Passport",   lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet", () => {
+                  {tile("passport", "📘", "Passport", () => {
                     if (lastPlayedSongNumber == null) return
                     for (const cat of curriculumData) {
                       for (const sec of cat.sections) {
@@ -4935,8 +4932,8 @@ export default function HablaBeat() {
                       }
                     }
                   })}
-                  {tile("best",     "🏆", "Best",     `${Object.keys(popHighScores).length} played`, () => setShowBestScores(true))}
-                  {tile("favs",     "⭐", "Favorites",`${favoriteSongs.size} saved`,                () => setShowFavorites(true))}
+                  {tile("best",     "🏆", "Best scores", () => setShowBestScores(true))}
+                  {tile("favs",     "⭐", "Favorites",   () => setShowFavorites(true))}
                 </div>
               </>
             )
