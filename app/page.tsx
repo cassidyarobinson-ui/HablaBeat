@@ -4802,8 +4802,8 @@ export default function HablaBeat() {
 
         <div className="pb-24 max-w-md mx-auto">
 
-          {/* ── HERO: Today's Mission — edge-to-edge, no bottom radius ──────── */}
-          <div className="p-4 pt-5 relative overflow-hidden" style={{
+          {/* ── HERO: Today's Mission — fully edge-to-edge ────────────────── */}
+          <div className="relative overflow-hidden" style={{
             boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
           }}>
             {/* Background image of the mission's next/first song */}
@@ -4816,14 +4816,13 @@ export default function HablaBeat() {
                 draggable={false}
               />
             )}
-            {/* Title block sits on its own white glass card so it stays readable;
-                the song list and CTA below sit directly over the image. */}
             <div className="relative">
-            <div className="rounded-2xl px-4 py-3 mb-3" style={{
+            {/* Title block — full-bleed across the card */}
+            <div className="px-4 py-3" style={{
               background: "rgba(255,255,255,0.62)",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.6)",
+              borderBottom: "1px solid rgba(255,255,255,0.5)",
             }}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="px-2.5 py-1 rounded-full text-[11px] font-black text-gray-900" style={{ background: "rgba(255,255,255,0.9)" }}>Today's Mission</span>
@@ -4834,7 +4833,7 @@ export default function HablaBeat() {
             </div>
 
             {/* Song list with scores */}
-            <div className="space-y-1.5 mb-4">
+            <div className="space-y-1.5 mb-4 px-4 pt-3">
               {missionSongs.map((s: any, idx: number) => {
                 const score = popHighScores[s.number] ?? 0
                 const grade = bestGrades[s.number]
@@ -4867,6 +4866,7 @@ export default function HablaBeat() {
               })}
             </div>
 
+            <div className="px-4 pb-4">
             <button
               onClick={() => {
                 if (!missionNextSong || allCleared) return
@@ -4883,12 +4883,11 @@ export default function HablaBeat() {
               </div>
             </button>
             </div>
+            </div>
           </div>
 
-          <div className="px-4 pt-4 space-y-4">
-
-          {/* ── STATS BAR (above quick actions, mimics top mission tile) ───── */}
-          <div className="rounded-2xl p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
+          {/* ── STATS BAR — edge-to-edge, sits flush against the hero image ─ */}
+          <div className="p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.95)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
             <div className="flex items-center gap-2">
               <span className="text-xl">🔥</span>
               <div>
@@ -4914,7 +4913,9 @@ export default function HablaBeat() {
             </div>
           </div>
 
-          {/* ── QUICK ACTIONS ───────────────────────────────────────────────── */}
+          <div className="px-4 pt-4 space-y-4">
+
+          {/* ── QUICK ACTIONS — bold button style ──────────────────────────── */}
           <div className="grid grid-cols-3 gap-2">
             <button onClick={() => {
               if (lastPlayedSongNumber == null) return
@@ -4925,25 +4926,25 @@ export default function HablaBeat() {
                 }
               }
             }}
-              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-              <div className="text-xl">📘</div>
-              <div className="font-black text-sm text-gray-900">Passport</div>
-              <div className="text-[10px] text-gray-500 font-semibold">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
+              className="flex flex-col items-center justify-center gap-1 px-3 py-4 rounded-2xl text-white active:scale-95 transition-all"
+              style={{ background: "linear-gradient(135deg,#4a7cdb,#6366f1)", boxShadow: "0 6px 18px rgba(74,124,219,0.35)" }}>
+              <div className="text-2xl">📘</div>
+              <div className="font-black text-sm">Passport</div>
+              <div className="text-[10px] font-bold opacity-80">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
             </button>
             <button onClick={() => setShowBestScores(true)}
-              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-              <div className="text-xl">🏆</div>
-              <div className="font-black text-sm text-gray-900">Best scores</div>
-              <div className="text-[10px] text-gray-500 font-semibold">{Object.keys(popHighScores).length} played</div>
+              className="flex flex-col items-center justify-center gap-1 px-3 py-4 rounded-2xl text-white active:scale-95 transition-all"
+              style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", boxShadow: "0 6px 18px rgba(245,158,11,0.35)" }}>
+              <div className="text-2xl">🏆</div>
+              <div className="font-black text-sm">Best scores</div>
+              <div className="text-[10px] font-bold opacity-80">{Object.keys(popHighScores).length} played</div>
             </button>
             <button onClick={() => setShowFavorites(true)}
-              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-              <div className="text-xl">⭐</div>
-              <div className="font-black text-sm text-gray-900">Favorites</div>
-              <div className="text-[10px] text-gray-500 font-semibold">{favoriteSongs.size} saved</div>
+              className="flex flex-col items-center justify-center gap-1 px-3 py-4 rounded-2xl text-white active:scale-95 transition-all"
+              style={{ background: "linear-gradient(135deg,#a855f7,#7c3aed)", boxShadow: "0 6px 18px rgba(168,85,247,0.35)" }}>
+              <div className="text-2xl">⭐</div>
+              <div className="font-black text-sm">Favorites</div>
+              <div className="text-[10px] font-bold opacity-80">{favoriteSongs.size} saved</div>
             </button>
           </div>
 
@@ -4983,12 +4984,12 @@ export default function HablaBeat() {
                         draggable={false}
                       />
                     )}
-                    {/* Translucent title block overlay — matches the hero card treatment */}
-                    <div className="absolute top-2 left-2 right-2 rounded-xl px-3 py-2" style={{
+                    {/* Translucent title block — full-bleed at the top, mirrors the hero card */}
+                    <div className="absolute top-0 left-0 right-0 px-3 py-2" style={{
                       background: "rgba(255,255,255,0.62)",
                       backdropFilter: "blur(20px)",
                       WebkitBackdropFilter: "blur(20px)",
-                      border: "1px solid rgba(255,255,255,0.6)",
+                      borderBottom: "1px solid rgba(255,255,255,0.5)",
                     }}>
                       <div className="font-black text-sm truncate text-gray-900">{sec.title}</div>
                       <div className="text-[11px] text-gray-700 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
