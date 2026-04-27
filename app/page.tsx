@@ -4930,7 +4930,22 @@ export default function HablaBeat() {
                     }}
                     className="flex-shrink-0 w-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all"
                     style={{ background: "rgba(255,255,255,0.05)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.6)" : "1px solid rgba(255,255,255,0.08)" }}>
-                    <div className="h-20 relative" style={{ background: cleared ? "linear-gradient(135deg,#a855f7,#7c3aed)" : "linear-gradient(135deg,#3b82f6,#06b6d4)" }}>
+                    <div className="h-24 relative overflow-hidden">
+                      {sec.songs[0]?.number != null && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={`/images/backgrounds/song-${sec.songs[0].number}.jpg`}
+                          alt={sec.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          draggable={false}
+                        />
+                      )}
+                      {/* status-tinted overlay so text remains legible */}
+                      <div className="absolute inset-0" style={{
+                        background: cleared
+                          ? "linear-gradient(180deg, rgba(124,58,237,0.15) 0%, rgba(15,13,34,0.55) 100%)"
+                          : "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(15,13,34,0.55) 100%)",
+                      }} />
                       {cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16" }}>Cleared</span>}
                       {isCurrent && !cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b" }}>You are here</span>}
                     </div>
