@@ -4762,18 +4762,18 @@ export default function HablaBeat() {
     const allCleared = missionDone === missionTotal && missionTotal > 0
 
     return (
-      <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #0f0d22 0%, #15123a 100%)", color: "#fff" }}>
-        {/* Top bar */}
-        <div className="flex items-center justify-between px-4 pt-6 pb-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div className="flex items-center gap-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-8 h-8 object-contain" />
-            <span className="font-black text-lg tracking-wide">HablaBeat</span>
-          </div>
+      <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
+        {/* Top bar — matches the legacy map header layout */}
+        <div className="flex items-center px-4 pt-4 pb-3 gap-3" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className="w-9 h-9 object-contain flex-shrink-0" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
+          <div className="flex-1" />
           <button
             onClick={() => setHomeView("map")}
             className="text-xs font-black px-3 py-1.5 rounded-full active:scale-95 transition-all"
-            style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)" }}>
+            style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.08)", color: "#374151" }}>
             🗺️ Map view
           </button>
         </div>
@@ -4782,7 +4782,7 @@ export default function HablaBeat() {
 
           {/* ── HERO: Today's Mission ───────────────────────────────────────── */}
           <div className="rounded-3xl p-4 relative overflow-hidden" style={{
-            boxShadow: "0 12px 32px rgba(91,108,242,0.35)",
+            boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
           }}>
             {/* Background image of the mission's next/first song */}
             {(missionNextSong?.number ?? missionSongs[0]?.number) != null && (
@@ -4794,17 +4794,22 @@ export default function HablaBeat() {
                 draggable={false}
               />
             )}
-            {/* Tinted gradient overlay so text stays readable while the image bleeds through */}
-            <div className="absolute inset-0" style={{
-              background: "linear-gradient(135deg, rgba(91,108,242,0.78) 0%, rgba(138,92,246,0.82) 100%)",
-            }} />
+            {/* Title block sits on its own white glass card so it stays readable;
+                the song list and CTA below sit directly over the image. */}
             <div className="relative">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-black" style={{ background: "rgba(255,255,255,0.18)" }}>Today's Mission</span>
-              <span className="px-2 py-1 rounded-full text-[11px] font-black" style={{ background: "#fbbf24", color: "#1e293b" }}>+{missionTotal * 50} 💰</span>
+            <div className="rounded-2xl px-4 py-3 mb-3" style={{
+              background: "rgba(255,255,255,0.62)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              border: "1px solid rgba(255,255,255,0.6)",
+            }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-black text-gray-900" style={{ background: "rgba(255,255,255,0.9)" }}>Today's Mission</span>
+                <span className="px-2 py-1 rounded-full text-[11px] font-black" style={{ background: "#fbbf24", color: "#1e293b" }}>+{missionTotal * 50} 💰</span>
+              </div>
+              <h1 className="text-2xl font-black leading-tight mb-0.5 text-gray-900">{missionSec?.title}{missionCountry ? ` · ${missionCountry}` : ""}</h1>
+              <p className="text-xs text-gray-700 font-semibold">{missionTotal} {missionTotal === 1 ? "song" : "songs"} in this country</p>
             </div>
-            <h1 className="text-2xl font-black leading-tight mb-1">{missionSec?.title}{missionCountry ? ` · ${missionCountry}` : ""}</h1>
-            <p className="text-xs text-white/70 font-semibold mb-3">{missionTotal} {missionTotal === 1 ? "song" : "songs"} in this country</p>
 
             {/* Song list with scores */}
             <div className="space-y-1.5 mb-4">
@@ -4821,14 +4826,14 @@ export default function HablaBeat() {
                       handlePlayDDR(s.id, cat.id, missionSec.id)
                     }}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-2xl text-left active:scale-[0.98] transition-all"
-                    style={{ background: isNext ? "rgba(251,191,36,0.18)" : "rgba(255,255,255,0.08)", border: isNext ? "1.5px solid rgba(251,191,36,0.6)" : "1px solid rgba(255,255,255,0.10)" }}>
+                    style={{ background: isNext ? "rgba(251,191,36,0.22)" : "rgba(255,255,255,0.7)", border: isNext ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)" }}>
                     <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{
-                      background: isComplete ? "#22c55e" : isNext ? "#fbbf24" : "rgba(255,255,255,0.12)",
-                      color: isComplete || isNext ? "#1e293b" : "rgba(255,255,255,0.6)",
+                      background: isComplete ? "#22c55e" : isNext ? "#fbbf24" : "rgba(0,0,0,0.08)",
+                      color: isComplete || isNext ? "#1e293b" : "rgba(15,23,42,0.55)",
                     }}>{isComplete ? "✓" : idx + 1}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-black text-sm truncate">{s.title}</div>
-                      <div className="text-[11px] text-white/60 font-semibold truncate">
+                      <div className="font-black text-sm truncate text-gray-900">{s.title}</div>
+                      <div className="text-[11px] text-gray-600 font-semibold truncate">
                         {isComplete ? `💰 ${score}` : isNext ? "Start now" : "Locked"}
                       </div>
                     </div>
@@ -4851,7 +4856,7 @@ export default function HablaBeat() {
               {allCleared ? "✨ Country cleared!" : `▶  Continue · ${missionNextSong?.title ?? ""}`}
             </button>
             {dailyStreak > 0 && !allCleared && (
-              <p className="text-center text-[11px] text-white/70 font-semibold mt-2">Finish today to extend your 🔥 {dailyStreak}-day streak</p>
+              <p className="text-center text-[11px] text-gray-700 font-semibold mt-2">Finish today to extend your 🔥 {dailyStreak}-day streak</p>
             )}
             </div>
           </div>
@@ -4868,10 +4873,10 @@ export default function HablaBeat() {
               }
             }}
               className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}>
+              style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
               <div className="text-xl">📘</div>
-              <div className="font-black text-sm">Passport</div>
-              <div className="text-[10px] text-white/60 font-semibold">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
+              <div className="font-black text-sm text-gray-900">Passport</div>
+              <div className="text-[10px] text-gray-500 font-semibold">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
             </button>
             <button onClick={() => {
               const flat = allSecs.flatMap(s => s.songs.map((sg: any) => ({ sg, sec: s })))
@@ -4880,43 +4885,43 @@ export default function HablaBeat() {
               handlePlayDDR(pick.sg.id, cat.id, pick.sec.id)
             }}
               className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}>
+              style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
               <div className="text-xl">🎲</div>
               <div className="font-black text-sm">Surprise me</div>
-              <div className="text-[10px] text-white/60 font-semibold">Random song</div>
+              <div className="text-[10px] text-gray-500 font-semibold">Random song</div>
             </button>
             <button onClick={() => setCurrentView("coins")}
               className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}>
+              style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
               <div className="text-xl">⚔️</div>
               <div className="font-black text-sm">Battle</div>
-              <div className="text-[10px] text-white/60 font-semibold">Challenge</div>
+              <div className="text-[10px] text-gray-500 font-semibold">Challenge</div>
             </button>
           </div>
 
           {/* ── STATS BAR ───────────────────────────────────────────────────── */}
-          <div className="rounded-2xl p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="rounded-2xl p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
             <div className="flex items-center gap-2">
               <span className="text-xl">🔥</span>
               <div>
-                <div className="text-[10px] text-white/60 font-black uppercase tracking-wider">Streak</div>
-                <div className="font-black text-base">{dailyStreak} days</div>
+                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Streak</div>
+                <div className="font-black text-base text-gray-900">{dailyStreak} days</div>
               </div>
             </div>
-            <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.10)" }} />
+            <div className="w-px h-8" style={{ background: "rgba(0,0,0,0.08)" }} />
             <div className="flex items-center gap-2">
               <span className="text-xl">⚡</span>
               <div>
-                <div className="text-[10px] text-white/60 font-black uppercase tracking-wider">Flow</div>
-                <div className="font-black text-base">{bestFlow}</div>
+                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Flow</div>
+                <div className="font-black text-base text-gray-900">{bestFlow}</div>
               </div>
             </div>
-            <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.10)" }} />
+            <div className="w-px h-8" style={{ background: "rgba(0,0,0,0.08)" }} />
             <div className="flex items-center gap-2">
               <span className="text-xl">💰</span>
               <div>
-                <div className="text-[10px] text-white/60 font-black uppercase tracking-wider">Bank</div>
-                <div className="font-black text-base">{totalVocabBank.toLocaleString()}</div>
+                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Bank</div>
+                <div className="font-black text-base text-gray-900">{totalVocabBank.toLocaleString()}</div>
               </div>
             </div>
           </div>
@@ -4924,8 +4929,8 @@ export default function HablaBeat() {
           {/* ── WORLD TOUR ──────────────────────────────────────────────────── */}
           <div>
             <div className="flex items-center justify-between mb-2 px-1">
-              <h2 className="font-black text-base">Your world tour</h2>
-              <button onClick={() => setHomeView("map")} className="text-xs font-bold text-white/60 active:scale-95 transition-all">
+              <h2 className="font-black text-base text-gray-900">Your world tour</h2>
+              <button onClick={() => setHomeView("map")} className="text-xs font-bold text-gray-500 active:scale-95 transition-all">
                 See all {allSecs.length} →
               </button>
             </div>
@@ -4946,7 +4951,7 @@ export default function HablaBeat() {
                       setWorldSlideDir(null)
                     }}
                     className="flex-shrink-0 w-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all"
-                    style={{ background: "rgba(255,255,255,0.05)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.6)" : "1px solid rgba(255,255,255,0.08)" }}>
+                    style={{ background: "rgba(255,255,255,0.85)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.06)" }}>
                     <div className="h-24 relative overflow-hidden">
                       {sec.songs[0]?.number != null && (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -4967,10 +4972,10 @@ export default function HablaBeat() {
                       {isCurrent && !cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b" }}>You are here</span>}
                     </div>
                     <div className="p-3">
-                      <div className="font-black text-sm truncate">{sec.title}</div>
-                      <div className="text-[11px] text-white/60 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
+                      <div className="font-black text-sm truncate text-gray-900">{sec.title}</div>
+                      <div className="text-[11px] text-gray-500 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
                       {total > 0 && (
-                        <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.10)" }}>
+                        <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
                           <div className="h-full" style={{ width: `${pct}%`, background: "linear-gradient(90deg,#fde047,#f59e0b)" }} />
                         </div>
                       )}
@@ -5131,14 +5136,6 @@ export default function HablaBeat() {
           />
 
 
-          {/* Dashboard return chip — only on the legacy map view */}
-          <button
-            onClick={() => setHomeView("dashboard")}
-            className="absolute top-3 right-3 z-30 text-xs font-black px-3 py-1.5 rounded-full active:scale-95 transition-all"
-            style={{ background: "rgba(15,13,34,0.92)", color: "#fff", boxShadow: "0 4px 14px rgba(0,0,0,0.3)" }}>
-            ✨ Dashboard
-          </button>
-
           {/* ── HEADER — clean white background (rainbow stripe is splash-only) ── */}
           <div style={{ background: "#ffffff", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
             {/* Desktop: single compact row with stats */}
@@ -5171,17 +5168,22 @@ export default function HablaBeat() {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center px-4 pt-3 pb-2 gap-3">
-                <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className={`w-[60px] h-[60px] object-contain ${bunnyHopping ? "bunny-hop-out" : ""}`} style={{ cursor: "pointer" }}
-                    onTouchStart={(e) => { if (!bunnyHopping) { const el = e.currentTarget; el.classList.remove("bunny-spin"); void el.offsetWidth; el.classList.add("bunny-spin") } }}
-                    onMouseEnter={(e) => { if (!bunnyHopping) { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") } }}
-                    onAnimationEnd={(e) => { if (!bunnyHopping) e.currentTarget.classList.remove("bunny-spin") }}
-                  />
-                </div>
+              <div className="flex items-center px-4 pt-4 pb-3 gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-[44px] object-contain" />
+                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className={`w-9 h-9 object-contain flex-shrink-0 ${bunnyHopping ? "bunny-hop-out" : ""}`} style={{ cursor: "pointer" }}
+                  onTouchStart={(e) => { if (!bunnyHopping) { const el = e.currentTarget; el.classList.remove("bunny-spin"); void el.offsetWidth; el.classList.add("bunny-spin") } }}
+                  onMouseEnter={(e) => { if (!bunnyHopping) { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") } }}
+                  onAnimationEnd={(e) => { if (!bunnyHopping) e.currentTarget.classList.remove("bunny-spin") }}
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
+                <div className="flex-1" />
+                <button
+                  onClick={() => setHomeView("dashboard")}
+                  className="text-xs font-black px-3 py-1.5 rounded-full active:scale-95 transition-all"
+                  style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.08)", color: "#374151" }}>
+                  ✨ Dashboard
+                </button>
               </div>
             )}
           </div>
