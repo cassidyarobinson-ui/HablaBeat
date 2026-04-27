@@ -2983,6 +2983,28 @@ export default function HablaBeat() {
   const [worldSwipeAnimating, setWorldSwipeAnimating] = useState(false)
   // Home page mode — "dashboard" (default) or "map" (legacy view)
   const [homeView, setHomeView] = useState<"dashboard" | "map">("dashboard")
+  // Favorited songs (persisted) + dashboard modals
+  const [favoriteSongs, setFavoriteSongs] = useState<Set<number>>(new Set())
+  const [showBestScores, setShowBestScores] = useState(false)
+  const [showFavorites, setShowFavorites] = useState(false)
+  // Hydrate favorites from localStorage once on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("hablabeat-favorites")
+      if (raw) setFavoriteSongs(new Set(JSON.parse(raw) as number[]))
+    } catch {}
+  }, [])
+  useEffect(() => {
+    try { localStorage.setItem("hablabeat-favorites", JSON.stringify(Array.from(favoriteSongs))) } catch {}
+  }, [favoriteSongs])
+  const toggleFavorite = useCallback((songNumber: number) => {
+    setFavoriteSongs(prev => {
+      const next = new Set(prev)
+      if (next.has(songNumber)) next.delete(songNumber)
+      else next.add(songNumber)
+      return next
+    })
+  }, [])
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [worldFocus, setWorldFocus] = useState<"carousel" | "modes">("carousel")
   const worldSwipeRef = useRef<{ x: number; y: number } | null>(null)
@@ -4778,10 +4800,10 @@ export default function HablaBeat() {
           </button>
         </div>
 
-        <div className="px-4 pb-24 pt-4 max-w-md mx-auto space-y-4">
+        <div className="pb-24 max-w-md mx-auto">
 
-          {/* ── HERO: Today's Mission ───────────────────────────────────────── */}
-          <div className="rounded-3xl p-4 relative overflow-hidden" style={{
+          {/* ── HERO: Today's Mission — edge-to-edge, no bottom radius ──────── */}
+          <div className="p-4 pt-5 relative overflow-hidden" style={{
             boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
           }}>
             {/* Background image of the mission's next/first song */}
@@ -4826,7 +4848,7 @@ export default function HablaBeat() {
                       handlePlayDDR(s.id, cat.id, missionSec.id)
                     }}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-2xl text-left active:scale-[0.98] transition-all"
-                    style={{ background: isNext ? "rgba(251,191,36,0.22)" : "rgba(255,255,255,0.7)", border: isNext ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)" }}>
+                    style={{ background: "rgba(255,255,255,0.92)", border: isNext ? "2px solid rgba(251,191,36,0.85)" : "1px solid rgba(0,0,0,0.06)", boxShadow: isNext ? "0 4px 14px rgba(251,191,36,0.25)" : undefined }}>
                     <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{
                       background: isComplete ? "#22c55e" : isNext ? "#fbbf24" : "rgba(0,0,0,0.08)",
                       color: isComplete || isNext ? "#1e293b" : "rgba(15,23,42,0.55)",
@@ -4853,54 +4875,20 @@ export default function HablaBeat() {
               disabled={!missionNextSong || allCleared}
               className="w-full py-3 rounded-full font-black text-base disabled:opacity-50 active:scale-95 transition-all"
               style={{ background: "linear-gradient(180deg,#fde047,#f59e0b)", color: "#1e293b", boxShadow: "0 6px 18px rgba(251,191,36,0.4)" }}>
-              {allCleared ? "✨ Country cleared!" : `▶  Continue · ${missionNextSong?.title ?? ""}`}
+              <div className="leading-tight">
+                <div>{allCleared ? "✨ Country cleared!" : `▶  Continue · ${missionNextSong?.title ?? ""}`}</div>
+                {dailyStreak > 0 && !allCleared && (
+                  <div className="text-[10px] font-bold opacity-70 mt-0.5">Finish today to extend your 🔥 {dailyStreak}-day streak</div>
+                )}
+              </div>
             </button>
-            {dailyStreak > 0 && !allCleared && (
-              <p className="text-center text-[11px] text-gray-700 font-semibold mt-2">Finish today to extend your 🔥 {dailyStreak}-day streak</p>
-            )}
             </div>
           </div>
 
-          {/* ── QUICK ACTIONS ───────────────────────────────────────────────── */}
-          <div className="grid grid-cols-3 gap-2">
-            <button onClick={() => {
-              if (lastPlayedSongNumber == null) return
-              for (const cat of curriculumData) {
-                for (const sec of cat.sections) {
-                  const s = sec.songs.find((sg: any) => sg.number === lastPlayedSongNumber)
-                  if (s) { handlePlayDDR(s.id, cat.id, sec.id); return }
-                }
-              }
-            }}
-              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-              <div className="text-xl">📘</div>
-              <div className="font-black text-sm text-gray-900">Passport</div>
-              <div className="text-[10px] text-gray-500 font-semibold">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
-            </button>
-            <button onClick={() => {
-              const flat = allSecs.flatMap(s => s.songs.map((sg: any) => ({ sg, sec: s })))
-              const pick = flat[Math.floor(Math.random() * flat.length)]
-              const cat = curriculumData.find(c => c.sections.some(sec => sec.id === pick.sec.id))!
-              handlePlayDDR(pick.sg.id, cat.id, pick.sec.id)
-            }}
-              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-              <div className="text-xl">🎲</div>
-              <div className="font-black text-sm">Surprise me</div>
-              <div className="text-[10px] text-gray-500 font-semibold">Random song</div>
-            </button>
-            <button onClick={() => setCurrentView("coins")}
-              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
-              style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-              <div className="text-xl">⚔️</div>
-              <div className="font-black text-sm">Battle</div>
-              <div className="text-[10px] text-gray-500 font-semibold">Challenge</div>
-            </button>
-          </div>
+          <div className="px-4 pt-4 space-y-4">
 
-          {/* ── STATS BAR ───────────────────────────────────────────────────── */}
-          <div className="rounded-2xl p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
+          {/* ── STATS BAR (above quick actions, mimics top mission tile) ───── */}
+          <div className="rounded-2xl p-3 flex items-center justify-around" style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
             <div className="flex items-center gap-2">
               <span className="text-xl">🔥</span>
               <div>
@@ -4924,6 +4912,39 @@ export default function HablaBeat() {
                 <div className="font-black text-base text-gray-900">{totalVocabBank.toLocaleString()}</div>
               </div>
             </div>
+          </div>
+
+          {/* ── QUICK ACTIONS ───────────────────────────────────────────────── */}
+          <div className="grid grid-cols-3 gap-2">
+            <button onClick={() => {
+              if (lastPlayedSongNumber == null) return
+              for (const cat of curriculumData) {
+                for (const sec of cat.sections) {
+                  const s = sec.songs.find((sg: any) => sg.number === lastPlayedSongNumber)
+                  if (s) { handlePlayDDR(s.id, cat.id, sec.id); return }
+                }
+              }
+            }}
+              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
+              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
+              <div className="text-xl">📘</div>
+              <div className="font-black text-sm text-gray-900">Passport</div>
+              <div className="text-[10px] text-gray-500 font-semibold">{lastPlayedSongNumber ? `Song ${lastPlayedSongNumber}` : "Nothing yet"}</div>
+            </button>
+            <button onClick={() => setShowBestScores(true)}
+              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
+              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
+              <div className="text-xl">🏆</div>
+              <div className="font-black text-sm text-gray-900">Best scores</div>
+              <div className="text-[10px] text-gray-500 font-semibold">{Object.keys(popHighScores).length} played</div>
+            </button>
+            <button onClick={() => setShowFavorites(true)}
+              className="flex flex-col items-start gap-1 p-3 rounded-2xl active:scale-95 transition-all"
+              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
+              <div className="text-xl">⭐</div>
+              <div className="font-black text-sm text-gray-900">Favorites</div>
+              <div className="text-[10px] text-gray-500 font-semibold">{favoriteSongs.size} saved</div>
+            </button>
           </div>
 
           {/* ── WORLD TOUR ──────────────────────────────────────────────────── */}
@@ -4951,7 +4972,13 @@ export default function HablaBeat() {
                       setWorldSlideDir(null)
                     }}
                     className="flex-shrink-0 w-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all"
-                    style={{ background: "rgba(255,255,255,0.85)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.06)" }}>
+                    style={{ background: "rgba(255,255,255,0.9)", border: isCurrent ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.06)" }}>
+                    {/* Title block at the top — mirrors the Today's Mission card */}
+                    <div className="px-3 pt-3 pb-2">
+                      <div className="font-black text-sm truncate text-gray-900">{sec.title}</div>
+                      <div className="text-[11px] text-gray-500 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
+                    </div>
+                    {/* Image below */}
                     <div className="h-24 relative overflow-hidden">
                       {sec.songs[0]?.number != null && (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -4962,30 +4989,90 @@ export default function HablaBeat() {
                           draggable={false}
                         />
                       )}
-                      {/* status-tinted overlay so text remains legible */}
-                      <div className="absolute inset-0" style={{
-                        background: cleared
-                          ? "linear-gradient(180deg, rgba(124,58,237,0.15) 0%, rgba(15,13,34,0.55) 100%)"
-                          : "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(15,13,34,0.55) 100%)",
-                      }} />
                       {cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16" }}>Cleared</span>}
                       {isCurrent && !cleared && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b" }}>You are here</span>}
-                    </div>
-                    <div className="p-3">
-                      <div className="font-black text-sm truncate text-gray-900">{sec.title}</div>
-                      <div className="text-[11px] text-gray-500 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
-                      {total > 0 && (
-                        <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
-                          <div className="h-full" style={{ width: `${pct}%`, background: "linear-gradient(90deg,#fde047,#f59e0b)" }} />
-                        </div>
-                      )}
                     </div>
                   </button>
                 )
               })}
             </div>
           </div>
+
+          </div>
         </div>
+
+        {/* ── Best Scores modal ───────────────────────────────────────────────── */}
+        {showBestScores && (
+          <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center" style={{ background: "rgba(0,0,0,0.55)" }} onClick={() => setShowBestScores(false)}>
+            <div className="w-full max-w-md rounded-t-3xl md:rounded-3xl bg-white px-4 pt-5 pb-8 mx-2 max-h-[80dvh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-black text-gray-900">🏆 Best Scores</h2>
+                <button onClick={() => setShowBestScores(false)} className="text-sm text-gray-500 font-bold">Close</button>
+              </div>
+              {(() => {
+                const ranked = Object.entries(popHighScores)
+                  .map(([num, score]) => ({ num: Number(num), score }))
+                  .sort((a, b) => b.score - a.score)
+                if (ranked.length === 0) return <p className="text-sm text-gray-500 py-6 text-center">No scores yet — play a song!</p>
+                return (
+                  <div className="space-y-2">
+                    {ranked.map((row, i) => {
+                      const songInfo = curriculumData.flatMap(c => c.sections.flatMap(s => s.songs.map((sg: any) => ({ ...sg, secId: s.id, catId: c.id })))).find((s: any) => s.number === row.num)
+                      if (!songInfo) return null
+                      return (
+                        <button key={row.num} onClick={() => { setShowBestScores(false); handlePlayDDR(songInfo.id, songInfo.catId, songInfo.secId) }}
+                          className="w-full flex items-center gap-3 p-3 rounded-2xl text-left active:scale-[0.98] transition-all"
+                          style={{ background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.06)" }}>
+                          <span className="text-base font-black w-6 text-center" style={{ color: i === 0 ? "#f59e0b" : i === 1 ? "#94a3b8" : i === 2 ? "#a16207" : "#9ca3af" }}>{i + 1}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-black text-sm truncate text-gray-900">{songInfo.title}</div>
+                            <div className="text-[11px] text-gray-500 font-semibold">Song {row.num}</div>
+                          </div>
+                          <div className="font-black text-sm" style={{ color: "#f59e0b" }}>💰 {row.score}</div>
+                          {bestGrades[row.num] && <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.15)", color: "#4a7cdb" }}>{bestGrades[row.num]}</span>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )
+              })()}
+            </div>
+          </div>
+        )}
+
+        {/* ── Favorites modal ─────────────────────────────────────────────────── */}
+        {showFavorites && (
+          <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center" style={{ background: "rgba(0,0,0,0.55)" }} onClick={() => setShowFavorites(false)}>
+            <div className="w-full max-w-md rounded-t-3xl md:rounded-3xl bg-white px-4 pt-5 pb-8 mx-2 max-h-[80dvh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-black text-gray-900">⭐ Favorites</h2>
+                <button onClick={() => setShowFavorites(false)} className="text-sm text-gray-500 font-bold">Close</button>
+              </div>
+              {favoriteSongs.size === 0 ? (
+                <p className="text-sm text-gray-500 py-6 text-center">No favorites yet — tap the ⭐ on a song page to add it.</p>
+              ) : (
+                <div className="space-y-2">
+                  {Array.from(favoriteSongs).map(num => {
+                    const songInfo = curriculumData.flatMap(c => c.sections.flatMap(s => s.songs.map((sg: any) => ({ ...sg, secId: s.id, catId: c.id })))).find((s: any) => s.number === num)
+                    if (!songInfo) return null
+                    return (
+                      <button key={num} onClick={() => { setShowFavorites(false); handlePlayDDR(songInfo.id, songInfo.catId, songInfo.secId) }}
+                        className="w-full flex items-center gap-3 p-3 rounded-2xl text-left active:scale-[0.98] transition-all"
+                        style={{ background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.06)" }}>
+                        <span className="text-xl">⭐</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-black text-sm truncate text-gray-900">{songInfo.title}</div>
+                          <div className="text-[11px] text-gray-500 font-semibold">Song {num}</div>
+                        </div>
+                        {popHighScores[num] > 0 && <div className="text-[12px] font-black" style={{ color: "#f59e0b" }}>💰 {popHighScores[num]}</div>}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     )
   }
@@ -5380,9 +5467,19 @@ export default function HablaBeat() {
                   {/* Top glass card — title+subtitle on one line (left), step indicator (right) */}
                   <div className="relative z-20 px-5 pt-16 pb-4" style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", borderRadius: "0 0 24px 24px" }}>
                     <div className="flex items-center justify-between gap-3">
-                      {/* Left: title above subtitle */}
+                      {/* Left: title above subtitle, with favorite toggle */}
                       <div className="min-w-0 flex-1">
-                        <h1 className="text-xl font-black text-gray-900 leading-tight truncate">{song.title}</h1>
+                        <div className="flex items-center gap-2">
+                          <h1 className="text-xl font-black text-gray-900 leading-tight truncate">{song.title}</h1>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleFavorite(song.number) }}
+                            className="flex-shrink-0 active:scale-90 transition-transform"
+                            aria-label={favoriteSongs.has(song.number) ? "Remove from favorites" : "Add to favorites"}
+                            style={{ fontSize: 18 }}
+                          >
+                            {favoriteSongs.has(song.number) ? "⭐" : "☆"}
+                          </button>
+                        </div>
                         <p className="text-xs text-gray-900 font-semibold truncate mt-0.5">
                           {description || `${countryName}`}
                           {songBestGrade && <span className="ml-2 text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,219,0.2)", color: "#4a7cdb" }}>{songBestGrade}</span>}
