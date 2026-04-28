@@ -5285,8 +5285,9 @@ export default function HablaBeat() {
                         background: "#ffffff",
                         transformOrigin: origin,
                         transform: open ? "scale(1)" : "scale(0.06)",
-                        transition: "transform 420ms cubic-bezier(0.4,0,0.2,1)",
-                        willChange: "transform",
+                        opacity: open ? 1 : 0,
+                        transition: "transform 420ms cubic-bezier(0.4,0,0.2,1), opacity 420ms ease",
+                        willChange: "transform, opacity",
                       }}
                     >
                       <video
