@@ -363,7 +363,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const recallBreaksFiredRef = useRef<Set<number>>(new Set())
   const [currentBreakIndex, setCurrentBreakIndex] = useState<number>(-1)
   const [recallCoins, setRecallCoins] = useState(0)
-  const [recallScores, setRecallScores] = useState<{ label: string; score: number }[]>([])
+  const [recallScores, setRecallScores] = useState<{ label: string; score: number; max: number }[]>([])
   // Mobile detection for Rhythm Hive-style single-lane layout
   const [isMobile, setIsMobile] = useState(false)
   const isMobileRef = useRef(false)
@@ -1430,8 +1430,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           skipIntro
           onCoinsChange={(delta) => setRecallCoins((c) => c + delta)}
           onClose={() => {
-            // Save a 0 score if user skips
-            setRecallScores(prev => prev.length <= currentBreakIndex ? [...prev, { label: brk.label, score: 0 }] : prev)
+            // Save a 0 score if user skips. Each correct fly-game answer = 10 pts.
+            setRecallScores(prev => prev.length <= currentBreakIndex ? [...prev, { label: brk.label, score: 0, max: brk.words.length * 10 }] : prev)
             // Resume the DDR game
             setGameState("playing")
             if (audioRef.current) {
@@ -1440,7 +1440,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           }}
           onGameEnd={(s: number) => {
             // Save recall score for this section
-            setRecallScores(prev => [...prev, { label: brk.label, score: s }])
+            setRecallScores(prev => [...prev, { label: brk.label, score: s, max: brk.words.length * 10 }])
             // Resume the DDR game
             setGameState("playing")
             if (audioRef.current) {
@@ -1999,10 +1999,25 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <p className="text-center text-sm font-black mb-1" style={{ color: "#4a7cdb" }}>You'll get there! 💪</p>
           )}
 
-          {/* Combined score header */}
+          {/* Combined score header — Total + Tapping/Recall/Flow row */}
           {(() => {
             const recallSum = recallScores.reduce((s, r) => s + r.score, 0)
+            const recallMax = recallScores.reduce((s, r) => s + r.max, 0)
             const totalScore = score + recallSum
+            // Tapping max: total notes × points per perfect hit (active pointer's coin multiplier)
+            const tappingMax = notesRef.current.length * Math.max(1, Math.round(getPointer(activePointer).gameplayModifier.coinMultiplier))
+            const cell = (
+              key: string,
+              emoji: string,
+              label: string,
+              value: React.ReactNode,
+            ) => (
+              <div key={key} className="flex-1 flex flex-col items-center justify-center rounded-2xl px-2 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
+                <span className="text-lg leading-none">{emoji}</span>
+                <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">{label}</span>
+                <span className="font-black text-gray-800 text-lg leading-tight">{value}</span>
+              </div>
+            )
             return (
               <>
                 {/* Total score — primary callout */}
@@ -2012,41 +2027,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                     <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider">Total Score</span>
                   </div>
                   <div className="font-black text-gray-800 text-3xl text-center leading-none">{totalScore}</div>
-                  {recallScores.length > 0 && (
-                    <div className="mt-2 flex justify-center gap-3 text-[11px] font-bold text-gray-500">
-                      <span>Tapping <span className="text-gray-800">{score}</span></span>
-                      <span className="text-gray-300">•</span>
-                      <span>Recall <span className="text-gray-800">{recallSum}</span></span>
-                    </div>
-                  )}
                 </div>
 
-                {/* Flow stat */}
-                <div className="w-full mb-2 rounded-2xl px-3 py-2" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
-                  <div className="flex flex-col items-center gap-0">
-                    <span className="text-lg">🔥</span>
-                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Flow</span>
-                    <span className="font-black text-gray-800 text-xl">{maxCombo}</span>
-                  </div>
+                {/* Tapping / Recall / Flow — one row, three cells */}
+                <div className="w-full mb-4 flex gap-2">
+                  {cell("tapping", "🥕", "Tapping", tappingMax > 0 ? `${score}/${tappingMax}` : score)}
+                  {recallScores.length > 0 && cell("recall", "🐰", "Recall", `${recallSum}/${recallMax}`)}
+                  {cell("flow", "🔥", "Flow", maxCombo)}
                 </div>
-
-                {/* Recall Test detail (per-quiz breakdown) */}
-                {recallScores.length > 0 && (
-                  <div className="w-full mb-4 rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.6)", border: "1.5px solid rgba(74,124,219,0.2)" }}>
-                    <div className="flex items-center gap-2 mb-2 justify-center">
-                      <span className="text-lg">🐰</span>
-                      <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Recall Test</span>
-                    </div>
-                    <div className="flex gap-2 justify-center flex-wrap">
-                      {recallScores.map((rs, i) => (
-                        <div key={i} className="flex flex-col items-center rounded-xl px-3 py-2" style={{ background: "rgba(74,124,219,0.08)", minWidth: 80 }}>
-                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{rs.label}</span>
-                          <span className="font-black text-gray-800 text-xl">{rs.score}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </>
             )
           })()}
