@@ -2996,6 +2996,12 @@ export default function HablaBeat() {
   const [focusedSongNumber, setFocusedSongNumber] = useState<number | null>(null)
   // Tap the bunny on the dashboard to expand it into the center as a placeholder for a future animation
   const [bunnyExpanded, setBunnyExpanded] = useState(false)
+  // Small bunny center (viewport coords) at click time — used as transform-origin
+  // for the zoom-in/zoom-out transition into the full-screen Mexico modal.
+  const [bunnyOrigin, setBunnyOrigin] = useState<{ x: number; y: number } | null>(null)
+  // 'enter' = mounted but not yet animated to open; 'open' = full-screen;
+  // 'close' = animating back. Drives the modal's transform/opacity targets.
+  const [bunnyAnim, setBunnyAnim] = useState<"enter" | "open" | "close">("enter")
   // When a user picks a country from the map we route them back to the dashboard
   // but pin the hero to that section. Clearing this returns to the natural mission.
   const [dashboardSectionOverride, setDashboardSectionOverride] = useState<string | null>(null)
@@ -5184,12 +5190,18 @@ export default function HablaBeat() {
                               {/* Inline bunny — appears next to the currently focused song.
                                   Tap to expand: Mexico plays the video, others just show
                                   the bunny larger. */}
-                              {isFocused && !bunnyExpanded && (
+                              {isFocused && (!bunnyExpanded || bunnyAnim === "close") && (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
                                   src="/images/me-bunny.svg"
                                   alt="Bunny — tap for surprise"
-                                  onClick={(e) => { e.stopPropagation(); setBunnyExpanded(true) }}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    const r = e.currentTarget.getBoundingClientRect()
+                                    setBunnyOrigin({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
+                                    setBunnyAnim("enter")
+                                    setBunnyExpanded(true)
+                                  }}
                                   className="w-11 h-11 object-contain ml-1 cursor-pointer flex-shrink-0"
                                   style={{ filter: "drop-shadow(0 0 6px rgba(255,255,255,0.95)) drop-shadow(0 0 14px rgba(255,255,255,0.85))" }}
                                 />
@@ -5250,19 +5262,38 @@ export default function HablaBeat() {
               {bunnyExpanded && (() => {
                 const country = missionCountry || missionSec?.title || ""
                 if (country === "Mexico") {
-                  // Full-screen white modal so the bunny gets full attention;
-                  // video has its own white bg, plays audio, collapses on end.
+                  // Full-screen white modal that zooms in from the small bunny's
+                  // position and zooms back out on close.
+                  const origin = bunnyOrigin
+                    ? `${bunnyOrigin.x}px ${bunnyOrigin.y}px`
+                    : "50% 50%"
+                  const open = bunnyAnim === "open"
+                  const startZoom = () => requestAnimationFrame(() => setBunnyAnim("open"))
+                  const closeWithZoom = () => setBunnyAnim("close")
                   return (
                     <div
-                      onClick={() => setBunnyExpanded(false)}
+                      onClick={closeWithZoom}
+                      ref={(el) => { if (el && bunnyAnim === "enter") startZoom() }}
+                      onTransitionEnd={(e) => {
+                        if (e.propertyName === "transform" && bunnyAnim === "close") {
+                          setBunnyExpanded(false)
+                          setBunnyAnim("enter")
+                        }
+                      }}
                       className="fixed inset-0 z-[100] cursor-pointer flex items-center justify-center"
-                      style={{ background: "#ffffff" }}
+                      style={{
+                        background: "#ffffff",
+                        transformOrigin: origin,
+                        transform: open ? "scale(1)" : "scale(0.06)",
+                        transition: "transform 420ms cubic-bezier(0.4,0,0.2,1)",
+                        willChange: "transform",
+                      }}
                     >
                       <video
                         src="/videos/mexico.mp4"
                         autoPlay
                         playsInline
-                        onEnded={() => setBunnyExpanded(false)}
+                        onEnded={closeWithZoom}
                         className="w-full h-full"
                         style={{ objectFit: "contain", background: "#ffffff" }}
                       />
