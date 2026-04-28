@@ -5228,14 +5228,14 @@ export default function HablaBeat() {
                 })()}
               </div>
 
-              {/* Expanded bunny overlay — centered placeholder for a future animation */}
+              {/* Expanded bunny — right-aligned so it doesn't cover the title/wizard text */}
               {bunnyExpanded && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src="/images/super-bunny-heart.gif"
                   alt="Bunny"
                   onClick={() => setBunnyExpanded(false)}
-                  className="w-48 h-48 object-contain cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 transition-all duration-500 ease-out"
+                  className="w-44 h-44 object-contain cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-30 transition-all duration-500 ease-out"
                   style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.28))" }}
                 />
               )}
@@ -5530,7 +5530,7 @@ export default function HablaBeat() {
 
   if (currentView === "songs") {
     return (
-      <div className={`swirl-bg ${isDesktop ? "h-screen overflow-hidden" : "min-h-screen"}`}>
+      <div className="swirl-bg h-[100dvh] overflow-hidden flex flex-col">
         {/* Animated swirl background styles */}
         <style>{`
           .swirl-bg {
@@ -5653,7 +5653,7 @@ export default function HablaBeat() {
           .shooting-star-b { animation: shootingStarB linear infinite; }
           .alien-float { animation: alienFloat ease-in-out infinite; }
         `}</style>
-        <div className={isDesktop ? "w-full h-screen" : "w-full min-h-screen"}>
+        <div className={`w-full flex-1 flex flex-col min-h-0 ${isDesktop ? "h-screen" : ""}`}>
           {/* Profile photo hidden input */}
           <input
             ref={profilePhotoInputRef}
@@ -5733,12 +5733,7 @@ export default function HablaBeat() {
                       <span>🔥</span>
                       {country && <span className="text-sm font-black text-gray-900">{country}</span>}
                       {flag && <span className="text-lg leading-none">{flag}</span>}
-                      {sectionTitle && (
-                        <>
-                          <span className="text-sm font-bold text-gray-400">·</span>
-                          <span className="text-sm font-black text-gray-900">{sectionTitle}</span>
-                        </>
-                      )}
+                      {sectionTitle && <span className="text-sm font-black text-gray-900">{sectionTitle}</span>}
                     </div>
                   )
                 })()}
@@ -6039,7 +6034,7 @@ export default function HablaBeat() {
           })()}
 
           {/* ── GALAXY MAP — stacked, one always open ── */}
-          <div className="px-0 pt-0 pb-0 overflow-hidden">
+          <div className="px-0 pt-0 pb-0 overflow-hidden flex-1 flex flex-col min-h-0">
             <style>{`
               @keyframes galaxyOpen {
                 from { opacity: 0; transform: scaleY(0.9); }
@@ -6077,7 +6072,7 @@ export default function HablaBeat() {
             `}</style>
             {/* ── Americas Map (both desktop and mobile) ── */}
             {(
-              <div className="w-full relative" style={{ height: isDesktop ? "calc(100vh - 56px)" : "calc(100dvh - 120px)" }}>
+              <div className="w-full relative flex-1 min-h-0" style={isDesktop ? { height: "calc(100vh - 56px)" } : undefined}>
                 <MapboxMap
                   onSelectSection={(sectionId) => {
                     // Route to dashboard pinned to the chosen section. Clear any
