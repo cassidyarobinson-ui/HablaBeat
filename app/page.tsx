@@ -2992,6 +2992,13 @@ export default function HablaBeat() {
   const [progressRange, setProgressRange] = useState<"week" | "month">("week")
   // Placeholder for end-of-country "World" mini-game (future feature)
   const [worldPlaceholder, setWorldPlaceholder] = useState<{ title: string; country: string } | null>(null)
+  // Tap a wizard node to focus that song in the hero (image / title / Vamos / highlight)
+  const [focusedSongNumber, setFocusedSongNumber] = useState<number | null>(null)
+  // Tap the bunny on the dashboard to expand it into the center as a placeholder for a future animation
+  const [bunnyExpanded, setBunnyExpanded] = useState(false)
+  // When a user picks a country from the map we route them back to the dashboard
+  // but pin the hero to that section. Clearing this returns to the natural mission.
+  const [dashboardSectionOverride, setDashboardSectionOverride] = useState<string | null>(null)
   // Hydrate from localStorage once
   useEffect(() => {
     try {
@@ -4996,9 +5003,16 @@ export default function HablaBeat() {
     }
     // Today's mission section: the section containing the last-played song,
     // or the first not-fully-cleared section if nothing has been played yet.
+    // Override: if the user picked a country from the map, pin the hero there.
     let missionSec: any = null
     let missionCat: any = null
-    if (lastPlayedSongNumber != null) {
+    if (dashboardSectionOverride) {
+      for (const cat of curriculumData) {
+        const s = cat.sections.find((sec: any) => sec.id === dashboardSectionOverride)
+        if (s) { missionSec = s; missionCat = cat; break }
+      }
+    }
+    if (!missionSec && lastPlayedSongNumber != null) {
       for (const cat of curriculumData) {
         const s = cat.sections.find((sec: any) => sec.songs.some((sg: any) => sg.number === lastPlayedSongNumber))
         if (s) { missionSec = s; missionCat = cat; break }
@@ -5017,38 +5031,56 @@ export default function HablaBeat() {
     const missionCountry = (missionSec as any)?.country ?? ""
     const missionSongs = missionSec?.songs ?? []
     const { done: missionDone, total: missionTotal } = sectionProgress(missionSec ?? { songs: [] })
-    // Next song to start in mission section
-    const missionNextSong = missionSongs.find((s: any) => (popHighScores[s.number] ?? 0) === 0) ?? missionSongs[0]
+    // Next song to start in mission section. If the user has tapped a wizard
+    // node, override to that song so the hero (image/title/Vamos/highlight)
+    // refocuses on what they tapped.
+    const defaultNextSong = missionSongs.find((s: any) => (popHighScores[s.number] ?? 0) === 0) ?? missionSongs[0]
+    const focusedSong = focusedSongNumber != null ? missionSongs.find((s: any) => s.number === focusedSongNumber) : null
+    const missionNextSong = focusedSong ?? defaultNextSong
     const allCleared = missionDone === missionTotal && missionTotal > 0
 
     return (
-      <div className="min-h-[100dvh] flex flex-col" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
-        {/* Top bar — logo flush-left, country flag + streak on the right */}
+      <div className={`flex flex-col ${dashboardSectionOverride ? "h-[100dvh]" : "min-h-[100dvh]"}`} style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
+        {/* Top bar — back arrow (when previewing a country) + logo + country/streak on the right */}
         <div className="flex items-center px-4 pt-4 pb-3 gap-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
+          {dashboardSectionOverride ? (
+            <button
+              onClick={() => { setDashboardSectionOverride(null); setFocusedSongNumber(null); setHomeView("map") }}
+              aria-label="Back to map"
+              className="text-gray-900 active:scale-90 transition-all p-1 -ml-1">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
+          )}
           <div className="flex-1" />
           {(() => {
             const num = missionNextSong?.number ?? missionSongs[0]?.number
             const flag = num != null ? SONG_COUNTRY_MAP[num]?.flag : ""
-            const country = missionCountry || missionSec?.title || ""
+            const country = missionCountry || ""
+            const sectionTitle = missionSec?.title || ""
             return (
               <div className="flex items-center gap-1.5 text-base font-black text-gray-900">
                 <span>{dailyStreak}</span>
                 <span>🔥</span>
                 {country && <span className="text-sm font-black text-gray-900">{country}</span>}
                 {flag && <span className="text-lg leading-none">{flag}</span>}
+                {sectionTitle && <span className="text-sm font-black text-gray-900">{sectionTitle}</span>}
               </div>
             )
           })()}
         </div>
 
-        <div className="pb-8 max-w-md mx-auto w-full flex-1 flex flex-col">
+        <div className={`max-w-md mx-auto w-full flex-1 flex flex-col ${dashboardSectionOverride ? "" : "pb-8"}`}>
 
-          {/* ── HERO: half-screen country image with single CTA ─────────── */}
-          <div className="relative overflow-hidden flex-shrink-0" style={{
+          {/* ── HERO: country image. When previewing from the map, fills the
+               whole page so there's no white space below. */}
+          <div className={`relative overflow-hidden ${dashboardSectionOverride ? "flex-1" : "flex-shrink-0"}`} style={{
             boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
-            minHeight: "50dvh",
+            minHeight: dashboardSectionOverride ? undefined : "50dvh",
           }}>
             {/* Background image of the mission's next/first song */}
             {(missionNextSong?.number ?? missionSongs[0]?.number) != null && (
@@ -5064,27 +5096,113 @@ export default function HablaBeat() {
             <div className="absolute inset-0 pointer-events-none" style={{
               background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0.62) 100%)",
             }} />
-            {/* V2 — title at top, Vamos centered, wizard pinned to bottom of image. */}
-            <div className="relative flex flex-col" style={{ minHeight: "50dvh" }}>
+            {/* V2 — title + english + wizard at top; middle reserved for animation; Vamos at bottom. */}
+            <div className="relative flex flex-col h-full" style={{ minHeight: dashboardSectionOverride ? "100%" : "50dvh" }}>
+              {/* Top section: title + English description only */}
               <div className="px-4 pt-5">
                 {(() => {
                   const country = missionCountry || missionSec?.title || ""
+                  const englishDesc = missionNextSong?.number != null ? (SONG_DESCRIPTIONS[missionNextSong.number] ?? "") : ""
+                  // Strong layered white halo so dark titles read on any background
+                  const titleGlow = "0 0 12px rgba(255,255,255,0.85), 0 0 6px rgba(255,255,255,0.95), 0 1px 2px rgba(255,255,255,0.95)"
                   return (
-                    <div className="mb-1">
-                      <div className="flex items-end justify-between gap-2">
-                        <h1 className="flex-1 text-2xl font-black leading-tight text-gray-900" style={{ textShadow: "0 1px 2px rgba(255,255,255,0.5)" }}>
-                          {allCleared ? `${country} cleared 🎉` : (missionNextSong?.title ?? missionSec?.title ?? "")}
-                        </h1>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-14 h-14 object-contain flex-shrink-0" style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.22))" }} />
-                      </div>
+                    <div>
+                      <h1 className="text-2xl font-black leading-tight text-gray-900" style={{ textShadow: titleGlow }}>
+                        {allCleared ? `${country} cleared 🎉` : (missionNextSong?.title ?? missionSec?.title ?? "")}
+                      </h1>
+                      {englishDesc && (
+                        <p className="text-sm font-bold text-gray-800 mt-0.5" style={{ textShadow: titleGlow }}>
+                          {englishDesc}
+                        </p>
+                      )}
                     </div>
                   )
                 })()}
               </div>
 
-              {/* Vamos — vertically centered in the remaining space */}
-              <div className="flex-1 flex items-center justify-center px-4">
+              {/* Empty middle — image visible, reserved for future animations */}
+              <div className="flex-1" />
+
+              {/* Bottom — wizard + Vamos + milestone, with white scrim for legibility */}
+              <div className="relative px-4 pt-4 pb-4" style={{
+                background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.55) 30%, rgba(255,255,255,0.85) 100%)",
+              }}>
+                {/* Wizard — vertical stepper. Solid connector runs through the
+                    column of node centers; song titles sit to the right of each node. */}
+                {(() => {
+                  const songs = missionSongs as any[]
+                  const country = missionCountry || missionSec?.title || ""
+                  const allDone = songs.length > 0 && songs.every(s => (popHighScores[s.number] ?? 0) > 0)
+                  return (
+                    <div className="relative pl-2 pr-2 mb-3">
+                      {/* Vertical connector line — touches but does not enter the node circles */}
+                      <div className="absolute w-0.5 pointer-events-none" style={{
+                        left: 25, top: 36, bottom: 36,
+                        background: "rgba(15,23,42,0.55)",
+                      }} aria-hidden />
+                      <div className="relative flex flex-col gap-2">
+                        {songs.map((s, i) => {
+                          const done = (popHighScores[s.number] ?? 0) > 0
+                          const isFocused = s.number === missionNextSong?.number
+                          return (
+                            <button
+                              key={s.number}
+                              onClick={() => setFocusedSongNumber(s.number)}
+                              className="flex items-center gap-3 active:scale-[0.98] transition-all">
+                              <span
+                                className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0"
+                                style={{
+                                  background: done ? "#22c55e" : isFocused ? "rgba(245,158,11,0.98)" : "#ffffff",
+                                  color: done || isFocused ? "#fff" : "#1e293b",
+                                  boxShadow: isFocused ? "0 0 0 3px rgba(245,158,11,0.32)" : "0 2px 8px rgba(15,23,42,0.18)",
+                                  border: !done && !isFocused ? "1.5px solid rgba(15,23,42,0.55)" : undefined,
+                                }}>
+                                {done ? "✓" : i + 1}
+                              </span>
+                              <span className="text-sm font-black text-left" style={{
+                                color: done ? "#15803d" : isFocused ? "#b45309" : "#1e293b",
+                                textShadow: "0 1px 2px rgba(255,255,255,0.7)",
+                              }}>
+                                {s.title}
+                              </span>
+                              {/* Inline bunny — appears next to the currently focused song.
+                                  Tap to expand to the centered overlay placeholder. */}
+                              {isFocused && !bunnyExpanded && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src="/images/super-bunny-heart.gif"
+                                  alt="Bunny — tap for surprise"
+                                  onClick={(e) => { e.stopPropagation(); setBunnyExpanded(true) }}
+                                  className="w-8 h-8 object-contain ml-1 cursor-pointer flex-shrink-0"
+                                  style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.22))" }}
+                                />
+                              )}
+                            </button>
+                          )
+                        })}
+                        <button
+                          onClick={() => { if (allDone) setWorldPlaceholder({ title: missionSec?.title ?? "", country }) }}
+                          disabled={!allDone}
+                          className="flex items-center gap-3 active:scale-[0.98] transition-all disabled:active:scale-100">
+                          <span
+                            className="w-9 h-9 rounded-full flex items-center justify-center text-base font-black flex-shrink-0"
+                            style={{
+                              background: allDone ? "linear-gradient(135deg,#4a7cdb,#2563eb)" : "rgba(15,23,42,0.62)",
+                              color: "#fff",
+                              boxShadow: allDone ? "0 4px 14px rgba(74,124,219,0.5)" : "0 2px 8px rgba(15,23,42,0.22)",
+                            }}>
+                            {allDone ? "🌍" : "🔒"}
+                          </span>
+                          <span className="text-sm font-black text-left" style={{
+                            color: allDone ? "#1d4ed8" : "#1e293b",
+                            textShadow: "0 1px 2px rgba(255,255,255,0.7)",
+                          }}>World</span>
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })()}
+
                 <button
                   onClick={() => {
                     if (!missionNextSong || allCleared) return
@@ -5095,11 +5213,6 @@ export default function HablaBeat() {
                   style={{ background: "linear-gradient(180deg,#fde047,#f59e0b)", color: "#1e293b", boxShadow: "0 8px 22px rgba(251,191,36,0.5)" }}>
                   {allCleared ? "✨ Pick a new country" : "¡Vamos! · 5 min"}
                 </button>
-              </div>
-
-              {/* Wizard path + milestone text — flush to bottom of the hero image */}
-              <div className="px-4 pb-3">
-                {/* World-progress anchor — songs remaining until end-of-country World mini-game */}
                 {(() => {
                   const country = missionCountry || missionSec?.title || ""
                   const remaining = Math.max(0, missionTotal - missionDone)
@@ -5108,77 +5221,32 @@ export default function HablaBeat() {
                     : `${remaining} more song${remaining === 1 ? "" : "s"} until the ${country} World 🌍`
                   const color = remaining === 0 ? "#16a34a" : "#475569"
                   return (
-                    <p className="text-center text-[12px] font-black mt-2" style={{ color }}>
-                      {line}
-                    </p>
-                  )
-                })()}
-
-                {/* Country song path — solid line behind the nodes, ends in 🌍 World */}
-                {(() => {
-                  const songs = missionSongs as any[]
-                  const country = missionCountry || missionSec?.title || ""
-                  const allDone = songs.length > 0 && songs.every(s => (popHighScores[s.number] ?? 0) > 0)
-                  return (
-                    <div className="relative mt-3 px-2">
-                      {/* Solid connector line — sits behind the song circles, stops at the World bubble's edge */}
-                      <div className="absolute h-0.5 pointer-events-none" style={{
-                        left: 24, right: 44, top: 17,
-                        background: "rgba(15,23,42,0.55)",
-                      }} aria-hidden />
-                      <div className="relative flex items-start justify-between">
-                        {songs.map((s, i) => {
-                          const done = (popHighScores[s.number] ?? 0) > 0
-                          const isNext = !done && songs.slice(0, i).every(p => (popHighScores[p.number] ?? 0) > 0)
-                          return (
-                            <div key={s.number} className="flex flex-col items-center gap-1">
-                              <button
-                                onClick={() => handlePlayDDR(s.id, missionCat.id, missionSec.id)}
-                                className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black active:scale-95 transition-all"
-                                style={{
-                                  background: done ? "#22c55e" : isNext ? "rgba(245,158,11,0.98)" : "#ffffff",
-                                  color: done || isNext ? "#fff" : "#1e293b",
-                                  boxShadow: isNext ? "0 0 0 3px rgba(245,158,11,0.32)" : "0 2px 8px rgba(15,23,42,0.18)",
-                                  border: !done && !isNext ? "1.5px solid rgba(15,23,42,0.55)" : undefined,
-                                }}>
-                                {done ? "✓" : i + 1}
-                              </button>
-                              <span className="text-[10px] font-black truncate max-w-[64px] text-center" style={{
-                                color: done ? "#15803d" : isNext ? "#b45309" : "#1e293b",
-                                textShadow: "0 1px 2px rgba(255,255,255,0.7)",
-                              }}>
-                                {s.title}
-                              </span>
-                            </div>
-                          )
-                        })}
-                        {/* World node */}
-                        <div className="flex flex-col items-center gap-1">
-                          <button
-                            onClick={() => { if (allDone) setWorldPlaceholder({ title: missionSec?.title ?? "", country }) }}
-                            disabled={!allDone}
-                            className="w-9 h-9 rounded-full flex items-center justify-center text-base font-black active:scale-95 transition-all disabled:active:scale-100"
-                            style={{
-                              background: allDone ? "linear-gradient(135deg,#4a7cdb,#2563eb)" : "rgba(15,23,42,0.62)",
-                              color: "#fff",
-                              boxShadow: allDone ? "0 4px 14px rgba(74,124,219,0.5)" : "0 2px 8px rgba(15,23,42,0.22)",
-                            }}>
-                            {allDone ? "🌍" : "🔒"}
-                          </button>
-                          <span className="text-[10px] font-black" style={{
-                            color: allDone ? "#1d4ed8" : "#1e293b",
-                            textShadow: "0 1px 2px rgba(255,255,255,0.7)",
-                          }}>World</span>
-                        </div>
-                      </div>
+                    <div className="relative mt-2">
+                      <p className="text-center text-[12px] font-black" style={{ color }}>{line}</p>
                     </div>
                   )
                 })()}
               </div>
+
+              {/* Expanded bunny overlay — centered placeholder for a future animation */}
+              {bunnyExpanded && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src="/images/super-bunny-heart.gif"
+                  alt="Bunny"
+                  onClick={() => setBunnyExpanded(false)}
+                  className="w-48 h-48 object-contain cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 transition-all duration-500 ease-out"
+                  style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.28))" }}
+                />
+              )}
             </div>
           </div>
 
+          {/* Skip the entire tile-row + Americas-tour section when previewing a country from the map */}
+          {!dashboardSectionOverride && (
           <div className="px-4 pt-6 flex-1 flex flex-col">
+
+          <React.Fragment>
 
           {/* Secondary actions — single row, smaller, below the fold */}
           {(() => {
@@ -5278,7 +5346,10 @@ export default function HablaBeat() {
             </div>
           </div>
 
+          </React.Fragment>
+
           </div>
+          )}
         </div>
 
         {/* ── World placeholder modal — future end-of-country mini-game ─────── */}
@@ -5654,13 +5725,20 @@ export default function HablaBeat() {
                   const missionNextSong = missionSongs.find((s: any) => (popHighScores[s.number] ?? 0) === 0) ?? missionSongs[0]
                   const num = missionNextSong?.number ?? missionSongs[0]?.number
                   const flag = num != null ? SONG_COUNTRY_MAP[num]?.flag : ""
-                  const country = (missionSec as any)?.country || missionSec?.title || ""
+                  const country = (missionSec as any)?.country || ""
+                  const sectionTitle = missionSec?.title || ""
                   return (
                     <div className="flex items-center gap-1.5 text-base font-black text-gray-900 flex-shrink-0">
                       <span>{dailyStreak}</span>
                       <span>🔥</span>
                       {country && <span className="text-sm font-black text-gray-900">{country}</span>}
                       {flag && <span className="text-lg leading-none">{flag}</span>}
+                      {sectionTitle && (
+                        <>
+                          <span className="text-sm font-bold text-gray-400">·</span>
+                          <span className="text-sm font-black text-gray-900">{sectionTitle}</span>
+                        </>
+                      )}
                     </div>
                   )
                 })()}
@@ -6001,16 +6079,12 @@ export default function HablaBeat() {
             {(
               <div className="w-full relative" style={{ height: isDesktop ? "calc(100vh - 56px)" : "calc(100dvh - 120px)" }}>
                 <MapboxMap
-                  onSelectSection={(sectionId, cx, cy) => {
-                    setWorldZoomOrigin({ x: cx, y: cy })
-                    setWorldSongIdx(0)
-                    setWorldModeIdx(1) // default to Dance
-                    // Bunny hops out, then open overlay
-                    setBunnyHopping(true)
-                    setTimeout(() => {
-                      setOpenSectionId(sectionId)
-                      setBunnyHopping(false)
-                    }, 350)
+                  onSelectSection={(sectionId) => {
+                    // Route to dashboard pinned to the chosen section. Clear any
+                    // previously-focused song so the new country starts fresh.
+                    setDashboardSectionOverride(sectionId)
+                    setFocusedSongNumber(null)
+                    setHomeView("dashboard")
                   }}
                   isSectionBadgeUnlocked={isSectionBadgeUnlocked}
                   openSectionId={openSectionId}
