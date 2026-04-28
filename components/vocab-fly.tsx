@@ -622,7 +622,7 @@ export default function VocabFly({
             transition: bunnyAnimating ? "left 0.4s cubic-bezier(0.34,1.56,0.64,1), top 0.4s cubic-bezier(0.34,1.56,0.64,1)" : "left 0.35s ease, top 0.35s ease",
             transform: bunnyFacing === "right" ? "scaleX(-1)" : "scaleX(1)",
           }}>
-            <Image src="/images/super-bunny-winner.png" alt="Bunny"
+            <Image src="/images/me-bunny.svg" alt="Bunny"
               width={BUNNY_W} height={BUNNY_H}
               className="w-full h-full object-contain" unoptimized priority
               style={{ animation: bunnySpin ? "bunnySpin 0.5s ease-in-out" : "none" }}/>

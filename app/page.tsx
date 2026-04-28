@@ -3990,8 +3990,8 @@ export default function HablaBeat() {
       <div
         style={{
           position: "fixed", inset: 0, zIndex: 9999,
-          background: "url('/images/serape-bg.jpg') repeat center/auto 100%",
-          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          background: "#42A0F5",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start",
           opacity: splashFading ? 0 : 1,
           transition: "opacity 0.5s ease",
           overflow: "hidden",
@@ -4012,8 +4012,8 @@ export default function HablaBeat() {
             100% { transform: translateY(110vh) rotate(calc(var(--r) + 360deg)) scale(0.9); opacity: 0; }
           }
           @keyframes splashPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(251,191,36,0.4)); }
-            50%       { transform: scale(1.04); filter: drop-shadow(0 0 28px rgba(251,191,36,0.65)); }
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.04); }
           }
           @keyframes splashWordFade {
             0%   { opacity: 0; transform: translateY(8px) scale(0.95); }
@@ -4023,7 +4023,7 @@ export default function HablaBeat() {
           .splash-word  { animation: splashWordFade 0.6s ease 0.3s both; }
         `}</style>
 
-        {/* Falling coins */}
+        {/* Falling coins — z-10 so they pass over the bunny face, not behind it */}
         {coins.map(c => (
           <div key={c.id} style={{
             position: "absolute",
@@ -4037,12 +4037,14 @@ export default function HablaBeat() {
             boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(120,53,0,0.4), inset 1px 1px 4px rgba(254,243,199,0.5)",
             animation: `coinFall ${c.duration} ${c.delay} ease-in infinite`,
             ["--r" as any]: `${c.rotate}deg`,
+            zIndex: 10,
+            pointerEvents: "none",
           }}>
             <div style={{ position: "absolute", top: "15%", left: "20%", width: "30%", height: "18%", background: "radial-gradient(ellipse,rgba(255,255,255,0.55),rgba(255,255,255,0) 70%)", borderRadius: "50%", transform: "rotate(-15deg)" }} />
           </div>
         ))}
 
-        {/* Falling carrots */}
+        {/* Falling carrots — same overlay layer */}
         {carrots.map(c => (
           <div key={`carrot-${c.id}`} style={{
             position: "absolute",
@@ -4051,23 +4053,36 @@ export default function HablaBeat() {
             fontSize: `${c.size}px`,
             animation: `carrotFall ${c.duration} ${c.delay} ease-in infinite`,
             ["--r" as any]: `${c.rotate}deg`,
-            zIndex: 1,
+            zIndex: 10,
             pointerEvents: "none",
             filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
           }}>🥕</div>
         ))}
 
-        {/* Bunny centered */}
-        <div className="splash-bunny" style={{ zIndex: 2, marginBottom: "-4px" }}>
+        {/* Big bunny face — bottom of the SVG runs off the page so there's no
+            visible "head ends here" line. Same #42A0F5 fills behind/around it. */}
+        <div className="splash-bunny" style={{ zIndex: 2, width: "100%", display: "flex", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/super-bunny-heart.gif" alt="HablaBeat" style={{ width: "140px", height: "140px", objectFit: "contain" }} />
+          <img
+            src="/images/super-bunny-face.svg"
+            alt="HablaBeat"
+            style={{
+              width: "120%",
+              maxWidth: "780px",
+              aspectRatio: "1 / 1",
+              objectFit: "cover",
+              objectPosition: "center top",
+              display: "block",
+              marginTop: "-4vh",
+            }}
+          />
         </div>
 
-        {/* Logo text */}
-        <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative" }}>
+        {/* Logo + tagline — same styling as before, on solid blue */}
+        <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative", padding: "16px 24px 32px" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "80px", objectFit: "contain", marginBottom: "12px" }} />
-          <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.5)" }}>LEARN SPANISH THROUGH MUSIC</p>
+          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "72px", objectFit: "contain", marginBottom: "12px", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.18))" }} />
+          <p style={{ color: "rgba(255,255,255,0.95)", fontSize: "0.9rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.25)" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
     )
