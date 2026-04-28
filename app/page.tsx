@@ -5250,25 +5250,21 @@ export default function HablaBeat() {
               {bunnyExpanded && (() => {
                 const country = missionCountry || missionSec?.title || ""
                 if (country === "Mexico") {
-                  // Animated WebP carries the alpha-channel bunny;
-                  // the audio plays separately and drives collapse on ended.
+                  // Full-screen white modal so the bunny gets full attention;
+                  // video has its own white bg, plays audio, collapses on end.
                   return (
                     <div
                       onClick={() => setBunnyExpanded(false)}
-                      className="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-30"
-                      style={{ width: "min(60vw, 240px)", aspectRatio: "9 / 16" }}
+                      className="fixed inset-0 z-[100] cursor-pointer flex items-center justify-center"
+                      style={{ background: "#ffffff" }}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/videos/mexico-bunny.webp"
-                        alt="Bunny"
-                        className="w-full h-full object-contain"
-                        style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.32))" }}
-                      />
-                      <audio
-                        src="/videos/mexico-bunny.mp3"
+                      <video
+                        src="/videos/mexico.mp4"
                         autoPlay
+                        playsInline
                         onEnded={() => setBunnyExpanded(false)}
+                        className="w-full h-full"
+                        style={{ objectFit: "contain", background: "#ffffff" }}
                       />
                     </div>
                   )
