@@ -5022,9 +5022,9 @@ export default function HablaBeat() {
     const allCleared = missionDone === missionTotal && missionTotal > 0
 
     return (
-      <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
+      <div className="min-h-[100dvh] flex flex-col" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
         {/* Top bar — logo flush-left, country flag + streak on the right */}
-        <div className="flex items-center px-4 pt-4 pb-3 gap-3" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+        <div className="flex items-center px-4 pt-4 pb-3 gap-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
           <div className="flex-1" />
@@ -5043,11 +5043,12 @@ export default function HablaBeat() {
           })()}
         </div>
 
-        <div className="pb-24 max-w-md mx-auto">
+        <div className="pb-8 max-w-md mx-auto w-full flex-1 flex flex-col">
 
-          {/* ── HERO: Today's 5 — single decision, bunny-led ─────────────── */}
-          <div className="relative overflow-hidden" style={{
+          {/* ── HERO: half-screen country image with single CTA ─────────── */}
+          <div className="relative overflow-hidden flex-shrink-0" style={{
             boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
+            minHeight: "50dvh",
           }}>
             {/* Background image of the mission's next/first song */}
             {(missionNextSong?.number ?? missionSongs[0]?.number) != null && (
@@ -5063,9 +5064,9 @@ export default function HablaBeat() {
             <div className="absolute inset-0 pointer-events-none" style={{
               background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0.62) 100%)",
             }} />
-            {/* V2 — clean: caption + (title | bunny) + dot progress. No speech bubble, no badges. */}
-            <div className="relative">
-              <div className="px-4 pt-5 pb-4">
+            {/* V2 — title at top, Vamos centered, wizard pinned to bottom of image. */}
+            <div className="relative flex flex-col" style={{ minHeight: "50dvh" }}>
+              <div className="px-4 pt-5">
                 {(() => {
                   const country = missionCountry || missionSec?.title || ""
                   return (
@@ -5082,8 +5083,8 @@ export default function HablaBeat() {
                 })()}
               </div>
 
-              {/* CTA + milestone anchor + reward-calendar week strip */}
-              <div className="px-4 pb-3 pt-1">
+              {/* Vamos — vertically centered in the remaining space */}
+              <div className="flex-1 flex items-center justify-center px-4">
                 <button
                   onClick={() => {
                     if (!missionNextSong || allCleared) return
@@ -5094,6 +5095,10 @@ export default function HablaBeat() {
                   style={{ background: "linear-gradient(180deg,#fde047,#f59e0b)", color: "#1e293b", boxShadow: "0 8px 22px rgba(251,191,36,0.5)" }}>
                   {allCleared ? "✨ Pick a new country" : "¡Vamos! · 5 min"}
                 </button>
+              </div>
+
+              {/* Wizard path + milestone text — flush to bottom of the hero image */}
+              <div className="px-4 pb-3">
                 {/* World-progress anchor — songs remaining until end-of-country World mini-game */}
                 {(() => {
                   const country = missionCountry || missionSec?.title || ""
@@ -5173,7 +5178,7 @@ export default function HablaBeat() {
             </div>
           </div>
 
-          <div className="px-4 pt-4 space-y-2">
+          <div className="px-4 pt-6 flex-1 flex flex-col">
 
           {/* Secondary actions — single row, smaller, below the fold */}
           {(() => {
@@ -5203,8 +5208,8 @@ export default function HablaBeat() {
             )
           })()}
 
-          {/* ── WORLD TOUR ──────────────────────────────────────────────────── */}
-          <div>
+          {/* ── WORLD TOUR — pinned toward bottom of dashboard ─────────────── */}
+          <div className="mt-auto pt-6">
             <div className="flex items-center justify-between mb-2 px-1">
               <h2 className="font-black text-base text-gray-900">Your Americas Tour</h2>
               <button onClick={() => setHomeView("map")} className="text-xs font-bold text-gray-500 active:scale-95 transition-all">
