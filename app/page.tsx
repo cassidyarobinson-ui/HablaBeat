@@ -4078,11 +4078,12 @@ export default function HablaBeat() {
           />
         </div>
 
-        {/* Logo + tagline — same styling as before, on solid blue */}
-        <div className="splash-word" style={{ zIndex: 2, textAlign: "center", position: "relative", padding: "16px 24px 32px" }}>
+        {/* Logo + tagline — fills remaining space below the bunny and
+            centers itself horizontally + vertically inside it */}
+        <div className="splash-word" style={{ zIndex: 2, position: "relative", flex: 1, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 24px" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ height: "72px", objectFit: "contain", marginBottom: "12px", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.18))" }} />
-          <p style={{ color: "rgba(255,255,255,0.95)", fontSize: "0.9rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.25)" }}>LEARN SPANISH THROUGH MUSIC</p>
+          <img src="/images/hablabeats-logo.png" alt="HablaBeat" style={{ display: "block", height: "72px", maxWidth: "100%", objectFit: "contain", marginBottom: "12px", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.18))" }} />
+          <p style={{ margin: 0, color: "rgba(255,255,255,0.95)", fontSize: "0.9rem", fontWeight: 700, letterSpacing: "0.18em", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif", textShadow: "1px 1px 3px rgba(0,0,0,0.25)" }}>LEARN SPANISH THROUGH MUSIC</p>
         </div>
       </div>
     )
