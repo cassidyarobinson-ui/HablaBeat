@@ -4785,22 +4785,19 @@ export default function HablaBeat() {
 
     return (
       <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
-        {/* Top bar — logo flush-left (bunny moved to the active song row) */}
+        {/* Top bar — logo flush-left, streak on the right (the only stat above the fold) */}
         <div className="flex items-center px-4 pt-4 pb-3 gap-3" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/hablabeats-logo.png" alt="HablaBeat" className="h-7 object-contain flex-shrink-0" />
           <div className="flex-1" />
-          <button
-            onClick={() => setHomeView("map")}
-            className="text-xs font-black px-3 py-1.5 rounded-full active:scale-95 transition-all"
-            style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.08)", color: "#374151" }}>
-            🗺️ Map view
-          </button>
+          <div className="flex items-center gap-1 text-base font-black text-gray-900">
+            <span>🔥</span><span>{dailyStreak}</span>
+          </div>
         </div>
 
         <div className="pb-24 max-w-md mx-auto">
 
-          {/* ── HERO: Today's Mission — fully edge-to-edge ────────────────── */}
+          {/* ── HERO: Today's 5 — single decision, bunny-led ─────────────── */}
           <div className="relative overflow-hidden" style={{
             boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
           }}>
@@ -4814,91 +4811,119 @@ export default function HablaBeat() {
                 draggable={false}
               />
             )}
+            {/* Single-decision hero: bunny + speech, one specific lesson, one giant CTA. */}
             <div className="relative">
-            {/* Title block — full-bleed across the card */}
-            <div className="px-4 py-3" style={{
-              background: "rgba(255,255,255,0.62)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              borderBottom: "1px solid rgba(255,255,255,0.5)",
-            }}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2.5 py-1 rounded-full text-[11px] font-black text-gray-900" style={{ background: "rgba(255,255,255,0.9)" }}>Today's Mission</span>
-                <span className="px-2 py-1 rounded-full text-[11px] font-black" style={{ background: "#fbbf24", color: "#1e293b" }}>+{missionTotal * 50} 💰</span>
-              </div>
-              <h1 className="text-2xl font-black leading-tight mb-0.5 text-gray-900">{missionSec?.title}{missionCountry ? ` · ${missionCountry}` : ""}</h1>
-              <p className="text-xs text-gray-700 font-semibold">{missionTotal} {missionTotal === 1 ? "song" : "songs"} in this country</p>
-            </div>
-
-            {/* Song list with scores */}
-            <div className="space-y-1.5 mb-4 px-4 pt-3">
-              {missionSongs.map((s: any, idx: number) => {
-                const score = popHighScores[s.number] ?? 0
-                const grade = bestGrades[s.number]
-                const isComplete = score > 0
-                const isNext = !isComplete && missionNextSong?.id === s.id
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => {
-                      const cat = curriculumData.find(c => c.sections.some((sec: any) => sec.id === missionSec.id))!
-                      handlePlayDDR(s.id, cat.id, missionSec.id)
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-2xl text-left active:scale-[0.98] transition-all"
-                    style={{ background: "rgba(255,255,255,0.92)", border: isNext ? "2px solid rgba(251,191,36,0.85)" : "1px solid rgba(0,0,0,0.06)", boxShadow: isNext ? "0 4px 14px rgba(251,191,36,0.25)" : undefined }}>
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{
-                      background: isComplete ? "#22c55e" : isNext ? "#fbbf24" : "rgba(0,0,0,0.08)",
-                      color: isComplete || isNext ? "#1e293b" : "rgba(15,23,42,0.55)",
-                    }}>{isComplete ? "✓" : idx + 1}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-black text-sm truncate text-gray-900">{s.title}</div>
-                      <div className="text-[11px] text-gray-600 font-semibold truncate">
-                        {isComplete ? `💰 ${score}` : isNext ? "Start now" : "Locked"}
+              <div className="px-4 pt-5 pb-4" style={{
+                background: "rgba(255,255,255,0.66)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+              }}>
+                {/* Bunny + speech bubble */}
+                {(() => {
+                  // Greeting rotates by streak / time-of-day. Server-render-safe: derive from a stable source.
+                  const hour = new Date().getHours()
+                  let bubble = "¡Vamos! Just 5 min."
+                  if (allCleared) bubble = "You earned a stamp 🎉"
+                  else if (dailyStreak >= 3) bubble = `¡Día ${dailyStreak}! 🔥`
+                  else if (dailyStreak === 1) bubble = "Día uno. Let's go."
+                  else if (dailyStreak === 0 && hour >= 19) bubble = "Solo 5 minutos. Nada más."
+                  return (
+                    <div className="flex items-end gap-3 mb-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/images/super-bunny-heart.gif" alt="Bunny" className="w-16 h-16 object-contain flex-shrink-0" style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.18))" }} />
+                      <div className="relative flex-1 max-w-[70%]">
+                        <div className="px-3 py-2 rounded-2xl rounded-bl-sm font-black text-sm text-gray-900" style={{ background: "rgba(255,255,255,0.95)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.06)" }}>
+                          {bubble}
+                        </div>
                       </div>
                     </div>
-                    {grade && (
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(251,191,36,0.25)", color: "#fbbf24" }}>{grade}</span>
-                    )}
-                    {isNext && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src="/images/super-bunny-heart.gif"
-                        alt="You are here"
-                        className="flex-shrink-0 w-10 h-10 object-contain pointer-events-none"
-                        style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.25))" }}
-                      />
-                    )}
-                  </button>
-                )
-              })}
-            </div>
+                  )
+                })()}
 
-            <div className="px-4 pb-4">
-            <button
-              onClick={() => {
-                if (!missionNextSong || allCleared) return
-                handlePlayDDR(missionNextSong.id, missionCat.id, missionSec.id)
-              }}
-              disabled={!missionNextSong || allCleared}
-              className="w-full py-3 rounded-full font-black text-base disabled:opacity-50 active:scale-95 transition-all"
-              style={{ background: "linear-gradient(180deg,#fde047,#f59e0b)", color: "#1e293b", boxShadow: "0 6px 18px rgba(251,191,36,0.4)" }}>
-              <div className="leading-tight">
-                <div>{allCleared ? "✨ Country cleared!" : `▶  Continue · ${missionNextSong?.title ?? ""}`}</div>
-                {dailyStreak > 0 && !allCleared && (
-                  <div className="text-[10px] font-bold opacity-70 mt-0.5">Finish today to extend your 🔥 {dailyStreak}-day streak</div>
-                )}
+                {/* Today's specific lesson */}
+                <div className="mb-1">
+                  <p className="text-[11px] font-black uppercase tracking-wider text-gray-500">Today's 5</p>
+                  <h1 className="text-2xl font-black leading-tight text-gray-900">
+                    {allCleared ? `${missionSec?.title} cleared` : (missionNextSong?.title ?? missionSec?.title ?? "")}
+                  </h1>
+                  {/* Country + dot progress */}
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs font-bold text-gray-700">{missionCountry || missionSec?.title}</span>
+                    {missionTotal > 0 && (
+                      <span className="flex items-center gap-1">
+                        {Array.from({ length: missionTotal }).map((_, i) => (
+                          <span key={i} className="w-1.5 h-1.5 rounded-full" style={{
+                            background: i < missionDone ? "#22c55e" : i === missionDone ? "#f59e0b" : "rgba(0,0,0,0.18)",
+                          }} />
+                        ))}
+                        <span className="text-[11px] font-bold text-gray-500 ml-1">{missionDone}/{missionTotal}</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-            </button>
-            </div>
+
+              {/* ONE big CTA + loss-framed sub-line */}
+              <div className="px-4 pb-3 pt-1" style={{
+                background: "rgba(255,255,255,0.66)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+              }}>
+                <button
+                  onClick={() => {
+                    if (!missionNextSong || allCleared) return
+                    handlePlayDDR(missionNextSong.id, missionCat.id, missionSec.id)
+                  }}
+                  disabled={!missionNextSong || allCleared}
+                  className="w-full py-4 rounded-full font-black text-lg disabled:opacity-50 active:scale-95 transition-all"
+                  style={{ background: "linear-gradient(180deg,#fde047,#f59e0b)", color: "#1e293b", boxShadow: "0 8px 22px rgba(251,191,36,0.5)" }}>
+                  {allCleared ? "✨ Pick a new country" : "¡Vamos! · 5 min"}
+                </button>
+                {!allCleared && (
+                  <p className="text-center text-[12px] font-bold mt-2" style={{ color: dailyStreak > 0 ? "#dc2626" : "#475569" }}>
+                    {dailyStreak > 0
+                      ? `Don't break your 🔥 ${dailyStreak}-day streak`
+                      : "Start a streak today 🔥"}
+                  </p>
+                )}
+
+                {/* Week strip — M T W T F S S, today is the glowing dot */}
+                {(() => {
+                  // ISO Mon..Sun layout. Today = jsDay (0=Sun..6=Sat) → mondayIdx
+                  const labels = ["M", "T", "W", "T", "F", "S", "S"]
+                  const jsDay = new Date().getDay() // 0=Sun..6=Sat
+                  const todayIdx = jsDay === 0 ? 6 : jsDay - 1 // 0=Mon..6=Sun
+                  const todayDone = (Object.values(songPlayCounts).reduce((s: number, n: any) => s + (n as number), 0) > 0) && dailyStreak > 0
+                  return (
+                    <div className="flex items-center justify-between mt-3 px-2">
+                      {labels.map((d, i) => {
+                        const isToday = i === todayIdx
+                        // Streak fills back from today — todayDone counts today, prior streakDays-1 fill before
+                        const filledBefore = Math.max(0, dailyStreak - (todayDone ? 1 : 0))
+                        const isPast = i < todayIdx && (todayIdx - i) <= filledBefore
+                        const isFilled = (isToday && todayDone) || isPast
+                        return (
+                          <div key={i} className="flex flex-col items-center gap-1 flex-1">
+                            <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black" style={{
+                              background: isFilled ? "#22c55e" : isToday ? "rgba(245,158,11,0.95)" : "rgba(0,0,0,0.07)",
+                              color: isFilled || isToday ? "#fff" : "rgba(15,23,42,0.45)",
+                              boxShadow: isToday && !isFilled ? "0 0 0 3px rgba(245,158,11,0.22)" : undefined,
+                            }}>{isFilled ? "✓" : ""}</div>
+                            <span className="text-[10px] font-black" style={{ color: isToday ? "#f59e0b" : "rgba(15,23,42,0.5)" }}>{d}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+                })()}
+              </div>
             </div>
           </div>
 
           <div className="px-4 pt-4 space-y-2">
 
-          {/* ── 2×3 grid: each tile is emoji + ONE line ─────────────────────── */}
+          {/* Secondary actions — single row, smaller, below the fold */}
           {(() => {
-            const totalPlayMinutes = Object.values(songPlayCounts).reduce((s: number, n: any) => s + (n as number), 0) * 3
-            const fmtTime = (m: number) => m < 60 ? `${m}m` : `${Math.floor(m/60)}h ${m%60}m`
             const tile = (
               key: string,
               emoji: string,
@@ -4909,33 +4934,27 @@ export default function HablaBeat() {
                 key={key}
                 onClick={onClick}
                 disabled={!onClick}
-                className="flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-2xl active:scale-95 transition-all disabled:cursor-default disabled:active:scale-100"
-                style={{ background: "rgba(255,255,255,0.95)", border: "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-                <div className="text-2xl leading-none">{emoji}</div>
-                <div className="font-black text-sm text-gray-900 truncate max-w-full">{line}</div>
+                className="flex flex-col items-center justify-center gap-0.5 px-2 py-2.5 rounded-xl active:scale-95 transition-all disabled:cursor-default disabled:active:scale-100"
+                style={{ background: "rgba(255,255,255,0.95)", border: "1px solid rgba(0,0,0,0.06)" }}>
+                <div className="text-lg leading-none">{emoji}</div>
+                <div className="font-black text-[11px] text-gray-900 truncate max-w-full">{line}</div>
               </button>
             )
             return (
-              <>
-                <div className="grid grid-cols-3 gap-2">
-                  {tile("streak", "🔥", `${dailyStreak} days`)}
-                  {tile("time",   "⏱️", fmtTime(totalPlayMinutes))}
-                  {tile("bank",   "💰", totalVocabBank.toLocaleString())}
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {tile("passport", "📘", "Passport", () => {
-                    if (lastPlayedSongNumber == null) return
-                    for (const cat of curriculumData) {
-                      for (const sec of cat.sections) {
-                        const s = sec.songs.find((sg: any) => sg.number === lastPlayedSongNumber)
-                        if (s) { handlePlayDDR(s.id, cat.id, sec.id); return }
-                      }
+              <div className="grid grid-cols-4 gap-2">
+                {tile("passport", "📘", "Passport", () => {
+                  if (lastPlayedSongNumber == null) return
+                  for (const cat of curriculumData) {
+                    for (const sec of cat.sections) {
+                      const s = sec.songs.find((sg: any) => sg.number === lastPlayedSongNumber)
+                      if (s) { handlePlayDDR(s.id, cat.id, sec.id); return }
                     }
-                  })}
-                  {tile("best",     "🏆", "Best scores", () => setShowBestScores(true))}
-                  {tile("favs",     "⭐", "Favorites",   () => setShowFavorites(true))}
-                </div>
-              </>
+                  }
+                })}
+                {tile("best", "🏆", "Best", () => setShowBestScores(true))}
+                {tile("favs", "⭐", "Favorites", () => setShowFavorites(true))}
+                {tile("map",  "🗺️", "Map", () => setHomeView("map"))}
+              </div>
             )
           })()}
 
