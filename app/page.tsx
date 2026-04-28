@@ -4811,13 +4811,13 @@ export default function HablaBeat() {
                 draggable={false}
               />
             )}
+            {/* Subtle bottom-up scrim so the country image stays visible while text remains readable. */}
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0.62) 100%)",
+            }} />
             {/* Single-decision hero: bunny + speech, one specific lesson, one giant CTA. */}
             <div className="relative">
-              <div className="px-4 pt-5 pb-4" style={{
-                background: "rgba(255,255,255,0.66)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-              }}>
+              <div className="px-4 pt-5 pb-4">
                 {/* Bunny + speech bubble */}
                 {(() => {
                   // Greeting rotates by streak / time-of-day. Server-render-safe: derive from a stable source.
@@ -4864,11 +4864,7 @@ export default function HablaBeat() {
               </div>
 
               {/* ONE big CTA + loss-framed sub-line */}
-              <div className="px-4 pb-3 pt-1" style={{
-                background: "rgba(255,255,255,0.66)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-              }}>
+              <div className="px-4 pb-3 pt-1">
                 <button
                   onClick={() => {
                     if (!missionNextSong || allCleared) return
