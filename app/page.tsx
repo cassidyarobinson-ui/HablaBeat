@@ -5272,31 +5272,43 @@ export default function HablaBeat() {
                   const closeWithZoom = () => setBunnyAnim("close")
                   return (
                     <div
-                      onClick={closeWithZoom}
                       ref={(el) => { if (el && bunnyAnim === "enter") startZoom() }}
-                      onTransitionEnd={(e) => {
-                        if (e.propertyName === "transform" && bunnyAnim === "close") {
-                          setBunnyExpanded(false)
-                          setBunnyAnim("enter")
-                        }
-                      }}
-                      className="fixed inset-0 z-[100] cursor-pointer flex items-center justify-center"
-                      style={{
-                        background: "#ffffff",
-                        transformOrigin: origin,
-                        transform: open ? "scale(1)" : "scale(0.06)",
-                        opacity: open ? 1 : 0,
-                        transition: "transform 420ms cubic-bezier(0.4,0,0.2,1), opacity 420ms ease",
-                        willChange: "transform, opacity",
-                      }}
+                      onClick={closeWithZoom}
+                      className="fixed inset-0 z-[100] cursor-pointer"
                     >
+                      {/* White scrim — just fades, doesn't zoom, so there's no
+                          shrinking-box silhouette during open/close. */}
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: "#ffffff",
+                          opacity: open ? 1 : 0,
+                          transition: "opacity 320ms ease",
+                          pointerEvents: "none",
+                        }}
+                      />
+                      {/* Video — zooms from / back into the small bunny's
+                          position. transitionend on this drives unmount. */}
                       <video
                         src="/videos/mexico.mp4"
                         autoPlay
                         playsInline
                         onEnded={closeWithZoom}
-                        className="w-full h-full"
-                        style={{ objectFit: "contain", background: "#ffffff" }}
+                        onTransitionEnd={(e) => {
+                          if (e.propertyName === "transform" && bunnyAnim === "close") {
+                            setBunnyExpanded(false)
+                            setBunnyAnim("enter")
+                          }
+                        }}
+                        className="absolute inset-0 w-full h-full"
+                        style={{
+                          objectFit: "contain",
+                          transformOrigin: origin,
+                          transform: open ? "scale(1)" : "scale(0.06)",
+                          opacity: open ? 1 : 0,
+                          transition: "transform 420ms cubic-bezier(0.4,0,0.2,1), opacity 380ms ease",
+                          willChange: "transform, opacity",
+                        }}
                       />
                     </div>
                   )
