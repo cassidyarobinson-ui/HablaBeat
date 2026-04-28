@@ -5261,7 +5261,22 @@ export default function HablaBeat() {
                   on end; everything else shows the static bunny. */}
               {bunnyExpanded && (() => {
                 const country = missionCountry || missionSec?.title || ""
-                if (country === "Mexico") {
+                const COUNTRY_VIDEOS: Record<string, string> = {
+                  "Mexico":             "/videos/mexico.mp4",
+                  "Argentina":          "/videos/argentina.mp4",
+                  "Bolivia":            "/videos/bolivia.mp4",
+                  "Chile":              "/videos/chile.mp4",
+                  "Colombia":           "/videos/colombia.mp4",
+                  "Dominican Republic": "/videos/dominican-republic.mp4",
+                  "Ecuador":            "/videos/ecuador.mp4",
+                  "Paraguay":           "/videos/paraguay.mp4",
+                  "Peru":               "/videos/peru.mp4",
+                  "Puerto Rico":        "/videos/puerto-rico.mp4",
+                  "Uruguay":            "/videos/uruguay.mp4",
+                  "Venezuela":          "/videos/venezuela.mp4",
+                }
+                const videoSrc = COUNTRY_VIDEOS[country]
+                if (videoSrc) {
                   // Full-screen white modal that zooms in from the small bunny's
                   // position and zooms back out on close.
                   const origin = bunnyOrigin
@@ -5290,7 +5305,7 @@ export default function HablaBeat() {
                       {/* Video — zooms from / back into the small bunny's
                           position. transitionend on this drives unmount. */}
                       <video
-                        src="/videos/mexico.mp4"
+                        src={videoSrc}
                         autoPlay
                         playsInline
                         onEnded={closeWithZoom}
