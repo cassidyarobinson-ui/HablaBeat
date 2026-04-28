@@ -493,7 +493,7 @@ export default function MapboxMap({ onSelectSection, isSectionBadgeUnlocked, ope
         }
         // Bunny that drops in on hover
         const bunny = document.createElement("img")
-        bunny.src = "/images/super-bunny-heart.gif"
+        bunny.src = "/images/me-bunny.svg"
         bunny.alt = ""
         const bunnySize = isMob ? 30 : 44
         bunny.style.cssText = `

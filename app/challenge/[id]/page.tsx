@@ -98,7 +98,7 @@ export default function ChallengePage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8" style={{ background: "linear-gradient(160deg, #2d5a9e 0%, #3d6bc4 30%, #4a7cdb 60%, #5b9be6 100%)" }}>
       <div className="max-w-sm w-full text-center">
         <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 mb-3" style={{ borderColor: "rgba(255,255,255,0.4)" }}>
-          {challengerPhoto ? <img src={challengerPhoto} alt={challengerName} className="w-full h-full object-cover" /> : <img src="/images/super-bunny-heart.gif" alt="Challenger" className="w-full h-full object-contain" style={{ background: "#4a7cdb" }} />}
+          {challengerPhoto ? <img src={challengerPhoto} alt={challengerName} className="w-full h-full object-cover" /> : <img src="/images/me-bunny.svg" alt="Challenger" className="w-full h-full object-contain" style={{ background: "#4a7cdb" }} />}
         </div>
         <p className="text-2xl font-black text-white">{challengerName}</p>
         <p className="text-white/60 text-sm">has challenged you!</p>

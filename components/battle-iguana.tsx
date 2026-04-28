@@ -463,7 +463,7 @@ export default function BattleIguana({ coins: initialCoins, onCoinsChange, onClo
           <div className="flex items-center gap-6 mb-6">
             <div style={{ animation: "countdownPop 0.6s ease-out forwards" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/super-bunny-heart.gif" alt="Blue Bunny" className="w-24 h-24 object-contain" />
+              <img src="/images/me-bunny.svg" alt="Blue Bunny" className="w-24 h-24 object-contain" />
             </div>
             <div className="text-white font-black text-5xl" style={{
               animation: "countdownPop 0.8s ease-out forwards",

@@ -2089,7 +2089,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <div className="relative w-14 h-14 md:w-20 md:h-20">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/super-bunny-heart.gif"
+                src="/images/me-bunny.svg"
                 alt="HablaBeat Bunny"
                 className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(74,124,219,0.35)]"
               />

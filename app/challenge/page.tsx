@@ -150,7 +150,7 @@ function ChallengeContent() {
               {challengerPhoto ? (
                 <img src={challengerPhoto} alt={challengerName} className="w-full h-full object-cover" />
               ) : (
-                <img src="/images/super-bunny-heart.gif" alt="Challenger" className="w-full h-full object-contain" style={{ background: "#4a7cdb" }} />
+                <img src="/images/me-bunny.svg" alt="Challenger" className="w-full h-full object-contain" style={{ background: "#4a7cdb" }} />
               )}
             </div>
             <p className="text-2xl font-black text-white leading-tight">{challengerName}</p>
@@ -316,7 +316,7 @@ function ChallengeContent() {
               {challengerPhoto ? (
                 <img src={challengerPhoto} alt={challengerName} className="w-7 h-7 rounded-full object-cover" style={{ border: "2px solid rgba(255,255,255,0.3)" }} />
               ) : (
-                <img src="/images/super-bunny-heart.gif" alt="Challenger" className="w-7 h-7 rounded-full object-contain" style={{ background: "#4a7cdb" }} />
+                <img src="/images/me-bunny.svg" alt="Challenger" className="w-7 h-7 rounded-full object-contain" style={{ background: "#4a7cdb" }} />
               )}
               <span className="text-[10px] text-white/40 font-bold truncate w-16">{challengerName.slice(0, 8)}</span>
             </div>

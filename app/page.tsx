@@ -5182,15 +5182,16 @@ export default function HablaBeat() {
                                 {s.title}
                               </span>
                               {/* Inline bunny — appears next to the currently focused song.
-                                  Tap to expand to the centered overlay placeholder. */}
+                                  Tap to expand: Mexico plays the video, others just show
+                                  the bunny larger. */}
                               {isFocused && !bunnyExpanded && (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
-                                  src="/images/super-bunny-heart.gif"
+                                  src="/images/me-bunny.svg"
                                   alt="Bunny — tap for surprise"
                                   onClick={(e) => { e.stopPropagation(); setBunnyExpanded(true) }}
-                                  className="w-8 h-8 object-contain ml-1 cursor-pointer flex-shrink-0"
-                                  style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.22))" }}
+                                  className="w-11 h-11 object-contain ml-1 cursor-pointer flex-shrink-0"
+                                  style={{ filter: "drop-shadow(0 0 6px rgba(255,255,255,0.95)) drop-shadow(0 0 14px rgba(255,255,255,0.85))" }}
                                 />
                               )}
                             </button>
@@ -5244,17 +5245,41 @@ export default function HablaBeat() {
                 })()}
               </div>
 
-              {/* Expanded bunny — right-aligned so it doesn't cover the title/wizard text */}
-              {bunnyExpanded && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src="/images/super-bunny-heart.gif"
-                  alt="Bunny"
-                  onClick={() => setBunnyExpanded(false)}
-                  className="w-44 h-44 object-contain cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-30 transition-all duration-500 ease-out"
-                  style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.28))" }}
-                />
-              )}
+              {/* Expanded bunny — Mexico shows a video that auto-collapses
+                  on end; everything else shows the static bunny. */}
+              {bunnyExpanded && (() => {
+                const country = missionCountry || missionSec?.title || ""
+                if (country === "Mexico") {
+                  return (
+                    <video
+                      src="/videos/mexico.mp4"
+                      autoPlay
+                      playsInline
+                      onEnded={() => setBunnyExpanded(false)}
+                      onClick={() => setBunnyExpanded(false)}
+                      className="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-30"
+                      style={{
+                        width: "min(60vw, 240px)",
+                        aspectRatio: "9 / 16",
+                        objectFit: "cover",
+                        background: "#42A0F5",
+                        borderRadius: "18px",
+                        filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.32))",
+                      }}
+                    />
+                  )
+                }
+                return (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src="/images/me-bunny.svg"
+                    alt="Bunny"
+                    onClick={() => setBunnyExpanded(false)}
+                    className="w-44 h-44 object-contain cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-30 transition-all duration-500 ease-out"
+                    style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.28))" }}
+                  />
+                )
+              })()}
             </div>
           </div>
 
@@ -5696,7 +5721,7 @@ export default function HablaBeat() {
             {isDesktop ? (
               <div className="flex items-center px-4 py-2 gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/super-bunny-heart.gif" alt="HablaBeat Bunny" className={`w-[40px] h-[40px] object-contain flex-shrink-0 ${bunnyHopping ? "bunny-hop-out" : ""}`} style={{ cursor: "pointer" }}
+                <img src="/images/me-bunny.svg" alt="HablaBeat Bunny" className={`w-[40px] h-[40px] object-contain flex-shrink-0 ${bunnyHopping ? "bunny-hop-out" : ""}`} style={{ cursor: "pointer" }}
                   onMouseEnter={(e) => { if (!bunnyHopping) { e.currentTarget.classList.remove("bunny-spin"); void e.currentTarget.offsetWidth; e.currentTarget.classList.add("bunny-spin") } }}
                   onAnimationEnd={(e) => { if (!bunnyHopping) e.currentTarget.classList.remove("bunny-spin") }}
                 />
