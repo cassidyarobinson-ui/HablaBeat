@@ -14,6 +14,7 @@ const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 const SongFly      = dynamic(() => import("@/components/song-fly"),      { ssr: false })
+const LunaMexicoRunner = dynamic(() => import("@/components/luna-mexico-runner"), { ssr: false })
 
 import {
   Play,
@@ -2996,6 +2997,10 @@ export default function HablaBeat() {
   const [focusedSongNumber, setFocusedSongNumber] = useState<number | null>(null)
   // Tap the bunny on the dashboard to expand it into the center as a placeholder for a future animation
   const [bunnyExpanded, setBunnyExpanded] = useState(false)
+  // Mexico end-of-country mini-world (Luna runner). Unlocked when the user
+  // has at least a C on every Mexico song; for now also accessible from the
+  // World node so it can be playtested.
+  const [lunaWorldOpen, setLunaWorldOpen] = useState(false)
   // Small bunny center (viewport coords) at click time — used as transform-origin
   // for the zoom-in/zoom-out transition into the full-screen Mexico modal.
   const [bunnyOrigin, setBunnyOrigin] = useState<{ x: number; y: number } | null>(null)
@@ -5067,8 +5072,8 @@ export default function HablaBeat() {
         <div className="flex items-center px-4 pt-4 pb-3 gap-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
           {dashboardSectionOverride ? (
             <button
-              onClick={() => { setDashboardSectionOverride(null); setFocusedSongNumber(null); setHomeView("map") }}
-              aria-label="Back to map"
+              onClick={() => { setDashboardSectionOverride(null); setFocusedSongNumber(null) }}
+              aria-label="Back to dashboard"
               className="text-gray-900 active:scale-90 transition-all p-1 -ml-1">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M15 18l-6-6 6-6" />
@@ -5086,8 +5091,6 @@ export default function HablaBeat() {
             const sectionTitle = missionSec?.title || ""
             return (
               <div className="flex items-center gap-1.5 text-base font-black text-gray-900">
-                <span>{dailyStreak}</span>
-                <span>🔥</span>
                 {country && <span className="text-sm font-black text-gray-900">{country}</span>}
                 {flag && <span className="text-lg leading-none">{flag}</span>}
                 {sectionTitle && <span className="text-sm font-black text-gray-900">{sectionTitle}</span>}
@@ -5127,10 +5130,28 @@ export default function HablaBeat() {
                   const englishDesc = missionNextSong?.number != null ? (SONG_DESCRIPTIONS[missionNextSong.number] ?? "") : ""
                   // Strong layered white halo so dark titles read on any background
                   const titleGlow = "0 0 12px rgba(255,255,255,0.85), 0 0 6px rgba(255,255,255,0.95), 0 1px 2px rgba(255,255,255,0.95)"
+                  const focusedNum = missionNextSong?.number
+                  const isFav = focusedNum != null && favoriteSongs.has(focusedNum)
                   return (
                     <div>
-                      <h1 className="text-2xl font-black leading-tight text-gray-900" style={{ textShadow: titleGlow }}>
-                        {allCleared ? `${country} cleared 🎉` : (missionNextSong?.title ?? missionSec?.title ?? "")}
+                      <h1 className="text-2xl font-black leading-tight text-gray-900 flex items-center gap-2" style={{ textShadow: titleGlow }}>
+                        <span>{allCleared ? `${country} cleared 🎉` : (missionNextSong?.title ?? missionSec?.title ?? "")}</span>
+                        {focusedNum != null && !allCleared && (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); toggleFavorite(focusedNum) }}
+                            aria-label={isFav ? "Unfavorite this song" : "Favorite this song"}
+                            className="select-none active:scale-90 transition-transform leading-none"
+                            style={{
+                              fontSize: 22,
+                              filter: isFav
+                                ? "drop-shadow(0 0 6px rgba(250,204,21,0.95))"
+                                : "drop-shadow(0 1px 2px rgba(0,0,0,0.25))",
+                            }}
+                          >
+                            {isFav ? "⭐" : "☆"}
+                          </button>
+                        )}
                       </h1>
                       {englishDesc && (
                         <p className="text-sm font-bold text-gray-800 mt-0.5" style={{ textShadow: titleGlow }}>
@@ -5210,17 +5231,23 @@ export default function HablaBeat() {
                           )
                         })}
                         <button
-                          onClick={() => { if (allDone) setWorldPlaceholder({ title: missionSec?.title ?? "", country }) }}
-                          disabled={!allDone}
-                          className="flex items-center gap-3 active:scale-[0.98] transition-all disabled:active:scale-100">
+                          onClick={() => {
+                            if (country === "Mexico") {
+                              setLunaWorldOpen(true)
+                              return
+                            }
+                            if (allDone) setWorldPlaceholder({ title: missionSec?.title ?? "", country })
+                          }}
+                          disabled={country !== "Mexico" && !allDone}
+                          className="flex items-center gap-3 active:scale-[0.98] transition-all disabled:active:scale-100 focus:outline-none focus-visible:outline-none">
                           <span
                             className="w-9 h-9 rounded-full flex items-center justify-center text-base font-black flex-shrink-0"
                             style={{
-                              background: allDone ? "linear-gradient(135deg,#4a7cdb,#2563eb)" : "rgba(15,23,42,0.62)",
+                              background: (allDone || country === "Mexico") ? "linear-gradient(135deg,#4a7cdb,#2563eb)" : "rgba(15,23,42,0.62)",
                               color: "#fff",
-                              boxShadow: allDone ? "0 4px 14px rgba(74,124,219,0.5)" : "0 2px 8px rgba(15,23,42,0.22)",
+                              boxShadow: (allDone || country === "Mexico") ? "0 4px 14px rgba(74,124,219,0.5)" : "0 2px 8px rgba(15,23,42,0.22)",
                             }}>
-                            {allDone ? "🌍" : "🔒"}
+                            {(allDone || country === "Mexico") ? "🌍" : "🔒"}
                           </span>
                           <span className="text-sm font-black text-left" style={{
                             color: allDone ? "#1d4ed8" : "#1e293b",
@@ -5238,9 +5265,9 @@ export default function HablaBeat() {
                     handlePlayDDR(missionNextSong.id, missionCat.id, missionSec.id)
                   }}
                   disabled={!missionNextSong || allCleared}
-                  className="w-full py-4 rounded-full font-black text-lg disabled:opacity-50 active:scale-95 transition-all"
-                  style={{ background: "linear-gradient(180deg,#fde047,#f59e0b)", color: "#1e293b", boxShadow: "0 8px 22px rgba(251,191,36,0.5)" }}>
-                  {allCleared ? "✨ Pick a new country" : "¡Vamos! · 5 min"}
+                  className="w-full py-4 rounded-full font-black text-lg text-white disabled:opacity-50 active:scale-95 transition-all"
+                  style={{ background: "linear-gradient(180deg,#0E83E2,#0A75D3)", boxShadow: "0 8px 22px rgba(10,117,211,0.5)" }}>
+                  {allCleared ? "✨ Pick a new country" : "¡Vamos!"}
                 </button>
                 {(() => {
                   const country = missionCountry || missionSec?.title || ""
@@ -5348,36 +5375,8 @@ export default function HablaBeat() {
 
           <React.Fragment>
 
-          {/* Secondary actions — single row, smaller, below the fold */}
-          {(() => {
-            const tile = (
-              key: string,
-              emoji: string,
-              line: React.ReactNode,
-              onClick?: () => void,
-            ) => (
-              <button
-                key={key}
-                onClick={onClick}
-                disabled={!onClick}
-                className="flex flex-col items-center justify-center gap-0.5 px-2 py-2.5 rounded-xl active:scale-95 transition-all disabled:cursor-default disabled:active:scale-100"
-                style={{ background: "rgba(255,255,255,0.95)", border: "1px solid rgba(0,0,0,0.06)" }}>
-                <div className="text-lg leading-none">{emoji}</div>
-                <div className="font-black text-[11px] text-gray-900 truncate max-w-full">{line}</div>
-              </button>
-            )
-            return (
-              <div className="grid grid-cols-4 gap-2">
-                {tile("passport", "📘", "Passport", () => setHomeView("passport"))}
-                {tile("progress", "📈", "Progress", () => setHomeView("progress"))}
-                {tile("favs", "⭐", "Favorites", () => setHomeView("favorites"))}
-                {tile("map",  "🗺️", "Map", () => setHomeView("map"))}
-              </div>
-            )
-          })()}
-
           {/* ── WORLD TOUR — pinned toward bottom of dashboard ─────────────── */}
-          <div className="mt-auto pt-6">
+          <div className="pt-2">
             <div className="flex items-center justify-between mb-2 px-1">
               <h2 className="font-black text-base text-gray-900">Your Americas Tour</h2>
               <button onClick={() => setHomeView("map")} className="text-xs font-bold text-gray-500 active:scale-95 transition-all">
@@ -5395,10 +5394,8 @@ export default function HablaBeat() {
                   <button
                     key={sec.id}
                     onClick={() => {
-                      setHomeView("map")
-                      setOpenSectionId(sec.id)
-                      setWorldSongIdx(0)
-                      setWorldSlideDir(null)
+                      setDashboardSectionOverride(sec.id)
+                      setFocusedSongNumber(null)
                     }}
                     className="flex-shrink-0 w-44 h-44 rounded-2xl overflow-hidden text-left active:scale-95 transition-all relative"
                     style={{ border: isCurrent ? "1.5px solid rgba(251,191,36,0.7)" : "1px solid rgba(0,0,0,0.06)", boxShadow: "0 2px 8px rgba(15,23,42,0.06)" }}>
@@ -5446,6 +5443,34 @@ export default function HablaBeat() {
             </div>
           </div>
 
+          {/* Secondary actions — single row, smaller, below the Americas tour */}
+          {(() => {
+            const tile = (
+              key: string,
+              emoji: string,
+              line: React.ReactNode,
+              onClick?: () => void,
+            ) => (
+              <button
+                key={key}
+                onClick={onClick}
+                disabled={!onClick}
+                className="flex flex-col items-center justify-center gap-0.5 px-2 py-2.5 rounded-xl active:scale-95 transition-all disabled:cursor-default disabled:active:scale-100"
+                style={{ background: "rgba(255,255,255,0.95)", border: "1px solid rgba(0,0,0,0.06)" }}>
+                <div className="text-lg leading-none">{emoji}</div>
+                <div className="font-black text-[11px] text-gray-900 truncate max-w-full">{line}</div>
+              </button>
+            )
+            return (
+              <div className="grid grid-cols-4 gap-2 mt-6">
+                {tile("passport", "📘", "Passport", () => setHomeView("passport"))}
+                {tile("progress", "📈", "Progress", () => setHomeView("progress"))}
+                {tile("favs", "⭐", "Favorites", () => setHomeView("favorites"))}
+                {tile("map",  "🗺️", "Map", () => setHomeView("map"))}
+              </div>
+            )
+          })()}
+
           </React.Fragment>
 
           </div>
@@ -5468,6 +5493,14 @@ export default function HablaBeat() {
               <button onClick={() => setWorldPlaceholder(null)} className="w-full mt-4 py-3 rounded-full font-black text-sm text-white" style={{ background: "#4a7cdb" }}>Got it</button>
             </div>
           </div>
+        )}
+
+        {/* ── Mexico bonus world — Luna endless runner ─────────────────────── */}
+        {lunaWorldOpen && (
+          <LunaMexicoRunner
+            onComplete={() => setLunaWorldOpen(false)}
+            onClose={() => setLunaWorldOpen(false)}
+          />
         )}
 
         {/* ── Progress modal — daily time chart + best scores ─────────────────── */}
