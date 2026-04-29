@@ -354,44 +354,19 @@ export default function LunaRunner({
         }}
       />
 
-      {/* Papel picado bunting along the top */}
-      <div className="absolute left-0 right-0 flex justify-around" style={{ top: "3%", padding: "0 4%" }}>
-        {Array.from({ length: 9 }).map((_, i) => (
-          <div key={i} style={{
-            width: 22, height: 26,
-            background: ["#FF1493","#FFD700","#00CED1","#FF6347","#9370DB","#32CD32"][i % 6],
-            clipPath: "polygon(0 0, 100% 0, 80% 100%, 50% 80%, 20% 100%)",
-            transform: `translateY(${(i % 2) * 4}px)`,
-            opacity: 0.9,
-          }} />
-        ))}
-      </div>
-
-      {/* HUD — score / coins / treats */}
-      <div
-        className="absolute top-3 left-3 px-3 py-1.5 rounded-full font-black text-white"
-        style={{ background: "rgba(15,23,42,0.6)", fontSize: 14, letterSpacing: 0.5 }}
-      >
-        ⭐ {score} · 🪙 {coins} · 🥕 {treats}
-      </div>
-
-      {/* Health bar — 6 hits total. Color steps every 2 mistakes:
-          green → light green → yellow → red. */}
+      {/* Health bar — full-width across the very top, segments every two
+          mistakes shift the color: green → light green → yellow → red. */}
       {(() => {
         const remaining = Math.max(0, MAX_HITS - mistakes)
         const pct = (remaining / MAX_HITS) * 100
         const color =
-          mistakes <= 0 ? "#16a34a" :        // 6/6 left  — green
-          mistakes <= 2 ? "#84cc16" :        // 5–4 left  — light green
-          mistakes <= 4 ? "#facc15" :        // 3–2 left  — yellow
-                          "#ef4444"          // 1–0 left  — red
+          mistakes <= 0 ? "#16a34a" :
+          mistakes <= 2 ? "#84cc16" :
+          mistakes <= 4 ? "#facc15" :
+                          "#ef4444"
         return (
-          <div className="absolute top-3 right-3 flex items-center gap-2" style={{ width: 140 }}>
-            <span className="text-[11px] font-black text-white" style={{
-              textShadow: "0 1px 3px rgba(0,0,0,0.6)",
-              letterSpacing: 0.6,
-            }}>♥</span>
-            <div className="flex-1 h-2.5 rounded-full overflow-hidden" style={{
+          <div className="absolute left-0 right-0 top-0 px-3 pt-2 pointer-events-none">
+            <div className="h-3 rounded-full overflow-hidden w-full" style={{
               background: "rgba(15,23,42,0.55)",
               boxShadow: "inset 0 1px 2px rgba(0,0,0,0.35)",
             }}>
@@ -408,20 +383,43 @@ export default function LunaRunner({
           </div>
         )
       })()}
+
+      {/* Collected stats — full-width row directly below the health bar */}
+      <div
+        className="absolute left-0 right-0 px-3 flex items-center justify-between text-white font-black"
+        style={{
+          top: 22,
+          fontSize: 13,
+          letterSpacing: 0.5,
+          textShadow: "0 1px 3px rgba(0,0,0,0.55)",
+          pointerEvents: "none",
+        }}
+      >
+        <span className="flex items-center gap-1"><span>⭐</span><span>{score}</span></span>
+        <span className="flex items-center gap-1"><span>🪙</span><span>{coins}</span></span>
+        <span className="flex items-center gap-1"><span>🥕</span><span>{treats}</span></span>
+      </div>
+
+      {/* Back — top left, below the new HUD rows */}
       <button
         onClick={(e) => { e.stopPropagation(); onClose() }}
-        className="absolute top-12 right-3 w-8 h-8 rounded-full font-black text-white"
-        style={{ background: "rgba(15,23,42,0.6)", fontSize: 14 }}
-        aria-label="Close"
-      >✕</button>
+        className="absolute top-12 left-3 w-9 h-9 rounded-full flex items-center justify-center text-white"
+        style={{ background: "rgba(15,23,42,0.6)" }}
+        aria-label="Back"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
 
-      {/* Target prompt — English word the bunny must match */}
+      {/* Target prompt — pinned to the bottom so it doesn't compete with
+          the top HUD rows. Shows the English word the bunny must catch. */}
       <div
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full text-white font-black"
         style={{
-          top: 56,
-          background: "rgba(15,23,42,0.78)",
-          boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
+          bottom: "calc(15% + 18px)",
+          background: "rgba(15,23,42,0.82)",
+          boxShadow: "0 6px 18px rgba(0,0,0,0.32)",
         }}
       >
         <span style={{ fontSize: 11, letterSpacing: 0.6, opacity: 0.7 }}>CATCH</span>
