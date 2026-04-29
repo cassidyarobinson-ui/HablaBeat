@@ -5424,7 +5424,7 @@ export default function HablaBeat() {
                         style={{
                           top: "50%",
                           left: "50%",
-                          transform: "translate(-50%, -55%)",
+                          transform: "translate(-50%, -42%)",
                           filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.35))",
                         }}
                       >
