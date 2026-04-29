@@ -5413,11 +5413,11 @@ export default function HablaBeat() {
                       WebkitBackdropFilter: "blur(20px)",
                       borderBottom: "1px solid rgba(255,255,255,0.5)",
                     }}>
-                      <div className="font-black text-sm truncate text-gray-900">{sec.title}</div>
-                      <div className="text-[11px] text-gray-700 font-semibold truncate">{country}{country ? " · " : ""}{done}/{total} songs</div>
+                      <div className="font-black text-sm truncate text-gray-900">{country || sec.title}</div>
+                      <div className="text-[11px] text-gray-700 font-semibold truncate">{sec.title}{sec.title ? " · " : ""}{done}/{total} songs</div>
                     </div>
-                    {cleared && <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16" }}>Cleared</span>}
-                    {isCurrent && !cleared && <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b" }}>You are here</span>}
+                    {cleared && <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16" }}>Cleared</span>}
+                    {isCurrent && !cleared && <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b", boxShadow: "0 2px 6px rgba(0,0,0,0.18)" }}>You&rsquo;re Here!</span>}
                     {/* World placeholder — end-of-country mini-game, unlocks when all songs cleared */}
                     <span
                       role="button"

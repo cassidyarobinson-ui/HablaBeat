@@ -9,6 +9,11 @@ export type CountryTheme = {
   // Country-specific name shown on the World button + on the runner's
   // welcome banner (e.g., Mexico → "Frida's Casa Azul").
   worldName: string
+  // Optional looping landmark video shown behind the gameplay layer.
+  // Free / no-copyright stock URLs. When set, the runner replaces the
+  // sky/mountain layers with the video and overlays a subtle dim so
+  // gameplay stays readable.
+  videoBg?: string
   // Background — vertical sky gradient (top → bottom)
   sky: [string, string, string, string]
   // Distant mountain silhouette

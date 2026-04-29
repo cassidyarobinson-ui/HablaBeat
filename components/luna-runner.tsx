@@ -310,16 +310,39 @@ export default function LunaRunner({
         }
       `}</style>
 
-      {/* Far mountains parallax */}
-      <div
-        className="absolute left-0 right-0"
-        style={{
-          top: "32%", height: "32%",
-          background: `linear-gradient(180deg,${theme.mountain[0]} 0%,${theme.mountain[1]} 100%)`,
-          clipPath: "polygon(0 60%, 8% 30%, 16% 55%, 24% 20%, 34% 50%, 44% 25%, 54% 55%, 66% 18%, 76% 50%, 86% 28%, 100% 50%, 100% 100%, 0 100%)",
-          opacity: 0.55,
-        }}
-      />
+      {/* Optional landmark video bg — looping muted scenery behind gameplay */}
+      {theme.videoBg && (
+        <>
+          <video
+            src={theme.videoBg}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full"
+            style={{ objectFit: "cover", pointerEvents: "none" }}
+          />
+          {/* Soft dim so the bunny + vocab pills stay readable on bright footage */}
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(180deg,rgba(0,0,0,0.18) 0%,rgba(0,0,0,0.05) 35%,rgba(0,0,0,0.05) 65%,rgba(0,0,0,0.32) 100%)",
+            pointerEvents: "none",
+          }} />
+        </>
+      )}
+
+      {/* Far mountains parallax — only shown when no landmark video set */}
+      {!theme.videoBg && (
+        <div
+          className="absolute left-0 right-0"
+          style={{
+            top: "32%", height: "32%",
+            background: `linear-gradient(180deg,${theme.mountain[0]} 0%,${theme.mountain[1]} 100%)`,
+            clipPath: "polygon(0 60%, 8% 30%, 16% 55%, 24% 20%, 34% 50%, 44% 25%, 54% 55%, 66% 18%, 76% 50%, 86% 28%, 100% 50%, 100% 100%, 0 100%)",
+            opacity: 0.55,
+          }}
+        />
+      )}
 
       {/* Sun */}
       <div
