@@ -14,7 +14,7 @@ const DDRGame = dynamic(() => import("@/components/ddr-game"), { ssr: false })
 const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { ssr: false })
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 const SongFly      = dynamic(() => import("@/components/song-fly"),      { ssr: false })
-const LunaMexicoRunner = dynamic(() => import("@/components/luna-mexico-runner"), { ssr: false })
+const LunaRunner = dynamic(() => import("@/components/luna-runner"), { ssr: false })
 
 import {
   Play,
@@ -2997,10 +2997,9 @@ export default function HablaBeat() {
   const [focusedSongNumber, setFocusedSongNumber] = useState<number | null>(null)
   // Tap the bunny on the dashboard to expand it into the center as a placeholder for a future animation
   const [bunnyExpanded, setBunnyExpanded] = useState(false)
-  // Mexico end-of-country mini-world (Luna runner). Unlocked when the user
-  // has at least a C on every Mexico song; for now also accessible from the
-  // World node so it can be playtested.
-  const [lunaWorldOpen, setLunaWorldOpen] = useState(false)
+  // End-of-country mini-world (Luna runner). Holds the country whose
+  // theme/vocab the runner should use, or null when closed.
+  const [lunaWorldCountry, setLunaWorldCountry] = useState<string | null>(null)
   // Small bunny center (viewport coords) at click time — used as transform-origin
   // for the zoom-in/zoom-out transition into the full-screen Mexico modal.
   const [bunnyOrigin, setBunnyOrigin] = useState<{ x: number; y: number } | null>(null)
@@ -5232,22 +5231,19 @@ export default function HablaBeat() {
                         })}
                         <button
                           onClick={() => {
-                            if (country === "Mexico") {
-                              setLunaWorldOpen(true)
-                              return
-                            }
-                            if (allDone) setWorldPlaceholder({ title: missionSec?.title ?? "", country })
+                            // Every country has a runner world now (default theme
+                            // is used as a fallback). Open it directly.
+                            if (country) setLunaWorldCountry(country)
                           }}
-                          disabled={country !== "Mexico" && !allDone}
-                          className="flex items-center gap-3 active:scale-[0.98] transition-all disabled:active:scale-100 focus:outline-none focus-visible:outline-none">
+                          className="flex items-center gap-3 active:scale-[0.98] transition-all focus:outline-none focus-visible:outline-none">
                           <span
                             className="w-9 h-9 rounded-full flex items-center justify-center text-base font-black flex-shrink-0"
                             style={{
-                              background: (allDone || country === "Mexico") ? "linear-gradient(135deg,#4a7cdb,#2563eb)" : "rgba(15,23,42,0.62)",
+                              background: "linear-gradient(135deg,#4a7cdb,#2563eb)",
                               color: "#fff",
-                              boxShadow: (allDone || country === "Mexico") ? "0 4px 14px rgba(74,124,219,0.5)" : "0 2px 8px rgba(15,23,42,0.22)",
+                              boxShadow: "0 4px 14px rgba(74,124,219,0.5)",
                             }}>
-                            {(allDone || country === "Mexico") ? "🌍" : "🔒"}
+                            🌍
                           </span>
                           <span className="text-sm font-black text-left" style={{
                             color: allDone ? "#1d4ed8" : "#1e293b",
@@ -5427,15 +5423,15 @@ export default function HablaBeat() {
                       tabIndex={0}
                       onClick={(e) => {
                         e.stopPropagation()
-                        if (cleared) setWorldPlaceholder({ title: sec.title, country })
+                        if (country) setLunaWorldCountry(country)
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); if (cleared) setWorldPlaceholder({ title: sec.title, country }) }
+                        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); if (country) setLunaWorldCountry(country) }
                       }}
-                      className={`absolute bottom-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center gap-1 ${cleared ? "active:scale-95 transition-all cursor-pointer" : "cursor-default"}`}
-                      style={{ background: cleared ? "rgba(74,124,219,0.95)" : "rgba(15,23,42,0.78)", color: "#fff" }}>
-                      <span>{cleared ? "🌍" : "🔒"}</span>
-                      <span>{cleared ? "World" : "World"}</span>
+                      className={`absolute bottom-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center gap-1 active:scale-95 transition-all cursor-pointer`}
+                      style={{ background: "rgba(74,124,219,0.95)", color: "#fff" }}>
+                      <span>🌍</span>
+                      <span>World</span>
                     </span>
                   </button>
                 )
@@ -5495,11 +5491,12 @@ export default function HablaBeat() {
           </div>
         )}
 
-        {/* ── Mexico bonus world — Luna endless runner ─────────────────────── */}
-        {lunaWorldOpen && (
-          <LunaMexicoRunner
-            onComplete={() => setLunaWorldOpen(false)}
-            onClose={() => setLunaWorldOpen(false)}
+        {/* ── Country bonus world — Luna endless runner, themed per country ── */}
+        {lunaWorldCountry && (
+          <LunaRunner
+            country={lunaWorldCountry}
+            onComplete={() => setLunaWorldCountry(null)}
+            onClose={() => setLunaWorldCountry(null)}
           />
         )}
 

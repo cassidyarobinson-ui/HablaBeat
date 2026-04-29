@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { getCountryTheme } from "@/lib/runner-themes"
 
 type Lane = "low" | "high"
 type Kind = "spanish" | "coin" | "treat" | "carrot"
@@ -13,23 +14,6 @@ type Item = {
   pairIdx: number // PAIRS index for "spanish" items, otherwise -1
   alive: boolean
 }
-
-// THEME: matching English → Spanish from Mexico songs 1–3 vocabulary.
-// HUD shows the English target, items are Spanish words; bunny must catch
-// the Spanish equivalent and skip the rest.
-const PAIRS: { es: string; en: string }[] = [
-  { es: "perro",      en: "dog" },
-  { es: "niño",       en: "child" },
-  { es: "lluvia",     en: "rain" },
-  { es: "carro",      en: "car" },
-  { es: "llama",      en: "flame" },
-  { es: "churro",     en: "donut" },
-  { es: "vamos",      en: "let's go" },
-  { es: "canta",      en: "sing" },
-  { es: "vocales",    en: "vowels" },
-  { es: "abecedario", en: "alphabet" },
-  { es: "ya",         en: "now" },
-]
 
 // Geometry constants (px). Origin: y=0 at ground.
 const BUNNY_W = 88
@@ -57,13 +41,17 @@ const SLOW_DOWN_PER_MISS = 2.0   // −vw/s per mistake
 
 const MAX_HITS = 6               // total wrong items the bunny can take
 
-export default function LunaMexicoRunner({
+export default function LunaRunner({
+  country,
   onComplete,
   onClose,
 }: {
+  country: string
   onComplete: (result: { won: boolean; score: number; mistakes: number }) => void
   onClose: () => void
 }) {
+  const theme = useMemo(() => getCountryTheme(country), [country])
+  const PAIRS = theme.vocab
   const [score, setScore] = useState(0)
   const [mistakes, setMistakes] = useState(0)
   const [coins, setCoins] = useState(0)
@@ -80,7 +68,7 @@ export default function LunaMexicoRunner({
       while (next === prev && PAIRS.length > 1) next = Math.floor(Math.random() * PAIRS.length)
       return next
     })
-  }, [])
+  }, [PAIRS.length])
   const startedRef       = useRef(0)
   const lastTickRef      = useRef(0)
   const lastSpawnRef     = useRef(0)
@@ -257,7 +245,7 @@ export default function LunaMexicoRunner({
       onClick={jump}
       className="fixed inset-0 z-[200] overflow-hidden select-none cursor-pointer"
       style={{
-        background: "linear-gradient(180deg,#FFE5B4 0%,#FDD89A 45%,#F4A460 70%,#D4663D 100%)",
+        background: `linear-gradient(180deg,${theme.sky[0]} 0%,${theme.sky[1]} 45%,${theme.sky[2]} 70%,${theme.sky[3]} 100%)`,
       }}
     >
       <style jsx>{`
@@ -278,7 +266,7 @@ export default function LunaMexicoRunner({
         className="absolute left-0 right-0"
         style={{
           top: "32%", height: "32%",
-          background: "linear-gradient(180deg,#8B5A3C 0%,#6B4423 100%)",
+          background: `linear-gradient(180deg,${theme.mountain[0]} 0%,${theme.mountain[1]} 100%)`,
           clipPath: "polygon(0 60%, 8% 30%, 16% 55%, 24% 20%, 34% 50%, 44% 25%, 54% 55%, 66% 18%, 76% 50%, 86% 28%, 100% 50%, 100% 100%, 0 100%)",
           opacity: 0.55,
         }}
@@ -350,7 +338,7 @@ export default function LunaMexicoRunner({
       })()}
       <button
         onClick={(e) => { e.stopPropagation(); onClose() }}
-        className="absolute top-3 right-3 w-8 h-8 rounded-full font-black text-white"
+        className="absolute top-12 right-3 w-8 h-8 rounded-full font-black text-white"
         style={{ background: "rgba(15,23,42,0.6)", fontSize: 14 }}
         aria-label="Close"
       >✕</button>
@@ -359,13 +347,13 @@ export default function LunaMexicoRunner({
       <div
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full text-white font-black"
         style={{
-          top: 14,
+          top: 56,
           background: "rgba(15,23,42,0.78)",
           boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
         }}
       >
         <span style={{ fontSize: 11, letterSpacing: 0.6, opacity: 0.7 }}>CATCH</span>
-        <span style={{ fontSize: 18, color: "#FFE066" }}>{PAIRS[targetIdx].en}</span>
+        <span style={{ fontSize: 18, color: theme.bannerHighlight }}>{PAIRS[targetIdx].en}</span>
       </div>
 
       {/* Ground */}
@@ -374,9 +362,9 @@ export default function LunaMexicoRunner({
         style={{
           top: `calc(85% + 5px)`, bottom: 0,
           background:
-            "repeating-linear-gradient(90deg, #B45309 0 30px, #A0480A 30px 60px), linear-gradient(180deg,#B45309,#7C3A09)",
+            `repeating-linear-gradient(90deg, ${theme.ground.stripeA} 0 30px, ${theme.ground.stripeB} 30px 60px), linear-gradient(180deg,${theme.ground.stripeA},${theme.ground.base})`,
           backgroundBlendMode: "multiply",
-          borderTop: "3px solid #5C2A06",
+          borderTop: `3px solid ${theme.ground.topBorder}`,
         }}
       />
 
@@ -467,7 +455,7 @@ export default function LunaMexicoRunner({
             <div
               className="px-3 py-1.5 rounded-full font-black text-white"
               style={{
-                background: "#0A75D3",
+                background: theme.itemColor,
                 border: "3px solid rgba(255,255,255,0.92)",
                 boxShadow: "0 4px 10px rgba(0,0,0,0.28)",
                 fontSize: 14,
@@ -482,7 +470,7 @@ export default function LunaMexicoRunner({
         )
       })}
 
-      {/* Decor: cacti & mariachi-trumpet sliding by */}
+      {/* Foreground decor — sliding past so the scene feels alive */}
       {[15, 38, 62, 85].map((leftPct, i) => (
         <div
           key={i}
@@ -492,12 +480,12 @@ export default function LunaMexicoRunner({
             top: `calc(85% - 4px)`,
             transform: "translate(-50%, -100%)",
             fontSize: 36,
-            opacity: 0.85,
+            opacity: 0.9,
             animation: `mxItemMove ${10 - (i % 2)}s linear infinite`,
             animationDelay: `${i * -2.4}s`,
           }}
         >
-          {i % 2 === 0 ? "🌵" : "🎺"}
+          {theme.decor[i % theme.decor.length]}
         </div>
       ))}
 
@@ -513,7 +501,7 @@ export default function LunaMexicoRunner({
             <div className="text-sm font-bold text-slate-600 mb-3">
               {phase === "won"
                 ? `You collected ${score} word${score === 1 ? "" : "s"}.`
-                : "Try again to reach the carrot."}
+                : theme.loseHint}
             </div>
             <div className="text-xs text-slate-500">Returning to dashboard…</div>
           </div>
