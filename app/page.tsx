@@ -5417,7 +5417,29 @@ export default function HablaBeat() {
                       <div className="text-[11px] text-gray-700 font-semibold truncate">{sec.title}{sec.title ? " · " : ""}{done}/{total} songs</div>
                     </div>
                     {cleared && <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 rounded-full text-[11px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16", boxShadow: "0 4px 12px rgba(0,0,0,0.25)" }}>Cleared</span>}
-                    {isCurrent && !cleared && <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 rounded-full text-[11px] font-black" style={{ background: "rgba(251,191,36,0.95)", color: "#1e293b", boxShadow: "0 4px 12px rgba(0,0,0,0.25)" }}>You&rsquo;re Here!</span>}
+                    {isCurrent && !cleared && (
+                      <span
+                        aria-label="You're here"
+                        className="absolute pointer-events-none"
+                        style={{
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -55%)",
+                          filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.35))",
+                        }}
+                      >
+                        <svg width="74" height="96" viewBox="0 0 100 130" aria-hidden>
+                          <path
+                            d="M50 0 C22 0 0 22 0 50 C0 88 50 130 50 130 C50 130 100 88 100 50 C100 22 78 0 50 0 Z"
+                            fill="#FBBF24"
+                            stroke="#1e293b"
+                            strokeWidth="3"
+                          />
+                          <text x="50" y="46" textAnchor="middle" fontSize="16" fontWeight="900" fill="#1e293b" style={{ letterSpacing: 0.2 }}>You&rsquo;re</text>
+                          <text x="50" y="66" textAnchor="middle" fontSize="16" fontWeight="900" fill="#1e293b" style={{ letterSpacing: 0.2 }}>Here!</text>
+                        </svg>
+                      </span>
+                    )}
                     {/* World placeholder — end-of-country mini-game, unlocks when all songs cleared */}
                     <span
                       role="button"
