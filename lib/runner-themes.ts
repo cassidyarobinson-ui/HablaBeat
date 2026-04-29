@@ -6,6 +6,9 @@
 // are the items they must catch.
 
 export type CountryTheme = {
+  // Country-specific name shown on the World button + on the runner's
+  // welcome banner (e.g., Mexico → "Frida's Casa Azul").
+  worldName: string
   // Background — vertical sky gradient (top → bottom)
   sky: [string, string, string, string]
   // Distant mountain silhouette
@@ -34,6 +37,7 @@ const baseGround = {
 export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   // ── Noun Galaxy ──────────────────────────────────────────────
   "Mexico": {
+    worldName: "Casa Azul",
     sky: ["#FFE5B4", "#FDD89A", "#F4A460", "#D4663D"],
     mountain: ["#8B5A3C", "#6B4423"],
     ground: baseGround,
@@ -56,6 +60,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Guatemala": {
+    worldName: "Tikal",
     sky: ["#A7F3D0", "#86EFAC", "#22C55E", "#15803D"],
     mountain: ["#1F4D1F", "#0E3010"],
     ground: { stripeA: "#3F6B3A", stripeB: "#2E5430", base: "#1F3D24", topBorder: "#0E2410" },
@@ -79,6 +84,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "El Salvador": {
+    worldName: "Santa Ana Volcano",
     sky: ["#FFE4B5", "#FFB347", "#FF6347", "#B91C1C"],
     mountain: ["#7C2D12", "#451A03"],
     ground: { stripeA: "#7C2D12", stripeB: "#5C1F0A", base: "#3E1306", topBorder: "#1F0903" },
@@ -100,6 +106,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Honduras": {
+    worldName: "Copán Ruinas",
     sky: ["#A7F3D0", "#5EEAD4", "#06B6D4", "#0E7490"],
     mountain: ["#0F766E", "#134E4A"],
     ground: { stripeA: "#365314", stripeB: "#1E3008", base: "#142105", topBorder: "#0A1003" },
@@ -123,6 +130,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Nicaragua": {
+    worldName: "Granada",
     sky: ["#FED7AA", "#FB923C", "#EA580C", "#9A3412"],
     mountain: ["#7C2D12", "#3E1306"],
     ground: { stripeA: "#52525B", stripeB: "#3F3F46", base: "#27272A", topBorder: "#18181B" },
@@ -144,6 +152,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Costa Rica": {
+    worldName: "Monteverde Cloud Forest",
     sky: ["#BBF7D0", "#86EFAC", "#22C55E", "#166534"],
     mountain: ["#14532D", "#052E16"],
     ground: { stripeA: "#3F6B3A", stripeB: "#2E5430", base: "#1F3D24", topBorder: "#0E2410" },
@@ -165,6 +174,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Panama": {
+    worldName: "Panama Canal",
     sky: ["#DBEAFE", "#93C5FD", "#3B82F6", "#1D4ED8"],
     mountain: ["#1E3A8A", "#172554"],
     ground: { stripeA: "#0E7490", stripeB: "#155E75", base: "#0E4257", topBorder: "#0C2233" },
@@ -186,6 +196,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Puerto Rico": {
+    worldName: "Flamenco Beach",
     sky: ["#FEF3C7", "#FDE68A", "#FBBF24", "#D97706"],
     mountain: ["#7C2D12", "#451A03"],
     ground: { stripeA: "#A16207", stripeB: "#854D0E", base: "#713F12", topBorder: "#3F2008" },
@@ -207,6 +218,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Dominican Republic": {
+    worldName: "Punta Cana",
     sky: ["#A7F3D0", "#FDE68A", "#FB923C", "#DC2626"],
     mountain: ["#7C2D12", "#451A03"],
     ground: { stripeA: "#0F766E", stripeB: "#115E59", base: "#134E4A", topBorder: "#042F2E" },
@@ -228,6 +240,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Cuba": {
+    worldName: "Old Havana",
     sky: ["#FEF3C7", "#FDBA74", "#F97316", "#9A3412"],
     mountain: ["#7C2D12", "#451A03"],
     ground: { stripeA: "#92400E", stripeB: "#78350F", base: "#451A03", topBorder: "#1C0701" },
@@ -250,6 +263,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   // ── Verb Galaxy ──────────────────────────────────────────────
   "Colombia": {
+    worldName: "Cartagena Old Town",
     sky: ["#FCD34D", "#3B82F6", "#1E40AF", "#1E3A8A"],
     mountain: ["#1E3A8A", "#172554"],
     ground: { stripeA: "#166534", stripeB: "#14532D", base: "#052E16", topBorder: "#01160A" },
@@ -271,6 +285,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Venezuela": {
+    worldName: "Angel Falls",
     sky: ["#FEF9C3", "#FDE047", "#A3E635", "#15803D"],
     mountain: ["#15803D", "#052E16"],
     ground: { stripeA: "#365314", stripeB: "#1E3008", base: "#142105", topBorder: "#0A1003" },
@@ -292,6 +307,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Ecuador": {
+    worldName: "Galápagos Islands",
     sky: ["#DBEAFE", "#FEF3C7", "#FBBF24", "#92400E"],
     mountain: ["#1E3A8A", "#172554"],
     ground: { stripeA: "#7C2D12", stripeB: "#5C1F0A", base: "#451A03", topBorder: "#1C0701" },
@@ -313,6 +329,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Peru": {
+    worldName: "Machu Picchu",
     sky: ["#E0E7FF", "#A5B4FC", "#7C3AED", "#4C1D95"],
     mountain: ["#3F3F46", "#18181B"],
     ground: { stripeA: "#A16207", stripeB: "#713F12", base: "#451A03", topBorder: "#1C0701" },
@@ -334,6 +351,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Bolivia": {
+    worldName: "Salar de Uyuni",
     sky: ["#FEF3C7", "#FDE68A", "#A78BFA", "#5B21B6"],
     mountain: ["#3730A3", "#1E1B4B"],
     ground: { stripeA: "#FAFAFA", stripeB: "#E4E4E7", base: "#A1A1AA", topBorder: "#52525B" },
@@ -355,6 +373,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Paraguay": {
+    worldName: "Cataratas del Monday",  // Paraguay (not provided by user; kept default)
     sky: ["#DBEAFE", "#86EFAC", "#22C55E", "#15803D"],
     mountain: ["#15803D", "#052E16"],
     ground: { stripeA: "#365314", stripeB: "#1E3008", base: "#142105", topBorder: "#0A1003" },
@@ -376,6 +395,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Uruguay": {
+    worldName: "Montevideo Rambla",  // Uruguay (not provided by user; kept default)
     sky: ["#BAE6FD", "#7DD3FC", "#0EA5E9", "#075985"],
     mountain: ["#0F172A", "#020617"],
     ground: { stripeA: "#FDE68A", stripeB: "#FCD34D", base: "#D97706", topBorder: "#78350F" },
@@ -397,6 +417,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Chile": {
+    worldName: "Valparaíso",
     sky: ["#E0F2FE", "#7DD3FC", "#0284C7", "#0C4A6E"],
     mountain: ["#3F3F46", "#18181B"],
     ground: { stripeA: "#A8A29E", stripeB: "#78716C", base: "#44403C", topBorder: "#1C1917" },
@@ -418,6 +439,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
     ],
   },
   "Argentina": {
+    worldName: "Iguazú Falls",
     sky: ["#FECACA", "#F472B6", "#7C3AED", "#1E1B4B"],
     mountain: ["#1E1B4B", "#0F0A30"],
     ground: { stripeA: "#7F1D1D", stripeB: "#581C18", base: "#3A1010", topBorder: "#1A0606" },
@@ -440,6 +462,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   // Default fallback for any country without a curated theme
   "Latin America": {
+    worldName: "Bonus World",
     sky: ["#FEF3C7", "#FBBF24", "#F97316", "#9A3412"],
     mountain: ["#7C2D12", "#451A03"],
     ground: baseGround,

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { getCountryTheme } from "@/lib/runner-themes"
 
 type Lane = "low" | "high"
-type Kind = "spanish" | "coin" | "treat" | "carrot"
+type Kind = "spanish" | "coin" | "treat" | "carrot" | "box" | "boxSpent"
 type Item = {
   id: number
   x: number       // viewport % from left
@@ -13,6 +13,7 @@ type Item = {
   label: string   // Spanish word for "spanish" items, emoji otherwise
   pairIdx: number // PAIRS index for "spanish" items, otherwise -1
   alive: boolean
+  poppedAt?: number // ms timestamp when a box was bumped (for pop animation)
 }
 
 // Geometry constants (px). Origin: y=0 at ground.
@@ -24,11 +25,11 @@ const HIGH_LANE_Y = 240          // item center, px above ground
 const LANE_HIT_R  = 80           // vertical collision tolerance (px)
 const COLLIDE_PCT = 9            // horizontal collision tolerance (vw %)
 
-// Physics — each tap snaps the bunny to the NEXT tier height. Successive
-// taps reach higher tiers, so triple-tap is the highest hop.
-const GRAVITY  = 2000           // px/s²
-const TIERS    = [0, 130, 260, 390] // px above ground: ground / 1× / 2× / 3×
-const MAX_JUMPS = 3
+// Physics — each tap applies a fresh upward impulse. Rapid taps stack
+// height (single ≈ 150px, double ≈ 300px, triple ≈ 450px), but the user
+// can keep tapping mid-air or after starting to fall to gain more height.
+const GRAVITY      = 2000        // px/s²
+const JUMP_IMPULSE = 770         // px/s — initial upward velocity per tap
 
 const GAME_MS     = 32000
 const ITEM_GAP_MS = 1100
@@ -82,13 +83,11 @@ export default function LunaRunner({
 
   const jump = useCallback(() => {
     if (phase !== "play") return
-    if (jumpsUsedRef.current >= MAX_JUMPS) return
+    // No cap — every tap gives an upward impulse, even while airborne.
+    // Stacked taps stack height: single ≈ 150px, double ≈ 300px, triple
+    // ≈ 450px, and the user can re-tap on the way down to bounce back up.
+    bunnyVyRef.current = JUMP_IMPULSE
     jumpsUsedRef.current += 1
-    // Snap upward velocity so the bunny just reaches the next tier height
-    // from wherever it is right now. v = sqrt(2g·Δh).
-    const target = TIERS[jumpsUsedRef.current]
-    const dh = Math.max(0, target - bunnyYRef.current)
-    bunnyVyRef.current = Math.sqrt(2 * GRAVITY * dh)
   }, [phase])
 
   // Game loop
@@ -115,19 +114,25 @@ export default function LunaRunner({
       setBunnyY(newY)
 
       // Spawn vocab + bonus collectibles. Most spawns are Spanish words;
-      // occasional gold coins and small carrots reward the player for
-      // grabbing them, on top of the matching score.
+      // occasional gold coins, small carrots, and bumpable ?-boxes
+      // reward the player on top of the matching score.
       if (!carrotSpawnedRef.current && elapsed - lastSpawnRef.current > ITEM_GAP_MS) {
         lastSpawnRef.current = elapsed
         const r = Math.random()
         const lane: Lane = Math.random() < 0.55 ? "low" : "high"
-        if (r < 0.18) {
+        if (r < 0.10) {
+          // ?-box: always at high lane, must bump from below moving up
+          setItems(prev => [...prev, {
+            id: itemIdRef.current++, x: 110, lane: "high",
+            kind: "box", label: "?", pairIdx: -1, alive: true,
+          }])
+        } else if (r < 0.22) {
           // gold coin
           setItems(prev => [...prev, {
             id: itemIdRef.current++, x: 110, lane,
             kind: "coin", label: "🪙", pairIdx: -1, alive: true,
           }])
-        } else if (r < 0.30) {
+        } else if (r < 0.32) {
           // bonus carrot treat
           setItems(prev => [...prev, {
             id: itemIdRef.current++, x: 110, lane,
@@ -166,6 +171,7 @@ export default function LunaRunner({
         let hitCarrot = false
         let advance = false
         const t = targetIdxRef.current
+        const movingUp = bunnyVyRef.current > 0
         const next: Item[] = []
         for (const it of prev) {
           if (!it.alive) continue
@@ -176,13 +182,28 @@ export default function LunaRunner({
           const bunnyCenterY = bunnyYRef.current + BUNNY_H / 2
           const dyOK = Math.abs(bunnyCenterY - itemY) < LANE_HIT_R
           if (dxOK && dyOK) {
-            if (it.kind === "carrot") hitCarrot = true
-            else if (it.kind === "coin")  coinDelta++
-            else if (it.kind === "treat") treatDelta++
-            else if (it.kind === "spanish") {
+            if (it.kind === "carrot") { hitCarrot = true; continue }
+            if (it.kind === "coin")  { coinDelta++;  continue }
+            if (it.kind === "treat") { treatDelta++; continue }
+            if (it.kind === "spanish") {
               if (it.pairIdx === t) { scoreDelta++; advance = true }
               else mistakeDelta++
+              continue
             }
+            if (it.kind === "box") {
+              // Only triggers when bunny is bumping it from below (moving up).
+              // Otherwise the bunny passes through harmlessly.
+              if (movingUp) {
+                if (Math.random() < 0.5) coinDelta++
+                else treatDelta++
+                next.push({ ...it, x, kind: "boxSpent", poppedAt: now })
+              } else {
+                next.push({ ...it, x })
+              }
+              continue
+            }
+            // boxSpent and any other inert kinds — keep traveling
+            next.push({ ...it, x })
             continue
           }
           next.push({ ...it, x })
@@ -446,6 +467,35 @@ export default function LunaRunner({
                   filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.28))",
                 }}
               >🥕</div>
+            </div>
+          )
+        }
+        if (it.kind === "box" || it.kind === "boxSpent") {
+          const live = it.kind === "box"
+          const recentlyPopped = !!it.poppedAt && (Date.now() - it.poppedAt) < 320
+          return (
+            <div key={it.id} className="absolute" style={baseStyle}>
+              <div
+                style={{
+                  width: 46, height: 46,
+                  borderRadius: 8,
+                  background: live
+                    ? "linear-gradient(180deg,#FCD34D 0%,#F59E0B 60%,#B45309 100%)"
+                    : "linear-gradient(180deg,#7C5C2C 0%,#5C3F1A 100%)",
+                  border: `3px solid ${live ? "#92400E" : "#3F1F08"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: live ? "#7C2D12" : "#1C0B02",
+                  fontFamily: "system-ui, sans-serif",
+                  fontWeight: 900,
+                  fontSize: 26, lineHeight: 1,
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.3), inset 0 -3px 0 rgba(0,0,0,0.18)",
+                  textShadow: live ? "0 1px 0 rgba(255,255,255,0.4)" : "none",
+                  transform: recentlyPopped ? "translateY(-6px) scale(1.06)" : "translateY(0) scale(1)",
+                  transition: "transform 220ms cubic-bezier(0.34,1.56,0.64,1)",
+                }}
+              >
+                {live ? "?" : ""}
+              </div>
             </div>
           )
         }

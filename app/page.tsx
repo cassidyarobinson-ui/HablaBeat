@@ -15,6 +15,7 @@ const VisualizerView = dynamic(() => import("@/components/visualizer-view"), { s
 const SingModeView = dynamic(() => import("@/components/sing-mode-view"), { ssr: false })
 const SongFly      = dynamic(() => import("@/components/song-fly"),      { ssr: false })
 const LunaRunner = dynamic(() => import("@/components/luna-runner"), { ssr: false })
+import { getCountryTheme } from "@/lib/runner-themes"
 
 import {
   Play,
@@ -5248,7 +5249,7 @@ export default function HablaBeat() {
                           <span className="text-sm font-black text-left" style={{
                             color: allDone ? "#1d4ed8" : "#1e293b",
                             textShadow: "0 1px 2px rgba(255,255,255,0.7)",
-                          }}>World</span>
+                          }}>{country ? getCountryTheme(country).worldName : "World"}</span>
                         </button>
                       </div>
                     </div>
@@ -5431,7 +5432,7 @@ export default function HablaBeat() {
                       className={`absolute bottom-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center gap-1 active:scale-95 transition-all cursor-pointer`}
                       style={{ background: "rgba(74,124,219,0.95)", color: "#fff" }}>
                       <span>🌍</span>
-                      <span>World</span>
+                      <span>{country ? getCountryTheme(country).worldName : "World"}</span>
                     </span>
                   </button>
                 )
