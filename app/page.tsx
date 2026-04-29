@@ -5428,12 +5428,10 @@ export default function HablaBeat() {
                           filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.35))",
                         }}
                       >
-                        <svg width="74" height="96" viewBox="0 0 100 130" aria-hidden>
+                        <svg width="48" height="62" viewBox="0 0 100 130" aria-hidden>
                           <path
                             d="M50 0 C22 0 0 22 0 50 C0 88 50 130 50 130 C50 130 100 88 100 50 C100 22 78 0 50 0 Z"
                             fill="#FBBF24"
-                            stroke="#1e293b"
-                            strokeWidth="3"
                           />
                           <text x="50" y="46" textAnchor="middle" fontSize="16" fontWeight="900" fill="#1e293b" style={{ letterSpacing: 0.2 }}>You&rsquo;re</text>
                           <text x="50" y="66" textAnchor="middle" fontSize="16" fontWeight="900" fill="#1e293b" style={{ letterSpacing: 0.2 }}>Here!</text>
