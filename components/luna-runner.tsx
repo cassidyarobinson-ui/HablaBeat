@@ -5,6 +5,8 @@ import { getCountryTheme } from "@/lib/runner-themes"
 
 type Lane = "low" | "high"
 type Kind = "spanish" | "coin" | "treat" | "carrot" | "box" | "boxSpent"
+type PowerUp = "fire" | "wings" | "bubble"
+const POWER_UP_MS = 8000  // power-ups last 8 seconds (bubble pops on first save)
 type Item = {
   id: number
   x: number       // viewport % from left
@@ -57,6 +59,10 @@ export default function LunaRunner({
   const [mistakes, setMistakes] = useState(0)
   const [coins, setCoins] = useState(0)
   const [treats, setTreats] = useState(0)
+  const [powerUp, setPowerUp] = useState<PowerUp | null>(null)
+  const powerUpUntilRef = useRef(0)
+  const powerUpRef = useRef<PowerUp | null>(null)
+  useEffect(() => { powerUpRef.current = powerUp }, [powerUp])
   const [items, setItems] = useState<Item[]>([])
   const [bunnyY, setBunnyY] = useState(0)        // px above ground
   const [phase, setPhase] = useState<"play" | "won" | "lost">("play")
@@ -84,9 +90,9 @@ export default function LunaRunner({
   const jump = useCallback(() => {
     if (phase !== "play") return
     // No cap — every tap gives an upward impulse, even while airborne.
-    // Stacked taps stack height: single ≈ 150px, double ≈ 300px, triple
-    // ≈ 450px, and the user can re-tap on the way down to bounce back up.
-    bunnyVyRef.current = JUMP_IMPULSE
+    // Wings boost the impulse so the bunny flies higher.
+    const impulse = powerUpRef.current === "wings" ? JUMP_IMPULSE * 1.4 : JUMP_IMPULSE
+    bunnyVyRef.current = impulse
     jumpsUsedRef.current += 1
   }, [phase])
 
@@ -101,6 +107,12 @@ export default function LunaRunner({
       const dt = Math.min(0.05, (now - lastTickRef.current) / 1000)
       lastTickRef.current = now
       const elapsed = now - startedRef.current
+
+      // Power-up expiration (fire / wings auto-expire; bubble drops on save)
+      if (powerUpUntilRef.current && now > powerUpUntilRef.current) {
+        powerUpUntilRef.current = 0
+        setPowerUp(null)
+      }
 
       // Bunny physics — semi-implicit Euler
       bunnyVyRef.current -= GRAVITY * dt
@@ -187,15 +199,31 @@ export default function LunaRunner({
             if (it.kind === "treat") { treatDelta++; continue }
             if (it.kind === "spanish") {
               if (it.pairIdx === t) { scoreDelta++; advance = true }
-              else mistakeDelta++
+              else {
+                // Fire and bubble both shield from a wrong-word penalty.
+                // Bubble is single-use (pops); fire holds for the rest of
+                // its duration.
+                const pu = powerUpRef.current
+                if (pu === "fire") {
+                  // burns through the wrong word; no penalty
+                } else if (pu === "bubble") {
+                  setPowerUp(null)
+                  powerUpUntilRef.current = 0
+                } else {
+                  mistakeDelta++
+                }
+              }
               continue
             }
             if (it.kind === "box") {
               // Only triggers when bunny is bumping it from below (moving up).
-              // Otherwise the bunny passes through harmlessly.
               if (movingUp) {
-                if (Math.random() < 0.5) coinDelta++
-                else treatDelta++
+                // Surprise power-up: fire | wings | bubble. The visible
+                // box has only "?" so the player doesn't know which.
+                const choices: PowerUp[] = ["fire", "wings", "bubble"]
+                const pick = choices[Math.floor(Math.random() * choices.length)]
+                setPowerUp(pick)
+                powerUpUntilRef.current = now + POWER_UP_MS
                 next.push({ ...it, x, kind: "boxSpent", poppedAt: now })
               } else {
                 next.push({ ...it, x })
@@ -404,17 +432,81 @@ export default function LunaRunner({
           style={{
             width: "100%", height: "100%",
             animation: bunnyY < 4 ? "mxBunnyIdle 0.5s ease-in-out infinite" : undefined,
+            position: "relative",
           }}
         >
+          {/* Bubble shield — translucent ring around the bunny */}
+          {powerUp === "bubble" && (
+            <div style={{
+              position: "absolute",
+              inset: -10,
+              borderRadius: "50%",
+              background: "radial-gradient(circle,rgba(125,211,252,0.25) 50%,rgba(56,189,248,0.55) 100%)",
+              border: "2px solid rgba(125,211,252,0.85)",
+              boxShadow: "0 0 18px rgba(56,189,248,0.55), inset 0 0 18px rgba(255,255,255,0.6)",
+              animation: "mxBunnyIdle 1.2s ease-in-out infinite",
+              pointerEvents: "none",
+            }} />
+          )}
+          {/* Fire trail — flickering flames behind the bunny */}
+          {powerUp === "fire" && (
+            <div style={{
+              position: "absolute",
+              left: -18, bottom: 4, fontSize: 28, lineHeight: 1,
+              filter: "drop-shadow(0 0 8px rgba(251,146,60,0.85))",
+              animation: "mxBunnyIdle 0.18s ease-in-out infinite",
+              pointerEvents: "none",
+            }}>🔥</div>
+          )}
+          {/* Wings — flap on either side of the bunny */}
+          {powerUp === "wings" && (
+            <>
+              <div style={{
+                position: "absolute", left: -22, top: 14, fontSize: 30,
+                transform: "scaleX(-1)",
+                animation: "mxBunnyIdle 0.22s ease-in-out infinite",
+                filter: "drop-shadow(0 0 6px rgba(255,255,255,0.7))",
+                pointerEvents: "none",
+              }}>🪽</div>
+              <div style={{
+                position: "absolute", right: -22, top: 14, fontSize: 30,
+                animation: "mxBunnyIdle 0.22s ease-in-out infinite",
+                filter: "drop-shadow(0 0 6px rgba(255,255,255,0.7))",
+                pointerEvents: "none",
+              }}>🪽</div>
+            </>
+          )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/me-bunny.svg"
             alt="Luna"
             className="w-full h-full object-contain"
-            style={{ filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.35))" }}
+            style={{
+              filter: powerUp === "fire"
+                ? "drop-shadow(0 4px 8px rgba(0,0,0,0.35)) drop-shadow(0 0 12px rgba(251,146,60,0.9))"
+                : "drop-shadow(0 4px 8px rgba(0,0,0,0.35))",
+              position: "relative",
+            }}
           />
         </div>
       </div>
+
+      {/* Power-up badge in HUD when active */}
+      {powerUp && (
+        <div
+          className="absolute left-1/2 -translate-x-1/2 px-3 py-1 rounded-full font-black text-white"
+          style={{
+            top: 100,
+            background: powerUp === "fire"   ? "rgba(234,88,12,0.92)"
+                       : powerUp === "wings" ? "rgba(168,85,247,0.92)"
+                       :                       "rgba(56,189,248,0.92)",
+            fontSize: 12, letterSpacing: 0.6,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.22)",
+          }}
+        >
+          {powerUp === "fire" ? "🔥 FIRE" : powerUp === "wings" ? "🪽 WINGS" : "🫧 BUBBLE"}
+        </div>
+      )}
 
       {/* Items — Spanish vocab pills, gold coins, bonus carrots, finish carrot */}
       {items.map(it => {
