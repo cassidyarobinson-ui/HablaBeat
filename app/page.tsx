@@ -5298,6 +5298,13 @@ export default function HablaBeat() {
                   "Puerto Rico":        "/videos/puerto-rico.mp4",
                   "Uruguay":            "/videos/uruguay.mp4",
                   "Venezuela":          "/videos/venezuela.mp4",
+                  "Cuba":               "/videos/cuba.mp4",
+                  "Costa Rica":         "/videos/costa-rica.mp4",
+                  "Guatemala":          "/videos/guatemala.mp4",
+                  "Honduras":           "/videos/honduras.mp4",
+                  "El Salvador":        "/videos/el-salvador.mp4",
+                  "Nicaragua":          "/videos/nicaragua.mp4",
+                  "Panama":             "/videos/panama.mp4",
                 }
                 const videoSrc = COUNTRY_VIDEOS[country]
                 if (videoSrc) {

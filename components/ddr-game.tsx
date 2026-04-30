@@ -443,6 +443,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
 
     const keywordSet = SONG_KEYWORDS[songNumber] ?? null
     const stripPunct = (s: string) => s.replace(/[^a-záéíóúüñ]/gi, "").toLowerCase()
+    // Alphabet world (songs 1-3) restricts notes to actual Spanish letters /
+    // digraphs (a-z, ñ, ch, ll, rr) so tap prompts say letters instead of
+    // filler lyrics like "arriba" or "abajo".
+    const isAlphabetSong = songNumber >= 1 && songNumber <= 3
+    const isSpanishLetter = (s: string) => /^[a-záéíóúüñ]$|^(ch|ll|rr)$/i.test(s)
 
     // Collect all word notes first (without lane assignment)
     const wordNotes: Omit<Note, "lane">[] = []
@@ -451,7 +456,11 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         if (keywordSet) {
           const stripped = stripPunct(word.text)
           if (!keywordSet.has(stripped)) return
-          if (stripped.length <= 1 && line.words.length > 1) return
+          if (isAlphabetSong) {
+            if (!isSpanishLetter(stripped)) return
+          } else if (stripped.length <= 1 && line.words.length > 1) {
+            return
+          }
         }
         wordNotes.push({
           text: word.text,

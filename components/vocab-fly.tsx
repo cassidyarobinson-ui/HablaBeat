@@ -45,6 +45,7 @@ export interface VocabFlyProps {
   storeOwned?:     string[]
   onEquipPointer?: (id: string) => void
   skipIntro?:      boolean
+  bgVideoQuery?:   string  // Pexels search query for country-themed background video
 }
 
 // Mini catalog for fly loadout UI
@@ -180,7 +181,34 @@ export default function VocabFly({
   speechEnabled, onGameEnd, onChallenge,
   activePointer = "pointer-carrot", storeOwned = ["pointer-carrot"], onEquipPointer,
   skipIntro,
+  bgVideoQuery,
 }: VocabFlyProps) {
+
+  // ── Country background video (Pexels) ──────────────────────────────────────
+  const [bgVideoUrl, setBgVideoUrl] = useState<string | null>(null)
+  useEffect(() => {
+    if (!bgVideoQuery) return
+    const PEXELS_KEY = 'QRejvnDTjk8yS9g9TWg3PNP3xQVpHJMuWimILfdpOUVYqnFygj58czF1'
+    let cancelled = false
+    fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(bgVideoQuery)}&per_page=8&min_duration=8&max_duration=60`, {
+      headers: { Authorization: PEXELS_KEY },
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (cancelled) return
+        const videos = data?.videos ?? []
+        if (videos.length === 0) return
+        const pick = videos[Math.floor(Math.random() * videos.length)]
+        const files = pick.video_files ?? []
+        const mp4 = files
+          .filter((f: any) => f.file_type === 'video/mp4')
+          .sort((a: any, b: any) => a.height - b.height)
+          .find((f: any) => f.height >= 480 && f.height <= 720) || files[0]
+        if (mp4?.link) setBgVideoUrl(mp4.link)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [bgVideoQuery])
 
   // ── Stable computed values ────────────────────────────────────────────────
   const FULL_QUEUE = useRef(phase2 ? [...phase1.words, ...phase2.words] : [...phase1.words]).current
@@ -437,6 +465,28 @@ export default function VocabFly({
   return (
     <div className="fixed inset-0 z-[200] flex flex-col"
       style={{ background: dynamicBg, transition: "background 0.9s ease" }}>
+
+      {/* ── Country background video (Pexels) — heavily dimmed/blurred so cartoon UI reads ── */}
+      {bgVideoUrl && (
+        <>
+          <video
+            src={bgVideoUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "blur(2px) saturate(1.15)", opacity: 0.55, zIndex: 0, pointerEvents: "none" }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.45) 100%)", zIndex: 1 }}
+          />
+        </>
+      )}
+
+      {/* Wrap remaining UI to sit above video — full-height flex column */}
+      <div className="relative flex flex-col flex-1 min-h-0 w-full" style={{ zIndex: 2 }}>
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 pt-safe-top pt-3 pb-2 flex-shrink-0">
@@ -919,6 +969,7 @@ export default function VocabFly({
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }

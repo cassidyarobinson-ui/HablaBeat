@@ -72,5 +72,5 @@ const config: Omit<VocabFlyProps, "coins" | "onCoinsChange" | "onClose"> = {
 
 interface Props { coins: number; onCoinsChange: (delta: number) => void; onClose: () => void }
 export default function FoodFly({ coins, onCoinsChange, onClose }: Props) {
-  return <VocabFly {...config} coins={coins} onCoinsChange={onCoinsChange} onClose={onClose} />
+  return <VocabFly {...config} coins={coins} onCoinsChange={onCoinsChange} onClose={onClose} bgVideoQuery="cuba havana vintage cars colorful colonial" />
 }
