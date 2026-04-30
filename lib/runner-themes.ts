@@ -43,7 +43,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   // ── Noun Galaxy ──────────────────────────────────────────────
   "Mexico": {
     worldName: "Casa Azul",
-    videoBg: "https://videos.pexels.com/video-files/20451740/20451740-sd_960_540_24fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/36909508/15635456_960_540_24fps.mp4",
     sky: ["#FFE5B4", "#FDD89A", "#F4A460", "#D4663D"],
     mountain: ["#8B5A3C", "#6B4423"],
     ground: baseGround,
@@ -115,7 +115,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Honduras": {
     worldName: "Copán Ruinas",
-    videoBg: "https://videos.pexels.com/video-files/16981458/16981458-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/27489370/12152217_960_540_30fps.mp4",
     sky: ["#A7F3D0", "#5EEAD4", "#06B6D4", "#0E7490"],
     mountain: ["#0F766E", "#134E4A"],
     ground: { stripeA: "#365314", stripeB: "#1E3008", base: "#142105", topBorder: "#0A1003" },
@@ -140,7 +140,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Nicaragua": {
     worldName: "Granada",
-    videoBg: "https://videos.pexels.com/video-files/18428850/18428850-sd_960_506_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/33919063/14394064_960_540_30fps.mp4",
     sky: ["#FED7AA", "#FB923C", "#EA580C", "#9A3412"],
     mountain: ["#7C2D12", "#3E1306"],
     ground: { stripeA: "#52525B", stripeB: "#3F3F46", base: "#27272A", topBorder: "#18181B" },
@@ -163,7 +163,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Costa Rica": {
     worldName: "Monteverde Cloud Forest",
-    videoBg: "https://videos.pexels.com/video-files/19366766/19366766-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/35177378/14903482_960_540_30fps.mp4",
     sky: ["#BBF7D0", "#86EFAC", "#22C55E", "#166534"],
     mountain: ["#14532D", "#052E16"],
     ground: { stripeA: "#3F6B3A", stripeB: "#2E5430", base: "#1F3D24", topBorder: "#0E2410" },
@@ -209,7 +209,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Puerto Rico": {
     worldName: "Flamenco Beach",
-    videoBg: "https://videos.pexels.com/video-files/15365161/15365161-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/15365288/15365288-sd_960_540_24fps.mp4",
     sky: ["#FEF3C7", "#FDE68A", "#FBBF24", "#D97706"],
     mountain: ["#7C2D12", "#451A03"],
     ground: { stripeA: "#A16207", stripeB: "#854D0E", base: "#713F12", topBorder: "#3F2008" },
@@ -232,7 +232,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Dominican Republic": {
     worldName: "Punta Cana",
-    videoBg: "https://videos.pexels.com/video-files/14834785/14834785-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/3576316/3576316-sd_960_540_25fps.mp4",
     sky: ["#A7F3D0", "#FDE68A", "#FB923C", "#DC2626"],
     mountain: ["#7C2D12", "#451A03"],
     ground: { stripeA: "#0F766E", stripeB: "#115E59", base: "#134E4A", topBorder: "#042F2E" },
@@ -255,7 +255,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Cuba": {
     worldName: "Old Havana",
-    videoBg: "https://videos.pexels.com/video-files/28999063/12541813_960_540_60fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/28999069/12541793_960_540_60fps.mp4",
     sky: ["#FEF3C7", "#FDBA74", "#F97316", "#9A3412"],
     mountain: ["#7C2D12", "#451A03"],
     ground: { stripeA: "#92400E", stripeB: "#78350F", base: "#451A03", topBorder: "#1C0701" },
@@ -325,7 +325,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Ecuador": {
     worldName: "Galápagos Islands",
-    videoBg: "https://videos.pexels.com/video-files/19774062/19774062-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/27500751/12154650_960_540_60fps.mp4",
     sky: ["#DBEAFE", "#FEF3C7", "#FBBF24", "#92400E"],
     mountain: ["#1E3A8A", "#172554"],
     ground: { stripeA: "#7C2D12", stripeB: "#5C1F0A", base: "#451A03", topBorder: "#1C0701" },
@@ -348,7 +348,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Peru": {
     worldName: "Machu Picchu",
-    videoBg: "https://videos.pexels.com/video-files/17636430/17636430-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/29837360/12813735_960_540_60fps.mp4",
     sky: ["#E0E7FF", "#A5B4FC", "#7C3AED", "#4C1D95"],
     mountain: ["#3F3F46", "#18181B"],
     ground: { stripeA: "#A16207", stripeB: "#713F12", base: "#451A03", topBorder: "#1C0701" },
@@ -371,7 +371,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Bolivia": {
     worldName: "Salar de Uyuni",
-    videoBg: "https://videos.pexels.com/video-files/11884430/11884430-sd_960_540_24fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/29998892/12871023_960_540_60fps.mp4",
     sky: ["#FEF3C7", "#FDE68A", "#A78BFA", "#5B21B6"],
     mountain: ["#3730A3", "#1E1B4B"],
     ground: { stripeA: "#FAFAFA", stripeB: "#E4E4E7", base: "#A1A1AA", topBorder: "#52525B" },
@@ -394,7 +394,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Paraguay": {
     worldName: "Cataratas del Monday",  // Paraguay (not provided by user; kept default)
-    videoBg: "https://videos.pexels.com/video-files/3940078/3940078-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/33650078/14299486_960_540_30fps.mp4",
     sky: ["#DBEAFE", "#86EFAC", "#22C55E", "#15803D"],
     mountain: ["#15803D", "#052E16"],
     ground: { stripeA: "#365314", stripeB: "#1E3008", base: "#142105", topBorder: "#0A1003" },
@@ -417,7 +417,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Uruguay": {
     worldName: "Montevideo Rambla",  // Uruguay (not provided by user; kept default)
-    videoBg: "https://videos.pexels.com/video-files/34371828/14560803_960_540_32fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/12097529/12097529-sd_960_540_25fps.mp4",
     sky: ["#BAE6FD", "#7DD3FC", "#0EA5E9", "#075985"],
     mountain: ["#0F172A", "#020617"],
     ground: { stripeA: "#FDE68A", stripeB: "#FCD34D", base: "#D97706", topBorder: "#78350F" },
@@ -440,7 +440,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Chile": {
     worldName: "Valparaíso",
-    videoBg: "https://videos.pexels.com/video-files/37008574/15678795_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/37271731/15789871_960_540_30fps.mp4",
     sky: ["#E0F2FE", "#7DD3FC", "#0284C7", "#0C4A6E"],
     mountain: ["#3F3F46", "#18181B"],
     ground: { stripeA: "#A8A29E", stripeB: "#78716C", base: "#44403C", topBorder: "#1C1917" },
@@ -463,7 +463,7 @@ export const COUNTRY_THEMES: Record<string, CountryTheme> = {
   },
   "Argentina": {
     worldName: "Iguazú Falls",
-    videoBg: "https://videos.pexels.com/video-files/4984759/4984759-sd_960_540_30fps.mp4",
+    videoBg: "https://videos.pexels.com/video-files/33053868/14088585_960_540_60fps.mp4",
     sky: ["#FECACA", "#F472B6", "#7C3AED", "#1E1B4B"],
     mountain: ["#1E1B4B", "#0F0A30"],
     ground: { stripeA: "#7F1D1D", stripeB: "#581C18", base: "#3A1010", topBorder: "#1A0606" },
