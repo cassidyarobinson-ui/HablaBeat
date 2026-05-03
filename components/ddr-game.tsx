@@ -401,7 +401,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   ]
 
   // Load timing data
+  // Auto-start the game when timing data is ready (skip the speed-selection setup screen)
+  const autoStartedRef = useRef(false)
+
   useEffect(() => {
+    // Re-arm the auto-start guard so "Next Song" actually plays the next song
+    // instead of getting stuck on the loading screen.
+    autoStartedRef.current = false
+    setGameState("loading")
     fetch(`/timing/song-${songNumber}.json`)
       .then((res) => res.json())
       .then((data: TimingData) => {
@@ -416,9 +423,6 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     setCurrentBreakIndex(-1)
     setRecallScores([])
   }, [songNumber])
-
-  // Auto-start the game when timing data is ready (skip the speed-selection setup screen)
-  const autoStartedRef = useRef(false)
   useEffect(() => {
     if (gameState === "setup" && timingData && !autoStartedRef.current) {
       autoStartedRef.current = true
@@ -1985,7 +1989,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
           </div>
 
           {/* Trophy centered */}
-          <div className="relative w-24 h-24 md:w-32 md:h-32 flex-shrink-0 mx-auto mb-1" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
+          <div className="relative w-24 h-24 md:w-32 md:h-32 flex-shrink-0 mx-auto" style={{ animation: "bunnyBounce 2s ease-in-out infinite" }}>
             <Image
               src="/images/trophy.png"
               alt="Trophy"
@@ -1999,12 +2003,13 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
                 {grade}
               </span>
             </div>
-            {/* WINNER text on the plaque */}
-            <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2">
-              <span className="text-sm md:text-base font-black text-yellow-900 tracking-wider uppercase" style={{ textShadow: "0 1px 1px rgba(255,255,255,0.3)" }}>
-                WINNER
-              </span>
-            </div>
+          </div>
+
+          {/* WINNER text below the trophy so it's readable */}
+          <div className="mb-2 mt-1">
+            <span className="text-base md:text-lg font-black text-yellow-900 tracking-wider uppercase" style={{ textShadow: "0 1px 1px rgba(255,255,255,0.3)" }}>
+              WINNER
+            </span>
           </div>
 
           {/* Encouraging message for F grade */}
@@ -2012,11 +2017,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             <p className="text-center text-sm font-black mb-1" style={{ color: "#4a7cdb" }}>You'll get there! 💪</p>
           )}
 
-          {/* Combined score header — Total + Tapping/Recall/Flow row */}
+          {/* Score row — Taps / Recall / Flow */}
           {(() => {
             const recallSum = recallScores.reduce((s, r) => s + r.score, 0)
             const recallMax = recallScores.reduce((s, r) => s + r.max, 0)
-            const totalScore = score + recallSum
             // Tapping max: total notes × points per perfect hit (active pointer's coin multiplier)
             const tappingMax = notesRef.current.length * Math.max(1, Math.round(getPointer(activePointer).gameplayModifier.coinMultiplier))
             const cell = (
@@ -2033,18 +2037,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
             )
             return (
               <>
-                {/* Total score — primary callout */}
-                <div className="w-full mb-2 rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.7)", border: "1.5px solid rgba(74,124,219,0.3)" }}>
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <span className="text-xl">💰</span>
-                    <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider">Total Score</span>
-                  </div>
-                  <div className="font-black text-gray-800 text-3xl text-center leading-none">{totalScore}</div>
-                </div>
-
-                {/* Tapping / Recall / Flow — one row, three cells */}
+                {/* Taps / Recall / Flow — one row, three cells */}
                 <div className="w-full mb-4 flex gap-2">
-                  {cell("tapping", "🥕", "Tapping", tappingMax > 0 ? `${score}/${tappingMax}` : score)}
+                  {cell("taps", "💰", "Taps", tappingMax > 0 ? `${score}/${tappingMax}` : score)}
                   {recallScores.length > 0 && cell("recall", "🐰", "Recall", `${recallSum}/${recallMax}`)}
                   {cell("flow", "🔥", "Flow", maxCombo)}
                 </div>
@@ -2074,7 +2069,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               <span style={{ display: "inline-block", animation: "btnBounce 0.9s ease-in-out infinite 0.3s" }}>{linkCopied ? "✅" : "⚔️"}</span>
               {linkCopied ? "Link Copied!" : "Challenge a Friend"}
             </button>
-            <p className="text-center text-xs font-bold -mt-1" style={{ color: "#d97706" }}>Win and earn 2x points!</p>
+            <p className="text-center text-xs font-bold -mt-1" style={{ color: "#000000" }}>Win and earn 2x points!</p>
 
             {/* Back / Next Song row */}
             <div className="flex gap-2 w-full">
@@ -2104,10 +2099,10 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               <img
                 src="/images/me-bunny.svg"
                 alt="HablaBeat Bunny"
-                className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(74,124,219,0.35)]"
+                className="w-full h-full object-contain"
               />
             </div>
-            <p className="text-gray-400 text-xs italic mt-1">
+            <p className="text-gray-700 text-xs italic mt-1">
               {showTranslations ? "Blue Bunny celebrates your victory!" : "¡Conejito Azul celebra tu victoria!"}
             </p>
           </div>
