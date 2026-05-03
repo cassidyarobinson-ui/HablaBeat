@@ -779,10 +779,14 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       judgmentColor = "text-blue-300"
     }
 
-    // Show English translation if available, otherwise show Spanish direction word
+    // Show English translation if available, the note's own text for real lyric
+    // notes (e.g. letters in alphabet songs), and only fall back to a Spanish
+    // lane label for filler "groove" notes that have no meaningful text.
     const LANE_SPANISH = ["¡Izquierda!", "¡Abajo!", "¡Arriba!", "¡Derecha!"]
     const hasEnglish = closest.english && closest.english.toLowerCase() !== closest.text.toLowerCase()
-    judgment = hasEnglish ? closest.english : LANE_SPANISH[closest.lane] || closest.text
+    judgment = hasEnglish
+      ? closest.english
+      : closest.isFill ? (LANE_SPANISH[closest.lane] || closest.text) : closest.text
 
     closest.hit = true
     scoreRef.current += points
