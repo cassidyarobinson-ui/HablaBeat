@@ -3070,6 +3070,9 @@ export default function HablaBeat() {
   const [bestGrades, setBestGrades] = useState<Record<number, string>>({})
   const [songPlayCounts, setSongPlayCounts] = useState<Record<number, number>>({})
   const [popHighScores, setPopHighScores] = useState<Record<number, number>>({})
+  // When a country becomes fully cleared on this most-recent game-end, this
+  // holds the country name so a stamp-on-passport animation overlay can play.
+  const [freshStampCountry, setFreshStampCountry] = useState<string | null>(null)
   const [flyHighScores, setFlyHighScores] = useState<Record<number, number>>({})
 
   // Challenge pre-select state
@@ -3788,6 +3791,22 @@ export default function HablaBeat() {
     })
     // Track play count per song
     setSongPlayCounts(prev => ({ ...prev, [songNum]: (prev[songNum] || 0) + 1 }))
+    // Detect a fresh country stamp — i.e. the country had at least one song
+    // unfinished before, and this game-end completes the last remaining one.
+    // Done before setPopHighScores so we read the pre-update state cleanly.
+    const country = SONG_COUNTRY_MAP[songNum]?.country
+    if (country && bank > 0 && (popHighScores[songNum] ?? 0) === 0) {
+      const songsInCountry = Object.entries(SONG_COUNTRY_MAP)
+        .filter(([, d]) => d.country === country)
+        .map(([n]) => Number(n))
+      const everyOtherCleared = songsInCountry.every(
+        n => n === songNum || (popHighScores[n] ?? 0) > 0,
+      )
+      if (everyOtherCleared) {
+        setFreshStampCountry(country)
+        setTimeout(() => setFreshStampCountry(null), 2600)
+      }
+    }
     // Track Pop high score per song
     setPopHighScores(prev => {
       if (bank > (prev[songNum] || 0)) return { ...prev, [songNum]: bank }
@@ -4830,8 +4849,19 @@ export default function HablaBeat() {
     )
 
     // Passport — country-by-country stamps. A country is "stamped" when every
-    // song mapped to it has a popHighScore > 0.
+    // song mapped to it has a popHighScore > 0. The cell shows the country
+    // outline + name in dark-blue ink, like a real passport stamp.
     if (homeView === "passport") {
+      // Maps display names to ISO-2 codes for the bundled outline SVGs at
+      // /images/countries/<code>.svg.
+      const COUNTRY_CODE: Record<string, string> = {
+        "Mexico": "mx", "Guatemala": "gt", "El Salvador": "sv", "Honduras": "hn",
+        "Nicaragua": "ni", "Costa Rica": "cr", "Panama": "pa", "Puerto Rico": "pr",
+        "Dominican Republic": "do", "Cuba": "cu", "Colombia": "co",
+        "Venezuela": "ve", "Ecuador": "ec", "Peru": "pe", "Bolivia": "bo",
+        "Paraguay": "py", "Uruguay": "uy", "Chile": "cl", "Argentina": "ar",
+      }
+      const INK = "#1e3a8a"
       const countryAgg: Record<string, { flag: string; total: number; done: number; firstSong: number }> = {}
       for (const [numStr, data] of Object.entries(SONG_COUNTRY_MAP)) {
         const num = Number(numStr)
@@ -4849,27 +4879,53 @@ export default function HablaBeat() {
         <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)" }}>
           <TabHeader title="Passport" />
           <div className="px-4 pt-4 pb-24 max-w-md mx-auto">
-            <div className="rounded-2xl px-4 py-3 mb-4" style={{ background: "linear-gradient(135deg, rgba(74,124,219,0.12), rgba(74,124,219,0.04))", border: "1.5px solid rgba(74,124,219,0.25)" }}>
-              <div className="text-[11px] font-black uppercase tracking-wider text-gray-600">Stamps earned</div>
-              <div className="font-black text-3xl text-gray-900 leading-none">{stampedCount}<span className="text-base text-gray-500 font-bold ml-1">/ {countries.length}</span></div>
-              <div className="text-xs font-bold text-gray-600 mt-1">Finish every song in a country to earn its stamp.</div>
+            <div className="rounded-2xl px-4 py-3 mb-4" style={{ background: "linear-gradient(135deg, rgba(30,58,138,0.10), rgba(30,58,138,0.03))", border: `1.5px solid ${INK}40` }}>
+              <div className="text-[11px] font-black uppercase tracking-wider" style={{ color: INK + "cc" }}>Stamps earned</div>
+              <div className="font-black text-3xl leading-none" style={{ color: INK }}>{stampedCount}<span className="text-base font-bold ml-1" style={{ color: INK + "80" }}>/ {countries.length}</span></div>
+              <div className="text-xs font-bold mt-1" style={{ color: INK + "b3" }}>Finish every song in a country to earn its stamp.</div>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              {countries.map(c => (
-                <div key={c.country} className="relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center px-2 py-3" style={{
-                  background: c.stamped ? "linear-gradient(135deg, #fde68a, #fbbf24)" : "rgba(0,0,0,0.04)",
-                  border: c.stamped ? "1.5px solid rgba(180,83,9,0.55)" : "1.5px dashed rgba(0,0,0,0.18)",
-                  boxShadow: c.stamped ? "0 6px 18px rgba(251,191,36,0.35)" : undefined,
-                  opacity: c.stamped ? 1 : 0.7,
-                }}>
-                  <span className={`text-3xl ${c.stamped ? "" : "grayscale opacity-50"}`}>{c.flag}</span>
-                  <span className="font-black text-[11px] text-gray-900 mt-1 text-center leading-tight">{c.country}</span>
-                  <span className="text-[10px] font-bold text-gray-700 mt-0.5">{c.done}/{c.total}</span>
-                  {c.stamped && (
-                    <span className="absolute top-1 right-1 text-[10px] font-black px-1.5 py-0.5 rounded-full" style={{ background: "rgba(220,38,38,0.95)", color: "#fff", transform: "rotate(8deg)", letterSpacing: "0.05em" }}>STAMPED</span>
-                  )}
-                </div>
-              ))}
+              {countries.map(c => {
+                const code = COUNTRY_CODE[c.country]
+                const outlineUrl = code ? `/images/countries/${code}.svg` : null
+                return (
+                  <div key={c.country} className="relative aspect-square rounded-2xl flex flex-col items-center justify-center px-2 py-3" style={{
+                    background: "rgba(255,255,255,0.6)",
+                    border: c.stamped ? `1.5px solid ${INK}` : `1.5px dashed ${INK}40`,
+                    boxShadow: c.stamped ? `0 6px 18px ${INK}30` : undefined,
+                  }}>
+                    {/* Country outline rendered as a CSS mask so it picks up
+                        the dark-blue ink color uniformly. */}
+                    {outlineUrl && (
+                      <div
+                        aria-hidden
+                        style={{
+                          width: "55%",
+                          height: "55%",
+                          backgroundColor: INK,
+                          opacity: c.stamped ? 0.95 : 0.32,
+                          WebkitMaskImage: `url(${outlineUrl})`,
+                          maskImage: `url(${outlineUrl})`,
+                          WebkitMaskRepeat: "no-repeat",
+                          maskRepeat: "no-repeat",
+                          WebkitMaskPosition: "center",
+                          maskPosition: "center",
+                          WebkitMaskSize: "contain",
+                          maskSize: "contain",
+                        }}
+                      />
+                    )}
+                    <span className="font-black text-[11px] mt-1 text-center leading-tight" style={{ color: INK, opacity: c.stamped ? 1 : 0.55, letterSpacing: "0.02em" }}>
+                      {c.country.toUpperCase()}
+                    </span>
+                    {c.stamped && (
+                      <span className="absolute -top-1 -right-1 text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: INK, color: "#fff", transform: "rotate(8deg)", letterSpacing: "0.06em" }}>
+                        STAMPED
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -5534,6 +5590,82 @@ export default function HablaBeat() {
 
           </div>
         </div>
+
+        {/* ── Passport stamp animation — plays for a couple of seconds when
+            the user clears the final song of a country. */}
+        {freshStampCountry && (() => {
+          const COUNTRY_CODE: Record<string, string> = {
+            "Mexico": "mx", "Guatemala": "gt", "El Salvador": "sv", "Honduras": "hn",
+            "Nicaragua": "ni", "Costa Rica": "cr", "Panama": "pa", "Puerto Rico": "pr",
+            "Dominican Republic": "do", "Cuba": "cu", "Colombia": "co",
+            "Venezuela": "ve", "Ecuador": "ec", "Peru": "pe", "Bolivia": "bo",
+            "Paraguay": "py", "Uruguay": "uy", "Chile": "cl", "Argentina": "ar",
+          }
+          const code = COUNTRY_CODE[freshStampCountry]
+          const INK = "#1e3a8a"
+          return (
+            <div
+              className="fixed inset-0 z-[300] flex items-center justify-center stamp-shake"
+              style={{ background: "rgba(15,23,42,0.55)", backdropFilter: "blur(2px)" }}
+              onClick={() => setFreshStampCountry(null)}
+            >
+              {/* Passport "page" */}
+              <div className="relative rounded-2xl px-8 py-10" style={{
+                background: "#fdfbf5",
+                width: "min(80vw, 320px)",
+                aspectRatio: "1 / 1",
+                boxShadow: "0 18px 60px rgba(0,0,0,0.45), inset 0 0 0 2px rgba(30,58,138,0.15)",
+              }}>
+                {/* The country's outline as inked stamp — appears with the slam */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="stamp-drop relative" style={{ width: "70%", height: "70%" }}>
+                    {/* Circular stamp ring */}
+                    <div className="stamp-ink absolute inset-0" style={{
+                      border: `4px solid ${INK}`,
+                      borderRadius: "50%",
+                      filter: `drop-shadow(0 1px 0 ${INK}33)`,
+                    }} />
+                    {code && (
+                      <div className="stamp-ink absolute inset-0 m-auto" style={{
+                        width: "60%",
+                        height: "60%",
+                        backgroundColor: INK,
+                        WebkitMaskImage: `url(/images/countries/${code}.svg)`,
+                        maskImage: `url(/images/countries/${code}.svg)`,
+                        WebkitMaskRepeat: "no-repeat",
+                        maskRepeat: "no-repeat",
+                        WebkitMaskPosition: "center",
+                        maskPosition: "center",
+                        WebkitMaskSize: "contain",
+                        maskSize: "contain",
+                        top: "10%",
+                      }} />
+                    )}
+                    <div className="stamp-ink absolute left-0 right-0 text-center font-black uppercase" style={{
+                      bottom: "8%",
+                      color: INK,
+                      letterSpacing: "0.15em",
+                      fontSize: "clamp(11px, 3vw, 14px)",
+                    }}>
+                      {freshStampCountry}
+                    </div>
+                    <div className="stamp-ink absolute left-0 right-0 text-center font-black" style={{
+                      top: "6%",
+                      color: INK,
+                      letterSpacing: "0.2em",
+                      fontSize: "clamp(9px, 2.4vw, 11px)",
+                    }}>
+                      ★ STAMPED ★
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute bottom-3 left-0 right-0 text-center text-[11px] font-bold" style={{ color: INK + "99" }}>
+                  Tap anywhere to dismiss
+                </div>
+              </div>
+            </div>
+          )
+        })()}
 
         {/* ── World placeholder modal — future end-of-country mini-game ─────── */}
         {worldPlaceholder && (
