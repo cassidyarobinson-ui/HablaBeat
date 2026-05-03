@@ -3052,6 +3052,9 @@ export default function HablaBeat() {
   const [worldModeIdx, setWorldModeIdx] = useState(1) // default to Dance
   const [worldFocus, setWorldFocus] = useState<"carousel" | "modes">("carousel")
   const worldSwipeRef = useRef<{ x: number; y: number } | null>(null)
+  // Tracks the start of a horizontal swipe on the dashboard hero card so the
+  // user can flick left/right to step through countries.
+  const heroSwipeRef = useRef<{ x: number; y: number } | null>(null)
   const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "pointer" | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
   const [isDesktop, setIsDesktop] = useState(false)
@@ -5102,11 +5105,39 @@ export default function HablaBeat() {
         <div className={`max-w-md mx-auto w-full flex-1 flex flex-col ${dashboardSectionOverride ? "" : "pb-8"}`}>
 
           {/* ── HERO: country image. When previewing from the map, fills the
-               whole page so there's no white space below. */}
-          <div className={`relative overflow-hidden ${dashboardSectionOverride ? "flex-1" : "flex-shrink-0"}`} style={{
-            boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
-            minHeight: dashboardSectionOverride ? undefined : "50dvh",
-          }}>
+               whole page so there's no white space below.
+               Swipe left/right on the card to step through countries —
+               updates dashboardSectionOverride so the bottom tour
+               highlights the focused section. */}
+          <div
+            className={`relative overflow-hidden ${dashboardSectionOverride ? "flex-1" : "flex-shrink-0"}`}
+            style={{
+              boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
+              minHeight: dashboardSectionOverride ? undefined : "50dvh",
+              touchAction: "pan-y",
+            }}
+            onTouchStart={(e) => {
+              const t = e.touches[0]
+              heroSwipeRef.current = { x: t.clientX, y: t.clientY }
+            }}
+            onTouchEnd={(e) => {
+              const start = heroSwipeRef.current
+              heroSwipeRef.current = null
+              if (!start) return
+              const t = e.changedTouches[0]
+              const dx = t.clientX - start.x
+              const dy = t.clientY - start.y
+              // Require a mostly-horizontal flick of at least ~60px so vertical
+              // page scrolls don't accidentally change the focused country.
+              if (Math.abs(dx) < 60 || Math.abs(dx) <= Math.abs(dy)) return
+              const idx = allSecs.findIndex((s: any) => s.id === missionSec?.id)
+              if (idx < 0) return
+              const next = dx < 0 ? idx + 1 : idx - 1
+              if (next < 0 || next >= allSecs.length) return
+              setDashboardSectionOverride(allSecs[next].id)
+              setFocusedSongNumber(null)
+            }}
+          >
             {/* Background image of the mission's next/first song */}
             {(missionNextSong?.number ?? missionSongs[0]?.number) != null && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -5420,7 +5451,9 @@ export default function HablaBeat() {
                       WebkitBackdropFilter: "blur(20px)",
                       borderBottom: "1px solid rgba(255,255,255,0.5)",
                     }}>
-                      <div className="font-black text-sm truncate text-gray-900">{country || sec.title}</div>
+                      <div className="font-black text-sm truncate text-gray-900">
+                        {isCurrent ? "You're Here!" : (country || sec.title)}
+                      </div>
                       <div className="text-[11px] text-gray-700 font-semibold truncate">{sec.title}{sec.title ? " · " : ""}{done}/{total} songs</div>
                     </div>
                     {cleared && <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 rounded-full text-[11px] font-black" style={{ background: "rgba(34,197,94,0.95)", color: "#052e16", boxShadow: "0 4px 12px rgba(0,0,0,0.25)" }}>Cleared</span>}
