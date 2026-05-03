@@ -5113,11 +5113,14 @@ export default function HablaBeat() {
                dashboardSectionOverride and triggers a slide animation. */}
           <div
             key={missionSec?.id ?? "no-section"}
-            className={`relative overflow-hidden flex-shrink-0 ${heroSwipeDir === "left" ? "hero-slide-from-right" : heroSwipeDir === "right" ? "hero-slide-from-left" : ""}`}
+            className={`relative overflow-hidden flex-shrink-0 w-full ${heroSwipeDir === "left" ? "hero-slide-from-right" : heroSwipeDir === "right" ? "hero-slide-from-left" : ""}`}
             onAnimationEnd={() => setHeroSwipeDir(null)}
             style={{
               boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
-              minHeight: "50dvh",
+              // Locked height so the card does not grow/shrink when sections
+              // with different song counts mount during a swipe — keeps the
+              // width and frame stable while the slide animation plays.
+              height: "50dvh",
               touchAction: "pan-y",
             }}
             onTouchStart={(e) => {
@@ -5153,9 +5156,11 @@ export default function HablaBeat() {
                 draggable={false}
               />
             )}
-            {/* Subtle bottom-up scrim so the country image stays visible while text remains readable. */}
+            {/* Bottom-up scrim — fades the country image into pure white at
+                the very bottom so the hero blends seamlessly into the white
+                page background underneath without a visible seam. */}
             <div className="absolute inset-0 pointer-events-none" style={{
-              background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0.62) 100%)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0.85) 85%, rgba(255,255,255,1) 100%)",
             }} />
             {/* V2 — title + english + wizard at top; middle reserved for animation; Vamos at bottom. */}
             <div className="relative flex flex-col h-full" style={{ minHeight: dashboardSectionOverride ? "100%" : "50dvh" }}>
@@ -5204,7 +5209,7 @@ export default function HablaBeat() {
 
               {/* Bottom — wizard + Vamos + milestone, with white scrim for legibility */}
               <div className="relative px-4 pt-4 pb-4" style={{
-                background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.55) 30%, rgba(255,255,255,0.85) 100%)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.55) 30%, rgba(255,255,255,1) 100%)",
               }}>
                 {/* Wizard — vertical stepper. Solid connector runs through the
                     column of node centers; song titles sit to the right of each node. */}
@@ -5294,13 +5299,17 @@ export default function HablaBeat() {
 
                 <button
                   onClick={() => {
-                    if (!missionNextSong || allCleared) return
-                    handlePlayDDR(missionNextSong.id, missionCat.id, missionSec.id)
+                    // Even after a country is cleared, fall back to the first
+                    // song of the section so the user can replay rather than
+                    // being told to pick a new country.
+                    const target = missionNextSong ?? missionSongs[0]
+                    if (!target) return
+                    handlePlayDDR(target.id, missionCat.id, missionSec.id)
                   }}
-                  disabled={!missionNextSong || allCleared}
+                  disabled={!missionNextSong && !missionSongs[0]}
                   className="w-full py-4 rounded-full font-black text-lg text-white disabled:opacity-50 active:scale-95 transition-all"
                   style={{ background: "linear-gradient(180deg,#0E83E2,#0A75D3)", boxShadow: "0 8px 22px rgba(10,117,211,0.5)" }}>
-                  {allCleared ? "✨ Pick a new country" : "¡Vamos!"}
+                  ¡Vamos!
                 </button>
               </div>
 
