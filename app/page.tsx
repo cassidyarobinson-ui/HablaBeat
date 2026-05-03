@@ -5396,8 +5396,9 @@ export default function HablaBeat() {
             </div>
           </div>
 
-          {/* Skip the entire tile-row + Americas-tour section when previewing a country from the map */}
-          {!dashboardSectionOverride && (
+          {/* Tile row + Americas tour stays visible even when previewing a
+              country (override mode) so the user can keep navigating after
+              swiping into a card. */}
           <div className="px-4 pt-6 flex-1 flex flex-col">
 
           <React.Fragment>
@@ -5523,7 +5524,6 @@ export default function HablaBeat() {
           </React.Fragment>
 
           </div>
-          )}
         </div>
 
         {/* ── World placeholder modal — future end-of-country mini-game ─────── */}
