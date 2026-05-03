@@ -3055,6 +3055,9 @@ export default function HablaBeat() {
   // Tracks the start of a horizontal swipe on the dashboard hero card so the
   // user can flick left/right to step through countries.
   const heroSwipeRef = useRef<{ x: number; y: number } | null>(null)
+  // Direction of the most recent hero swipe — drives the slide animation on
+  // the freshly-mounted hero contents. null when no swipe is in flight.
+  const [heroSwipeDir, setHeroSwipeDir] = useState<"left" | "right" | null>(null)
   const [loadoutOpen, setLoadoutOpen] = useState<"effect" | "pointer" | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string>("people-places-things")
   const [isDesktop, setIsDesktop] = useState(false)
@@ -5070,7 +5073,7 @@ export default function HablaBeat() {
     const allCleared = missionDone === missionTotal && missionTotal > 0
 
     return (
-      <div className={`flex flex-col ${dashboardSectionOverride ? "h-[100dvh]" : "min-h-[100dvh]"}`} style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
+      <div className="flex flex-col min-h-[100dvh]" style={{ background: "linear-gradient(180deg, #f5f7fb 0%, #ffffff 100%)", color: "#0f172a" }}>
         {/* Top bar — back arrow (when previewing a country) + logo + country/streak on the right */}
         <div className="flex items-center px-4 pt-4 pb-3 gap-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
           {dashboardSectionOverride ? (
@@ -5102,18 +5105,19 @@ export default function HablaBeat() {
           })()}
         </div>
 
-        <div className={`max-w-md mx-auto w-full flex-1 flex flex-col ${dashboardSectionOverride ? "" : "pb-8"}`}>
+        <div className="max-w-md mx-auto w-full flex-1 flex flex-col pb-8">
 
-          {/* ── HERO: country image. When previewing from the map, fills the
-               whole page so there's no white space below.
-               Swipe left/right on the card to step through countries —
-               updates dashboardSectionOverride so the bottom tour
-               highlights the focused section. */}
+          {/* ── HERO: country image. The bottom tour stays visible underneath
+               so the user can see where they are while swiping. Swipe
+               left/right to step through countries — updates
+               dashboardSectionOverride and triggers a slide animation. */}
           <div
-            className={`relative overflow-hidden ${dashboardSectionOverride ? "flex-1" : "flex-shrink-0"}`}
+            key={missionSec?.id ?? "no-section"}
+            className={`relative overflow-hidden flex-shrink-0 ${heroSwipeDir === "left" ? "hero-slide-from-right" : heroSwipeDir === "right" ? "hero-slide-from-left" : ""}`}
+            onAnimationEnd={() => setHeroSwipeDir(null)}
             style={{
               boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
-              minHeight: dashboardSectionOverride ? undefined : "50dvh",
+              minHeight: "50dvh",
               touchAction: "pan-y",
             }}
             onTouchStart={(e) => {
@@ -5134,6 +5138,7 @@ export default function HablaBeat() {
               if (idx < 0) return
               const next = dx < 0 ? idx + 1 : idx - 1
               if (next < 0 || next >= allSecs.length) return
+              setHeroSwipeDir(dx < 0 ? "left" : "right")
               setDashboardSectionOverride(allSecs[next].id)
               setFocusedSongNumber(null)
             }}
@@ -5297,19 +5302,6 @@ export default function HablaBeat() {
                   style={{ background: "linear-gradient(180deg,#0E83E2,#0A75D3)", boxShadow: "0 8px 22px rgba(10,117,211,0.5)" }}>
                   {allCleared ? "✨ Pick a new country" : "¡Vamos!"}
                 </button>
-                {(() => {
-                  const country = missionCountry || missionSec?.title || ""
-                  const remaining = Math.max(0, missionTotal - missionDone)
-                  const line = remaining === 0
-                    ? `🌍 ${country} World unlocked! Tap below to play`
-                    : `${remaining} more song${remaining === 1 ? "" : "s"} until the ${country} World 🌍`
-                  const color = remaining === 0 ? "#16a34a" : "#475569"
-                  return (
-                    <div className="relative mt-2">
-                      <p className="text-center text-[12px] font-black" style={{ color }}>{line}</p>
-                    </div>
-                  )
-                })()}
               </div>
 
               {/* Expanded bunny — Mexico shows a video that auto-collapses

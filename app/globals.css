@@ -18,6 +18,23 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* Hero card swipe animations — slide a freshly-mounted card in from the
+   side opposite the swipe direction so it feels like the deck physically
+   moved. Paired with a `key={sectionId}` change in the React tree so the
+   animation re-fires each step. */
+@keyframes heroSlideFromRight {
+  0%   { transform: translateX(28%); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { transform: translateX(0);   opacity: 1; }
+}
+@keyframes heroSlideFromLeft {
+  0%   { transform: translateX(-28%); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { transform: translateX(0);    opacity: 1; }
+}
+.hero-slide-from-right { animation: heroSlideFromRight 320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hero-slide-from-left  { animation: heroSlideFromLeft  320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
 /* Force portrait orientation — show overlay when landscape */
 @media (orientation: landscape) and (max-height: 500px) {
   body::after {
