@@ -42,6 +42,15 @@ declare global {
   }
 }
 
+// ── Karaoke availability ──────────────────────────────────────────────────
+// A song supports sing/karaoke (Practice) mode when it has bundled audio +
+// synced lyrics. Every song numbered 1–50 ships with /audio/song-N.m4a and
+// /timing/song-N.json, so Practice no longer depends on a YouTube video.
+const MAX_KARAOKE_SONG = 50
+function songHasKaraoke(song?: { number?: number } | null): boolean {
+  return !!song && typeof song.number === "number" && song.number >= 1 && song.number <= MAX_KARAOKE_SONG
+}
+
 // ── STORE CATALOG ───────────────────────────────────────────────────────────
 type StoreItemCategory = "pointer"
 interface StoreItem {
@@ -3188,7 +3197,7 @@ export default function HablaBeat() {
         const sidx = Math.min(worldSongIdx, songCount - 1)
         const song = songs[sidx]
         const modes: string[] = []
-        if (song?.youtubeId && song.youtubeId !== "") modes.push("sing")
+        if (songHasKaraoke(song)) modes.push("sing")
         if (selectedLanguage === "spanish") modes.push("dance")
         
         if (worldFocus === "carousel") {
@@ -3268,7 +3277,7 @@ export default function HablaBeat() {
       const idx = Math.min(worldSongIdx, songCount - 1)
       const song = songs[idx]
       const modes: string[] = []
-      if (song?.youtubeId && song.youtubeId !== "") modes.push("sing")
+      if (songHasKaraoke(song)) modes.push("sing")
       if (selectedLanguage === "spanish") modes.push("dance")
       
       if (worldFocus === "carousel") {
@@ -4178,7 +4187,7 @@ export default function HablaBeat() {
   // ── Song Page View ──
   if (currentView === "song" && currentSong) {
     const hasPop = selectedLanguage === "spanish"
-    const hasSing = currentSong.youtubeId && currentSong.youtubeId !== ""
+    const hasSing = songHasKaraoke(currentSong)
     const keywords = SONG_KEYWORDS_DISPLAY[currentSong.number] ?? []
     const description = SONG_DESCRIPTIONS[currentSong.number] ?? "Vocabulary and grammar"
 
@@ -6113,7 +6122,7 @@ export default function HablaBeat() {
             const prevWorldName = hasPrevWorld ? (allSections[currentSectionIdx - 1] as any).country || allSections[currentSectionIdx - 1].title : ""
             const hasFly = false
             const hasPop = selectedLanguage === "spanish"
-            const hasSing = song.youtubeId && song.youtubeId !== ""
+            const hasSing = songHasKaraoke(song)
             const description = SONG_DESCRIPTIONS[song.number] ?? ""
             const keywords = SONG_KEYWORDS_DISPLAY[song.number] ?? []
             const songBestGrade = bestGrades[song.number]
@@ -6477,7 +6486,7 @@ export default function HablaBeat() {
                               const songBestGrade = bestGrades[song.number]
                               const hasFly = false
                               const hasPop = selectedLanguage === "spanish"
-                              const hasSing = song.youtubeId && song.youtubeId !== ""
+                              const hasSing = songHasKaraoke(song)
                               const description = SONG_DESCRIPTIONS[song.number] ?? ""
                               const keywords = SONG_KEYWORDS_DISPLAY[song.number] ?? []
                               const isPadSelected = isDesktop && songIdx === worldSongIdx
