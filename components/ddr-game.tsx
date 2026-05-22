@@ -357,6 +357,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
   const animationRef = useRef<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const fallingRef = useRef<HTMLDivElement>(null)
+  /** Guards the end-of-song fade so it runs exactly once per game */
+  const fadeStartedRef = useRef(false)
   /** Tracks if the Dragon Breath combo-shield has been used this song */
   const comboShieldUsedRef = useRef(false)
   // Recall break tracking
@@ -507,6 +509,7 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
     maxComboRef.current = 0
     totalHitsRef.current = 0
     comboShieldUsedRef.current = false
+    fadeStartedRef.current = false
     setScore(0)
     setCombo(0)
     setMaxCombo(0)
@@ -685,13 +688,16 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
         }
       })
 
-      // Check if all notes are done — fade out 3 seconds after last bubble exits screen
-      const allNotesDone = notesRef.current.every((n) => n.hit)
+      // End the song once the arrows (notes) are finished. Trigger purely on
+      // TIME — last note + miss window + exit travel — so it always fires, even
+      // if a note never flipped to "hit" (which left some songs playing on).
+      // fadeStartedRef guards it so the fade runs exactly once.
       const lastNoteCheck = notesRef.current[notesRef.current.length - 1]
       // Last bubble exits screen at: timestamp + MISS window + exit travel time
       const lastBubbleExitTime = lastNoteCheck ? lastNoteCheck.timestamp + HIT_WINDOWS.MISS + MISS_EXIT_TIME : 0
-      if (allNotesDone && lastNoteCheck && currentTime > lastBubbleExitTime) {
-        // Fade out audio over ~3 seconds then end
+      if (lastNoteCheck && currentTime > lastBubbleExitTime && !fadeStartedRef.current) {
+        fadeStartedRef.current = true
+        // Fade out audio over ~3 seconds, then show the score
         const fadeAudio = audioRef.current
         if (fadeAudio && !fadeAudio.paused) {
           const fadeInterval = setInterval(() => {
@@ -707,6 +713,9 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
               }
             }
           }, 75)
+        } else {
+          // Audio already stopped — go straight to the score
+          setGameState("ended")
         }
         return
       }
