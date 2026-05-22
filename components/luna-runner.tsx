@@ -412,14 +412,15 @@ export default function LunaRunner({
         </svg>
       </button>
 
-      {/* Target prompt — pinned to the bottom so it doesn't compete with
-          the top HUD rows. Shows the English word the bunny must catch. */}
+      {/* Target prompt — pinned to the very bottom (in the clear lower ground
+          strip, below the bunny's feet and the catch line) so the flying
+          word-pills and the bunny never cover it. Shows the English word to catch. */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full text-white font-black"
+        className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full text-white font-black z-[50]"
         style={{
-          bottom: "calc(15% + 18px)",
-          background: "rgba(15,23,42,0.82)",
-          boxShadow: "0 6px 18px rgba(0,0,0,0.32)",
+          bottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)",
+          background: "rgba(15,23,42,0.92)",
+          boxShadow: "0 6px 18px rgba(0,0,0,0.4)",
         }}
       >
         <span style={{ fontSize: 11, letterSpacing: 0.6, opacity: 0.7 }}>CATCH</span>
