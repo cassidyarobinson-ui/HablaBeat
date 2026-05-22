@@ -1,7 +1,13 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
+import { Haptics, ImpactStyle } from "@capacitor/haptics"
 import { Button } from "@/components/ui/button"
+
+// Fire-and-forget haptic tap (native Taptic Engine on iOS; no-op on unsupported platforms)
+function buzz(style: ImpactStyle) {
+  Haptics.impact({ style }).catch(() => {})
+}
 import { ChevronLeft, Play, Pause } from "lucide-react"
 import { translateWord } from "@/lib/spanish-dictionary"
 import Image from "next/image"
@@ -802,6 +808,8 @@ export default function DDRGame({ songNumber, songTitle, userName = "", userPhot
       : closest.isFill ? (LANE_SPANISH[closest.lane] || closest.text) : closest.text
 
     closest.hit = true
+    // Native haptic tap on each successful hit — stronger for a Perfect
+    buzz(isPerfect ? ImpactStyle.Medium : ImpactStyle.Light)
     scoreRef.current += points
     comboRef.current += 1
     const c = comboRef.current
