@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:ios": "CAPACITOR_BUILD=true next build && npx cap sync ios",
+    "build:ios": "bash scripts/build-ios.sh",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
@@ -12,6 +12,9 @@
     "sync": "npx cap sync"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
+    "@capacitor/ios": "^8.3.4",
     "@tailwindcss/postcss": "^4.1.9",
     "@types/node": "^22",
     "@types/react": "^19",
