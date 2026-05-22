@@ -5362,20 +5362,36 @@ export default function HablaBeat() {
                   )
                 })()}
 
-                <button
-                  onClick={() => {
-                    // Even after a country is cleared, fall back to the first
-                    // song of the section so the user can replay rather than
-                    // being told to pick a new country.
-                    const target = missionNextSong ?? missionSongs[0]
-                    if (!target) return
-                    handlePlayDDR(target.id, missionCat.id, missionSec.id)
-                  }}
-                  disabled={!missionNextSong && !missionSongs[0]}
-                  className="w-full py-4 rounded-full font-black text-lg text-white disabled:opacity-50 active:scale-95 transition-all"
-                  style={{ background: "linear-gradient(180deg,#0E83E2,#0A75D3)", boxShadow: "0 8px 22px rgba(10,117,211,0.5)" }}>
-                  ¡Vamos!
-                </button>
+                <div className="flex gap-3 w-full">
+                  {/* Sing — secondary, microphone-only, compact, on the left — launches karaoke */}
+                  <button
+                    onClick={() => {
+                      const target = missionNextSong ?? missionSongs[0]
+                      if (!target) return
+                      handlePlaySong(target.id, missionCat.id, missionSec.id)
+                    }}
+                    disabled={!missionNextSong && !missionSongs[0]}
+                    aria-label="Sing"
+                    className="shrink-0 w-16 py-4 rounded-full font-black text-2xl disabled:opacity-50 active:scale-95 transition-all flex items-center justify-center"
+                    style={{ background: "#ffffff", color: "#0A75D3", border: "2px solid #0E83E2", boxShadow: "0 8px 22px rgba(10,117,211,0.22)" }}>
+                    🎤
+                  </button>
+                  {/* Play — primary (blue w/ white), takes most of the space */}
+                  <button
+                    onClick={() => {
+                      // Even after a country is cleared, fall back to the first
+                      // song of the section so the user can replay rather than
+                      // being told to pick a new country.
+                      const target = missionNextSong ?? missionSongs[0]
+                      if (!target) return
+                      handlePlayDDR(target.id, missionCat.id, missionSec.id)
+                    }}
+                    disabled={!missionNextSong && !missionSongs[0]}
+                    className="flex-1 py-4 rounded-full font-black text-lg text-white disabled:opacity-50 active:scale-95 transition-all"
+                    style={{ background: "linear-gradient(180deg,#0E83E2,#0A75D3)", boxShadow: "0 8px 22px rgba(10,117,211,0.5)" }}>
+                    ¡Vamos!
+                  </button>
+                </div>
               </div>
 
               {/* Expanded bunny — Mexico shows a video that auto-collapses
